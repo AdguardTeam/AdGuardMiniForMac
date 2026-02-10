@@ -1,136 +1,267 @@
-# Development instructions
+<!--
+SPDX-FileCopyrightText: AdGuard Software Limited
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
 
-## Requirements
+# Development Guide
 
-Minimum deployment target: macOS 12.
+## Prerequisites
 
-### Main Development
+### Required Tools
 
-- Xcode 15 or later
-- Ruby 3.2.2 or later
-- Bundler 2.4.21 or later
-- Yarn 1.22.19 or later
+| Tool | Version | Notes |
+|------|---------|-------|
+| Xcode | 26+ | Required for `.icon` asset format |
+| Node.js | 22+ | JavaScript runtime (used by Yarn, Webpack, Sciter UI build) |
+| Ruby | 3.2.2+ | Fastlane and build scripts |
+| Bundler | 2.6+ | Ruby dependency management |
+| Yarn | 1.22+ | Frontend dependency management |
+| Python | 3.9+ | Protobuf schema generation (venv created by `configure.sh`) |
 
-### Working with Proto Schema
+- **Minimum deployment target** (end-user): **macOS 12** (`AG_DEPLOYMENT_TARGET`
+  in `CommonConfig.xcconfig`)
+- **Minimum development machine**: **macOS 26+** (required for Xcode 26)
 
-- Python 3.9.6 or later
+### Repository Access
 
-**Note:** `protoc` and `protoc-gen-swift` are installed automatically by `./configure.sh dev` into `build/protoc-tools/`. No manual installation required.
+SSH access to the internal Bitbucket server is required. The following private
+repositories are resolved as SPM dependencies during build:
 
-**Version pinning (optional):** To ensure reproducible builds, you can pin the protoc version:
+- `adguard-mac-lib`
+- `sp-appstore`
+- `sp-backend`
+- `sp-color-palette` (+ transitive: `sp-swiftlint`)
+- `sp-flm`
+- `sp-sciter-sdk`
+- `sp-sentry`
+- `sp-xpcgate`
+
+Additionally, `adguard-mini-private` must be cloned at the same directory level
+as `adguard-mini` (or create it manually from the
+`adguard-mini-private-template` folder).
+
+## Getting Started
+
+1. **Clone the repository** and ensure `adguard-mini-private` is at the same
+   directory level as `adguard-mini`:
+
+   ```text
+   Projects/
+   ├── adguard-mini/
+   └── adguard-mini-private/
+   ```
+
+2. **Initialize the development environment:**
+
+   ```bash
+   ./configure.sh dev
+   ```
+
+   This command will:
+   - Install Ruby gems via Bundler
+   - Load credentials from `adguard-mini-private`
+   - Create a Python virtual environment (`.venv/`) and install pip packages
+   - Install local protoc tools (`protoc` + `protoc-gen-swift`) into
+     `build/protoc-tools/`
+   - Sync certificates for MAS and Standalone distributions
+
+3. **Install frontend dependencies:**
+
+   ```bash
+   yarn
+   ```
+
+4. **Build the project** in Xcode: open `AdguardMini/AdguardMini.xcodeproj`
+   and build the `AdguardMini` scheme.
+
+   > **Note:** Sciter UI is built automatically as an Xcode target dependency
+   > (`Build Sciter UI` legacy target). It tracks changes in `sciter-ui/` and
+   > rebuilds `resources.bin` only when needed. No manual UI build step is
+   > required.
+
+## Development Workflow
+
+### Code Style
+
+- **Swift**: SwiftLint (config at `AdguardMini/.swiftlint.yml`)
+- **TypeScript**: ESLint (config at `AdguardMini/sciter-ui/scripts/lint/prod.mjs`)
+- **Pre-commit hook**: Husky runs `lint-staged` on TypeScript files automatically
+
+For code guidelines and architectural conventions, see [AGENTS.md](./AGENTS.md).
+
+### Frontend Development
+
+```bash
+# Development build (one-time)
+yarn build:dev
+
+# Watch mode — rebuilds on file changes
+yarn start
+
+# Hot-reload — rebuilds UI and restarts the app
+# Terminal 1:
+yarn start
+# Terminal 2:
+yarn watchProject
+
+# Build user rules module separately
+yarn build:userRules
+
+# Webpack dev server (web build mode, for browser debugging)
+yarn devserver
+```
+
+### Linting
+
+```bash
+# Run ESLint on TypeScript sources
+yarn lint
+
+# Auto-fix ESLint issues
+yarn lint:fix
+```
+
+### Testing
+
+```bash
+# Swift: run XCTest suite from Xcode (target: AdguardMiniTests)
+
+# Swift: run tests via Fastlane
+bundle exec fastlane test
+```
+
+### Building
+
+```bash
+# Production build of Sciter UI
+yarn build:prod
+
+# Build via Fastlane (various configurations)
+bundle exec fastlane build config:Debug
+bundle exec fastlane build config:Release
+bundle exec fastlane build config:MAS
+```
+
+## Common Tasks
+
+### Protobuf Schema
+
+The app uses Protobuf for Swift ↔ TypeScript communication.
+
+| Path | Description |
+|------|-------------|
+| `AdguardMini/sciter-ui/schema/` | Schema definitions (`.proto` files) |
+| `AdguardMini/sciter-ui/schema/.protocfg/` | Generator configs (swift.json, typescript.json) |
+| `AdguardMini/SciterResources/SciterSchema/Sources/` | Generated Swift code |
+| `AdguardMini/sciter-ui/modules/common/apis/` | Generated TypeScript code |
+
+Regenerate after modifying `.proto` files:
+
+```bash
+bundle exec fastlane update_proto_schema
+```
+
+**Version pinning (optional):** To ensure reproducible protoc builds:
+
 ```bash
 echo '31.1' > .protoc-version
 ```
 
-### Repository Accesses
+### Localization
 
-Access via SSH:
+The project supports 35 languages via TwoSky. Base locale is English.
 
-- adguard-mac-lib
-- sp-sciter-sdk
-- sp-color-palette
-- sp-swiftlint
-- adguard-mini-private (or create it manually)
+```bash
+# Pull all translations (Swift + TypeScript)
+./Support/Scripts/locales.sh
 
-#### adguard-mini-private Structure
+# Push Swift base locale to TwoSky
+./Support/Scripts/locales.sh push
 
-Information about the contents of `adguard-mini-private` is located in the `adguard-mini-private-template` folder.
+# Pull TypeScript translations
+yarn locales:pull
 
-### Possible Problems
+# Push TypeScript base locale
+yarn locales:pushMaster
 
-#### Ruby
+# Validate locale files
+yarn locales:check
+```
 
-If your system version of Ruby is too old, install Ruby via Homebrew and add it to PATH.
+### Update Dependencies
 
-Example for `zsh`:
+```bash
+# Update all dependencies
+bundle exec fastlane update_third_party_deps
+
+# Update specific packages (available: assistant, safari-extension, safariconverterlib)
+bundle exec fastlane update_third_party_deps packages:assistant,safariconverterlib
+
+# Check for updates without applying
+bundle exec fastlane update_third_party_deps dry_run:true
+```
+
+> **IMPORTANT**: SafariConverterLib and @adguard/safari-extension versions
+> **MUST** always be exactly the same for compatibility. After running
+> `update_third_party_deps`, you MUST manually verify and synchronize versions:
+>
+> 1. Check SafariConverterLib version in Xcode Project → Package Dependencies
+> 2. Check @adguard/safari-extension version in
+>    `AdguardMini/PopupExtension/ContentScript/package.json`
+> 3. **Manually update** the mismatched version to ensure they are identical
+
+For detailed Fastlane options, see `fastlane/README.md`.
+
+### Utility Scripts
+
+All scripts are located in `Support/Scripts/`.
+
+| Script | Description |
+|--------|-------------|
+| `flush_adguard_mini_data.sh` | Cleans all AdGuard Mini data (settings, keychain, group containers), restoring to first-run state |
+| `move_templates.sh` | Installs Xcode file templates (available under `macOS/AdGuardMini related` in New → File) |
+| `increment-some-number.sh` | Modifies version or build number components |
+| `locales.sh` | Pushes/pulls localization strings (see Localization section) |
+
+### Theme Generation
+
+```bash
+yarn theme:generate
+```
+
+Generates CSS stylesheets from the default theme definition at
+`AdguardMini/sciter-ui/modules/common/theme/default`.
+
+## Troubleshooting
+
+### Ruby Version Too Old
+
+Install Ruby via Homebrew and add it to PATH:
 
 ```bash
 brew install ruby
 echo 'export PATH="/opt/homebrew/opt/ruby/bin:$PATH"' >> ~/.zshrc
 ```
 
-#### Tests Don't Build
+### Tests Don't Build
 
-If you find that your tests are not building, switch to the test target and try building locally. Add the missing source files to the appropriate target.
+Switch to the test target in Xcode and try building locally. Add the missing
+source files to the appropriate target membership.
 
-#### Can't See the Build in TestFlight
+### Can't See the Build in TestFlight
 
-If the TestFlight deployment was successful but no build is displayed for a long time, it may be due to validation issues with the application package. An email describing the problem is sent to certain categories of related users, such as project managers.
+If the TestFlight deployment was successful but no build is displayed for a long
+time, it may be due to validation issues with the application package. An email
+describing the problem is sent to certain categories of related users, such as
+project managers.
 
-The last known problems were related to invalid `sciter` `dylib` entitlements. See the `sp-sciter-sdk` repository for more information.
+The last known problems were related to invalid `sciter` `dylib` entitlements.
+See the `sp-sciter-sdk` repository for more information.
 
-## Project Setup
+### Get New Updates Immediately (Sparkle)
 
-- You must have an `adguard-mini-private` repository with credentials at the same level as the `adguard-mini` root folder
-- Run `./configure.sh dev`. This command will:
-  - Install local protoc tools (protoc + protoc-gen-swift) into `build/protoc-tools/`
-  - Set up other development dependencies
-  - Version can be pinned via `.protoc-version` file for reproducible builds
-- Run `bundle exec fastlane build_sciter_ui dev_build:true`
-- Build the project in Xcode
-
-### Additional Resources
-
-There are several scripts that improve the development process.
-
-#### `move_templates.sh`
-
-You can add special templates for Xcode. To do this from the `Support/Scripts` folder, execute:
-
-```bash
-./move_templates.sh
-```
-
-The templates can then be found under `macOS/AdGuardMini related` in the `New -> File` menu.
-
-#### `flush_adguard_mini_data.sh`
-
-Cleans all AdGuard Mini data, restoring it to the state before the first run.
-
-### `increment-some-number.sh`
-
-Designed to modify the constituent parts of a version or build number.
-
-### Locales `locales.sh`
-
-Script for pushing and pulling locales. With the `push` parameter, it pushes the master locale to TwoSky. Without arguments, it pulls all locales for Swift and Sciter.
-
-#### Push Base Locale
-
-```bash
-./Support/Scripts/locales.sh push
-```
-
-#### Pull All Locales
-
-```bash
-./Support/Scripts/locales.sh
-```
-
-## Fastlane
-
-Fastlane documentation can be found in the `fastlane/README.md`.
-
-## Protobuf Schema
-
-Generation script: `bundle exec fastlane update_proto_schema`\
-Main schema `./AdguardMini/sciter-ui/schema`\
-Generator configs `./AdguardMini/sciter-ui/schema/.protocfg`\
-Generated Swift schema  `./AdguardMini/SciterResources/SciterSchema/Sources`\
-Generated TS schema `./AdguardMini/sciter-ui/schema`
-
-## Development
-
-### Watch Hot-Reload Sciter Application
-
-- In the first terminal: `yarn start`
-- In the second terminal: `yarn watchProject`
-
-## Dev and Test Tricks
-
-### Get New Updates Immediately
-
-To join the `Sparkle` first update group and receive version information without waiting for the phased rollout interval, run the following command before checking for updates:
+To join the first update group and receive version information without waiting
+for the phased rollout interval:
 
 ```bash
 # For Standalone nightly/beta/release builds
@@ -139,33 +270,10 @@ defaults write com.adguard.safari.AdGuard SUUpdateGroupIdentifier -int 2009
 defaults write com.adguard.safari.AdGuard.Dev SUUpdateGroupIdentifier -int 2009
 ```
 
-## ⚠️ Critical Version Synchronization Requirement
+## Additional Resources
 
-> **IMPORTANT**: SafariConverterLib and @adguard/safari-extension versions **MUST** always be exactly the same for compatibility.
-
-The automated update process handles these packages independently:
-- `SafariConverterLib` (SPM)
-- `@adguard/safari-extension` (npm)
-
-**After running `update_third_party_deps`, you MUST manually verify and synchronize versions:**
-
-1. Check SafariConverterLib version in Xcode Project → Package Dependencies
-2. Check @adguard/safari-extension version in `AdguardMini/PopupExtension/ContentScript/package.json`
-3. **Manually update** the mismatched version to ensure they are identical
-
-## Update Dependencies
-
-Use the automated Fastlane lane:
-
-```bash
-# Update all dependencies
-bundle exec fastlane update_third_party_deps
-
-# Update specific packages
-bundle exec fastlane update_third_party_deps packages:sparkle,filterlistmanager
-
-# Check for updates without applying
-bundle exec fastlane update_third_party_deps dry_run:true
-```
-
-For detailed options see `fastlane/README.md`.
+- [AGENTS.md](./AGENTS.md) — Project context, code guidelines, and
+  contribution rules
+- [README.md](./README.md) — Product overview and user documentation
+- [fastlane/README.md](./fastlane/README.md) — Full Fastlane lane
+  documentation (auto-generated)

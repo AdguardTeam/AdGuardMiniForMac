@@ -242,3 +242,5 @@ AdguardMini.zip
 fastlane/keychain/
 bin/
 buildServer.json
+
+specs/.current/spec.md
