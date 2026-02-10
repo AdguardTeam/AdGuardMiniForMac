@@ -124,7 +124,7 @@ function SettingsItemComponent({
                 )}
             </div>
             {routeName && (<div className={routeName && s.SettingsItem_container_routeBorder} />)}
-            {newLabel && (<div className={s.SettingsItem_container_newLabel}><Text type="t2">{translate('new')}</Text></div>)}
+            {newLabel && (<div className={s.SettingsItem_container_newLabel}><Text type="t2">New</Text></div>)}
             <div
                 className={cx(
                     s.SettingsItem_container,
