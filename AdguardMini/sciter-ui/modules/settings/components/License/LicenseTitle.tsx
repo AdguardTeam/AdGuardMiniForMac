@@ -139,6 +139,7 @@ function LicenseTitleComponent() {
         <>
             <SettingsTitle
                 elements={elements}
+                navigateContactSupport={{ subject: 'other' }}
                 title={translate('menu.license')}
                 maxTopPadding
             />

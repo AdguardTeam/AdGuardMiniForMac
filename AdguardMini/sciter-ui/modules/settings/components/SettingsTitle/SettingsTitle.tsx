@@ -28,10 +28,10 @@ export function SettingsTitle({
     children,
     elements,
     maxTopPadding,
-    reportBug,
+    navigateContactSupport,
     showReportBugTooltip,
 }: SettingsTitleProps) {
-    const doubleContextMenu = elements && reportBug;
+    const doubleContextMenu = elements && navigateContactSupport;
     return (
         <div className={cx(s.SettingsTitle, maxTopPadding && s.SettingsTitle__maxTopPadding)}>
             <div className={cx(s.SettingsTitle_titleBlock, theme.layout.content)}>
@@ -40,14 +40,17 @@ export function SettingsTitle({
                 we have to show report bug and context menu separately */}
                 {doubleContextMenu && (
                     <>
-                        <ContextMenu className={s.SettingsTitle_contextMenu} reportBug={reportBug} />
+                        <ContextMenu
+                            className={s.SettingsTitle_contextMenu}
+                            navigateContactSupport={navigateContactSupport}
+                        />
                         <ContextMenu elements={elements} />
                     </>
                 )}
-                {!doubleContextMenu && (elements || reportBug) && (
+                {!doubleContextMenu && (elements || navigateContactSupport) && (
                     <ContextMenu
                         elements={elements || []}
-                        reportBug={reportBug}
+                        navigateContactSupport={navigateContactSupport}
                         showReportBugTooltip={showReportBugTooltip}
                     />
                 )}

@@ -27,6 +27,7 @@ function AdvancedBlockingComponent() {
         <Layout type="settingsPage">
             <SettingsTitle
                 description={translate('advanced.blocking.desc')}
+                navigateContactSupport={{ subject: 'other' }}
                 title={translate('menu.advanced.blocking')}
                 maxTopPadding
             />

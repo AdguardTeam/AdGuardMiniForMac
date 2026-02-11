@@ -111,10 +111,10 @@ function SafariProtectionComponent() {
         <Layout type="settingsPage">
             <SettingsTitle
                 description={translate('safari.protection.title.desc')}
+                navigateContactSupport={{ subject: 'report_bug' }}
                 showReportBugTooltip={ui.reportProblemLabelStatus === ReportProblemVariant.Show}
                 title={translate('menu.safari.protection')}
                 maxTopPadding
-                reportBug
             />
             <div className={s.SafariProtection_block}>
                 <Text className={cx(s.SafariProtection_block_title, theme.layout.content)} type="h5">{translate('safari.protection.part.ad.blocking')}</Text>

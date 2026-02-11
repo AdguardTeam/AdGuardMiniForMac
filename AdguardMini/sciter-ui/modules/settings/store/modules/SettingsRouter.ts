@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { RouterStore } from 'Modules/common/stores/RouterStore';
+import { Subject } from 'Modules/settings/components/SupportContact';
 
 /**
  * Settings routes list
@@ -35,6 +36,10 @@ export type SettingsRouterStore = RouterStore<RouteName>;
  */
 export type LicenseRouterParams = {
     alreadyPurchased?: boolean;
+};
+
+export type ContactSupportRouterParams = {
+    subject?: Subject;
 };
 
 /**

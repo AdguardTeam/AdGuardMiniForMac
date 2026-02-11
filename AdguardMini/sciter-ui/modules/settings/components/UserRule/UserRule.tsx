@@ -285,7 +285,7 @@ function UserRuleComponent() {
                 <Text type="h4" className={s.UserRule_title_text}>
                     {rawRule ? translate('user.rules.edit') : translate('user.rules.create')}
                 </Text>
-                <ContextMenu reportBug />
+                <ContextMenu navigateContactSupport={{ subject: 'report_bug' }} />
             </div>
             <div className={cx(theme.layout.content, s.UserRule_form, s.UserRule_input)}>
                 <Select<RuleType>

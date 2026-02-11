@@ -16,6 +16,7 @@ import { SettingsTitle } from '../SettingsTitle';
 
 import s from './SupportContact.module.pcss';
 
+import type { ContactSupportRouterParams } from 'SettingsStore/modules';
 import type { IOption } from 'UILib';
 
 // Subject of contact to support
@@ -27,6 +28,8 @@ export type Subject = 'report_bug' | 'suggest' | 'other';
 function SupportContactComponent() {
     const { router, account: { license }, ui, ui: { supportContactFormData } } = useSettingsStore();
 
+    const params = router.castParams<ContactSupportRouterParams>();
+
     const themes: IOption<Subject>[] = [
         { value: 'report_bug', label: translate('support.contact.theme.report.bug') },
         { value: 'suggest', label: translate('support.contact.theme.suggest.feature') },
@@ -37,11 +40,16 @@ function SupportContactComponent() {
     const [addLogs, setAddLogs] = useState(supportContactFormData?.addLogs ?? true);
     const [emailError, setEmailError] = useState('');
     const [messageError, setMessageError] = useState('');
-    const [theme, setTheme] = useState(
-        supportContactFormData?.theme
-            ? themes.find(({ value }) => value === supportContactFormData?.theme)!
-            : themes[0],
-    );
+
+    let initialTheme = themes[0];
+    if (supportContactFormData?.theme) {
+        initialTheme = themes.find(({ value }) => value === supportContactFormData?.theme)!;
+    }
+    if (params?.subject) {
+        initialTheme = themes.find(({ value }) => value === params.subject)!;
+    }
+
+    const [theme, setTheme] = useState(initialTheme);
     const [submitDisabled, setSubmitDisabled] = useState(false);
     const [showSuccessSubmitModal, setShowSuccessSubmitModal] = useState(false);
     const [showFailedSubmitModal, setShowFailedSubmitModal] = useState(false);

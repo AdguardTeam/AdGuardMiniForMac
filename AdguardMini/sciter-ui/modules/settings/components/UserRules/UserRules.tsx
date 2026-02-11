@@ -175,9 +175,9 @@ function UserRulesComponent() {
                         action: () => setShowDeleteModal(!showDeleteModal),
                         className: theme.button.redText,
                     }]}
+                    navigateContactSupport={{ subject: 'report_bug' }}
                     title={translate('menu.user.rules')}
                     maxTopPadding
-                    reportBug
                 >
                     {!isScrolling && (
                         <Button

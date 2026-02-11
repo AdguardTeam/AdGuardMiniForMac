@@ -24,6 +24,7 @@ import s from './ContextMenu.module.pcss';
 
 // eslint-disable-next-line lodash/import-scope
 import type { DebouncedFunc } from 'lodash';
+import type { ContactSupportRouterParams } from 'SettingsStore/modules';
 
 export type ContextMenuProps = {
     elements?: {
@@ -31,7 +32,7 @@ export type ContextMenuProps = {
         action(): void;
         className?: string;
     }[];
-    reportBug?: boolean;
+    navigateContactSupport?: ContactSupportRouterParams;
     className?: string;
     showReportBugTooltip?: boolean;
 };
@@ -39,7 +40,7 @@ export type ContextMenuProps = {
 /**
  * Context dropdown menu
  */
-function ContextMenuComponent({ elements, reportBug, className, showReportBugTooltip }: ContextMenuProps) {
+function ContextMenuComponent({ elements, navigateContactSupport, className, showReportBugTooltip }: ContextMenuProps) {
     const { router, ui, telemetry } = useSettingsStore();
     const [open, setOpen] = useState(false);
 
@@ -90,11 +91,11 @@ function ContextMenuComponent({ elements, reportBug, className, showReportBugToo
 
     return (
         <div ref={containerRef} className={cx(s.ContextMenu, className)}>
-            {reportBug ? (
+            {navigateContactSupport ? (
                 <div
                     onClick={() => {
                         telemetry.trackEvent(SettingsEvent.FlagClick);
-                        router?.changePath(RouteName.contact_support)
+                        router?.changePath(RouteName.contact_support, navigateContactSupport);
                     }}
                     onMouseEnter={debounceRef.current}
                     onMouseLeave={closeTooltip}
@@ -108,8 +109,8 @@ function ContextMenuComponent({ elements, reportBug, className, showReportBugToo
                 <Button icon="context" iconClassName={theme.button.grayIcon} type="icon" onClick={() => setOpen(!open)} />
             )}
             {open && (
-                <div className={cx(s.ContextMenu_context, reportBug && s.ContextMenu_context__tooltip)}>
-                    {reportBug ? (
+                <div className={cx(s.ContextMenu_context, navigateContactSupport && s.ContextMenu_context__tooltip)}>
+                    {navigateContactSupport ? (
                         <div className={s.ContextMenu_action}>
                             <Text lineHeight="none" type="t1">
                                 {showReportBugTooltip ? translate('context.menu.report.problem.tooltip') : translate('context.menu.report.problem')}
