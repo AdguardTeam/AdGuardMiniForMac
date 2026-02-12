@@ -108,6 +108,7 @@ function SettingsItemComponent({
                     >
                         <Text lineHeight="none" type="t1">{title}</Text>
                     </div>
+                    {newLabel && (<div className={s.SettingsItem_container_newLabel}><Text type="t3">New</Text></div>)}
                 </div>
                 {(description || additionalText) && (
                     <div
@@ -124,7 +125,6 @@ function SettingsItemComponent({
                 )}
             </div>
             {routeName && (<div className={routeName && s.SettingsItem_container_routeBorder} />)}
-            {newLabel && (<div className={s.SettingsItem_container_newLabel}><Text type="t2">New</Text></div>)}
             <div
                 className={cx(
                     s.SettingsItem_container,
