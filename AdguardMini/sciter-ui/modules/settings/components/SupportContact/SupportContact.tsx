@@ -124,6 +124,7 @@ function SupportContactComponent() {
                 />
                 <div className={cx(s.SupportContact_content, tx.layout.content, th.layout.bottomPadding)}>
                     <Input
+                        className={s.SupportContact_input}
                         error={!!emailError}
                         errorMessage={emailError}
                         id="email"
