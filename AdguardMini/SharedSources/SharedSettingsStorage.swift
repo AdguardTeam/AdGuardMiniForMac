@@ -11,7 +11,7 @@ import Foundation
 import AML
 
 private enum Constants {
-    static let defaultLaunchOnStartup = true
+    static let defaultLaunchOnStartup = false
 }
 
 enum SharedSettingsKey: String, CaseIterable {
