@@ -1,0 +1,26 @@
+key: DTSFP
+other:
+  clean-working-dir: true
+tasks:
+  - checkout:
+      repository: slack-scripts
+      force-clean-build: "false"
+      description: Checkout Default Repository
+  - checkout:
+      repository: sciter-adguard-mini
+      path: main
+      force-clean-build: "false"
+      description: Checkout Default Repository
+  - script:
+      interpreter: SHELL
+      scripts:
+        - ./main/bamboo-specs/scripts/publish_to_slack.sh "${PWD}/slack_kit.py" "${PWD}/build/${bamboo.build.config}"
+      description: Deploy to Slack
+requirements: !include common/build-requirements.yaml
+artifact-subscriptions:
+  - artifact: !include common/app-archive-name.yaml
+    destination: build/${bamboo.build.config}
+  - artifact: build.json
+    destination: build/${bamboo.build.config}
+  - artifact: changelog.md
+    destination: build/${bamboo.build.config}

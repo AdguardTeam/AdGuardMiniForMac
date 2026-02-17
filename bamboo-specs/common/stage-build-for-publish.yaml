@@ -1,0 +1,94 @@
+# SPDX-FileCopyrightText: AdGuard Software Limited
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+key: BUILD
+other:
+  clean-working-dir: true
+tasks:
+  - checkout: !include common/checkout-default-repo.yaml
+  - checkout:
+      repository: sciter-adguard-mini-private
+      path: adguard-mini-private
+      force-clean-build: "true"
+      description: Checkout Default Repository
+  - checkout:
+      repository: slack-scripts
+      path: slack-scripts
+      force-clean-build: "true"
+      description: Checkout Default Repository
+  - script:
+      interpreter: SHELL
+      scripts:
+        - bamboo-specs/scripts/prebuild_vars.sh
+      working-dir: main
+      description: Obtaining Prebuild Vars
+  - inject-variables:
+      file: main/build/vars.txt
+      scope: RESULT
+      namespace: inject
+      description: Inject prebuild vars
+  - script:
+      interpreter: SHELL
+      scripts:
+        - ./bamboo-specs/scripts/configure.sh
+      working-dir: main
+      description: Configure
+  - script:
+      interpreter: SHELL
+      scripts:
+        - ./bamboo-specs/scripts/build.sh ${bamboo.build.config}
+      working-dir: main
+      description: Build app
+  - inject-variables:
+      file: main/build/${bamboo.build.config}/version.txt
+      scope: RESULT
+      namespace: inject
+      description: Inject version
+  - script:
+      interpreter: SHELL
+      scripts:
+        - |-
+          #!/bin/bash
+
+          set -e
+
+          source .venv/bin/activate
+
+          BUILD_DIR="../../build/${bamboo.build.config}"
+
+          python -u Support/Scripts/changelog.py \
+              --repo="SCITER/adguard-mini" \
+              --gh-repo="AdguardTeam/AdGuardForSafari" \
+              --output="$BUILD_DIR" \
+              --channel="${bamboo.update.channel}" \
+              --version="${bamboo.inject.base_version_name}" \
+              --from=${bamboo.inject.tag_from} \
+              --branch=${bamboo.planRepository.branchName}
+      working-dir: main
+      description: Create changelog
+  - script:
+      interpreter: SHELL
+      scripts:
+        - |-
+          #!/bin/bash
+
+          set -x
+
+          ./bamboo-specs/scripts/generate_appcast.sh
+      working-dir: main
+      description: Create appcast
+  - script:
+      interpreter: SHELL
+      scripts:
+        - |-
+          #!/bin/bash
+
+          set -e
+
+          bundle exec fastlane to_sentry config:${bamboo.build.config}
+      working-dir: main
+      description: Upload dSYMs to Sentry
+artifacts: !include build-for-publish-plans/artifacts-standalone.yaml
+requirements: !include common/build-requirements.yaml
+artifact-subscriptions: []

@@ -1,0 +1,51 @@
+# SPDX-FileCopyrightText: AdGuard Software Limited
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+---
+version: 2
+plan:
+  project-key: ADGMINI
+  key: BFPR
+  name: Build for standalone release deploy
+  description: Prepare standalone release build for publish
+
+stages:
+- Build for publish:
+    manual: false
+    final: false
+    jobs:
+    - Build for publish
+- Deploy for Test to Slack QA:
+    manual: false
+    final: false
+    jobs:
+    - Deploy to Slack for Publish
+- Git Tagging:
+    manual: false
+    final: false
+    jobs:
+    - Git Tagging
+
+Build for publish: !include common/build-for-publish-stage.yaml
+
+Deploy to Slack for Publish: !include common/stage-deploy-to-slack.yaml
+
+Git Tagging: !include common/stage-git-tagging.yaml
+
+variables:
+  build.config: Release
+  changelog.tag.from: latest@tag
+  update.channel: release
+repositories: !include common/repos-ag-mini-and-slack.yaml
+
+triggers: []
+
+branches:
+  create: manually
+  delete: never
+  link-to-jira: true
+
+labels: []
+other:
+  concurrent-build-plugin: system-default
