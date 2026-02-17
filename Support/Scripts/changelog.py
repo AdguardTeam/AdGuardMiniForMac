@@ -37,6 +37,8 @@ def get_args():
                       help="Version that we will put to build.json")
     parser.add_option("-c", "--channel", dest="channel",
                       help="Update channel (can be nightly, beta or release)")
+    parser.add_option("-b", "--branch", dest="branch",
+                      help="Branch name to collect changelog from (default: master)")
 
     # pylint: disable=unused-variable
     (options, args) = parser.parse_args()
@@ -84,6 +86,8 @@ def write_md_changelog(args):
     }
     if args.from_ref and len(args.from_ref):
         params['from_ref'] = args.from_ref
+    if args.branch and len(args.branch):
+        params['branch'] = args.branch
 
     result = download(MD_URL, params).text
 
@@ -106,6 +110,8 @@ def write_json_changelog(args):
     }
     if args.from_ref and len(args.from_ref):
         params['from_ref'] = args.from_ref
+    if args.branch and len(args.branch):
+        params['branch'] = args.branch
 
     result = download(TXT_URL, params).text
 

@@ -90,7 +90,8 @@ Build for publish:
             --output="$BUILD_DIR" \
             --channel="${bamboo.update.channel}" \
             --version="${bamboo.inject.base_version_name}" \
-            --from=${bamboo.inject.tag_from}
+            --from=${bamboo.inject.tag_from} \
+            --branch=${bamboo.planRepository.branchName}
       working-dir: main
       description: Create changelog
   - script:
