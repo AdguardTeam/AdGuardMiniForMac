@@ -37,6 +37,7 @@ variables:
   build.config: Nightly
   changelog.tag.from: latest@tag
   update.channel: nightly
+  sparkle.critical.update: false
 repositories: !include common/repos-ag-mini-and-slack.yaml
 
 triggers: []

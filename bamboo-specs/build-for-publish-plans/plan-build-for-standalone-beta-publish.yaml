@@ -37,6 +37,7 @@ variables:
   build.config: Beta
   changelog.tag.from: latest@tag
   update.channel: beta
+  sparkle.critical.update: false
 repositories: !include common/repos-ag-mini-and-slack.yaml
 
 triggers: []

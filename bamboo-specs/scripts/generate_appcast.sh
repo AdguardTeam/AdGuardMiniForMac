@@ -10,6 +10,7 @@ CONFIGURATION=${bamboo_build_config}
 CHANNEL=${bamboo_update_channel}
 VERSION_NAME="${bamboo_inject_base_version_name}"
 APP_NAME="AdGuardMini"
+IS_CRITICAL_UPDATE=${bamboo_sparkle_critical_update:-false}
 
 BUILD_PATH="${PWD}/build/${CONFIGURATION}"
 DERIVED_DATA_PATH="${BUILD_PATH}/derived_data"
@@ -35,7 +36,8 @@ bundle exec fastlane generate_appcast \
     updates:"${BUILD_PATH}" \
     sparkle:"${SPARKLE_PATH}" \
     release_notes_url:${RELEASE_NOTES_URL} \
-    channel:${CHANNEL}
+    channel:${CHANNEL} \
+    is_critical_update:${IS_CRITICAL_UPDATE}
 
 echo "Clear Sparkle_generate_appcast cache"
 rm -rf ~/Library/Caches/Sparkle_generate_appcast
