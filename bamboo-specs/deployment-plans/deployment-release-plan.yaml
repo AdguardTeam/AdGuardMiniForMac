@@ -29,6 +29,16 @@ static.adguard.com_mac_mini_release:
         #!/bin/bash
 
         set -ex
+
+        mac/update_appcast_pubdate.sh adguard-mini-appcast.xml
+      description: Update appcast pubDate
+  - script:
+      interpreter: SHELL
+      scripts:
+      - |-
+        #!/bin/bash
+
+        set -ex
         ls -alt
 
         ./artifactory.sh mac-mini-release
