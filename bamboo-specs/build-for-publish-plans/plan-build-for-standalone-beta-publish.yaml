@@ -27,7 +27,7 @@ stages:
     jobs:
     - Git Tagging
 
-Build for publish: !include common/build-for-publish-stage.yaml
+Build for publish: !include common/stage-build-for-publish.yaml
 
 Deploy to Slack for Publish: !include common/stage-deploy-to-slack.yaml
 
