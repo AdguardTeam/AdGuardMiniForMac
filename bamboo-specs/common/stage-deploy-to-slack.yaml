@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: AdGuard Software Limited
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 key: DTSFP
 other:
   clean-working-dir: true
@@ -5,12 +9,12 @@ tasks:
   - checkout:
       repository: slack-scripts
       force-clean-build: "false"
-      description: Checkout Default Repository
+      description: Checkout slack-scripts
   - checkout:
       repository: sciter-adguard-mini
       path: main
       force-clean-build: "false"
-      description: Checkout Default Repository
+      description: Checkout sciter-adguard-mini
   - script:
       interpreter: SHELL
       scripts:

@@ -2,6 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-description: Checkout Default Repository
+description: Checkout sciter-adguard-mini
 path: main
 force-clean-build: "true"

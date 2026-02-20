@@ -11,12 +11,12 @@ tasks:
       repository: sciter-adguard-mini-private
       path: adguard-mini-private
       force-clean-build: "true"
-      description: Checkout Default Repository
+      description: Checkout sciter-adguard-mini-private
   - checkout:
       repository: slack-scripts
       path: slack-scripts
       force-clean-build: "true"
-      description: Checkout Default Repository
+      description: Checkout slack-scripts
   - script:
       interpreter: SHELL
       scripts:
