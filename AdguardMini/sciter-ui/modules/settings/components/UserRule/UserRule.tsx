@@ -13,7 +13,7 @@ import {
     RulesBuilder,
 } from '@adguard/rules-editor';
 import { observer } from 'mobx-react-lite';
-import { useCallback, useRef, useState } from 'preact/hooks';
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 
 import { UserRule as UserRuleType } from 'Apis/types';
 import { useSettingsStore } from 'SettingsLib/hooks';
@@ -45,22 +45,31 @@ export type FormErrors = Partial<Record<ErrorFields, string>>;
  * User rule create edit page in settings module
  */
 function UserRuleComponent() {
-    const { router, userRules, notification, telemetry } = useSettingsStore();
+    const { router, userRules, notification, telemetry, ui } = useSettingsStore();
     const editRef = useRef(false);
 
     const { userRules: { rules } } = userRules;
 
     const params = router.castParams<Params>();
     const rawRule = userRules.rules[typeof params?.index === 'number' ? params.index : -1]?.rule;
+    const hasRawRule = typeof rawRule === 'string';
 
-    const initialType = (rawRule ? RulesBuilder.getRuleType(rawRule) : 'block') || 'custom';
+    useEffect(() => {
+        return () => {
+            if (router.currentPath !== RouteName.user_rules) {
+                ui.resetUserRulesScrollTop();
+            }
+        };
+    }, [router, ui]);
+
+    const initialType = (hasRawRule ? RulesBuilder.getRuleType(rawRule) : 'block') || 'custom';
 
     const [type, setType] = useState<IOption<RuleType>>({ value: initialType, label: getLabelByRuleType(initialType) });
-    let initialValue = rawRule
+    let initialValue = hasRawRule
         ? RulesBuilder.getRuleFromRuleString(rawRule)
         : RulesBuilder.getRuleByType('block');
 
-    if (!initialValue && rawRule) {
+    if (!initialValue && hasRawRule) {
         initialValue = RulesBuilder.getRuleByType('custom');
         initialValue.setRule(rawRule);
     }
@@ -116,7 +125,7 @@ function UserRuleComponent() {
             return;
         }
 
-        if (rawRule && newType === initialType && currentRule.buildRule() === rawRule) {
+        if (hasRawRule && newType === initialType && currentRule.buildRule() === rawRule) {
             setType({ value: initialType, label: getLabelByRuleType(initialType) });
             setRule({ rule: RulesBuilder.getRuleFromRuleString(rawRule)! });
             return;
@@ -210,7 +219,7 @@ function UserRuleComponent() {
             return;
         }
 
-        if (rawRule) {
+        if (hasRawRule) {
             let tempRules = [...rules];
             const index = tempRules.findIndex((r) => r.rule === rawRule);
             tempRules[index].rule = rule.rule.buildRule();
@@ -276,14 +285,14 @@ function UserRuleComponent() {
      * Else rule is new, so button should be enabled always
      */
     const canSave = (
-        rawRule && (rule.rule.buildRule() !== rawRule || (addComment.value && addComment.comment.getText()))
-    ) || !rawRule;
+        hasRawRule && (rule.rule.buildRule() !== rawRule || (addComment.value && Boolean(addComment.comment.getText())))
+    ) || !hasRawRule;
 
     return (
         <Layout navigation={{ router, onClick: onCancel, title: translate('menu.user.rules') }} type="settingsPage">
             <div ref={divRef} className={cx(s.UserRule_title, theme.layout.content)}>
-                <Text type="h4" className={s.UserRule_title_text}>
-                    {rawRule ? translate('user.rules.edit') : translate('user.rules.create')}
+                <Text className={s.UserRule_title_text} type="h4">
+                    {hasRawRule ? translate('user.rules.edit') : translate('user.rules.create')}
                 </Text>
                 <ContextMenu reportBug />
             </div>
@@ -296,58 +305,58 @@ function UserRuleComponent() {
                 />
             </div>
             {(type.value === 'block') && (
+                // TODO: AG-40506
                 <BlockRequestForm
                     errors={errors}
                     rule={rule as RuleTypeParam<BlockRequestRule>}
-                    setRule={setRule}
                     setErrors={setErrors}
-                    // TODO: AG-40506
+                    setRule={setRule}
                     shouldFocus={!!(rule as RuleTypeParam<BlockRequestRule>).rule.getDomain()}
                 />
             )}
             {(type.value === 'unblock') && (
+                // TODO: AG-40506
                 <UnblockRequestForm
                     errors={errors}
                     rule={rule as RuleTypeParam<UnblockRequestRule>}
-                    setRule={setRule}
                     setErrors={setErrors}
-                    // TODO: AG-40506
+                    setRule={setRule}
                     shouldFocus={!!(rule as RuleTypeParam<UnblockRequestRule>).rule.getDomain()}
                 />
             )}
             {(type.value === 'noFiltering') && (
+                // TODO: AG-40506
                 <DisableFilteringForm
                     errors={errors}
                     rule={rule as RuleTypeParam<NoFilteringRule>}
-                    setRule={setRule}
                     setErrors={setErrors}
-                    // TODO: AG-40506
+                    setRule={setRule}
                     shouldFocus={!!(rule as RuleTypeParam<NoFilteringRule>).rule.getDomain()}
                 />
             )}
             {(type.value === 'custom') && (
+                // TODO: AG-40506
                 <CustomRuleForm
                     errors={errors}
                     rule={rule as RuleTypeParam<CustomRule>}
-                    setRule={setRule}
                     setErrors={setErrors}
-                    // TODO: AG-40506
+                    setRule={setRule}
                     shouldFocus={!!(rule as RuleTypeParam<CustomRule>).rule.getRule()}
                 />
             )}
             {(type.value === 'comment') && (
+                // TODO: AG-40506
                 <CommentForm
                     errors={errors}
                     rule={rule as RuleTypeParam<Comment>}
-                    setRule={setRule}
                     setErrors={setErrors}
-                    // TODO: AG-40506
+                    setRule={setRule}
                     shouldFocus={!!(rule as RuleTypeParam<Comment>).rule.getText()}
                 />
             )}
             {/* User can add a comment to any new rule type except comment, when creating a new rule */}
             {/* if rawRule exist - it means user is editing an existing rule */}
-            {type.value !== 'comment' && !rawRule && (
+            {type.value !== 'comment' && !hasRawRule && (
                 <div className={cx(theme.layout.content)}>
                     <Checkbox
                         checked={addComment.value}
@@ -393,7 +402,7 @@ function UserRuleComponent() {
                         small
                         onClick={onSave}
                     >
-                        <Text lineHeight="none" type="t1" semibold>{rawRule ? translate('save') : translate('create')}</Text>
+                        <Text lineHeight="none" type="t1" semibold>{hasRawRule ? translate('save') : translate('create')}</Text>
                     </Button>
                     <Button
                         className={s.UserRule_buttons_button}
@@ -408,7 +417,7 @@ function UserRuleComponent() {
             {showExitModal && (
                 <Modal
                     cancelText={translate('user.rule.leave.cancel')}
-                    description={rawRule ? translate('user.rule.leave.desc.edit') : translate('user.rule.leave.desc.new')}
+                    description={hasRawRule ? translate('user.rule.leave.desc.edit') : translate('user.rule.leave.desc.new')}
                     submitAction={() => router.changePath(RouteName.user_rules)}
                     submitClassName={theme.button.redSubmit}
                     submitText={translate('user.rule.leave.ok')}

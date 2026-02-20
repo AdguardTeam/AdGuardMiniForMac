@@ -45,6 +45,8 @@ export class UI {
 
     public supportContactFormData: Nullable<SupportContactFormData> = null;
 
+    public userRulesScrollTop = 0;
+
     // Used in Safari protection page to show report problem button once open
     public reportProblemLabelStatus: ReportProblemVariant = ReportProblemVariant.NotShown;
 
@@ -64,6 +66,21 @@ export class UI {
      */
     public updateTooltip(data: Nullable<TooltipData>) {
         this.tooltipData = data;
+    }
+
+    /**
+     * Set user rules scroll top
+     * @param value number
+     */
+    public setUserRulesScrollTop(value: number) {
+        this.userRulesScrollTop = value;
+    }
+
+    /**
+     * Reset user rules scroll top
+     */
+    public resetUserRulesScrollTop() {
+        this.userRulesScrollTop = 0;
     }
 
     /**

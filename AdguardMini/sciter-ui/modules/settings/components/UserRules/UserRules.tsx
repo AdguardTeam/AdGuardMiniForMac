@@ -35,6 +35,7 @@ const PAGE_SIZE = 100;
 function UserRulesComponent() {
     const {
         userRules,
+        ui,
         notification,
         router,
         settings,
@@ -52,11 +53,66 @@ function UserRulesComponent() {
     const contentRef = useRef<HTMLDivElement>(null);
     const [isScrolling, setIsScrolling] = useToggleHeader(rules, isRuleEditorWindowOpened, contentRef);
 
+    const navigateToUserRule = (index?: number) => {
+        const savedScrollTop = contentRef.current?.scrollTop;
+        if (typeof savedScrollTop === 'number') {
+            ui.setUserRulesScrollTop(savedScrollTop);
+        }
+
+        if (typeof index === 'number') {
+            router.changePath(RouteName.user_rule, { index });
+            return;
+        }
+
+        router.changePath(RouteName.user_rule);
+    };
+
     useEffect(() => {
         if (isRuleEditorWindowOpened) {
             setIsScrolling(false);
         }
     }, [isRuleEditorWindowOpened]);
+
+    const {
+        foundItems,
+        searchQuery,
+        updateSearchQuery,
+    } = useSearch(rules, ['rule']);
+
+    const onSearch = (e: string) => {
+        setIsScrolling(false);
+        updateSearchQuery(e);
+    };
+
+    const rulesToRender = foundItems.slice((page - 1) * PAGE_SIZE, (page * PAGE_SIZE));
+    const showPagination = Math.ceil(foundItems.length / PAGE_SIZE) > 1;
+
+    useEffect(() => {
+        if (!ui.userRulesScrollTop) {
+            return;
+        }
+
+        if (isRuleEditorWindowOpened) {
+            return;
+        }
+
+        if (rulesToRender.length === 0) {
+            return;
+        }
+
+        const content = contentRef.current;
+        if (!content) {
+            return;
+        }
+
+        requestAnimationFrame(() => {
+            const maxScrollTop = Math.max(0, content.scrollHeight - content.clientHeight);
+            const nextScrollTop = Math.min(Math.max(ui.userRulesScrollTop, 0), maxScrollTop);
+            content.scrollTop = nextScrollTop;
+            ui.resetUserRulesScrollTop();
+            setIsScrolling(true);
+        });
+    }, [ui, ui.userRulesScrollTop, isRuleEditorWindowOpened, rulesToRender.length]);
 
     const showInFinder = (path: string) => {
         window.API.internalService.ShowInFinder(new Path({ path }));
@@ -64,7 +120,7 @@ function UserRulesComponent() {
 
     const onImportRules = () => {
         try {
-            const defaultPath = userActionLastDirectory || window.DocumentsPath;
+            const defaultPath = userActionLastDirectory ?? window.DocumentsPath;
             selectFile(false, '(*.txt)|*.txt', translate('import'), defaultPath, async (path: string) => {
                 const pathParts = path.split('/');
                 pathParts.pop();
@@ -93,7 +149,7 @@ function UserRulesComponent() {
     };
 
     const onExportRules = () => {
-        const defaultPath = userActionLastDirectory || window.DocumentsPath;
+        const defaultPath = userActionLastDirectory ?? window.DocumentsPath;
         selectFile(true, '(*.txt)|*.txt', translate('export'), `${defaultPath}/adguard_mini_user_rules_${getFormattedDateTime()}`, async (path: string) => {
             settings.updateUserActionLastDirectory(path);
             const error = await userRules.exportUserRules(path);
@@ -135,20 +191,6 @@ function UserRulesComponent() {
             closeable: true,
         });
     };
-
-    const {
-        foundItems,
-        searchQuery,
-        updateSearchQuery,
-    } = useSearch(rules, ['rule']);
-
-    const onSearch = (e: string) => {
-        setIsScrolling(false);
-        updateSearchQuery(e);
-    };
-
-    const rulesToRender = foundItems.slice((page - 1) * PAGE_SIZE, (page * PAGE_SIZE));
-    const showPagination = Math.ceil(foundItems.length / PAGE_SIZE) > 1;
 
     return (
         <div className={cx(s.UserRules, showPagination && s.UserRules__padding)}>
@@ -215,7 +257,11 @@ function UserRulesComponent() {
                     onChange={onSearch}
                 />
                 {!isRuleEditorWindowOpened && (
-                    <div className={cx(s.UserRules_addRule, isScrolling && s.UserRules_addRule__scroll)} role="button" onClick={() => router.changePath(RouteName.user_rule)}>
+                    <div
+                        className={cx(s.UserRules_addRule, isScrolling && s.UserRules_addRule__scroll)}
+                        role="button"
+                        onClick={() => navigateToUserRule()}
+                    >
                         <Icon className={s.UserRules_addRule_icon} icon="plus" />
                         <Text className={s.UserRules_addRule_text} type="t1">{translate('user.rules.create')}</Text>
                     </div>
@@ -230,6 +276,7 @@ function UserRulesComponent() {
                             <RulesList
                                 muted={!enabled}
                                 rulesList={rulesToRender}
+                                onEdit={navigateToUserRule}
                             />
                         </div>
                     )}

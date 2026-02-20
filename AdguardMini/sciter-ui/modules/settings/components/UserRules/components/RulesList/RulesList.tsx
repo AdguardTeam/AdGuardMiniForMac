@@ -4,7 +4,7 @@
 
 import { useSettingsStore } from 'SettingsLib/hooks';
 import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
-import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType, RouteName } from 'SettingsStore/modules';
+import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType } from 'SettingsStore/modules';
 
 import { Rule } from '..';
 
@@ -13,6 +13,7 @@ import s from './RulesList.module.pcss';
 export type RulesListProps = {
     rulesList: { rule: string; enabled: boolean; index: number }[];
     muted?: boolean;
+    onEdit(index: number): void;
 };
 
 /**
@@ -21,17 +22,13 @@ export type RulesListProps = {
 export function RulesList({
     rulesList,
     muted,
+    onEdit,
 }: RulesListProps) {
     const {
-        router,
         userRules,
         userRules: { userRules: { rules } },
         notification,
     } = useSettingsStore();
-
-    const onEdit = (index: number) => {
-        router.changePath(RouteName.user_rule, { index });
-    };
 
     const handleDelete = async (index: number) => {
         const [err, prevRules] = await userRules.updateRules(rules.filter((_, i) => i !== index));
