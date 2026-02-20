@@ -6,4 +6,4 @@
 version: 2
 plan:
   key: ADGMINI-BFPR
-plan-permissions: !include common/permissions-standalone-publish.yaml
+plan-permissions: !include common/permissions-build-for-publish.yaml

@@ -6,21 +6,4 @@
 version: 2
 plan:
   key: ADGMINI-BFM
-plan-permissions:
-- roles:
-  - logged-in
-  permissions:
-  - view
-- users:
-  - am
-  permissions:
-  - view
-  - build
-- groups:
-  - mac-developers
-  permissions:
-  - view
-  - edit
-  - build
-  - clone
-  - admin
+plan-permissions: !include common/permissions-build-for-publish.yaml
