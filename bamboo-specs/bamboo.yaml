@@ -30,10 +30,22 @@
 !include ci-cd-plans/plan-increment-patch-version.yaml
 
 ---
-!include build-for-publish-plans/plan-build-for-standalone-publish.yaml
+!include build-for-publish-plans/plan-build-for-standalone-release-publish.yaml
 
 ---
-!include build-for-publish-plans/permissions-plan-build-for-standalone-publish.yaml
+!include build-for-publish-plans/permissions-plan-build-for-standalone-release-publish.yaml
+
+---
+!include build-for-publish-plans/plan-build-for-standalone-beta-publish.yaml
+
+---
+!include build-for-publish-plans/permissions-plan-build-for-standalone-beta-publish.yaml
+
+---
+!include build-for-publish-plans/plan-build-for-standalone-nightly-publish.yaml
+
+---
+!include build-for-publish-plans/permissions-plan-build-for-standalone-nightly-publish.yaml
 
 ---
 !include build-for-publish-plans/plan-build-for-mas-publish.yaml

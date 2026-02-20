@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: AdGuard Software Limited
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+---
+version: 2
+plan:
+  key: ADGMINI-BFPR
+plan-permissions: !include common/permissions-standalone-publish.yaml
