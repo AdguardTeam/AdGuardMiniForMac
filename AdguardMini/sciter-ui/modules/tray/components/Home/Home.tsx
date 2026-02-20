@@ -148,8 +148,17 @@ function HomeComponent() {
         });
     }, [closeStories]);
 
+    const rafRef = useRef<number | null>(null);
     useTheme((th) => {
-        document.documentElement.setAttribute('theme', th);
+        // We have to change theme attribute in next frame to fix bug with no rerender from sciter
+        // This probably happens because sciter doesn't see changes in theme attribute
+        // TODO: AG-51217 remove this when sciter will be fixed
+        if (rafRef.current != null) {
+            cancelAnimationFrame(rafRef.current);
+        }
+        rafRef.current = requestAnimationFrame(() => {
+            document.documentElement.setAttribute('theme', th);
+        });
         setIsDarkTheme(isDarkColorTheme(th));
     });
 
@@ -172,7 +181,7 @@ function HomeComponent() {
             return translate('tray.home.title.protection.extensions.disabled', {
                 link: (text: string) => {
                     return (
-                        <div 
+                        <div
                             onClick={() => {
                                 telemetry.trackEvent(TrayEvent.FixItClick);
                                 openSafariPreferences();

@@ -17,7 +17,7 @@ export function useTheme(onThemeChanged: OnColorThemeChanged) {
     const trayStore = useTrayStore();
     const { trayWindowEffectiveThemeChanged, settings: { settings: globalSettings } } = trayStore;
     const { theme } = globalSettings ?? { theme: Theme.system };
-    
+
     useLayoutEffect(() => {
         if (theme === Theme.system) {
             (async () => {
@@ -29,7 +29,7 @@ export function useTheme(onThemeChanged: OnColorThemeChanged) {
                 onThemeChanged(getColorTheme(value));
             });
         }
-    
+
         const value = getEffectiveTheme(theme);
         onThemeChanged(getColorTheme(value));
     }, [theme]);
