@@ -25,6 +25,9 @@ const WINDOW_HEIGHT = 670;
  */
 const LINES_CHUNK_SIZE = 1000;
 
+// AG-51375 fix escaping for \ in rules
+const rulePrepare = (rule: string) => rule.replace(/\\/g, '\\\\').replace(/`/g, '\\`');
+
 /**
  * Custom hook for managing the DNS Rule Editor Window.
  * Provides functionality for opening the window, sending messages to it, and handling events from it.
@@ -51,12 +54,12 @@ export function useOpenUserRulesWindow() {
                     sendMessage(RulesEditorEvents.initial_chunk_start);
                     for (let i = 0; i < rules.length; i += LINES_CHUNK_SIZE) {
                         const chunk = rules.slice(i, i + LINES_CHUNK_SIZE);
-                        const chunkRules = chunk.map((r) => `${Number(r.enabled)}${SPLITTER}${r.rule}`.replace(/`/g, '\\`'));
+                        const chunkRules = chunk.map((r) => `${Number(r.enabled)}${SPLITTER}${rulePrepare(r.rule)}`);
                         sendMessage(RulesEditorEvents.initial_chunk, `\`${chunkRules.join('\n')}\``);
                     }
                     sendMessage(RulesEditorEvents.initial_chunk_end);
                 } else {
-                    const initialRules = rules.map((r) => `${Number(r.enabled)}${SPLITTER}${r.rule}`.replace(/`/g, '\\`'));
+                    const initialRules = rules.map((r) => `${Number(r.enabled)}${SPLITTER}${rulePrepare(r.rule)}`);
                     sendMessage(RulesEditorEvents.initial, `\`${initialRules.join('\n')}\``);
                 }
             },

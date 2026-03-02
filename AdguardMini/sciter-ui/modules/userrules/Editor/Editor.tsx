@@ -81,8 +81,8 @@ function EditorComponent({
         if (typeof rules === 'string') {
             return rules;
         }
-
-        return rules.map(({ enabled, rule }) => `${Number(enabled)}${SPLITTER}${rule}`).join('\n');
+        // AG-51375 fix escaping for \ in rules
+        return rules.map(({ enabled, rule }) => `${Number(enabled)}${SPLITTER}${rule.replace(/\\/g, '\\\\')}`).join('\n');
     };
 
     const parseInputDataAndSetEditorValue = () => {
