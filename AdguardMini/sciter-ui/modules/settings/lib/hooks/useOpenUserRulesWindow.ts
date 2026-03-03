@@ -140,7 +140,7 @@ export function useOpenUserRulesWindow() {
 
     useEffect(() => {
         if (isWindowOpened) {
-            const initialRules = userRules.rules.map((r) => `${Number(r.enabled)}${SPLITTER}${r.rule}`.replace(/`/g, '\\`'));
+            const initialRules = userRules.rules.map((r) => `${Number(r.enabled)}${SPLITTER}${rulePrepare(r.rule)}`);
             sendMessage(RulesEditorEvents.user_rules_updated, `\`${initialRules.join('\n')}\``);
         }
     }, [isWindowOpened, sendMessage, userRules.rules]);
