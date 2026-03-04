@@ -26,7 +26,7 @@
         <img src="https://img.shields.io/github/release/AdguardTeam/AdGuardMiniForMac.svg?label=beta&filter=%2Abeta&color=orange" alt="Beta version" />
     </a>
     <a href="https://agrd.io/adguard_mini_for_mac_nightly">
-        <img src="https://img.shields.io/badge/nightly-download-green" alt="Nighlty version" />
+        <img src="https://img.shields.io/github/tag-pre/AdguardTeam/AdGuardMiniForMac.svg?label=nightly&filter=%2Anightly&color=green" alt="Nightly version" />
     </a>
 </p>
 
