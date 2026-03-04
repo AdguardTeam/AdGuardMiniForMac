@@ -89,7 +89,7 @@ export function SafariExtensionComponent() {
                     {/* FIXME: Bug in sciter 6.0.2.16-rev-1
                     If <b> tag isn't wrapped, its color, weight, font-family are unset */}
                     <div>
-                        {translate('settings.rules.count', { rules: Math.max(extension.rulesTotal, 0), total: contentBlockersRulesLimit })}
+                        {translate('settings.rules.count', { rules: Math.max(extension.rulesEnabled, 0), total: contentBlockersRulesLimit })}
                     </div>
                 </Text>
                 <Text className={cx(s.SafariExtension_rules)} type="t2">
