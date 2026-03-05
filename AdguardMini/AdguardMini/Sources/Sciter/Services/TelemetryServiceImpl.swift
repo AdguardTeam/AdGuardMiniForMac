@@ -12,10 +12,12 @@ import SciterSchema
 import AML
 
 extension Sciter.TelemetryServiceImpl:
+    ABTestsStorageDependent,
     TelemetryServiceDependent {}
 
 extension Sciter {
     final class TelemetryServiceImpl: TelemetryService.ServiceType {
+        var abTestsStorage: ABTests.Storage!
         var telemetryService: Telemetry.Service!
 
         override init() {
@@ -52,6 +54,18 @@ extension Sciter {
                 }
                 await self.telemetryService.sendEvent(event)
                 promise(EmptyValue())
+            }
+        }
+
+        func getActiveABTests(_ message: EmptyValue, _ promise: @escaping (ActiveABTests) -> Void) {
+            Task {
+                let tests = await self.abTestsStorage.getActiveTests()
+
+                let activeTests = tests.map { exp, opt in
+                    ABTest(name: exp.toProto(), option: opt.toProto())
+                }
+
+                promise(.activeTests(activeTests))
             }
         }
     }

@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "ssh://git@bit.int.agrd.dev:7999/adguard-mac/adguard-mac-lib.git",
       "state" : {
-        "revision" : "ae6b92f2f7a081626b83acc8ae8a0a8ab5d28d64",
-        "version" : "12.2.0"
+        "revision" : "825157ce70b0e6669631259b52ae15b9fb5651eb",
+        "version" : "12.3.0"
       }
     },
     {

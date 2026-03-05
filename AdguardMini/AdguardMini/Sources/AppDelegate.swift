@@ -24,6 +24,7 @@ extension AppDelegate:
     SciterCallbackServiceDependent,
     SciterOnboardingCallbackServiceDependent,
     BackendServiceDependent,
+    TelemetryServiceDependent,
     EventBusDependent,
     ProtectionServiceDependent,
     UserSettingsManagerDependent,
@@ -45,6 +46,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     var sciterCallbackService: SciterCallbackService!
     var sciterOnboardingCallbackService: SciterOnboardingCallbackService!
     var backendService: BackendService!
+    var telemetryService: Telemetry.Service!
     var eventBus: EventBus!
     var protectionService: ProtectionService!
     var userSettingsManager: UserSettingsManager!
@@ -225,6 +227,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         self.userSettingsManager.registerUserDefaults(
             SettingsKey.asDict.merging(updatedFields) { $1 }
         )
+
+        await self.telemetryService.startSession()
 
         if !self.isDisplayReady() {
             self.isWaitingForWake = true

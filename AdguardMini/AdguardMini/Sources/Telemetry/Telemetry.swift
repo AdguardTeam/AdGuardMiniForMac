@@ -14,7 +14,7 @@ import AML
 // MARK: - Constants
 
 private enum Constants {
-    static let apiURL: URL = {
+    static let baseURL: URL = {
         #if DEBUG
         let host = "https://telemetry.service.agrd.dev"
         #else
@@ -28,7 +28,15 @@ private enum Constants {
                 LogError("Invalid devConf value for \(DeveloperConfigUtils.Property.telemetryApiUrl): \(devConfigHost)")
             }
         }
-        return baseURL.appendingPathComponent("/api/v1/event", conformingTo: .url)
+        return baseURL
+    }()
+
+    static let eventEndpointURL: URL = {
+        Self.baseURL.appendingPathComponent("/api/v1/event", conformingTo: .url)
+    }()
+
+    static let startSessionEndpointURL: URL = {
+        Self.baseURL.appendingPathComponent("/api/v1/session_start", conformingTo: .url)
     }()
 }
 
@@ -72,7 +80,31 @@ enum Telemetry {
 // MARK: - Telemetry.Service
 
 extension Telemetry {
+    /// Service for sending telemetry events and managing A/B test sessions
+    ///
+    /// Handles communication with the telemetry backend for:
+    /// - Session initialization with A/B test experiment assignments
+    /// - Sending pageview and custom events
+    /// - Managing experiment lifecycle (new/active/old experiments)
     protocol Service {
+        /// Starts a new telemetry session and retrieves A/B test assignments
+        ///
+        /// This method:
+        /// - Removes outdated experiments that no longer exist or changed slots
+        /// - Identifies new experiments that need assignment
+        /// - Requests experiment assignments from the backend
+        /// - Updates local storage with received assignments
+        /// - Marks unassigned experiments as `.notInTest`
+        ///
+        /// Called on app launch to initialize the session.
+        func startSession() async
+
+        /// Sends a telemetry event to the backend
+        ///
+        /// Events are only sent if user has enabled telemetry in settings.
+        /// Includes current A/B test assignments and user properties.
+        ///
+        /// - Parameter event: The event to send (pageview or custom event)
         func sendEvent(_ event: Event) async
     }
 }
@@ -83,6 +115,7 @@ extension Telemetry {
     final actor ServiceImpl: Telemetry.Service {
         private let network: NetworkManager
         private let settings: UserSettingsManager
+        private let abTestsStorage: ABTests.Storage
         private let appMetadata: AppMetadata
         private let licenseStateProvider: LicenseStateProvider
         private let telemetry: AML.Telemetry
@@ -90,11 +123,13 @@ extension Telemetry {
         init(
             network: NetworkManager,
             settings: UserSettingsManager,
+            abTestsStorage: ABTests.Storage,
             appMetadata: AppMetadata,
             licenseStateProvider: LicenseStateProvider
         ) {
             self.network = network
             self.settings = settings
+            self.abTestsStorage = abTestsStorage
             self.appMetadata = appMetadata
             self.licenseStateProvider = licenseStateProvider
             self.telemetry = AML.Telemetry(
@@ -104,23 +139,87 @@ extension Telemetry {
             )
         }
 
-        func sendEvent(_ event: Telemetry.Event) async {
-             guard self.settings.allowTelemetry else { return }
+        func startSession() async {
+           guard self.settings.allowTelemetry else { return }
 
-            guard let request = await self.createRequest(for: event) else {
-                LogDebug("Can't create telemetry request")
+            await self.abTestsStorage.removeOldTests()
+            let newExperiments = await self.abTestsStorage.getNewTests()
+
+            LogInfo("Start session with new active experiments: \(newExperiments)")
+
+            guard let request = await self.createRequest(for: newExperiments) else {
+                LogWarn("Can't create exp start session request")
                 return
             }
 
-            do {
-                let response = try await self.network.data(request: request)
-                if response.code / 100 != 2 {
-                    LogDebug("Error sending telemetry event: HTTP status code \(response.code)")
-                }
-                LogDebug("Telemetry sent")
-            } catch {
-                LogDebug("Error sending telemetry event: \(error)")
+            guard let data = await self.sendRequest(request) else {
+                LogWarn("Can't send exp start session request")
+                return
             }
+
+            func createKey(exp: String, slot: ABTests.Experiment) -> String {
+                "\(exp)|\(slot)"
+            }
+
+            do {
+                let result = try self.telemetry.parseStartSessionResponse(from: data)
+
+                let index: [String: ABTests.ActiveExperiment] =
+                Dictionary(uniqueKeysWithValues: newExperiments.map { exp in
+                    (createKey(exp: exp.rawValue, slot: exp.slot), exp)
+                })
+
+                var newExpStates: [ABTests.ActiveExperiment: ABTests.TestOption] = [:]
+
+                for (slotRaw, version) in result {
+                    let slot = slotRaw.toDomain()
+                    let key = createKey(exp: version.experimentName, slot: slot)
+
+                    guard let activeExp = index[key],
+                          let option = version.option?.toDomain()
+                    else { continue }
+
+                    newExpStates[activeExp] = option
+                }
+
+                for exp in newExperiments where newExpStates[exp] == nil {
+                    newExpStates[exp] = .notInTest
+                }
+
+                await self.abTestsStorage.updateTests(newExpStates)
+            } catch {
+                LogWarn("Failed to parse start session response: \(error)")
+            }
+        }
+
+        func sendEvent(_ event: Telemetry.Event) async {
+            guard self.settings.allowTelemetry else { return }
+
+            guard let request = await self.createRequest(for: event) else {
+                LogDebug("Can't create telemetry event request")
+                return
+            }
+
+            await self.sendRequest(request)
+        }
+
+        private func createRequest(for tests: [ABTests.ActiveExperiment]) async -> URLRequest? {
+            let tests: [AML.Telemetry.Experiment: String] = Dictionary(
+                uniqueKeysWithValues: tests.compactMap {
+                    if let slot = $0.slot.toAmlType() {
+                        return (slot, $0.rawValue)
+                    }
+                    return nil
+                }
+            )
+
+            let props = await self.getProps()
+
+            return self.telemetry.startSessionEventRequest(
+                url: Constants.startSessionEndpointURL,
+                props: props,
+                tests: tests
+            )
         }
 
         private func createRequest(for event: Event) async -> URLRequest? {
@@ -131,17 +230,59 @@ extension Telemetry {
                     .custom(name: event.name, refName: event.refName)
             }
 
-            let props = await AML.Telemetry.Props(
+            let props = await self.getProps()
+
+            return self.telemetry.eventRequest(
+                url: Constants.eventEndpointURL,
+                event: event,
+                props: props
+            )
+        }
+
+        @discardableResult
+        private func sendRequest(
+            _ request: URLRequest,
+            function: String = #function,
+            line: UInt = #line
+        ) async -> Data? {
+            do {
+                let response = try await self.network.data(request: request)
+                if response.code / 100 != 2 {
+                    LogDebug(
+                        "Error telemetry request: HTTP status code \(response.code)", function: function, line: line
+                    )
+                    return nil
+                }
+                LogDebug("Telemetry sent", function: function, line: line)
+                return response.data
+            } catch {
+                LogDebug("Error telemetry request: \(error)", function: function, line: line)
+                return nil
+            }
+        }
+
+        private func getProps() async -> AML.Telemetry.Props {
+            let activeTests = await self.abTestsStorage.getActiveTests()
+
+            let experiments: [AML.Telemetry.Experiment: AML.Telemetry.ExperimentVersion] = Dictionary(
+                uniqueKeysWithValues: activeTests.compactMap {
+                    let exp = $0.key
+                    let opt = $0.value
+                    guard let opt = opt.toAmlType(),
+                          let slot = exp.slot.toAmlType() else { return nil }
+                    return (
+                        slot,
+                        .init(experimentName: exp.rawValue, option: opt)
+                    )
+                }
+            )
+
+            return await AML.Telemetry.Props(
                 subscriptionDuration: self.getSubscriptionDuration(),
                 licenseStatus: self.getLicenseStatus(),
                 theme: self.getTheme(),
-                retentionCohort: self.getRetentionCohort()
-            )
-
-            return self.telemetry.eventRequest(
-                url: Constants.apiURL,
-                event: event,
-                props: props
+                retentionCohort: self.getRetentionCohort(),
+                experiments: experiments
             )
         }
 
@@ -245,6 +386,46 @@ extension Telemetry {
 
         static func isValid(_ value: String) -> Bool {
             value.range(of: #"^[a-f1-9]{8}$"#, options: .regularExpression) != nil
+        }
+    }
+}
+
+private extension ABTests.Experiment {
+    func toAmlType() -> AML.Telemetry.Experiment? {
+        switch self {
+        case .exp1: .experiment1
+        case .exp2: .experiment2
+        case .exp3: .experiment3
+        case .__placeholder__: nil
+        }
+    }
+}
+
+private extension ABTests.TestOption {
+    func toAmlType() -> AML.Telemetry.Experiment.Option? {
+        switch self {
+        case .optA:      return .optA
+        case .optB:      return .optB
+        case .notInTest: return nil
+        }
+    }
+}
+
+private extension AML.Telemetry.Experiment {
+    func toDomain() -> ABTests.Experiment {
+        switch self {
+        case .experiment1: .exp1
+        case .experiment2: .exp2
+        case .experiment3: .exp3
+        }
+    }
+}
+
+private extension AML.Telemetry.Experiment.Option {
+    func toDomain() -> ABTests.TestOption {
+        switch self {
+        case .optA: .optA
+        case .optB: .optB
         }
     }
 }

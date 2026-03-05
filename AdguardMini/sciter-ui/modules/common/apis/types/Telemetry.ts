@@ -4,6 +4,15 @@
  * source: Telemetry.proto
  * git: https://github.com/thesayyn/protoc-gen-ts */
 import * as pb_1 from "google-protobuf";
+export enum ActiveABTest {
+    unknown = 0,
+    AG_51019_advanced_settings = 1
+}
+export enum ABTestOption {
+    unknown = 0,
+    option_a = 1,
+    option_b = 2
+}
 export class TelemetryEvent extends pb_1.Message {
     #one_of_decls: number[][] = [[1, 2]];
     constructor(data?: any[] | ({} & (({
@@ -376,5 +385,162 @@ export class CustomTelemetryEvent extends pb_1.Message {
     }
     static deserializeBinary(bytes: Uint8Array): CustomTelemetryEvent {
         return CustomTelemetryEvent.deserialize(bytes);
+    }
+}
+export class ActiveABTests extends pb_1.Message {
+    #one_of_decls: number[][] = [];
+    constructor(data?: any[] | {
+        activeTests?: ABTest[];
+    }) {
+        super();
+        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [1], this.#one_of_decls);
+        if (!Array.isArray(data) && typeof data == "object") {
+            if ("activeTests" in data && data.activeTests != undefined) {
+                this.activeTests = data.activeTests;
+            }
+        }
+    }
+    get activeTests() {
+        return pb_1.Message.getRepeatedWrapperField(this, ABTest, 1) as ABTest[];
+    }
+    set activeTests(value: ABTest[]) {
+        pb_1.Message.setRepeatedWrapperField(this, 1, value);
+    }
+    static fromObject(data: {
+        activeTests?: ReturnType<typeof ABTest.prototype.toObject>[];
+    }): ActiveABTests {
+        const message = new ActiveABTests({});
+        if (data.activeTests != null) {
+            message.activeTests = data.activeTests.map(item => ABTest.fromObject(item));
+        }
+        return message;
+    }
+    toObject() {
+        const data: {
+            activeTests?: ReturnType<typeof ABTest.prototype.toObject>[];
+        } = {};
+        if (this.activeTests != null) {
+            data.activeTests = this.activeTests.map((item: ABTest) => item.toObject());
+        }
+        return data;
+    }
+    serialize(): Uint8Array;
+    serialize(w: pb_1.BinaryWriter): void;
+    serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+        const writer = w || new pb_1.BinaryWriter();
+        if (this.activeTests.length)
+            writer.writeRepeatedMessage(1, this.activeTests, (item: ABTest) => item.serialize(writer));
+        if (!w)
+            return writer.getResultBuffer();
+    }
+    static deserialize(bytes: Uint8Array | pb_1.BinaryReader): ActiveABTests {
+        const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new ActiveABTests();
+        while (reader.nextField()) {
+            if (reader.isEndGroup())
+                break;
+            switch (reader.getFieldNumber()) {
+                case 1:
+                    reader.readMessage(message.activeTests, () => pb_1.Message.addToRepeatedWrapperField(message, 1, ABTest.deserialize(reader), ABTest));
+                    break;
+                default: reader.skipField();
+            }
+        }
+        return message;
+    }
+    serializeBinary(): Uint8Array {
+        return this.serialize();
+    }
+    static deserializeBinary(bytes: Uint8Array): ActiveABTests {
+        return ActiveABTests.deserialize(bytes);
+    }
+}
+export class ABTest extends pb_1.Message {
+    #one_of_decls: number[][] = [];
+    constructor(data?: any[] | {
+        name?: ActiveABTest;
+        option?: ABTestOption;
+    }) {
+        super();
+        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+        if (!Array.isArray(data) && typeof data == "object") {
+            if ("name" in data && data.name != undefined) {
+                this.name = data.name;
+            }
+            if ("option" in data && data.option != undefined) {
+                this.option = data.option;
+            }
+        }
+    }
+    get name() {
+        return pb_1.Message.getFieldWithDefault(this, 1, ActiveABTest.unknown) as ActiveABTest;
+    }
+    set name(value: ActiveABTest) {
+        pb_1.Message.setField(this, 1, value);
+    }
+    get option() {
+        return pb_1.Message.getFieldWithDefault(this, 2, ABTestOption.unknown) as ABTestOption;
+    }
+    set option(value: ABTestOption) {
+        pb_1.Message.setField(this, 2, value);
+    }
+    static fromObject(data: {
+        name?: ActiveABTest;
+        option?: ABTestOption;
+    }): ABTest {
+        const message = new ABTest({});
+        if (data.name != null) {
+            message.name = data.name;
+        }
+        if (data.option != null) {
+            message.option = data.option;
+        }
+        return message;
+    }
+    toObject() {
+        const data: {
+            name?: ActiveABTest;
+            option?: ABTestOption;
+        } = {};
+        if (this.name != null) {
+            data.name = this.name;
+        }
+        if (this.option != null) {
+            data.option = this.option;
+        }
+        return data;
+    }
+    serialize(): Uint8Array;
+    serialize(w: pb_1.BinaryWriter): void;
+    serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+        const writer = w || new pb_1.BinaryWriter();
+        if (this.name != ActiveABTest.unknown)
+            writer.writeEnum(1, this.name);
+        if (this.option != ABTestOption.unknown)
+            writer.writeEnum(2, this.option);
+        if (!w)
+            return writer.getResultBuffer();
+    }
+    static deserialize(bytes: Uint8Array | pb_1.BinaryReader): ABTest {
+        const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new ABTest();
+        while (reader.nextField()) {
+            if (reader.isEndGroup())
+                break;
+            switch (reader.getFieldNumber()) {
+                case 1:
+                    message.name = reader.readEnum();
+                    break;
+                case 2:
+                    message.option = reader.readEnum();
+                    break;
+                default: reader.skipField();
+            }
+        }
+        return message;
+    }
+    serializeBinary(): Uint8Array {
+        return this.serialize();
+    }
+    static deserializeBinary(bytes: Uint8Array): ABTest {
+        return ABTest.deserialize(bytes);
     }
 }

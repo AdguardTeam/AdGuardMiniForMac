@@ -13,6 +13,10 @@ public protocol TelemetryServiceProtocol
 	func recordEvent (
 						_ message: TelemetryEvent,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void
+	/// Get active AB tests
+	func getActiveABTests (
+						_ message: EmptyValue,
+						_ promise: @escaping (ActiveABTests) -> Void) -> Void
 }
 
 // MARK: Protobuf Bridge definition
@@ -31,6 +35,18 @@ open class TelemetryService: SciterBridge
 			inputType: TelemetryEvent.self,
 			outputType: EmptyValue.self,
 			method: cast.recordEvent(_:_:),
+			message,
+			promise
+		)
+	}
+
+	/// Wrapper for `GetActiveABTests`
+	@objc func GetActiveABTests(_ message: Data, promise: @escaping (Data) -> Void)
+	{
+		swiftCall(
+			inputType: EmptyValue.self,
+			outputType: ActiveABTests.self,
+			method: cast.getActiveABTests(_:_:),
 			message,
 			promise
 		)

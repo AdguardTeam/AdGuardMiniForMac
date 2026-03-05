@@ -39,6 +39,7 @@ extension ServiceLocator {
         (client as? SentryHelperDependent)?.sentryHelper = self.sentryHelper
         (client as? RulesGrouperDependent)?.rulesGrouper = self.groupRules
         (client as? BackendServiceDependent)?.backendService = self.backendService
+        (client as? ABTestsStorageDependent)?.abTestsStorage = self.abTestsStorage
         (client as? AppResetServiceDependent)?.appResetService = self.appResetService
         (client as? TelemetryServiceDependent)?.telemetryService = self.telemetryService
         (client as? SafariApiHandlerDependent)?.safariApiHandler = self.safariApiHandler
@@ -242,6 +243,8 @@ private final class ServiceLocator {
 
     private lazy var networkReachabilityMonitor: NetworkReachability = NetworkReachabilityImpl(eventBus: self.eventBus)
 
+    private lazy var abTestsStorage: ABTests.Storage = ABTests.StorageImpl()
+
     private lazy var sciterAppLocator: SciterAppLocator = SciterAppLocator.shared
 
     // MARK: Injectable properties
@@ -253,6 +256,7 @@ private final class ServiceLocator {
     private lazy var telemetryService: Telemetry.Service = Telemetry.ServiceImpl(
         network: self.coreDIContainer.networkManager,
         settings: self.userSettingsManager,
+        abTestsStorage: self.abTestsStorage,
         appMetadata: self.appMetadata,
         licenseStateProvider: self.licenseStateProvider
     )

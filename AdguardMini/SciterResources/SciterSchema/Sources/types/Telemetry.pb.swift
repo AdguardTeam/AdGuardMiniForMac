@@ -20,6 +20,78 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
+public enum ActiveABTest: SwiftProtobuf.Enum, Swift.CaseIterable {
+  public typealias RawValue = Int
+  case unknown // = 0
+  case ag51019AdvancedSettings // = 1
+  case UNRECOGNIZED(Int)
+
+  public init() {
+    self = .unknown
+  }
+
+  public init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .unknown
+    case 1: self = .ag51019AdvancedSettings
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  public var rawValue: Int {
+    switch self {
+    case .unknown: return 0
+    case .ag51019AdvancedSettings: return 1
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static let allCases: [ActiveABTest] = [
+    .unknown,
+    .ag51019AdvancedSettings,
+  ]
+
+}
+
+public enum ABTestOption: SwiftProtobuf.Enum, Swift.CaseIterable {
+  public typealias RawValue = Int
+  case unknown // = 0
+  case optionA // = 1
+  case optionB // = 2
+  case UNRECOGNIZED(Int)
+
+  public init() {
+    self = .unknown
+  }
+
+  public init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .unknown
+    case 1: self = .optionA
+    case 2: self = .optionB
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  public var rawValue: Int {
+    switch self {
+    case .unknown: return 0
+    case .optionA: return 1
+    case .optionB: return 2
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static let allCases: [ABTestOption] = [
+    .unknown,
+    .optionA,
+    .optionB,
+  ]
+
+}
+
 /// Pageview or custom event.
 public struct TelemetryEvent: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
@@ -119,7 +191,41 @@ public struct CustomTelemetryEvent: Sendable {
   fileprivate var _labelName: String? = nil
 }
 
+public struct ActiveABTests: Sendable {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var activeTests: [ABTest] = []
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct ABTest: Sendable {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var name: ActiveABTest = .unknown
+
+  public var option: ABTestOption = .unknown
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
+
+extension ActiveABTest: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0ActiveABTest_unknown\0\u{1}ActiveABTest_AG_51019_advanced_settings\0")
+}
+
+extension ABTestOption: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0ABTestOption_unknown\0\u{1}ABTestOption_option_a\0\u{1}ABTestOption_option_b\0")
+}
 
 extension TelemetryEvent: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "TelemetryEvent"
@@ -271,6 +377,71 @@ extension CustomTelemetryEvent: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     if lhs.refName != rhs.refName {return false}
     if lhs._actionName != rhs._actionName {return false}
     if lhs._labelName != rhs._labelName {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension ActiveABTests: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "ActiveABTests"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}active_tests\0")
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.activeTests) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.activeTests.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.activeTests, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: ActiveABTests, rhs: ActiveABTests) -> Bool {
+    if lhs.activeTests != rhs.activeTests {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension ABTest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "ABTest"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}name\0\u{1}option\0")
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularEnumField(value: &self.name) }()
+      case 2: try { try decoder.decodeSingularEnumField(value: &self.option) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.name != .unknown {
+      try visitor.visitSingularEnumField(value: self.name, fieldNumber: 1)
+    }
+    if self.option != .unknown {
+      try visitor.visitSingularEnumField(value: self.option, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: ABTest, rhs: ABTest) -> Bool {
+    if lhs.name != rhs.name {return false}
+    if lhs.option != rhs.option {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

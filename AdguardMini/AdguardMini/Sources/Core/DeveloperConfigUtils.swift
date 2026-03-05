@@ -58,6 +58,12 @@ struct DeveloperConfigUtils {
         case filtersMetaUrl = "filters_meta_url"
         /// Value is string with url to the adblock filters localization file.
         case filtersI18nUrl = "filters_i18n_url"
+
+        /// Value is a dictionary mapping experiment names to options.
+        ///
+        /// Example: `{"AG-51019-Advanced-settings": "optA"}`.
+        /// Valid options: `"optA"`, `"optB"`, `"notInTest"`
+        case abTestOverrides = "ab_tests"
     }
 
     // MARK: Public properties and methods

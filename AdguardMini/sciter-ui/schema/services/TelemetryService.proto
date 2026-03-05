@@ -4,4 +4,6 @@ syntax = "proto3";
 service TelemetryService {
     /* Record telemetry event */
     rpc RecordEvent(TelemetryEvent) returns (EmptyValue);
+    /* Get active AB tests */
+    rpc GetActiveABTests(EmptyValue) returns (ActiveABTests);
 }
