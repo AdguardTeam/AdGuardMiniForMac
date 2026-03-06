@@ -13,7 +13,7 @@
 		<key>UpdateMethod</key>
 		<string>npm</string>
 		<key>Version</key>
-		<string>4.3.77</string>
+		<string>4.4.2</string>
 	</dict>
 	<key>sentry</key>
 	<dict>

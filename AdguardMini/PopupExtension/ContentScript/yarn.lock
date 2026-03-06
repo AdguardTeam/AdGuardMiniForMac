@@ -17,10 +17,10 @@
     xregexp "^5.1.1"
     zod "3.24.4"
 
-"@adguard/assistant@^4.3.77":
-  version "4.3.77"
-  resolved "https://registry.yarnpkg.com/@adguard/assistant/-/assistant-4.3.77.tgz#b087f052b818139076cbd69120d298764c93be9e"
-  integrity sha512-JfOcZBS1Ih47DneyA9p38WY2ZqB7MLd9M6sPydM6rArmsdkVEN922G7srSiqwnxW4QZtMYHIIkdwcYKAr09FUA==
+"@adguard/assistant@^4.4.2":
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/@adguard/assistant/-/assistant-4.4.2.tgz#00942f731ae6877bb036bee5e224e6e34c62c32f"
+  integrity sha512-Wox4HfES/4ukK6uRKfYstuorSpqx0QnFCfRJ9OrbJnXO5gMmaI5UYlMmPqWm4BAqn5gbGLNz8rNNRf5F/P2sfg==
 
 "@adguard/css-tokenizer@^1.2.0":
   version "1.2.0"
