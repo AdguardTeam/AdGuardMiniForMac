@@ -8,6 +8,34 @@ set -e
 
 export PATH="/opt/homebrew/opt/ruby/bin:/opt/homebrew/bin:$PATH"
 
+# Check for newer version of a git repository.
+# Usage: check_latest_version <repo_url> <current_tag> <friendly_name>
+check_latest_version() {
+    local repo_url="$1"
+    local current_tag="$2"
+    local name="$3"
+
+    if [ "${SKIP_VERSION_CHECK:-}" = "1" ]; then
+        return
+    fi
+
+    local latest_tag
+    latest_tag=$(git ls-remote --tags --sort=-v:refname "$repo_url" 2>/dev/null \
+        | grep -o 'refs/tags/v[0-9][^{}]*$' \
+        | head -1 \
+        | sed 's|refs/tags/||')
+
+    if [ -n "$latest_tag" ] && [ "$latest_tag" != "$current_tag" ]; then
+        echo ""
+        echo "========================================================"
+        echo "  UPDATE AVAILABLE: $name"
+        echo "  Current: $current_tag  →  Latest: $latest_tag"
+        echo "========================================================"
+        echo ""
+        sleep 1
+    fi
+}
+
 if [ "$1" == "dev" ]; then
     ENV_NAME=Development
 else
@@ -21,17 +49,45 @@ if [ -f ../adguard-mini-private/config.env ]; then
 fi
 
 if [[ "$1" == "dev" ]]; then
+    # Clone support-scripts
+
+    SUPPORT_SCRIPTS_TAG="v1.2"
     if [ -z "$SUPPORT_SCRIPTS_GIT" ]; then
         echo "Error: SUPPORT_SCRIPTS_GIT not set. Source ../adguard-mini-private/config.env or set via environment."
         exit 1
     fi
+
     rm -rf support-scripts
-    git clone "$SUPPORT_SCRIPTS_GIT"
+    git clone -c advice.detachedHead=false --depth 1 --branch "$SUPPORT_SCRIPTS_TAG" "$SUPPORT_SCRIPTS_GIT" support-scripts
+    rm -rf support-scripts/.git
+
     pushd support-scripts
-    git checkout 'v1.2'
     bundle config set --local path '../.bundle/vendor'
     bundle install
     popd
+
+    check_latest_version "$SUPPORT_SCRIPTS_GIT" "$SUPPORT_SCRIPTS_TAG" "support-scripts"
+
+    # Clone SDD workflows
+
+    SDD_WORKFLOWS_TAG="v1.6.0"
+    if [ -z "$SDD_WORKFLOWS_GIT" ]; then
+        echo "Error: SDD_WORKFLOWS_GIT not set. Source ../adguard-mini-private/config.env or set via environment."
+        exit 1
+    else
+        SDD_TMP_DIR=$(mktemp -d)
+        git clone -c advice.detachedHead=false --depth 1 --branch "$SDD_WORKFLOWS_TAG" "$SDD_WORKFLOWS_GIT" "$SDD_TMP_DIR"
+
+        rm -f .windsurf/workflows/sdd-*.md \
+              .windsurf/workflows/doc-*.md \
+              .windsurf/workflows/dev-*.md
+
+        cp "$SDD_TMP_DIR"/templates/workflows/*.md .windsurf/workflows/
+        rm -rf "$SDD_TMP_DIR"
+        echo "SDD workflows updated ($SDD_WORKFLOWS_TAG)"
+
+        check_latest_version "$SDD_WORKFLOWS_GIT" "$SDD_WORKFLOWS_TAG" "SDD workflows"
+    fi
 fi
 
 bundle config --local path '.bundle/vendor'
