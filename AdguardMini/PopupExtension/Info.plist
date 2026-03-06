@@ -88,6 +88,15 @@
 			<key>Level</key>
 			<string>All</string>
 		</dict>
+		<key>SFSafariAssociatedContentBlockers</key>
+		<array>
+			<string>$(AG_BLOCKER_GENERAL_BUNDLEID)</string>
+			<string>$(AG_BLOCKER_PRIVACY_BUNDLEID)</string>
+			<string>$(AG_BLOCKER_SECURITY_BUNDLEID)</string>
+			<string>$(AG_BLOCKER_SOCIAL_BUNDLEID)</string>
+			<string>$(AG_BLOCKER_OTHER_BUNDLEID)</string>
+			<string>$(AG_BLOCKER_CUSTOM_BUNDLEID)</string>
+		</array>
 	</dict>
 	<key>NSHumanReadableDescription</key>
 	<string>You can use this extension to manage AdGuard Mini settings. For instance, pause blocking on a website, or block an ad manually.</string>
