@@ -6,4 +6,4 @@
 
 set -ex
 
-bundle exec fastlane test
+bin/fastlane test

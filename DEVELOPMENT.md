@@ -58,12 +58,18 @@ as `adguard-mini` (or create it manually from the
    ```
 
    This command will:
+   - Capture toolchain (Ruby, Bundler, Node, Yarn) and generate wrappers in `bin/`
    - Install Ruby gems via Bundler
+   - Generate Bundler binstubs
    - Load credentials from `adguard-mini-private`
    - Create a Python virtual environment (`.venv/`) and install pip packages
    - Install local protoc tools (`protoc` + `protoc-gen-swift`) into
      `build/protoc-tools/`
    - Sync certificates for MAS and Standalone distributions
+
+   > **Note:** After running `configure.sh`, all Ruby and Node.js tools are
+   > invoked via wrappers in `bin/` (e.g., `bin/fastlane`, `bin/yarn`). This
+   > ensures consistent tool versions regardless of your shell configuration.
 
 3. **Install frontend dependencies:**
 
@@ -127,7 +133,7 @@ yarn lint:fix
 # Swift: run XCTest suite from Xcode (target: AdguardMiniTests)
 
 # Swift: run tests via Fastlane
-bundle exec fastlane test
+bin/fastlane test
 ```
 
 ### Building
@@ -137,9 +143,9 @@ bundle exec fastlane test
 yarn build:prod
 
 # Build via Fastlane (various configurations)
-bundle exec fastlane build config:Debug
-bundle exec fastlane build config:Release
-bundle exec fastlane build config:MAS
+bin/fastlane build config:Debug
+bin/fastlane build config:Release
+bin/fastlane build config:MAS
 ```
 
 ## Common Tasks
@@ -158,7 +164,7 @@ The app uses Protobuf for Swift ↔ TypeScript communication.
 Regenerate after modifying `.proto` files:
 
 ```bash
-bundle exec fastlane update_proto_schema
+bin/fastlane update_proto_schema
 ```
 
 **Version pinning (optional):** To ensure reproducible protoc builds:
@@ -192,13 +198,13 @@ yarn locales:check
 
 ```bash
 # Update all dependencies
-bundle exec fastlane update_third_party_deps
+bin/fastlane update_third_party_deps
 
 # Update specific packages (available: assistant, safari-extension, safariconverterlib)
-bundle exec fastlane update_third_party_deps packages:assistant,safariconverterlib
+bin/fastlane update_third_party_deps packages:assistant,safariconverterlib
 
 # Check for updates without applying
-bundle exec fastlane update_third_party_deps dry_run:true
+bin/fastlane update_third_party_deps dry_run:true
 ```
 
 > **IMPORTANT**: SafariConverterLib and @adguard/safari-extension versions
@@ -234,14 +240,16 @@ Generates CSS stylesheets from the default theme definition at
 
 ## Troubleshooting
 
-### Ruby Version Too Old
+### Ruby or Node.js Version Too Old
 
-Install Ruby via Homebrew and add it to PATH:
+If `configure.sh` reports that your Ruby or Node.js version is too old:
 
-```bash
-brew install ruby
-echo 'export PATH="/opt/homebrew/opt/ruby/bin:$PATH"' >> ~/.zshrc
-```
+1. Install the required versions (Ruby 3.2+, Node.js 22+)
+2. Ensure they are available in your current shell
+3. Run `./configure.sh dev` again to capture the new toolchain
+
+The toolchain wrappers in `bin/` will use whatever versions were active when
+`configure.sh` was run, so you don't need to modify shell profiles.
 
 ### Tests Don't Build
 

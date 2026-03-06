@@ -118,10 +118,9 @@ adguard-mini/
 
 ### Project Setup
 
-- `./configure.sh dev` - Initialize development environment (installs protoc
-  tools, sets up dependencies)
+- `./configure.sh dev` - Initialize development environment (captures toolchain,
+  generates wrappers in `bin/`, installs protoc tools, sets up dependencies)
 - `yarn` - Install frontend dependencies
-- `bundle install` - Install Ruby/Fastlane dependencies
 
 ### Frontend (TypeScript/Sciter UI)
 
@@ -142,7 +141,7 @@ adguard-mini/
 ### Testing
 
 - Run XCTest suite from Xcode (target: `AdguardMiniTests`)
-- `bundle exec fastlane test` - Run tests via Fastlane
+- `bin/fastlane test` - Run tests via Fastlane
 
 ### Linting
 
@@ -160,15 +159,15 @@ adguard-mini/
 
 ### Protobuf Schema
 
-- `bundle exec fastlane update_proto_schema` - Regenerate Swift and TypeScript
+- `bin/fastlane update_proto_schema` - Regenerate Swift and TypeScript
   schema from Protobuf definitions
 
 ### Dependency Updates
 
-- `bundle exec fastlane update_third_party_deps` - Update all dependencies
-- `bundle exec fastlane update_third_party_deps packages:sparkle` - Update
+- `bin/fastlane update_third_party_deps` - Update all dependencies
+- `bin/fastlane update_third_party_deps packages:sparkle` - Update
   specific package
-- `bundle exec fastlane update_third_party_deps dry_run:true` - Check for
+- `bin/fastlane update_third_party_deps dry_run:true` - Check for
   updates without applying
 
 ## Contribution Instructions
@@ -295,3 +294,14 @@ You MUST follow the following rules for EVERY task that you perform:
 
    **Rationale**: Prevents EXC_BAD_ACCESS crashes in Swift Concurrency runtime
    caused by unmanaged task lifecycles and mixed concurrency patterns.
+
+4. **Toolchain wrappers**: All Ruby and Node.js tools MUST be invoked via `bin/`
+   wrappers (e.g., `bin/fastlane`, `bin/yarn`, `bin/ruby`, `bin/node`). Never
+   hardcode tool paths (e.g., `/opt/homebrew/opt/ruby/bin/ruby`) or use
+   `bundle exec` in scripts. The `configure.sh` script captures the toolchain
+   and generates wrappers that ensure consistent tool versions across all
+   environments (Xcode Build Phases, Fastlane, Terminal, CI).
+
+   **Rationale**: Eliminates PATH-dependent behavior, removes reliance on shell
+   init files and version managers (nvm, rbenv), and ensures reproducible builds
+   regardless of developer environment.

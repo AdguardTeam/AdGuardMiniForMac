@@ -6,4 +6,4 @@
 
 set -ex
 
-bundle exec fastlane increment_version type:$1
+bin/fastlane increment_version type:$1

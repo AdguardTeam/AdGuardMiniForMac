@@ -7,4 +7,4 @@
 set -e
 
 ./configure.sh
-bundle exec fastlane certs config:"$1"
+bin/fastlane certs config:"$1"
