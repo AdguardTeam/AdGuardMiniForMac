@@ -75,7 +75,7 @@ if [[ "$1" == "dev" ]]; then
 
     # Clone SDD workflows
 
-    SDD_WORKFLOWS_TAG="v1.6.0"
+    SDD_WORKFLOWS_TAG="v2.0.1"
     if [ -z "$SDD_WORKFLOWS_GIT" ]; then
         echo "Error: SDD_WORKFLOWS_GIT not set. Source ../adguard-mini-private/config.env or set via environment."
         exit 1
