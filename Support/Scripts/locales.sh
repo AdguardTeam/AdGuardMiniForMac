@@ -6,6 +6,11 @@
 
 set -e
 
+if [ ! -x "bin/yarn" ]; then
+    echo "Error: Toolchain not configured. Run ./configure.sh dev" >&2
+    exit 1
+fi
+
 if [ "$1" == "push" ]; then
     bin/yarn locales:pushMaster
     ./support-scripts/localize.rb export -b

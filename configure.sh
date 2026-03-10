@@ -6,8 +6,6 @@
 
 set -e
 
-export PATH="/opt/homebrew/opt/ruby/bin:/opt/homebrew/bin:$PATH"
-
 # Load toolchain setup
 source "`dirname $0`/Support/Scripts/include/configure_toolchain.inc"
 
