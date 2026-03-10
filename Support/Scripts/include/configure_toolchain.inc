@@ -36,7 +36,8 @@ setup_toolchain() {
 
     # Check Node.js version (minimum 22)
     local node_version
-    node_version=$(node --version | sed 's/v//')
+    node_version=$(node --version)
+    node_version=${node_version#v}
     local node_major=${node_version%%.*}
 
     if [ "$node_major" -lt 22 ]; then
