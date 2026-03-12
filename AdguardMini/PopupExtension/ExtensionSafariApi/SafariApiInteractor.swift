@@ -39,6 +39,8 @@ protocol SafariApiInteractor {
     func telemetryActionEvent(_ action: Telemetry.Action, screen: Telemetry.Screen) async throws
 
     func notifyWindowOpened() async throws
+
+    func reportBlockCounts(_ counts: [SafariBlockerType: Int]) async throws
 }
 
 // MARK: - SafariApiInteractorImpl
@@ -136,6 +138,16 @@ final class SafariApiInteractorImpl: SafariApiInteractor {
     func notifyWindowOpened() async throws {
         try await withCheckedThrowingContinuation { continuation in
             self.safariApi.notifyWindowOpened(reply: continuation.callback)
+        }
+    }
+
+    func reportBlockCounts(_ counts: [SafariBlockerType: Int]) async throws {
+        let stringCounts = counts.reduce(into: [String: Int64]()) { result, pair in
+            result[pair.key.bundleId] = Int64(pair.value)
+        }
+
+        try await withCheckedThrowingContinuation { continuation in
+            self.safariApi.reportBlockCounts(stringCounts, reply: continuation.callback)
         }
     }
 }
