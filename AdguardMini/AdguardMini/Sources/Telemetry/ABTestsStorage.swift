@@ -206,7 +206,7 @@ extension ABTests {
         /// This case exists only to keep the enum non-empty.
         /// Do not use it for real experiments.
         case __placeholder__         = "__placeholder__"
-        case ag51019AdvancedSettings = "AG-51019-Advanced-settings"
+        case ag51019AdvancedSettings = "AG-51019-advanced-settings"
 
         static let realCases: [ActiveExperiment] = Self.allCases.filter { $0 != .__placeholder__ }
 

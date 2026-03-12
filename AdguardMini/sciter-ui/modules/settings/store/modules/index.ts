@@ -4,6 +4,7 @@
 
 export * from './Account';
 export * from './AdvancedBlocking';
+export * from './ABTests';
 export * from './AppInfo';
 export * from './Filters';
 export * from './SettingsRouter';

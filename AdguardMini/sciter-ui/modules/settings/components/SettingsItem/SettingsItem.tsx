@@ -165,6 +165,7 @@ export function SettingsItemSwitch({
     setValue,
     muted,
     disabled,
+    iconColor,
     ...rest
 }: SettingsItemSwitchProps) {
     const isEnabled = value && !muted;
@@ -172,7 +173,7 @@ export function SettingsItemSwitch({
     return (
         <SettingsItem
             {...rest}
-            iconColor={isEnabled ? 'green' : 'gray'}
+            iconColor={iconColor ?? (isEnabled ? 'green' : 'gray')}
             onContainerClick={() => {
                 if (disabled) {
                     return;

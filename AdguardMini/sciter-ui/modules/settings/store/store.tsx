@@ -9,6 +9,7 @@ import { Action } from 'Common/utils/EventAction';
 
 import {
     Account,
+    ABTests,
     AdvancedBlocking,
     AppInfo,
     Filters,
@@ -31,25 +32,27 @@ import type { ColorTheme } from 'Utils/colorThemes';
  * Settings app store
  */
 export class SettingsStore {
-    account: Account;
+    public account: Account;
 
-    advancedBlocking: AdvancedBlocking;
+    public abTests: ABTests;
 
-    appInfo: AppInfo;
+    public advancedBlocking: AdvancedBlocking;
 
-    filters: Filters;
+    public appInfo: AppInfo;
 
-    safariProtection: SafariProtection;
+    public filters: Filters;
 
-    settings: Settings;
+    public safariProtection: SafariProtection;
 
-    userRules: UserRules;
+    public settings: Settings;
 
-    windowing: Windowing;
+    public userRules: UserRules;
 
-    notification: NotificationsQueue;
+    public windowing: Windowing;
 
-    ui: UI;
+    public notification: NotificationsQueue;
+
+    public ui: UI;
 
     /**
      * Settings window router store
@@ -71,6 +74,7 @@ export class SettingsStore {
      */
     constructor() {
         this.account = new Account(this);
+        this.abTests = new ABTests();
         this.advancedBlocking = new AdvancedBlocking(this);
         this.appInfo = new AppInfo(this);
         this.filters = new Filters(this);
@@ -92,6 +96,7 @@ export class SettingsStore {
     private init() {
         this.account.getLicense();
         this.account.getTrialAvailability();
+        this.abTests.loadActiveABTests();
         this.advancedBlocking.getAdvancedBlocking();
         this.appInfo.getAppInfo();
         this.filters.getEnabledFilters();

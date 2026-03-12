@@ -17,6 +17,7 @@ type SettingsTitleProps = {
     description?: string;
     maxTopPadding?: boolean;
     children?: ComponentChildren;
+    newLabel?: boolean;
 } & Partial<ContextMenuProps>;
 
 /**
@@ -30,12 +31,14 @@ export function SettingsTitle({
     maxTopPadding,
     reportBug,
     showReportBugTooltip,
+    newLabel,
 }: SettingsTitleProps) {
     const doubleContextMenu = elements && reportBug;
     return (
         <div className={cx(s.SettingsTitle, maxTopPadding && s.SettingsTitle__maxTopPadding)}>
             <div className={cx(s.SettingsTitle_titleBlock, theme.layout.content)}>
-                <Text className={s.SettingsTitle_title} lineHeight="s" type="h4">{title}</Text>
+                <Text className={cx(!newLabel && s.SettingsTitle_title)} lineHeight="s" type="h4">{title}</Text>
+                {newLabel && (<div className={s.SettingsTitle_newLabel}><Text type="t2">New</Text></div>)}
                 {/* We have to use context menu twice due to on UserRules page
                 we have to show report bug and context menu separately */}
                 {doubleContextMenu && (
