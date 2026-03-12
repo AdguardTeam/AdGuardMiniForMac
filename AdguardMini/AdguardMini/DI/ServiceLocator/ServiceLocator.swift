@@ -431,7 +431,8 @@ private final class ServiceLocator {
             SharedDIContainer.shared.sharedSettingsStorage,
             self.filtersSupervisor,
             self.userSettingsService,
-            self.serviceSupervisor
+            self.serviceSupervisor,
+            self.statisticsService
         )
     }()
 

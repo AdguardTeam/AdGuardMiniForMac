@@ -333,7 +333,7 @@ extension SafariApiProvider: MainAppApi {
 
         for (bundleId, count) in counts {
             if let blockerType = SafariBlockerType(contentBlockerIdentifier: bundleId) {
-                typedCounts[blockerType] = Int(count)
+                typedCounts[blockerType] = Int(clamping: count)
             } else {
                 unknownBundleIds.append(bundleId)
             }

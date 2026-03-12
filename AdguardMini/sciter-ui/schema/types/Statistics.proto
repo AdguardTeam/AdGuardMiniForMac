@@ -2,8 +2,6 @@ syntax = "proto3";
 
 option optimize_for = CODE_SIZE;
 
-import "PrimitivesWrappers.proto";
-
 enum StatisticsPeriod {
     StatisticsPeriod_day = 0;
     StatisticsPeriod_week = 1;

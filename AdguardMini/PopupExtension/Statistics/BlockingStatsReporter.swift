@@ -64,6 +64,7 @@ actor BlockingStatsReporterImpl: BlockingStatsReporter {
     func stop() async {
         self.flushTask?.cancel()
         self.flushTask = nil
+        await self.flush()
         LogInfo("BlockingStatsReporter stopped")
     }
 

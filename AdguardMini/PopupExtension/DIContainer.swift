@@ -40,6 +40,8 @@ final class DIContainer {
     private let popupViewModel: PopupView.ViewModel
     private let mainView: PopupView
 
+    private var reporterTask: Task<Void, Never>?
+
     private let filtersStorage: FiltersStorage = {
         let fileManager = AMFileManagerImpl()
         let fileStorage = GroupFolderFileServiceImpl(fileManager: fileManager)
@@ -81,7 +83,7 @@ final class DIContainer {
         self.popupViewModel.popupViewControllerDelegate = self.safariController
 
         self.blockingStatsReporter = BlockingStatsReporterImpl(safariApi: self.safariApiInteractor)
-        Task {
+        self.reporterTask = Task {
             await self.blockingStatsReporter.start()
         }
     }

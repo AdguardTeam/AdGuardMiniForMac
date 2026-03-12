@@ -30,19 +30,22 @@ actor AppResetServiceImpl: AppResetService {
     private let filtersSupervisor: FiltersSupervisor
     private let userSettings: UserSettingsService
     private let serviceSupervisor: ServiceSupervisor
+    private let statisticsService: StatisticsService
 
     init(
         _ lifecycle: AppLifecycleService,
         _ sharedStorage: SharedSettingsStorage,
         _ filtersSupervisor: FiltersSupervisor,
         _ userSettings: UserSettingsService,
-        _ serviceSupervisor: ServiceSupervisor
+        _ serviceSupervisor: ServiceSupervisor,
+        _ statisticsService: StatisticsService
     ) {
         self.lifecycle = lifecycle
         self.sharedStorage = sharedStorage
         self.filtersSupervisor = filtersSupervisor
         self.userSettings = userSettings
         self.serviceSupervisor = serviceSupervisor
+        self.statisticsService = statisticsService
     }
 
     func resetApp(request: Bool) async -> Bool {
@@ -72,6 +75,7 @@ actor AppResetServiceImpl: AppResetService {
         self.sharedStorage.resetStorage()
         await self.filtersSupervisor.reset()
         self.userSettings.resetSettings()
+        self.statisticsService.resetStatistics()
     }
 
     private func resetRequest() async -> Bool {

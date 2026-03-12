@@ -211,7 +211,7 @@ final class StatisticsStoreImpl: StatisticsStore {
             throw StatisticsStoreError.failedToLoadStore(error)
         }
 
-        LogWarn("Resetting corrupted statistics store at \(storeURL.path)")
+        LogError("Statistics store corrupted at \(storeURL.path). All accumulated statistics data will be lost. Original error: \(error)")
 
         do {
             try container.persistentStoreCoordinator.destroyPersistentStore(
