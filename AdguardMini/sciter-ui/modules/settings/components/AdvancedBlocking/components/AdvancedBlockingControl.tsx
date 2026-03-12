@@ -27,19 +27,21 @@ export function AdvancedBlockingControlComponent() {
     } = advancedBlocking.advancedBlocking;
     const { isLicenseOrTrialActive } = account;
 
-    const payedFuncsTitle = usePayedFuncsTitle(SettingsEvent.TryForFreeExtraClick);
-
     const isFree = !isLicenseOrTrialActive;
 
     const test = useABTest(ActiveABTest.AG_51019_advanced_settings);
     const isBVariant = test === ABTestOption.option_b;
+
+    const payedFuncsTitle = usePayedFuncsTitle(
+        isBVariant ? SettingsEvent.TryForFreeAbTest : SettingsEvent.TryForFreeExtraClick,
+    );
     const onAdguardExtraChange = (value: boolean) => {
         if (isFree && !isBVariant) {
             account.showPaywall();
             return;
         }
 
-        telemetry.trackEvent(SettingsEvent.AdguardExtraClick);
+        telemetry.trackEvent(isBVariant ? SettingsEvent.ExtraAbTest : SettingsEvent.AdguardExtraClick);
         advancedBlocking.updateAdguardExtra(value);
     };
 
@@ -50,17 +52,17 @@ export function AdvancedBlockingControlComponent() {
             return;
         }
         settings.updateRealTimeFiltersUpdate(value);
-        telemetry.trackEvent(SettingsEvent.RealTimeUpdatesClick);
+        telemetry.trackEvent(SettingsEvent.RealTimeAbTest);
     };
 
     const onUpdateAutoFilters = (value: boolean) => {
         settings.updateAutoFiltersUpdate(value);
-        telemetry.trackEvent(SettingsEvent.UpdateFiltersAutoClick);
+        telemetry.trackEvent(SettingsEvent.EnableUpdatesAbTest);
     };
 
     return (
         <>
-            <AdvancedBlockingTitle tryContent={payedFuncsTitle ? (
+            <AdvancedBlockingTitle tryContent={payedFuncsTitle && isBVariant ? (
                 <div className={s.AdvancedBlockingControl_payedTitle}>{payedFuncsTitle}</div>
             ) : undefined}
             />

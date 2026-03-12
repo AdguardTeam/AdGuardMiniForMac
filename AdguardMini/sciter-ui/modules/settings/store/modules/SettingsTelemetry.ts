@@ -73,6 +73,10 @@ export enum SettingsEvent {
     FlagClick = 'flag_click',
     NoRestoreSubscribeClick = 'no_restore_subscribe_click',
     CreateRuleClick = 'create_rule_click',
+    TryForFreeAbTest = 'try_for_free_ab_test',
+    EnableUpdatesAbTest = 'enable_updates_ab_test',
+    ExtraAbTest = 'extra_ab_test',
+    RealTimeAbTest = 'real_time_ab_test',
 }
 
 /**
