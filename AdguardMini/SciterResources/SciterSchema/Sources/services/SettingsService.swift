@@ -134,6 +134,14 @@ public protocol SettingsServiceProtocol
 	func updateTheme (
 						_ message: UpdateThemeMessage,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void
+	/// Get blocking statistics
+	func getStatistics (
+						_ message: StatisticsRequest,
+						_ promise: @escaping (StatisticsResponse) -> Void) -> Void
+	/// Reset all statistics
+	func resetStatistics (
+						_ message: EmptyValue,
+						_ promise: @escaping (EmptyValue) -> Void) -> Void
 }
 
 // MARK: Protobuf Bridge definition
@@ -512,6 +520,30 @@ open class SettingsService: SciterBridge
 			inputType: UpdateThemeMessage.self,
 			outputType: EmptyValue.self,
 			method: cast.updateTheme(_:_:),
+			message,
+			promise
+		)
+	}
+
+	/// Wrapper for `GetStatistics`
+	@objc func GetStatistics(_ message: Data, promise: @escaping (Data) -> Void)
+	{
+		swiftCall(
+			inputType: StatisticsRequest.self,
+			outputType: StatisticsResponse.self,
+			method: cast.getStatistics(_:_:),
+			message,
+			promise
+		)
+	}
+
+	/// Wrapper for `ResetStatistics`
+	@objc func ResetStatistics(_ message: Data, promise: @escaping (Data) -> Void)
+	{
+		swiftCall(
+			inputType: EmptyValue.self,
+			outputType: EmptyValue.self,
+			method: cast.resetStatistics(_:_:),
 			message,
 			promise
 		)
