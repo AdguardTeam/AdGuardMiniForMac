@@ -624,6 +624,9 @@
 				SafariExtensions/SafariExtensionStateStorage.swift,
 				SafariExtensions/SafariExtensionStatusManager/SafariExtensionStatusManagerProtocol.swift,
 				Sciter/SciterCallbackService/SciterCallbackService.swift,
+				Statistics/BlockingStatistics.xcdatamodeld,
+				Statistics/StatisticsService.swift,
+				Statistics/StatisticsStore.swift,
 			);
 			target = EB843F052B90ED15009179E0 /* AdguardMiniTests */;
 		};

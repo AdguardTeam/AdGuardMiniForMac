@@ -20,12 +20,12 @@ enum StatisticsPeriod {
     case year
     case all
 
-    func datePredicate(calendar: Calendar = .current) -> NSPredicate? {
+    func datePredicate(referenceDate: Date = Date(), calendar: Calendar = .current) -> NSPredicate? {
         guard let inclusiveDaysCount else {
             return nil
         }
 
-        let today = calendar.startOfDay(for: Date())
+        let today = calendar.startOfDay(for: referenceDate)
         let daysBeforeToday = inclusiveDaysCount - 1
 
         guard
@@ -96,6 +96,14 @@ final class StatisticsStoreImpl: StatisticsStore {
             try Self.recoverPersistentStore(in: persistentContainer, after: error)
         }
 
+        let context = persistentContainer.viewContext
+        context.automaticallyMergesChangesFromParent = true
+
+        self.persistentContainer = persistentContainer
+        self.context = context
+    }
+
+    init(persistentContainer: NSPersistentContainer) {
         let context = persistentContainer.viewContext
         context.automaticallyMergesChangesFromParent = true
 
