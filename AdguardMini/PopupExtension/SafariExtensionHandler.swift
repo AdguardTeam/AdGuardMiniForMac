@@ -124,9 +124,7 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 
         LogDebug("Content blocker \(blockerType) blocked \(urls.count) resource(s)")
 
-        Task {
-            await self.statsReporter.incrementCount(for: blockerType, by: urls.count)
-        }
+        self.statsReporter.enqueueIncrement(for: blockerType, by: urls.count)
     }
 
     // This is required by the signature of the function we're overwriting

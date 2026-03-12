@@ -59,7 +59,8 @@ final class StatisticsServiceImpl: StatisticsService {
         do {
             try self.store.addCounts(counts)
         } catch {
-            LogError("Failed to add block counts: \(error)")
+            let countsDesc = counts.map { "\($0.key)=\($0.value)" }.joined(separator: ", ")
+            LogError("Failed to add block counts [\(countsDesc)]: \(error)")
         }
     }
 
@@ -67,7 +68,8 @@ final class StatisticsServiceImpl: StatisticsService {
         do {
             return try self.store.queryStatistics(for: period, blockerType: blockerType)
         } catch {
-            LogError("Failed to query statistics: \(error)")
+            let blockerTypeDesc = blockerType.map { "blocker=\($0)" } ?? "all blockers"
+            LogError("Failed to query statistics for period=\(period.displayName), \(blockerTypeDesc): \(error)")
             return 0
         }
     }

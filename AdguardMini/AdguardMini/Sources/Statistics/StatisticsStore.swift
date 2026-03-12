@@ -32,7 +32,7 @@ enum StatisticsPeriod {
             let start = calendar.date(byAdding: .day, value: -daysBeforeToday, to: today),
             let end = calendar.date(byAdding: .day, value: 1, to: today)
         else {
-            LogError("Failed to build date predicate for period: \(self)")
+            LogError("Failed to build date predicate for period: \(self.displayName)")
             return nil
         }
 
@@ -46,6 +46,22 @@ enum StatisticsPeriod {
         case .month:  30
         case .year:  365
         case .all:   nil
+        }
+    }
+}
+
+extension StatisticsPeriod: CustomStringConvertible {
+    var description: String {
+        self.displayName
+    }
+
+    var displayName: String {
+        switch self {
+        case .day:   "day"
+        case .week:  "week"
+        case .month: "month"
+        case .year:  "year"
+        case .all:   "all time"
         }
     }
 }
@@ -132,13 +148,13 @@ final class StatisticsStoreImpl: StatisticsStore {
 
                 if let existing = results.first {
                     existing.count += count64
-                    LogDebug("Updated \(blockerType): \(existing.count - count64) + \(count) = \(existing.count)")
+                    LogDebug("Updated stats for \(blockerType) on \(today): \(existing.count - count64) + \(count) = \(existing.count)")
                 } else {
                     let newRecord = DailyBlockCount(context: self.context)
                     newRecord.date = today
                     newRecord.blockerType = blockerTypeString
                     newRecord.count = count64
-                    LogDebug("Created \(blockerType): \(count)")
+                    LogDebug("Created stats for \(blockerType) on \(today): \(count)")
                 }
             }
 
@@ -167,9 +183,10 @@ final class StatisticsStoreImpl: StatisticsStore {
                 partial + item.count
             }
 
-            LogDebug("Query \(period) \(blockerType.map { "\($0)" } ?? "all"): \(results.count) records, total: \(total)")
+            let blockerTypeDesc = blockerType.map { "blocker=\($0)" } ?? "all blockers"
+            LogDebug("Query stats for period=\(period.displayName), \(blockerTypeDesc): \(results.count) records, total: \(total)")
 
-            return Int(total)
+            return Int(clamping: total)
         }
     }
 

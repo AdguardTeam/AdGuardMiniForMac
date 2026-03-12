@@ -14,6 +14,7 @@ import AML
 
 protocol BlockingStatsReporter {
     func incrementCount(for blockerType: SafariBlockerType, by count: Int) async
+    func enqueueIncrement(for blockerType: SafariBlockerType, by count: Int)
     func start() async
     func stop() async
 }
@@ -49,10 +50,8 @@ actor BlockingStatsReporterImpl: BlockingStatsReporter {
 
         LogInfo("BlockingStatsReporter started with \(self.flushInterval)s interval")
 
-        self.flushTask = Task { [weak self] in
+        self.flushTask = Task {
             while !Task.isCancelled {
-                guard let self else { break }
-
                 try? await Task.sleep(seconds: self.flushInterval)
 
                 guard !Task.isCancelled else { break }
@@ -72,6 +71,10 @@ actor BlockingStatsReporterImpl: BlockingStatsReporter {
         self.counters[blockerType, default: 0] += count
     }
 
+    nonisolated func enqueueIncrement(for blockerType: SafariBlockerType, by count: Int) {
+        Task { await self.incrementCount(for: blockerType, by: count) }
+    }
+
     // MARK: Private methods
 
     private func flush() async {
@@ -79,7 +82,8 @@ actor BlockingStatsReporterImpl: BlockingStatsReporter {
 
         let batch = self.counters
 
-        LogDebug("Flushing statistics batch: \(batch)")
+        let totalCount = batch.values.reduce(0, +)
+        LogDebug("Flushing statistics: \(batch.count) type(s), \(totalCount) total blocks")
 
         do {
             try await self.safariApi.reportBlockCounts(batch)
