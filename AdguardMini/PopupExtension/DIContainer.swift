@@ -30,6 +30,7 @@ final class DIContainer {
     let safariApiInteractor: SafariApiInteractor
     let sharedSettingsStorage: SharedSettingsStorage = SharedSettingsStorageImpl()
     let mainAppDiscovery: MainAppDiscovery = MainAppDiscoveryImpl()
+    let blockingStatsReporter: BlockingStatsReporter
 
     // MARK: Private properties
 
@@ -78,5 +79,10 @@ final class DIContainer {
         self.safariController = PopupViewController(mainView: self.mainView, viewModel: self.popupViewModel)
 
         self.popupViewModel.popupViewControllerDelegate = self.safariController
+
+        self.blockingStatsReporter = BlockingStatsReporterImpl(safariApi: self.safariApiInteractor)
+        Task {
+            await self.blockingStatsReporter.start()
+        }
     }
 }

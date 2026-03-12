@@ -86,6 +86,7 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
     private let toolbarHandler: ToolbarHandler
     private let advancedBlockerHandler: AdvancedBlockerHandler
     private let appDiscovery: MainAppDiscovery
+    private let statsReporter: BlockingStatsReporter
 
     // MARK: Init
 
@@ -98,6 +99,7 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
         self.toolbarHandler = container.toolbarHandler
         self.advancedBlockerHandler = container.advancedBlockerHandler
         self.appDiscovery = container.mainAppDiscovery
+        self.statsReporter = container.blockingStatsReporter
 
         super.init()
     }
@@ -107,6 +109,25 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
     }
 
     // MARK: Overrides
+
+    override func contentBlocker(
+        withIdentifier contentBlockerIdentifier: String,
+        blockedResourcesWith urls: [URL],
+        on page: SFSafariPage
+    ) {
+        guard !urls.isEmpty else { return }
+
+        guard let blockerType = SafariBlockerType(contentBlockerIdentifier: contentBlockerIdentifier) else {
+            LogWarn("Unknown content blocker identifier: \(contentBlockerIdentifier)")
+            return
+        }
+
+        LogDebug("Content blocker \(blockerType) blocked \(urls.count) resource(s)")
+
+        Task {
+            await self.statsReporter.incrementCount(for: blockerType, by: urls.count)
+        }
+    }
 
     // This is required by the signature of the function we're overwriting
     // swiftlint:disable:next discouraged_optional_collection
