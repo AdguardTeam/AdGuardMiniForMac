@@ -24,6 +24,11 @@ private enum Constants {
     static var appStoreLink: URL {
         URL(string: "macappstore://apps.apple.com/app/id1440147259")!
     }
+
+    static var appStoreReviewLink: URL {
+        URL(string: "macappstore://apps.apple.com/app/id1440147259?action=write-review")!
+    }
+
     static var appStoreSubscriptionsLink: URL {
         URL(string: "macappstore://apps.apple.com/account/subscriptions")!
     }
