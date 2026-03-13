@@ -369,6 +369,11 @@ extension Sciter {
             NSWorkspace.shared.open(Constants.appStoreLink)
             promise(EmptyValue())
         }
+
+        func requestOpenAppStoreReview(_ message: EmptyValue, _ promise: @escaping (EmptyValue) -> Void) {
+            NSWorkspace.shared.open(Constants.appStoreReviewLink)
+            promise(EmptyValue())
+        }
     }
 }
 
