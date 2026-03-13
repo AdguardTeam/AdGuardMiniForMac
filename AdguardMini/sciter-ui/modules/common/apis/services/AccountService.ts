@@ -32,6 +32,8 @@ interface IAccountService {
 	RequestOpenSubscriptions(param:EmptyValue): Promise<EmptyValue>;
 	/* Request opening app store page */
 	RequestOpenAppStore(param:EmptyValue): Promise<EmptyValue>;
+	/* Request opening app store review page */
+	RequestOpenAppStoreReview(param:EmptyValue): Promise<EmptyValue>;
 }
 
 /**
@@ -230,6 +232,21 @@ export class AccountService implements IAccountService {
 		const data = EmptyValue.deserializeBinary(res);
 
 		log.dbg('Response data', 'AccountService.RequestOpenAppStore', data.toObject());
+		return data;
+	};
+
+	/**
+	 * Request opening app store review page
+	 * @param EmptyValue param
+	 * @returns EmptyValue param
+	 */
+	RequestOpenAppStoreReview = async (param: EmptyValue): Promise<EmptyValue> => {
+		log.dbg('Request data', 'AccountService.RequestOpenAppStoreReview', param.toObject());
+
+		const res = await xcall('AccountService.RequestOpenAppStoreReview', param.serializeBinary().buffer);
+		const data = EmptyValue.deserializeBinary(res);
+
+		log.dbg('Response data', 'AccountService.RequestOpenAppStoreReview', data.toObject());
 		return data;
 	};
 
