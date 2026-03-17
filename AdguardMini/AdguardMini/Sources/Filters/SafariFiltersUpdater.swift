@@ -38,7 +38,6 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
 
     private let debouncer = Debouncer(debounceTimeSeconds: Constants.debounceTime)
     private var hasPendingUpdates: Bool = false
-    private var currentUpdateTask: Task<Void, Never>?
 
     // For debugging duplicate updates
     private var updateCounter: Int = 0
@@ -62,8 +61,8 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
     }
 
     private func checkCancellation(_ progress: Progress) throws {
-        try Task.checkCancellation()
-        if progress.isCancelled {
+        if Task.isCancelled {
+            progress.cancel()
             throw CancellationError()
         }
     }
@@ -82,96 +81,109 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
 
     @objc
     func updateSafariFilters() {
+        var shouldUpdate = false
         locked(self.lk) {
             guard self.isStarted
             else {
                 self.hasPendingUpdates = true
                 return
             }
+            shouldUpdate = true
+        }
 
-            // Cancel previous task if it's still running (new state requires fresh update)
-            if let currentTask = self.currentUpdateTask, !currentTask.isCancelled {
-                currentTask.cancel()
+        guard shouldUpdate else { return }
+        self.scheduleUpdate()
+    }
+
+    private func scheduleUpdate() {
+        Task {
+            await self.debouncer.debounce { [weak self] in
+                guard let self else { return }
+                await self.performUpdate()
             }
-
-            self.currentUpdateTask = self.createUpdateTask()
         }
     }
 
-    private func createUpdateTask() -> Task<Void, Never> {
-        Task {
-            let progress = Progress(totalUnitCount: 4)
+    private func performUpdate() async {
+        let progress = Progress(totalUnitCount: 4)
 
-            await self.debouncer.debounce { [weak self] in
-                guard let self else { return }
+        // Reset pending updates flag at the start
+        self.hasPendingUpdates = false
 
-                // Reset pending updates flag at the start
-                self.hasPendingUpdates = false
+        self.updateCounter += 1
+        let updateId = self.updateCounter
+        LogInfo("Safari filters update started (ID: \(updateId))")
 
-                self.updateCounter += 1
-                let updateId = self.updateCounter
-                LogInfo("Safari filters update started (ID: \(updateId))")
+        do {
+            // Wrap the entire update in a cancellation handler so that
+            // progress.cancel() fires immediately when debounceTask is cancelled,
+            // even if the code is deep inside SafariConverter's Task.detached.
+            try await withTaskCancellationHandler {
+                try self.checkCancellation(progress)
 
-                do {
-                    try self.checkCancellation(progress)
+                // Stage 1: Get filters for conversion
 
-                    // Stage 1: Get filters for conversion
+                var rawFilters = self.filterListManager.getActiveRulesInfo()
 
-                    var rawFilters = self.filterListManager.getActiveRulesInfo()
+                try self.checkCancellation(progress)
 
-                    try self.checkCancellation(progress)
-
-                    if !self.userSettingsService.languageSpecific {
-                        rawFilters = rawFilters.filter { filter in
-                            filter.groupId != FiltersDefinedGroup.languageSpecific.id
-                        }
+                if !self.userSettingsService.languageSpecific {
+                    rawFilters = rawFilters.filter { filter in
+                        filter.groupId != FiltersDefinedGroup.languageSpecific.id
                     }
-
-                    progress.completedUnitCount += 1
-
-                    try self.checkCancellation(progress)
-
-                    // Stage 2: Reset converted filters storage
-
-                    self.safariFiltersStorage.resetStorage()
-                    progress.completedUnitCount += 1
-
-                    try self.checkCancellation(progress)
-
-                    // Stage 3: Convert rules and save
-
-                    let updatedBlockers = self.safariConverter.convertRulesAndSave(
-                        filters: rawFilters,
-                        advanced: self.userSettingsService.advancedBlockingState.advancedRules,
-                        progress: progress
-                    )
-                    progress.completedUnitCount += 1
-
-                    try self.checkCancellation(progress)
-
-                    // Stage 4: Reload content blockers
-
-                    await withTaskGroup(of: Void.self) { group in
-                        for await blocker in updatedBlockers {
-                            group.addTask {
-                                let blockerType = blocker.blockerType
-                                LogDebug("Blocker \(blockerType) conversion info: \(blocker.conversionInfo)")
-                                await self.safariExtensionManager.reloadContentBlocker(blockerType)
-                            }
-                        }
-                    }
-
-                    progress.completedUnitCount += 1
-
-                    LogInfo("Safari filters update ended (ID: \(updateId))")
-                } catch is CancellationError {
-                    LogInfo("Safari filters update was cancelled (ID: \(updateId))")
-                } catch {
-                    LogError("Safari filters update failed (ID: \(updateId)): \(error)")
                 }
+
+                progress.completedUnitCount += 1
+
+                try self.checkCancellation(progress)
+
+                // Stage 2: Reset converted filters storage
+
+                self.safariFiltersStorage.resetStorage()
+                progress.completedUnitCount += 1
+
+                try self.checkCancellation(progress)
+
+                // Stage 3: Convert rules and save
+
+                let updatedBlockers = self.safariConverter.convertRulesAndSave(
+                    filters: rawFilters,
+                    advanced: self.userSettingsService.advancedBlockingState.advancedRules,
+                    progress: progress
+                )
+                progress.completedUnitCount += 1
+
+                try self.checkCancellation(progress)
+
+                // Stage 4: Reload content blockers
+
+                var blockersToReload: [SafariConversionResult] = []
+                for await blocker in updatedBlockers {
+                    blockersToReload.append(blocker)
+                }
+
+                try self.checkCancellation(progress)
+
+                await withTaskGroup(of: Void.self) { group in
+                    for blocker in blockersToReload {
+                        group.addTask {
+                            let blockerType = blocker.blockerType
+                            LogDebug("Blocker \(blockerType) conversion info: \(blocker.conversionInfo)")
+                            await self.safariExtensionManager.reloadContentBlocker(blockerType)
+                        }
+                    }
+                }
+
+                progress.completedUnitCount += 1
+
+                LogInfo("Safari filters update ended (ID: \(updateId))")
             } onCancel: {
                 progress.cancel()
             }
+        } catch is CancellationError {
+            LogInfo("Safari filters update was cancelled (ID: \(updateId))")
+        } catch {
+            LogError("Safari filters update failed (ID: \(updateId)): \(error)")
         }
     }
 }
