@@ -34,6 +34,10 @@ extend AG
 ensure_bundle_exec
 
 before_all do |lane, options|
+  # Prepend bin/ to PATH so toolchain wrappers are used
+  project_bin = File.expand_path('../bin', __dir__)
+  ENV['PATH'] = "#{project_bin}:#{ENV['PATH']}"
+
   @is_bamboo = ENV['bamboo_agentId'] && true
 
   unless %i[

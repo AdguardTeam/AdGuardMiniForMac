@@ -6,15 +6,14 @@
 
 set -e
 
-# Use not system ruby
-export PATH="/opt/homebrew/opt/ruby/bin:/opt/homebrew/bin:$PATH"
+PROJECT_ROOT="${SRCROOT}/.."
+YARN="${PROJECT_ROOT}/bin/yarn"
+
+[ -x "$YARN" ] || {
+    echo "Error: Toolchain not configured. Run ./configure.sh" >&2
+    exit 1
+}
 
 cd "${SRCROOT}/PopupExtension/ContentScript"
-
-if [ ${bamboo_agentId} ]; then
-    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-    nvm use 22
-fi
-
-yarn install
-yarn build "${AGP_ADVANCED_SCRIPT_FILE}"
+"$YARN" install
+"$YARN" build "${AGP_ADVANCED_SCRIPT_FILE}"

@@ -30,7 +30,7 @@ xcodebuild \
 
 # Generate appcast
 
-bundle exec fastlane generate_appcast \
+bin/fastlane generate_appcast \
     config:${CONFIGURATION} \
     output:"${APPCAST_PATH}" \
     updates:"${BUILD_PATH}" \

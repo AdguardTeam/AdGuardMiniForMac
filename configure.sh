@@ -6,7 +6,8 @@
 
 set -e
 
-export PATH="/opt/homebrew/opt/ruby/bin:/opt/homebrew/bin:$PATH"
+# Load toolchain setup
+source "`dirname $0`/Support/Scripts/include/configure_toolchain.inc"
 
 # Check for newer version of a git repository.
 # Usage: check_latest_version <repo_url> <current_tag> <friendly_name>
@@ -48,6 +49,8 @@ if [ -f ../adguard-mini-private/config.env ]; then
     source ../adguard-mini-private/config.env
 fi
 
+setup_toolchain
+
 if [[ "$1" == "dev" ]]; then
     # Clone support-scripts
 
@@ -70,7 +73,7 @@ if [[ "$1" == "dev" ]]; then
 
     # Clone SDD workflows
 
-    SDD_WORKFLOWS_TAG="v1.6.0"
+    SDD_WORKFLOWS_TAG="v2.0.1"
     if [ -z "$SDD_WORKFLOWS_GIT" ]; then
         echo "Error: SDD_WORKFLOWS_GIT not set. Source ../adguard-mini-private/config.env or set via environment."
         exit 1
@@ -99,6 +102,9 @@ fi
 
 bundle install
 
+# Generate Bundler binstubs with bin/ruby shebang
+bundle binstubs --all --force --shebang "$PWD/bin/ruby"
+
 if [ ! ${bamboo_no_need_private_vars} ]; then
     if [ -z "$KEYCHAIN_GIT" ]; then
         echo "Error: KEYCHAIN_GIT not set. Source ../adguard-mini-private/config.env or set via environment."
@@ -109,7 +115,7 @@ if [ ! ${bamboo_no_need_private_vars} ]; then
     git clone $KEYCHAIN_GIT
     popd
 
-    bundle exec fastlane create_sens_config
+    bin/fastlane create_sens_config
 fi
 
 # Activate python venv and install components
@@ -123,7 +129,7 @@ if [ "$1" == "dev" ]; then
     "`dirname $0`/Support/Scripts/install_protoc_tools.sh"
 
     # syncs certificates for `MAS` distribution
-    bundle exec fastlane certs config:MAS
+    bin/fastlane certs config:MAS
     # syncs certificates for `Standalone` distribution
-    bundle exec fastlane certs config:Debug
+    bin/fastlane certs config:Debug
 fi

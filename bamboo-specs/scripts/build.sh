@@ -9,7 +9,7 @@ set -e -x
 CONFIGURATION="${1}"
 OBTAIN_VERSION="${2:-true}"
 
-bundle exec fastlane build \
+bin/fastlane build \
     config:"$CONFIGURATION" \
     obtain_version:"${OBTAIN_VERSION}" \
     notarize:"${bamboo_build_notarize}"

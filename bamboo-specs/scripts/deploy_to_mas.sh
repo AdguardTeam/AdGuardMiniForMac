@@ -14,4 +14,4 @@ ARCHIVE_PATH="$BUILD_DIR/$ARCHIVE_NAME"
 
 /usr/bin/ditto -x -k "$BUILD_DIR/MAS/$ZIP_ARCHIVE_NAME" "$BUILD_DIR/"
 
-bundle exec fastlane upload_to_mas archive:"$ARCHIVE_PATH"
+bin/fastlane upload_to_mas archive:"$ARCHIVE_PATH"
