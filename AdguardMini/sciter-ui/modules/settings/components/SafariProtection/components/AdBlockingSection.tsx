@@ -2,33 +2,40 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { observer } from 'mobx-react-lite';
+
 import { ABTestOption, ActiveABTest } from 'Apis/types';
-import { useABTest, useSettingsStore } from 'SettingsLib/hooks';
+import { useABTest, useNotificationSomethingWentWrongText, useSettingsStore } from 'SettingsLib/hooks';
 import { RouteName, SettingsEvent } from 'SettingsStore/modules';
 import theme from 'Theme';
 import { Text } from 'UILib';
 
 import { AdvancedRulesSwitch } from '../../AdvancedBlocking/components/AdvancedRulesSwitch';
 import { SettingsItemSwitch } from '../../SettingsItem';
-import { useSafariProtectionContext } from '../hooks/useSafariProtectionContext';
 import s from '../SafariProtection.module.pcss';
 
 /**
  * Ad blocking section for Safari protection
  */
-export function AdBlockingSection() {
+function AdBlockingSectionComponent() {
     const { safariProtection, filters, telemetry } = useSettingsStore();
-    const { createErrorWrapper } = useSafariProtectionContext();
+    const notifyError = useNotificationSomethingWentWrongText();
 
-    const onToggleBlockAds = createErrorWrapper(async (value) => {
+    const onToggleBlockAds = async (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.BlockAdsProtectionClick);
-        return safariProtection.updateBlockAds(value);
-    });
+        const error = await safariProtection.updateBlockAds(value);
+        if (error) {
+            notifyError();
+        }
+    };
 
-    const onToggleBlockSearchAds = createErrorWrapper(async (value) => {
+    const onToggleBlockSearchAds = async (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.BlockSearchAds);
-        return safariProtection.updateBlockSearchAds(value);
-    });
+        const error = await safariProtection.updateBlockSearchAds(value);
+        if (error) {
+            notifyError();
+        }
+    };
 
     const onToggleLanguageSpecific = (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.LanguageAdBlockingClick);
@@ -67,3 +74,5 @@ export function AdBlockingSection() {
         </div>
     );
 }
+
+export const AdBlockingSection = observer(AdBlockingSectionComponent);

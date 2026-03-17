@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { observer } from 'mobx-react-lite';
+
 import { useSettingsStore } from 'SettingsLib/hooks';
 import { ReportProblemVariant } from 'SettingsStore/modules';
 
@@ -10,7 +12,7 @@ import { SettingsTitle } from '../../SettingsTitle';
 /**
  * Safari protection title component
  */
-export function SafariProtectionTitle() {
+function SafariProtectionTitleComponent() {
     const { ui } = useSettingsStore();
 
     return (
@@ -23,3 +25,5 @@ export function SafariProtectionTitle() {
         />
     );
 }
+
+export const SafariProtectionTitle = observer(SafariProtectionTitleComponent);

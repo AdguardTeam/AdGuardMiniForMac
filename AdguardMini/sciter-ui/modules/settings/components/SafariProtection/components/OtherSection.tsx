@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { observer } from 'mobx-react-lite';
+
 import { useOtherEnabledFilters, useSettingsStore } from 'SettingsLib/hooks';
 import { RouteName, SettingsEvent } from 'SettingsStore/modules';
 import theme from 'Theme';
@@ -15,7 +17,7 @@ import type { FiltersPageParams } from 'SettingsLib/const/routeParams';
 /**
  * Other section for Safari protection
  */
-export function OtherSection() {
+function OtherSectionComponent() {
     const { safariProtection, filters } = useSettingsStore();
     const otherEnabledFiltersIds = useOtherEnabledFilters();
 
@@ -48,3 +50,5 @@ export function OtherSection() {
         </div>
     );
 }
+
+export const OtherSection = observer(OtherSectionComponent);

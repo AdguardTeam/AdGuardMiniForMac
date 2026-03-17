@@ -10,3 +10,4 @@ export * from './usePayedFuncsTitle';
 export * from './useOtherEnabledFilters';
 export * from './useABTests';
 export * from './useTheme';
+export * from './useNotificationSomethingWentWrongText';

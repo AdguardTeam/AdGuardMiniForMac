@@ -2,26 +2,30 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { useSettingsStore } from 'SettingsLib/hooks';
+import { observer } from 'mobx-react-lite';
+
+import { useSettingsStore, useNotificationSomethingWentWrongText } from 'SettingsLib/hooks';
 import { SettingsEvent } from 'SettingsStore/modules';
 import theme from 'Theme';
 import { Text } from 'UILib';
 
 import { SettingsItemSwitch } from '../../SettingsItem';
-import { useSafariProtectionContext } from '../hooks/useSafariProtectionContext';
 import s from '../SafariProtection.module.pcss';
 
 /**
  * Tracking section for Safari protection
  */
-export function TrackingSection() {
+function TrackingSectionComponent() {
     const { safariProtection, telemetry } = useSettingsStore();
-    const { createErrorWrapper } = useSafariProtectionContext();
+    const notifyError = useNotificationSomethingWentWrongText();
 
-    const onToggleBlockTrackers = createErrorWrapper(async (value) => {
+    const onToggleBlockTrackers = async (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.BlockTrackerClick);
-        return safariProtection.updateBlockTrackers(value);
-    });
+        const error = await safariProtection.updateBlockTrackers(value);
+        if (error) {
+            notifyError();
+        }
+    };
 
     return (
         <div className={s.SafariProtection_block}>
@@ -36,3 +40,5 @@ export function TrackingSection() {
         </div>
     );
 }
+
+export const TrackingSection = observer(TrackingSectionComponent);

@@ -2,25 +2,51 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { useSettingsStore } from 'SettingsLib/hooks';
+import { observer } from 'mobx-react-lite';
+
+import { useNotificationSomethingWentWrongText, useSettingsStore } from 'SettingsLib/hooks';
 import theme from 'Theme';
 import { ConsentModal, Modal } from 'UILib';
 
-import { useSafariProtectionContext } from '../hooks/useSafariProtectionContext';
+type SafariProtectionModalsProps = {
+    showConsentFilterIds?: number[];
+    showLoginItemModal?: boolean;
+    closeConsentModal(): void;
+    closeLoginItemModal(): void;
+};
 
 /**
  * Safari protection modals component
  */
-export function SafariProtectionModals() {
-    const { filters } = useSettingsStore();
-    const {
-        showConsentFilterIds,
-        showLoginItemModal,
-        closeConsentModal,
-        closeLoginItemModal,
-        enableConsent,
-        openLoginItemsSettings,
-    } = useSafariProtectionContext();
+export function SafariProtectionModalsComponent({
+    showConsentFilterIds,
+    showLoginItemModal,
+    closeConsentModal,
+    closeLoginItemModal,
+}: SafariProtectionModalsProps) {
+    const { filters, settings } = useSettingsStore();
+    const notifyError = useNotificationSomethingWentWrongText();
+
+    const enableConsent = async () => {
+        if (!showConsentFilterIds) {
+            return;
+        }
+
+        const { consentFiltersIds } = settings.settings;
+        const newConsent = [...consentFiltersIds, ...showConsentFilterIds];
+        settings.updateUserConsent(newConsent);
+
+        const error = await filters.switchFiltersState(showConsentFilterIds, true);
+        if (error) {
+            notifyError();
+        }
+
+        closeConsentModal();
+    };
+
+    const openLoginItemsSettings = () => {
+        settings.openLoginItemsSettings();
+    };
 
     const {
         filters: { filters: filtersArr },
@@ -50,3 +76,5 @@ export function SafariProtectionModals() {
         </>
     );
 }
+
+export const SafariProtectionModals = observer(SafariProtectionModalsComponent);

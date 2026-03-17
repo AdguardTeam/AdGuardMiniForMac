@@ -243,7 +243,7 @@ export function useStoriesConfig(): StoryInfo[] {
                 frameId: 'filters3',
             }, {
                 title: translate('tray.story.filters.title.4'),
-                description: translate('tray.story.filters.desc.4'),
+                description: translate('tray.story.filters.desc.4', { i: (text: string) => <i id="tray.story.filters.desc.4">{text}</i> }),
                 image: 'filters4',
                 frameId: 'filters4',
             }, {
