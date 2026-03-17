@@ -72,26 +72,16 @@ extension SafariFiltersStorageImpl: SafariFiltersStorage {
     }
 
     func resetStorage() {
+        let fileManager = FileManager.default
+
         for type in SafariBlockerType.allCases {
+            let url = self.rulesUrl(for: type)
+            guard fileManager.fileExists(atPath: url.path) else { continue }
+
             do {
-                if type == .advanced {
-                    let items = try FileManager.default.contentsOfDirectory(
-                        at: self.rulesUrl(for: type),
-                        includingPropertiesForKeys: nil,
-                        options: []
-                    )
-                    for url in items {
-                        do {
-                            try FileManager.default.removeItem(at: url)
-                        } catch {
-                            LogWarn("Could not remove \(url.lastPathComponent): \(error)")
-                        }
-                    }
-                } else {
-                    try FileManager.default.removeItem(at: self.rulesUrl(for: type))
-                }
+                try fileManager.removeItem(at: url)
             } catch {
-                LogWarn("Can't remove stored rules: \(error)")
+                LogWarn("Can't remove stored rules for \(type): \(error)")
             }
         }
     }
