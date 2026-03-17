@@ -243,7 +243,7 @@ fastlane/keychain/
 bin/
 buildServer.json
 
-specs/.current/
+specs/
 
 support-scripts
 
