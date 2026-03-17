@@ -186,6 +186,8 @@ extension SafariExtensionStateServiceImpl: ConversionStateDelegate {
         switch result.conversionInfo {
         case .success(let info):
             conversionInfo = info
+        case .failure(.cancelled):
+            LogDebug("Conversion of \(result.blockerType) was cancelled")
         case .failure(let error):
             LogError("Conversion of \(result.blockerType) failed: \(error)")
             extensionStateError = .converterError

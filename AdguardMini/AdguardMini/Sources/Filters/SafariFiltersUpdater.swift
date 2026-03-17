@@ -118,9 +118,6 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
         LogInfo("Safari filters update started (ID: \(updateId))")
 
         do {
-            // Wrap the entire update in a cancellation handler so that
-            // progress.cancel() fires immediately when debounceTask is cancelled,
-            // even if the code is deep inside SafariConverter's Task.detached.
             try await withTaskCancellationHandler {
                 try self.checkCancellation(progress)
 
