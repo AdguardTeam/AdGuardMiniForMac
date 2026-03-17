@@ -47,6 +47,7 @@ extension ServiceLocator {
         (client as? FiltersSupervisorDependent)?.filtersSupervisor = self.filtersSupervisor
         (client as? SystemInfoManagerDependent)?.systemInfoManager = self.coreDIContainer.systemInfoManager
         (client as? ProtectionServiceDependent)?.protectionService = self.protectionService
+        (client as? StatisticsServiceDependent)?.statisticsService = self.statisticsService
         (client as? AppLifecycleServiceDependent)?.appLifecycleService = self.appLifecycleService
         (client as? ImportExportServiceDependent)?.importExportService = self.importExportService
         (client as? UserSettingsManagerDependent)?.userSettingsManager = self.userSettingsManager
@@ -261,6 +262,16 @@ private final class ServiceLocator {
         licenseStateProvider: self.licenseStateProvider
     )
 
+    private lazy var statisticsService: StatisticsService = {
+        do {
+            let store = try StatisticsStoreImpl()
+            return StatisticsServiceImpl(store: store)
+        } catch {
+            LogError("Failed to initialize StatisticsStore: \(error). Using no-op implementation.")
+            return NoOpStatisticsService()
+        }
+    }()
+
     private lazy var safariApiHandler: SafariApiHandler = {
         SafariApiProvider(
             proxyStorage: self.xpcConnectionStorage,
@@ -273,6 +284,7 @@ private final class ServiceLocator {
             telemetry: self.telemetryService,
             keychain: self.coreDIContainer.keychain,
             eventBus: self.eventBus,
+            statisticsService: self.statisticsService,
             appStoreRateUs: {
                 #if MAS
                 return self.appStoreRateUs
@@ -419,7 +431,8 @@ private final class ServiceLocator {
             SharedDIContainer.shared.sharedSettingsStorage,
             self.filtersSupervisor,
             self.userSettingsService,
-            self.serviceSupervisor
+            self.serviceSupervisor,
+            self.statisticsService
         )
     }()
 

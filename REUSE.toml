@@ -52,6 +52,7 @@ path = [
     "AdguardMini/PopupExtension/ContentScript/rollup.config.ts",
     "AdguardMini/PopupExtension/ContentScript/src/index.ts",
     "AdguardMini/PopupExtension/ContentScript/src/logger.ts",
+    "**/*.xcdatamodeld/**",
 ]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "AdGuard Software Limited"

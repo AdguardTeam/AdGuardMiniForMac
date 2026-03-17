@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option optimize_for = CODE_SIZE;
+
+enum StatisticsPeriod {
+    StatisticsPeriod_day = 0;
+    StatisticsPeriod_week = 1;
+    StatisticsPeriod_month = 2;
+    StatisticsPeriod_year = 3;
+    StatisticsPeriod_all = 4;
+}
+
+message StatisticsRequest {
+    StatisticsPeriod period = 1;
+}
+
+message BlockerStatistics {
+    int64 total = 1;
+    int64 privacy = 2;
+}
+
+message StatisticsResponse {
+    BlockerStatistics statistics = 1;
+    StatisticsPeriod period = 2;
+}

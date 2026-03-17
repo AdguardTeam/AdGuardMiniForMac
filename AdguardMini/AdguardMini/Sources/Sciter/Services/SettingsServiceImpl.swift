@@ -33,6 +33,7 @@ extension Sciter.SettingsServiceImpl:
     AppResetServiceDependent,
     SystemInfoManagerDependent,
     AppUpdaterDependent,
+    StatisticsServiceDependent,
     SciterAppControllerDependent,
     AppLifecycleServiceDependent,
     AppMetadataDependent {}
@@ -48,6 +49,7 @@ extension Sciter {
         var appResetService: AppResetService!
         var systemInfoManager: SystemInfoManager!
         var appUpdater: AppUpdater!
+        var statisticsService: StatisticsService!
         var eventBus: EventBus!
         var sciterAppController: SciterAppsController!
         var appLifecycleService: AppLifecycleService!
@@ -333,6 +335,36 @@ extension Sciter {
         func updateAllowTelemetry(_ message: BoolValue, _ promise: @escaping (EmptyValue) -> Void) {
             self.userSettingsService.allowTelemetry = message.value
             promise(EmptyValue())
+        }
+
+        func getStatistics(_ message: StatisticsRequest, _ promise: @escaping (StatisticsResponse) -> Void) {
+            let period = message.period.toDomain()
+
+            let total = self.statisticsService.getStatistics(for: period)
+            let privacy = self.statisticsService.getStatistics(for: period, blockerType: .privacy)
+
+            let stats = BlockerStatistics(total: total, privacy: privacy)
+
+            let response = StatisticsResponse(statistics: stats, period: message.period)
+            promise(response)
+        }
+
+        func resetStatistics(_ message: EmptyValue, _ promise: @escaping (EmptyValue) -> Void) {
+            self.statisticsService.resetStatistics()
+            promise(EmptyValue())
+        }
+    }
+}
+
+private extension SciterSchema.StatisticsPeriod {
+    func toDomain() -> StatisticsPeriod {
+        switch self {
+        case .day: return .day
+        case .week: return .week
+        case .month: return .month
+        case .year: return .year
+        case .all: return .all
+        case .UNRECOGNIZED: return .all
         }
     }
 }

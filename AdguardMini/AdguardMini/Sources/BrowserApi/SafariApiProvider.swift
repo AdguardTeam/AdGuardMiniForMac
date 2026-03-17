@@ -56,6 +56,7 @@ final class SafariApiProvider: NSObject {
     private let telemetry: Telemetry.Service
     private let eventBus: EventBus
     private let keychain: KeychainManager
+    private let statisticsService: StatisticsService
 
     #if MAS
     private let appStoreRateUs: AppStoreRateUs?
@@ -74,6 +75,7 @@ final class SafariApiProvider: NSObject {
         telemetry: Telemetry.Service,
         keychain: KeychainManager,
         eventBus: EventBus,
+        statisticsService: StatisticsService,
         appStoreRateUs: AppStoreRateUs?
     ) {
         self.proxyStorage = proxyStorage
@@ -86,6 +88,7 @@ final class SafariApiProvider: NSObject {
         self.telemetry = telemetry
         self.keychain = keychain
         self.eventBus = eventBus
+        self.statisticsService = statisticsService
 
         #if MAS
         self.appStoreRateUs = appStoreRateUs
@@ -314,6 +317,33 @@ extension SafariApiProvider: MainAppApi {
         #if MAS
         self.appStoreRateUs?.onWindowOpened()
         #endif
+        reply(nil)
+    }
+
+    func reportBlockCounts(_ counts: [String: Int64], reply: @escaping (Error?) -> Void) {
+        guard !counts.isEmpty else {
+            reply(nil)
+            return
+        }
+
+        LogDebug("Received block counts: \(counts)")
+
+        var typedCounts: [SafariBlockerType: Int] = [:]
+        var unknownBundleIds: [String] = []
+
+        for (bundleId, count) in counts {
+            if let blockerType = SafariBlockerType(contentBlockerIdentifier: bundleId) {
+                typedCounts[blockerType] = Int(clamping: count)
+            } else {
+                unknownBundleIds.append(bundleId)
+            }
+        }
+
+        if !unknownBundleIds.isEmpty {
+            LogWarn("Received block counts from unknown bundle IDs: \(unknownBundleIds)")
+        }
+
+        self.statisticsService.addBlockCounts(typedCounts)
         reply(nil)
     }
 }

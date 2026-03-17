@@ -1,11 +1,7 @@
-// SPDX-FileCopyrightText: AdGuard Software Limited
-//
-// SPDX-License-Identifier: GPL-3.0-or-later
-
 /* This code was generated automatically by proto-parser tool version 1 */
 
 
-import { EmptyValue, Settings, BoolValue, UpdateQuitReactionMessage, Path, OptionalError, ImportSettingsConfirmation, GlobalSettings, SafariExtensions, Int32Value, OptionalStringValue, UserConsent, SupportMessage, StringValue, EffectiveThemeValue, UpdateThemeMessage } from '../types'
+import { EmptyValue, Settings, BoolValue, UpdateQuitReactionMessage, Path, OptionalError, ImportSettingsConfirmation, GlobalSettings, SafariExtensions, Int32Value, OptionalStringValue, UserConsent, SupportMessage, StringValue, EffectiveThemeValue, UpdateThemeMessage, StatisticsRequest, StatisticsResponse } from '../types'
 import { xcall } from 'ApiWindow';
 
 /* Service that handles settings  */
@@ -73,6 +69,10 @@ interface ISettingsService {
 	UpdateAllowTelemetry(param:BoolValue): Promise<EmptyValue>;
 	/* Update theme setting */
 	UpdateTheme(param:UpdateThemeMessage): Promise<EmptyValue>;
+	/* Get blocking statistics */
+	GetStatistics(param:StatisticsRequest): Promise<StatisticsResponse>;
+	/* Reset all statistics */
+	ResetStatistics(param:EmptyValue): Promise<EmptyValue>;
 }
 
 /**
@@ -542,6 +542,36 @@ export class SettingsService implements ISettingsService {
 		const data = EmptyValue.deserializeBinary(res);
 
 		log.dbg('Response data', 'SettingsService.UpdateTheme', data.toObject());
+		return data;
+	};
+
+	/**
+	 * Get blocking statistics
+	 * @param StatisticsRequest param
+	 * @returns StatisticsResponse param
+	 */
+	GetStatistics = async (param: StatisticsRequest): Promise<StatisticsResponse> => {
+		log.dbg('Request data', 'SettingsService.GetStatistics', param.toObject());
+
+		const res = await xcall('SettingsService.GetStatistics', param.serializeBinary().buffer);
+		const data = StatisticsResponse.deserializeBinary(res);
+
+		log.dbg('Response data', 'SettingsService.GetStatistics', data.toObject());
+		return data;
+	};
+
+	/**
+	 * Reset all statistics
+	 * @param EmptyValue param
+	 * @returns EmptyValue param
+	 */
+	ResetStatistics = async (param: EmptyValue): Promise<EmptyValue> => {
+		log.dbg('Request data', 'SettingsService.ResetStatistics', param.toObject());
+
+		const res = await xcall('SettingsService.ResetStatistics', param.serializeBinary().buffer);
+		const data = EmptyValue.deserializeBinary(res);
+
+		log.dbg('Response data', 'SettingsService.ResetStatistics', data.toObject());
 		return data;
 	};
 

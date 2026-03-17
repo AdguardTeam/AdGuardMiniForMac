@@ -10,6 +10,15 @@
 		<string>com.apple.Safari.extension</string>
 		<key>NSExtensionPrincipalClass</key>
 		<string>$(PRODUCT_MODULE_NAME).SafariExtensionHandler</string>
+		<key>SFSafariAssociatedContentBlockers</key>
+		<array>
+			<string>$(AG_BLOCKER_GENERAL_BUNDLEID)</string>
+			<string>$(AG_BLOCKER_PRIVACY_BUNDLEID)</string>
+			<string>$(AG_BLOCKER_SECURITY_BUNDLEID)</string>
+			<string>$(AG_BLOCKER_SOCIAL_BUNDLEID)</string>
+			<string>$(AG_BLOCKER_OTHER_BUNDLEID)</string>
+			<string>$(AG_BLOCKER_CUSTOM_BUNDLEID)</string>
+		</array>
 		<key>SFSafariContentScript</key>
 		<array>
 			<dict>

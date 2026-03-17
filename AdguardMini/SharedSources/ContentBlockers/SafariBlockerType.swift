@@ -9,7 +9,7 @@
 
 import Foundation
 
-enum SafariBlockerType: Codable, CaseIterable {
+enum SafariBlockerType: String, Codable, CaseIterable {
     case general
     case privacy
     case security
@@ -35,6 +35,30 @@ enum SafariBlockerType: Codable, CaseIterable {
             BuildConfig.AG_BLOCKER_CUSTOM_BUNDLEID
         case .advanced:
             BuildConfig.AG_POPUP_EXTENSION_BUNDLEID
+        }
+    }
+
+    // MARK: Init
+
+    /// Creates a SafariBlockerType from a Content Blocker bundle identifier
+    /// - Parameter contentBlockerIdentifier: Bundle ID string from Safari callback
+    /// - Returns: Matching blocker type, or nil if unknown or not a Content Blocker
+    init?(contentBlockerIdentifier: String) {
+        switch contentBlockerIdentifier {
+        case BuildConfig.AG_BLOCKER_GENERAL_BUNDLEID:
+            self = .general
+        case BuildConfig.AG_BLOCKER_PRIVACY_BUNDLEID:
+            self = .privacy
+        case BuildConfig.AG_BLOCKER_SECURITY_BUNDLEID:
+            self = .security
+        case BuildConfig.AG_BLOCKER_SOCIAL_BUNDLEID:
+            self = .socialWidgetsAndAnnoyances
+        case BuildConfig.AG_BLOCKER_OTHER_BUNDLEID:
+            self = .other
+        case BuildConfig.AG_BLOCKER_CUSTOM_BUNDLEID:
+            self = .custom
+        default:
+            return nil
         }
     }
 }

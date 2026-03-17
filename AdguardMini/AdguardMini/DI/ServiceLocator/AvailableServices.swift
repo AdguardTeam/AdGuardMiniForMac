@@ -20,9 +20,10 @@ protocol LoginItemServiceDependent: ServiceDependent { var loginItemService: Log
 protocol SafariApiHandlerDependent: ServiceDependent { var safariApiHandler: SafariApiHandler! { get set } }
 protocol TelemetryServiceDependent: ServiceDependent { var telemetryService: Telemetry.Service! { get set }}
 
-protocol FiltersSupervisorDependent:  ServiceDependent { var filtersSupervisor:  FiltersSupervisor! { get set } }
-protocol SystemInfoManagerDependent:  ServiceDependent { var systemInfoManager:  SystemInfoManager! { get set } }
-protocol ProtectionServiceDependent:  ServiceDependent { var protectionService:  ProtectionService! { get set } }
+protocol FiltersSupervisorDependent: ServiceDependent { var filtersSupervisor: FiltersSupervisor! { get set } }
+protocol SystemInfoManagerDependent: ServiceDependent { var systemInfoManager: SystemInfoManager! { get set } }
+protocol ProtectionServiceDependent: ServiceDependent { var protectionService: ProtectionService! { get set } }
+protocol StatisticsServiceDependent: ServiceDependent { var statisticsService: StatisticsService! { get set } }
 
 protocol AppLifecycleServiceDependent: ServiceDependent { var appLifecycleService: AppLifecycleService! { get set } }
 protocol ImportExportServiceDependent: ServiceDependent { var importExportService: ImportExportService! { get set } }

@@ -3,6 +3,7 @@ syntax = "proto3";
 import "PrimitivesWrappers.proto";
 import "Settings.proto";
 import "EffectiveTheme.proto";
+import "Statistics.proto";
 
 /* Service that handles settings */
 service SettingsService {
@@ -68,4 +69,8 @@ service SettingsService {
     rpc UpdateAllowTelemetry(BoolValue) returns (EmptyValue);
     /* Update theme setting */
     rpc UpdateTheme(UpdateThemeMessage) returns (EmptyValue);
+    /* Get blocking statistics */
+    rpc GetStatistics(StatisticsRequest) returns (StatisticsResponse);
+    /* Reset all statistics */
+    rpc ResetStatistics(EmptyValue) returns (EmptyValue);
 }
