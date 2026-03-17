@@ -24,6 +24,11 @@ private enum Constants {
     static var appStoreLink: URL {
         URL(string: "macappstore://apps.apple.com/app/id1440147259")!
     }
+
+    static var appStoreReviewLink: URL {
+        URL(string: "macappstore://apps.apple.com/app/id1440147259?action=write-review")!
+    }
+
     static var appStoreSubscriptionsLink: URL {
         URL(string: "macappstore://apps.apple.com/account/subscriptions")!
     }
@@ -124,7 +129,6 @@ extension Sciter {
                     )
                 )
             }
-            promise(AppStoreSubscriptionsMessage(error: .unknown))
             #endif
         }
 
@@ -362,6 +366,11 @@ extension Sciter {
 
         func requestOpenAppStore(_ message: EmptyValue, _ promise: @escaping (EmptyValue) -> Void) {
             NSWorkspace.shared.open(Constants.appStoreLink)
+            promise(EmptyValue())
+        }
+
+        func requestOpenAppStoreReview(_ message: EmptyValue, _ promise: @escaping (EmptyValue) -> Void) {
+            NSWorkspace.shared.open(Constants.appStoreReviewLink)
             promise(EmptyValue())
         }
     }

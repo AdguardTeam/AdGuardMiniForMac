@@ -31,4 +31,6 @@ service AccountService {
     rpc RequestOpenSubscriptions(EmptyValue) returns (EmptyValue);
     /* Request opening app store page */
     rpc RequestOpenAppStore(EmptyValue) returns (EmptyValue);
+    /* Request opening app store review page */
+    rpc RequestOpenAppStoreReview(EmptyValue) returns (EmptyValue);
 }

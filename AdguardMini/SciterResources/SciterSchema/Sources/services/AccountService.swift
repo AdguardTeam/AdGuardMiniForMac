@@ -61,6 +61,10 @@ public protocol AccountServiceProtocol
 	func requestOpenAppStore (
 						_ message: EmptyValue,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void
+	/// Request opening app store review page
+	func requestOpenAppStoreReview (
+						_ message: EmptyValue,
+						_ promise: @escaping (EmptyValue) -> Void) -> Void
 }
 
 // MARK: Protobuf Bridge definition
@@ -223,6 +227,18 @@ open class AccountService: SciterBridge
 			inputType: EmptyValue.self,
 			outputType: EmptyValue.self,
 			method: cast.requestOpenAppStore(_:_:),
+			message,
+			promise
+		)
+	}
+
+	/// Wrapper for `RequestOpenAppStoreReview`
+	@objc func RequestOpenAppStoreReview(_ message: Data, promise: @escaping (Data) -> Void)
+	{
+		swiftCall(
+			inputType: EmptyValue.self,
+			outputType: EmptyValue.self,
+			method: cast.requestOpenAppStoreReview(_:_:),
 			message,
 			promise
 		)

@@ -54,7 +54,7 @@ function SupportComponent() {
         description: translate('support.rate.desc'),
         onClick: () => {
             if (settings.isMASReleaseVariant) {
-                window.API.accountService.RequestOpenAppStore(new EmptyValue());
+                window.API.accountService.RequestOpenAppStoreReview(new EmptyValue());
             } else {
                 window.OpenLinkInBrowser(getTdsLink(TDS_PARAMS.trustpilot, RouteName.support));
             }
