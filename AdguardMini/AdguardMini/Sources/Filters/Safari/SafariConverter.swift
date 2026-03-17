@@ -211,7 +211,7 @@ extension SafariConverterImpl: SafariConverter {
                         discardedSafariRules += info.discardedSafariRules
                         errorsCount += info.errorsCount
                     case .failure(.cancelled):
-                        LogDebug("Conversion of \(result.blockerType) was cancelled")
+                        break
                     case .failure(let error):
                         error.log("Can't convert rules for \(result.blockerType)")
                     }
