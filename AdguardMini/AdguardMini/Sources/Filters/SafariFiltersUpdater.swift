@@ -38,6 +38,7 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
 
     private let debouncer = Debouncer(debounceTimeSeconds: Constants.debounceTime)
     private var hasPendingUpdates: Bool = false
+    private var currentUpdateTask: Task<Void, Never>?
 
     // For debugging duplicate updates
     private var updateCounter: Int = 0
@@ -61,7 +62,7 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
     }
 
     private func checkCancellation(_ progress: Progress) throws {
-        if Task.isCancelled {
+        if Task.isCancelled || progress.isCancelled {
             progress.cancel()
             throw CancellationError()
         }
@@ -81,22 +82,23 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
 
     @objc
     func updateSafariFilters() {
-        var shouldUpdate = false
         locked(self.lk) {
             guard self.isStarted
             else {
                 self.hasPendingUpdates = true
                 return
             }
-            shouldUpdate = true
-        }
 
-        guard shouldUpdate else { return }
-        self.scheduleUpdate()
+            // Cancel previous task if it's still running (new state requires fresh update)
+            self.currentUpdateTask?.cancel()
+            self.currentUpdateTask = self.createUpdateTask()
+        }
     }
 
-    private func scheduleUpdate() {
-        Task {
+    private func createUpdateTask() -> Task<Void, Never> {
+        Task { [weak self] in
+            guard let self else { return }
+
             await self.debouncer.debounce { [weak self] in
                 guard let self else { return }
                 await self.performUpdate()
@@ -107,11 +109,12 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
     private func performUpdate() async {
         let progress = Progress(totalUnitCount: 4)
 
-        // Reset pending updates flag at the start
-        self.hasPendingUpdates = false
+        let updateId: Int = locked(self.lk) {
+            self.hasPendingUpdates = false
+            self.updateCounter += 1
+            return self.updateCounter
+        }
 
-        self.updateCounter += 1
-        let updateId = self.updateCounter
         LogInfo("Safari filters update started (ID: \(updateId))")
 
         do {
