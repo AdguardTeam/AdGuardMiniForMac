@@ -74,22 +74,21 @@ extension SafariFiltersStorageImpl: SafariFiltersStorage {
     func resetStorage() {
         for type in SafariBlockerType.allCases {
             do {
-                if type != .advanced {
-                    try FileManager.default.removeItem(at: self.rulesUrl(for: type))
-                    return
-                }
-
-                let items = try FileManager.default.contentsOfDirectory(
-                    at: self.rulesUrl(for: type),
-                    includingPropertiesForKeys: nil,
-                    options: []
-                )
-                for url in items {
-                    do {
-                        try FileManager.default.removeItem(at: url)
-                    } catch {
-                        LogWarn("Could not remove \(url.lastPathComponent): \(error)")
+                if type == .advanced {
+                    let items = try FileManager.default.contentsOfDirectory(
+                        at: self.rulesUrl(for: type),
+                        includingPropertiesForKeys: nil,
+                        options: []
+                    )
+                    for url in items {
+                        do {
+                            try FileManager.default.removeItem(at: url)
+                        } catch {
+                            LogWarn("Could not remove \(url.lastPathComponent): \(error)")
+                        }
                     }
+                } else {
+                    try FileManager.default.removeItem(at: self.rulesUrl(for: type))
                 }
             } catch {
                 LogWarn("Can't remove stored rules: \(error)")
