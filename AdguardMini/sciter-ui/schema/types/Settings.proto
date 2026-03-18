@@ -51,7 +51,6 @@ message GlobalSettings {
     ReleaseVariants releaseVariant = 4;
     string language = 5;
     bool debug_logging = 6;
-    bool recently_migrated = 7;
     bool allow_telemetry = 8;
     Theme theme = 9;
 }

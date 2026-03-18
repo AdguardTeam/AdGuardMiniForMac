@@ -7,7 +7,6 @@ import type { JSXInternal } from 'preact/src/jsx';
 export type IconType
     = 'logo'
         | 'logo_dark'
-        | 'adguard'
         | 'settings'
         | 'update'
         | 'ads'
@@ -16,7 +15,6 @@ export type IconType
         | 'privacy'
         | 'cross'
         | 'arrow_left'
-        | 'update'
         | 'loading'
         | 'logo_check'
         | 'info'
@@ -125,12 +123,6 @@ export function Icons({ icon }: IconsProps): JSXInternal.Element {
                     </defs>
                 </svg>
 
-            );
-        case 'adguard':
-            return (
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
-                    <path d="M13.3333 14.6667C15.334 16.6667 13.9998 15.3334 16 17.3334L20 13.3334M4 6.93343C4 11.0242 3.94859 21.3034 15.9997 28.2668C28.0511 21.3034 28 11.0242 28 6.93343C20.7856 2.55834 11.3492 2.57794 4 6.93343Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
             );
         case 'settings':
             return (

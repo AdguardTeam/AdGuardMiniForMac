@@ -103,27 +103,6 @@ export function useStoriesConfig(): StoryInfo[] {
         });
     }
 
-    if (settings.settings?.recentlyMigrated) {
-        stories.push({
-            icon: 'adguard',
-            text: translate('tray.story.meetAGMini.card'),
-            storyConfig: {
-                id: 'meetAGMini',
-                frames: [{
-                    title: translate('tray.story.meetAGMini.card.title'),
-                    description: translate('tray.story.meetAGMini.card.desc'),
-                    image: 'ag_mini_mac_release_blogpost',
-                    frameId: 'meetAGMini1',
-                    actionButton: {
-                        title: translate('tray.story.meetAGMini.card.action'),
-                        action: () => window.OpenLinkInBrowser(getTdsLink(TDS_PARAMS.ag_mini_mac_release_blogpost)),
-                    },
-                }],
-                backgroundColor: 'green',
-            },
-        });
-    }
-
     if (!isLicenseOrTrialActive) {
         stories.push({
             icon: 'quality',
