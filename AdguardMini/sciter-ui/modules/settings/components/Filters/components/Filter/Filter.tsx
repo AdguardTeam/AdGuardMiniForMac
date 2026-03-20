@@ -96,14 +96,14 @@ function FilterComponent({
                             <Text className={cx(s.Filter_desc, theme.typo.lhCustom)} type="t2">{translate('filters.rules', { rules: serverFilter?.rulesCount })}</Text>
                         )}
                         <ExternalLink
-                            className={theme.typo.lhCustom}
+                            className={cx(s.Filter_homepage, theme.typo.lhCustom)}
                             href={filter.homepage}
                             textType="t2"
                         >
                             {translate('filters.official.website')}
                         </ExternalLink>
                         {showLanguageSpecificDisabled && (
-                            <Text className={cx(theme.typo.lhCustom, theme.color.orange)} type="t2">
+                            <Text className={cx(s.Filter_warning, theme.typo.lhCustom, theme.color.orange)} type="t2">
                                 {translate('filters.language.specific.disabled', {
                                     btn: (text: string) => (
                                         <span
