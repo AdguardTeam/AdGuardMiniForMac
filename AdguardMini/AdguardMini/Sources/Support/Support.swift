@@ -81,6 +81,7 @@ final class SupportImpl {
     private let userSettings: UserSettingsService
     private let sharedSettings: SharedSettingsStorage
     private let keychain: KeychainManager
+    private let safariExtensionStateService: SafariExtensionStateService
 
     init(
         safariFiltersStorage: SafariFiltersStorage,
@@ -89,7 +90,8 @@ final class SupportImpl {
         productInfo: ProductInfoStorage,
         userSettings: UserSettingsService,
         sharedSettings: SharedSettingsStorage,
-        keychain: KeychainManager
+        keychain: KeychainManager,
+        safariExtensionStateService: SafariExtensionStateService
     ) {
         self.safariFiltersStorage = safariFiltersStorage
         self.filtersSupervisor = filtersSupervisor
@@ -98,6 +100,7 @@ final class SupportImpl {
         self.userSettings = userSettings
         self.sharedSettings = sharedSettings
         self.keychain = keychain
+        self.safariExtensionStateService = safariExtensionStateService
     }
 
     private func createAdditionalFilesDict(state: String?) async -> [String: Any] {
@@ -126,46 +129,130 @@ final class SupportImpl {
             "\(dep.name) version: \(dep.version)"
         }
 
-        let appStatus = await {
-            guard let appStatus = await self.keychain.getAppStatusInfo() else { return "App Status: Unknown/Free" }
-
-            var info = "App Status: \(appStatus.licenseStatus)"
-            if let licenseType = appStatus.licenseType {
-                info += ", Type: \(licenseType), isAppStore: \(appStatus.isAppStoreSubscription)"
-            }
-            if let devicesCount = appStatus.licenseComputersCount,
-               let devicesMax = appStatus.licenseMaxComputersCount {
-                info += ", Devices: \(devicesCount)/\(devicesMax)"
-            }
-            return info
-        }()
-
+        let settings = self.userSettings.settings
         let advancedBlockingState = self.userSettings.advancedBlockingState
+
+        let appStatusInfo = await self.keychain.getAppStatusInfo()
+        let licenseSection = self.formatLicenseSection(appStatusInfo: appStatusInfo)
+
+        let safariExtensionsSection = await self.getSafariExtensionsSection()
+
+        let userRules = await self.filtersSupervisor.getUserRules()
+        let enabledUserRulesCount = userRules.filter { $0.isEnabled }.count
+        let userRulesStatus = enabledUserRulesCount > 0 ? "active" : "disabled"
+
+        let customFiltersSection = await self.getCustomFiltersSection()
+
+        let timeSinceUpdate = max(0, Date().timeIntervalSince(self.userSettings.lastFiltersUpdateTime))
+        let hours = Int(timeSinceUpdate / 1.hour)
+        let minutes = Int(timeSinceUpdate / 1.minute) % 60
+        let updateTimeString = hours > 0 ? "\(hours)h \(minutes)m ago" : "\(minutes)m ago"
 
         return """
         Application version: \(BuildConfig.AG_FULL_VERSION)
         Application channel: \(BuildConfig.AG_CHANNEL)
 
-        Modules versions:
-            \(thirdPartyDepsVersions.joined(separator: "\n    "))
-
         Application ID: \(await self.productInfo.applicationId)
-        \(appStatus)
-
-        Filtration: \(self.sharedSettings.protectionEnabled ? "Enabled" : "Disabled")
-            AdvancedRules: \(advancedBlockingState.advancedRules)
-            AdGuardExtra:  \(advancedBlockingState.adguardExtra)
 
         Platform: Mac OS X
         OS: \(ProcessInfo.processInfo.operatingSystemVersionString)
+        Arch: \(SystemInfo.getCPUType().rawValue)
         Locale: \(Locale.canonicalIdentifier(from: Locale.current.identifier))
 
-        Last error: \(AppLogConfig.getLastErrorMessage() ?? "None")
+        \(licenseSection)
+
+        Modules versions:
+            \(thirdPartyDepsVersions.joined(separator: "\n    "))
+
+        Diagnostic Settings:
+            Auto filters update: \(settings.autoFiltersUpdate ? "Enabled" : "Disabled")
+            Real-time filters update: \(settings.realTimeFiltersUpdate ? "Enabled" : "Disabled")
+            Debug logging: \(settings.debugLogging ? "Enabled" : "Disabled")
+
+        Filtration: \(self.sharedSettings.protectionEnabled ? "Enabled" : "Disabled")
+            Advanced rules: \(advancedBlockingState.advancedRules ? "Enabled" : "Disabled")
+            AdGuard Extra: \(advancedBlockingState.adguardExtra ? "Enabled" : "Disabled")
+            Filters last updated: \(updateTimeString)
+
+        \(safariExtensionsSection)
+
+        User Rules:
+            Enabled count: \(enabledUserRulesCount)
+            Status: \(userRulesStatus)
+
+        \(customFiltersSection)
 
         Enabled filters:
             \(enabledFilters.joined(separator: "\n    "))
 
+        Last error: \(AppLogConfig.getLastErrorMessage() ?? "None")
+
         """
+    }
+
+    private func formatLicenseSection(appStatusInfo: AppStatusInfo?) -> String {
+        guard let appStatus = appStatusInfo else {
+            return "License: Unknown/Free"
+        }
+
+        var components = ["License: \(appStatus.licenseStatus)"]
+
+        if let licenseType = appStatus.licenseType {
+            components.append("Type: \(licenseType)")
+            components.append("isAppStore: \(appStatus.isAppStoreSubscription)")
+        }
+
+        if let devicesCount = appStatus.licenseComputersCount,
+           let devicesMax = appStatus.licenseMaxComputersCount {
+            components.append("Devices: \(devicesCount)/\(devicesMax)")
+        }
+
+        return components.joined(separator: ", ")
+    }
+
+    private func getSafariExtensionsSection() async -> String {
+        let extensionsStates = await self.safariExtensionStateService.getAllExtensionsStatus()
+
+        let allStates: [(String, CurrentExtensionState)] = [
+            ("General", extensionsStates.general),
+            ("Privacy", extensionsStates.privacy),
+            ("Security", extensionsStates.security),
+            ("Social", extensionsStates.social),
+            ("Other", extensionsStates.other),
+            ("Custom", extensionsStates.custom),
+            ("Advanced", extensionsStates.advanced)
+        ]
+
+        let statusLines = allStates
+            .map { "    \($0.0): \($0.1.status)" }
+            .joined(separator: "\n")
+
+        return """
+        Safari Extensions:
+        \(statusLines)
+        """
+    }
+
+    private func getCustomFiltersSection() async -> String {
+        let allFilters = await self.filtersSupervisor.getAllFilters()
+        let customFilters = allFilters.filter { $0.isCustom && $0.isEnabled }
+
+        guard !customFilters.isEmpty else {
+            return "Custom Filters:\n    None"
+        }
+
+        var lines = ["Custom Filters:"]
+
+        for (index, filter) in customFilters.enumerated() {
+            lines.append("""
+                Filter \(index + 1):
+                    Name: \(filter.name)
+                    URL: \(filter.url)
+                    Trusted: \(filter.isTrusted)
+            """)
+        }
+
+        return lines.joined(separator: "\n")
     }
 
     private func generateAttachments(shouldSendLogs: Bool, applicationState: String) async -> RequestFileEntities {
