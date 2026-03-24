@@ -10,5 +10,5 @@
 import Foundation
 
 final class ContentBlockerRequestHandler: ContentBlockerRequestHandlerBase {
-    override static var blockerContentRulesURI: SafariBlockerType { .socialWidgetsAndAnnoyances }
+    override static var blockerType: SafariBlockerType { .socialWidgetsAndAnnoyances }
 }
