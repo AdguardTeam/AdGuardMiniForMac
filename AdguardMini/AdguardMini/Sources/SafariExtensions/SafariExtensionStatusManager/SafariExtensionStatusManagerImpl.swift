@@ -52,6 +52,7 @@ final class SafariExtensionStatusManagerImpl: SafariExtensionStatusManager {
         self.lock.lock()
         if let cached = self.cache[type], cached.isValid() {
             self.lock.unlock()
+            LogDebug("[ExtStatus] \(type) — cached: isEnabled=\(cached.isEnabled)")
             return cached.isEnabled
         }
         self.lock.unlock()
@@ -71,10 +72,36 @@ final class SafariExtensionStatusManagerImpl: SafariExtensionStatusManager {
             } else {
                 try await SFSafariExtensionManager.stateOfSafariExtension(withIdentifier: type.bundleId).isEnabled
             }
+            LogDebug("[ExtStatus] \(type) (\(type.bundleId)): isEnabled=\(isEnabled)")
         } catch {
             isEnabled = false
             LogError("Error checking \(type) extension state: \(SafariError(error))")
         }
+
+        // Diagnostic: also try SFSafariExtensionManager for content blockers to compare results
+        if type != .advanced {
+            do {
+                let altEnabled = try await SFSafariExtensionManager
+                    .stateOfSafariExtension(withIdentifier: type.bundleId).isEnabled
+                if altEnabled != isEnabled {
+                    LogWarn(
+                        "[ExtStatus] \(type) MISMATCH: " +
+                        "SFContentBlockerManager=\(isEnabled), " +
+                        "SFSafariExtensionManager=\(altEnabled)"
+                    )
+                } else {
+                    LogDebug(
+                        "[ExtStatus] \(type) alt check (SFSafariExtensionManager): " +
+                        "isEnabled=\(altEnabled) (matches)"
+                    )
+                }
+            } catch {
+                LogDebug(
+                    "[ExtStatus] \(type) alt check (SFSafariExtensionManager) failed: \(error)"
+                )
+            }
+        }
+
         locked(self.lock) {
             self.cache[type] = CachedResult(isEnabled: isEnabled, timestamp: Date())
         }
