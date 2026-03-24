@@ -78,26 +78,16 @@ final class SafariExtensionStatusManagerImpl: SafariExtensionStatusManager {
             LogError("Error checking \(type) extension state: \(SafariError(error))")
         }
 
-        // Diagnostic: also try SFSafariExtensionManager for content blockers to compare results
-        if type != .advanced {
+        // Diagnostic: probe reloadContentBlocker for 'custom' type only (fewest rules)
+        // If the extension is actually disabled, the reload may fail — giving us a reliable signal
+        if type == .custom && isEnabled {
             do {
-                let altEnabled = try await SFSafariExtensionManager
-                    .stateOfSafariExtension(withIdentifier: type.bundleId).isEnabled
-                if altEnabled != isEnabled {
-                    LogWarn(
-                        "[ExtStatus] \(type) MISMATCH: " +
-                        "SFContentBlockerManager=\(isEnabled), " +
-                        "SFSafariExtensionManager=\(altEnabled)"
-                    )
-                } else {
-                    LogDebug(
-                        "[ExtStatus] \(type) alt check (SFSafariExtensionManager): " +
-                        "isEnabled=\(altEnabled) (matches)"
-                    )
-                }
+                try await SFContentBlockerManager.reloadContentBlocker(withIdentifier: type.bundleId)
+                LogDebug("[ExtStatus] \(type) probe: reloadContentBlocker SUCCEEDED")
             } catch {
-                LogDebug(
-                    "[ExtStatus] \(type) alt check (SFSafariExtensionManager) failed: \(error)"
+                LogWarn(
+                    "[ExtStatus] \(type) probe: reloadContentBlocker FAILED: \(error) " +
+                    "— extension likely disabled despite stateOfContentBlocker returning true"
                 )
             }
         }
