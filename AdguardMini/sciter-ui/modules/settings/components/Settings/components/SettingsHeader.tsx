@@ -10,6 +10,7 @@ type Props = {
     onImport(): void;
     onExport(): void;
     onToggleResetModal(): void;
+    onClearStatistics(): void;
 };
 
 /**
@@ -20,6 +21,7 @@ export function SettingsHeader(props: Props) {
         onExport,
         onImport,
         onToggleResetModal,
+        onClearStatistics,
     } = props;
 
     return (
@@ -30,6 +32,9 @@ export function SettingsHeader(props: Props) {
             }, {
                 text: translate('settings.import.settings'),
                 action: onImport,
+            }, {
+                text: translate('settings.clear.statistics'),
+                action: onClearStatistics,
             }, {
                 text: translate('reset.defaults'),
                 action: onToggleResetModal,

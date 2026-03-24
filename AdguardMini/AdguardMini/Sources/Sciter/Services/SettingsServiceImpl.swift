@@ -192,7 +192,6 @@ extension Sciter {
                     releaseVariant: ProductInfo.releaseVariant.toProto(),
                     language: Locales.navigatorLang,
                     debugLogging: self.userSettingsService.settings.debugLogging,
-                    recentlyMigrated: self.appMetadata.wasMigratedFromLegacyApp,
                     allowTelemetry: self.userSettingsService.allowTelemetry,
                     theme: self.userSettingsService.theme.toProto()
                 )

@@ -102,7 +102,7 @@ function CustomFilterComponent({
                 )}
                 {homepage && (
                     <ExternalLink
-                        className={theme.typo.lhCustom}
+                        className={cx(s.CustomFilter_text_homepage, theme.typo.lhCustom)}
                         href={homepage}
                         textType="t2"
                     >

@@ -388,6 +388,13 @@ export class Settings {
     }
 
     /**
+     * Clear statistics
+     */
+    public clearStatistics() {
+        window.API.settingsService.ResetStatistics(new EmptyValue());
+    }
+
+    /**
      * On import success
      */
     public onImportSuccess() {

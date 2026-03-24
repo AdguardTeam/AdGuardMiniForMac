@@ -18,7 +18,6 @@ extension GlobalSettings {
         releaseVariant: ReleaseVariants = .standAlone,
         language: String = "",
         debugLogging: Bool = false,
-        recentlyMigrated: Bool = false,
         allowTelemetry: Bool = false,
         theme: Theme
     ) {
@@ -29,7 +28,6 @@ extension GlobalSettings {
         self.releaseVariant = releaseVariant
         self.language = language
         self.debugLogging = debugLogging
-        self.recentlyMigrated = recentlyMigrated
         self.allowTelemetry = allowTelemetry
         self.theme = theme
     }

@@ -3,16 +3,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { observer } from 'mobx-react-lite';
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useState, useCallback } from 'preact/hooks';
 
 import { Channel, ReleaseVariants } from 'Apis/types';
 import { ADGUARD_MINI_TITLE } from 'Common/utils/consts';
 import { TDS_PARAMS, getTdsLink } from 'Common/utils/links';
 import { SettingsTitle } from 'Modules/settings/components/SettingsTitle';
 import { useSettingsStore } from 'SettingsLib/hooks';
-import { RouteName } from 'SettingsStore/modules';
+import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType, RouteName } from 'SettingsStore/modules';
 import theme from 'Theme';
-import { ExternalLink, Icon, Layout, Text } from 'UILib';
+import { Button, ExternalLink, Icon, Layout, Text } from 'UILib';
 
 import { SettingsItem } from '../SettingsItem/SettingsItem';
 
@@ -33,7 +33,7 @@ const channelToText = (ch: Channel): string => {
  * About page component for settings module
  */
 export function AboutComponent() {
-    const { appInfo, settings } = useSettingsStore();
+    const { appInfo, settings, notification } = useSettingsStore();
 
     const LINKS = [
         {
@@ -77,6 +77,31 @@ export function AboutComponent() {
 
     const year = (new Date()).getFullYear();
 
+    const copyVersion = useCallback(() => {
+        window.SystemClipboard.writeText(`${ADGUARD_MINI_TITLE} ${version} ${channelToText(channel) ? `(${channelToText(channel)})` : ''}`);
+
+        notification.notify({
+            message: translate('about.version.copy.notify'),
+            notificationContext: NotificationContext.info,
+            type: NotificationsQueueType.success,
+            iconType: NotificationsQueueIconType.done,
+            closeable: true,
+        });
+    }, [version, channel, notification]);
+
+    const copyLibraries = useCallback(() => {
+        const libraries = dependencies.map((dep) => `${dep.name} ${dep.version}`).join('\n');
+        window.SystemClipboard.writeText(libraries);
+
+        notification.notify({
+            message: translate('about.libraries.copy.notify'),
+            notificationContext: NotificationContext.info,
+            type: NotificationsQueueType.success,
+            iconType: NotificationsQueueIconType.done,
+            closeable: true,
+        });
+    }, [dependencies, notification]);
+
     // const onClickRateUs = () => {
     //     if (isMASReleaseVariant) {
     //         window.API.accountService.RequestOpenAppStoreReview(new EmptyValue());
@@ -107,13 +132,21 @@ export function AboutComponent() {
                         onContainerClick={appInfo.requestUpdate}
                     />
                 )}
-                <Text className={s.About_textSpace} type="h5">
-                    {ADGUARD_MINI_TITLE}
-                    {' '}
-                    {version}
-                    {' '}
-                    {channelToText(channel) ? `(${channelToText(channel)})` : ''}
-                </Text>
+                <div className={s.About_version}>
+                    <Text className={s.About_textSpace} type="h5">
+                        {ADGUARD_MINI_TITLE}
+                        {' '}
+                        {version}
+                        {' '}
+                        {channelToText(channel) ? `(${channelToText(channel)})` : ''}
+                    </Text>
+                    <Button
+                        className={cx(theme.button.greenIcon, s.About_version_copy)}
+                        icon="copy"
+                        type="icon"
+                        onClick={copyVersion}
+                    />
+                </div>
                 {releaseVariant === ReleaseVariants.standAlone && !newVersionAvailable && (
                     <Text className={s.About_updateSection} type="t1" div>{translate('about.use.last.verion')}</Text>
                 )}
@@ -122,13 +155,17 @@ export function AboutComponent() {
                     <Text className={s.About_textSpace} type="t1">{translate('about.dependencies')}</Text>
                     <Icon className={showDependencies ? s.About_dependencies_arrow__active : s.About_dependencies_arrow} icon="arrow_left" />
                 </div>
-                {showDependencies && dependencies.map((dep) => (
-                    <Text key={dep} className={cx(s.About_textSpace, s.About_dependencies_item)} type="t1">
-                        {dep.name}
-                        {' '}
-                        {dep.version}
-                    </Text>
-                ))}
+                {showDependencies && (
+                    <div className={s.About_libraries} onClick={copyLibraries}>
+                        {dependencies.map((dep) => (
+                            <Text key={dep.name} className={cx(s.About_textSpace, s.About_dependencies_item)} type="t1">
+                                {dep.name}
+                                {' '}
+                                {dep.version}
+                            </Text>
+                        ))}
+                    </div>
+                )}
             </div>
             <div className={cx(theme.layout.content, theme.layout.bottomPadding)}>
                 {LINKS.map(({ label, href }) => (

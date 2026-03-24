@@ -4,6 +4,16 @@
 
 declare module 'mobx-preact';
 declare module 'SciterPolyfills';
+declare module '@adg/js-format-number' {
+    namespace numeral {
+        function locale(locale: string): void;
+    }
+    function numeral(value: number | string): {
+        format: (format: string) => string;
+        value(): string;
+    };
+    export default numeral;
+}
 
 declare module '*.png';
 declare module '*.jpg';

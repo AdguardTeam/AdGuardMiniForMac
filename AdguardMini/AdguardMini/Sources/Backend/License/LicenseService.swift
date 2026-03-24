@@ -70,8 +70,8 @@ final class LicenseServiceImpl: LicenseService {
             appVersion:    BuildConfig.AG_VERSION,
             appId:         await self.productInfo.applicationId,
             appName:       Constants.appName,
-            locale:        Locale.current.languageCode ?? "en",
-            sysLocale:     Locale.autoupdatingCurrent.languageCode ?? "en",
+            locale:        Locale.currentLocaleIdentifier,
+            sysLocale:     Locale.systemLocaleIdentifier,
             activeProtectionEnabled: self.sharedSettings.protectionEnabled,
             computerName:  self.systemInfo.name,
             mac:           self.systemInfo.mac,
@@ -87,7 +87,7 @@ final class LicenseServiceImpl: LicenseService {
             appId:         await self.productInfo.applicationId,
             appKey:        appKey,
             appName:       Constants.appName,
-            locale:        Locale.current.languageCode ?? "en"
+            locale:        Locale.currentLocaleIdentifier
         )
         return try await self.makeRequest(request, action: "activateApp")
     }
@@ -98,7 +98,7 @@ final class LicenseServiceImpl: LicenseService {
             encryptionKey: Constants.requestEncryptionKey,
             appId: await self.productInfo.applicationId,
             appName: Constants.appName,
-            locale: Locale.current.languageCode ?? "en",
+            locale: Locale.currentLocaleIdentifier,
             bundleId: BuildConfig.AG_APP_ID,
             signedTransaction: jws,
             restore: restore
@@ -107,15 +107,13 @@ final class LicenseServiceImpl: LicenseService {
     }
 
     func promoInfo() async throws -> PromotionResponse {
-        let currentLocale = Locale.current
-        let systemLocale = Locale.autoupdatingCurrent
         let request = try BackendRequest.promotion(
             encryptionKey: Constants.requestEncryptionKey,
             appVersion: BuildConfig.AG_VERSION,
             appId: await self.productInfo.applicationId,
             appName: Constants.appName,
-            locale: currentLocale.collatorIdentifier ?? currentLocale.identifier,
-            sysLocale: systemLocale.collatorIdentifier ?? systemLocale.identifier
+            locale: Locale.currentLocaleIdentifier,
+            sysLocale: Locale.systemLocaleIdentifier
         )
         return try await self.makeRequest(request, action: "promoInfo")
     }
@@ -133,5 +131,19 @@ final class LicenseServiceImpl: LicenseService {
             LogError("Failed for \(action): \(error)")
             throw error
         }
+    }
+}
+
+private extension Locale {
+    static var currentLocaleIdentifier: String {
+        Self.identifier(for: .current)
+    }
+
+    static var systemLocaleIdentifier: String {
+        Self.identifier(for: .autoupdatingCurrent)
+    }
+
+    private static func identifier(for locale: Locale) -> String {
+        locale.collatorIdentifier ?? locale.identifier
     }
 }

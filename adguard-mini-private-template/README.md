@@ -6,11 +6,9 @@ Directory containing private configuration settings. Here you can find the templ
 
 Folder `adguard-mini-private` contains:
 
-- `credentials` folder:
-  - `app-store-api-info.json`. See [Using fastlane API Key JSON file](https://docs.fastlane.tools/app-store-connect-api/)
-  - `env-vars.json`. See `fastlane action match` and [.env.default](/fastlane/.env.default)
+- `config.env` - Environment variables for keychain and support scripts repositories
 - `configuration` folder:
-  - `Config.xcconfig`. This file contains customizable constants such as Team ID, Application ID, and app group.
+  - `Config.xcconfig` - Customizable constants such as Team ID, Application ID, app group, and company name
 
 ## Development
 

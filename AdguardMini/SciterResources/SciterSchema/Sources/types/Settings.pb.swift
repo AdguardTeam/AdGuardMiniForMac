@@ -382,8 +382,6 @@ public struct GlobalSettings: Sendable {
 
   public var debugLogging: Bool = false
 
-  public var recentlyMigrated: Bool = false
-
   public var allowTelemetry: Bool = false
 
   public var theme: Theme = .unknown
@@ -757,7 +755,7 @@ extension ImportStatus: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
 
 extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "GlobalSettings"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}enabled\0\u{1}allExtensionEnabled\0\u{1}newVersionAvailable\0\u{1}releaseVariant\0\u{1}language\0\u{3}debug_logging\0\u{3}recently_migrated\0\u{3}allow_telemetry\0\u{1}theme\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}enabled\0\u{1}allExtensionEnabled\0\u{1}newVersionAvailable\0\u{1}releaseVariant\0\u{1}language\0\u{3}debug_logging\0\u{4}\u{2}allow_telemetry\0\u{1}theme\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -771,7 +769,6 @@ extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       case 4: try { try decoder.decodeSingularEnumField(value: &self.releaseVariant) }()
       case 5: try { try decoder.decodeSingularStringField(value: &self.language) }()
       case 6: try { try decoder.decodeSingularBoolField(value: &self.debugLogging) }()
-      case 7: try { try decoder.decodeSingularBoolField(value: &self.recentlyMigrated) }()
       case 8: try { try decoder.decodeSingularBoolField(value: &self.allowTelemetry) }()
       case 9: try { try decoder.decodeSingularEnumField(value: &self.theme) }()
       default: break
@@ -798,9 +795,6 @@ extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if self.debugLogging != false {
       try visitor.visitSingularBoolField(value: self.debugLogging, fieldNumber: 6)
     }
-    if self.recentlyMigrated != false {
-      try visitor.visitSingularBoolField(value: self.recentlyMigrated, fieldNumber: 7)
-    }
     if self.allowTelemetry != false {
       try visitor.visitSingularBoolField(value: self.allowTelemetry, fieldNumber: 8)
     }
@@ -817,7 +811,6 @@ extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if lhs.releaseVariant != rhs.releaseVariant {return false}
     if lhs.language != rhs.language {return false}
     if lhs.debugLogging != rhs.debugLogging {return false}
-    if lhs.recentlyMigrated != rhs.recentlyMigrated {return false}
     if lhs.allowTelemetry != rhs.allowTelemetry {return false}
     if lhs.theme != rhs.theme {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}

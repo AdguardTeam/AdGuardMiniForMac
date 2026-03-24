@@ -5,7 +5,7 @@
 import { LogLevel } from '@adg/sciter-utils-kit';
 import { makeAutoObservable } from 'mobx';
 
-import { EmptyValue, GlobalSettings, LicenseOrError, LicenseStatus, ReleaseVariants, SafariExtensions, SafariExtensionStatus, SafariExtensionType, StringValue } from 'Apis/types';
+import { EmptyValue, GlobalSettings, LicenseOrError, LicenseStatus, ReleaseVariants, SafariExtensions, SafariExtensionStatus, SafariExtensionType, StatisticsPeriod, StatisticsRequest, StatisticsResponse, StringValue } from 'Apis/types';
 import { updateLanguage } from 'Intl';
 
 import type { Filters, Filter, FiltersStatus, SafariExtensionUpdate, SafariExtension, AdvancedBlocking } from 'Apis/types';
@@ -77,6 +77,11 @@ export class SettingsStore {
     public trialAvailableDays = 0;
 
     /**
+     * Statistics data
+     */
+    public statistics = new StatisticsResponse();
+
+    /**
      * Checks if the license status is active or trial
      */
     public get isLicenseOrTrialActive() {
@@ -143,6 +148,7 @@ export class SettingsStore {
         this.rootStore = rootStore;
         makeAutoObservable(this, { rootStore: false }, { autoBind: true });
         this.getSettings();
+        this.getStatistics();
         this.getLicense();
         this.getSafariExtensions();
         this.getTrialAvailability();
@@ -161,7 +167,6 @@ export class SettingsStore {
             newValue.releaseVariant = this.settings.releaseVariant;
             newValue.language = this.settings.language;
             newValue.debugLogging = this.settings.debugLogging;
-            newValue.recentlyMigrated = this.settings.recentlyMigrated;
             newValue.allowTelemetry = this.settings.allowTelemetry;
             newValue.theme = this.settings.theme;
         }
@@ -197,6 +202,16 @@ export class SettingsStore {
     public async getSettings() {
         const data = await window.API.settingsService.GetTraySettings(new EmptyValue());
         this.setSettings(data);
+    }
+
+    /**
+     * Get statistics
+     */
+    public async getStatistics() {
+        const data = await window.API.settingsService.GetStatistics(new StatisticsRequest({
+            period: StatisticsPeriod.all,
+        }));
+        this.setStatistics(data);
     }
 
     /**
@@ -267,6 +282,13 @@ export class SettingsStore {
         this.newVersionAvailable = settings.newVersionAvailable;
         log.setLogLevel(settings.debugLogging ? LogLevel.DBG : LogLevel.ERR);
         updateLanguage(settings.language);
+    }
+
+    /**
+     * Setter for statistics
+     */
+    public setStatistics(statistics: StatisticsResponse) {
+        this.statistics = statistics;
     }
 
     /**

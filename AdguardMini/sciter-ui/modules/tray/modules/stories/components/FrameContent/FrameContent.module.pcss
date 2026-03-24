@@ -4,91 +4,92 @@
 */
 
 .advanced {
-    background-image: url('./images/advanced.png');
+    background-image: url('./images/advanced.svg');
 }
 
 .devices {
-    background-image: url('./images/devices.png');
+    background-image: url('./images/devices.svg');
 }
 
 .extensions {
-    background-image: url('./images/extensions.png');
+    background-image: url('./images/extensions.svg');
 }
 
 .extra1 {
-    background-image: url('./images/extra1.png');
+    background-image: url('./images/extra1.svg');
 }
 
 .extra2 {
-    background-image: url('./images/extra2.png');
+    background-image: url('./images/extra2.svg');
 }
 
 .extra3 {
-    background-image: url('./images/extra3.png');
+    background-image: url('./images/extra3.svg');
 }
 
-.ag_mini_mac_release_blogpost {
-    background-image: url('./images/mini_rebranding.png');
+.extra4 {
+    background-image: url('./images/extra4.svg');
 }
 
 .filters1 {
-    background-image: url('./images/filters1.png');
+    background-image: url('./images/filters1.svg');
 }
 
 .filters2 {
-    background-image: url('./images/filters2.png');
+    background-image: url('./images/filters2.svg');
 }
 
 .filters3 {
-    background-image: url('./images/filters3.png');
+    background-image: url('./images/filters3.svg');
 }
 
 .filters4 {
-    background-image: url('./images/filters4.png');
+    background-image: url('./images/filters4.svg');
 }
 
 .filters5 {
-    background-image: url('./images/filters5.png');
+    background-image: url('./images/filters5.svg');
 }
 
 .loginItem {
-    background-image: url('./images/loginItem.png');
+    background-image: url('./images/loginItem.svg');
 }
 
-.rate1 {
-    background-image: url('./images/rate1.png');
-}
-
-.rate2 {
-    background-image: url('./images/rate2.png');
-}
-
-.rate3 {
-    background-image: url('./images/rate3.png');
+.rate {
+    background-image: url('./images/rate.svg');
 }
 
 .telemetry1 {
-    background-image: url('./images/telemetry1.png');
+    background-image: url('./images/telemetry1.svg');
+}
+
+.telemetry2 {
+    background-image: url('./images/telemetry2.svg');
 }
 
 .telemetry3 {
-    background-image: url('./images/telemetry3.png');
+    background-image: url('./images/telemetry3.svg');
 }
 
 .telemetry4 {
-    background-image: url('./images/telemetry4.png');
+    background-image: url('./images/telemetry4.svg');
 }
 
 .FrameContent {
+    width: 360px;
+    height: 510px;
+    display: flex;
+    flex-direction: column;
+
     &_image {
         background-size: contain;
-        width: 220px;
-        height: 220px;
-        margin: *;
+        background-position: center;
+        max-height: 300px;
+        flex: 1;
     }
 
     &_title {
-        margin: 0 var(--m-s) var(--m-xs);
+        margin: var(--m-s) var(--m-s) var(--m-xs);
         color: var(--text-footer-footer-text-default);
         text-align: center;
         position: relative;
@@ -124,6 +125,6 @@
     }
 
     &_bottom {
-        height: 16px;
+        height: 32px;
     }
 }

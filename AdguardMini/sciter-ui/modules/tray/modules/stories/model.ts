@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import type { TrayEvent } from 'Modules/tray/store/modules';
+import type { JSX } from 'preact';
 
 /**
  * Story ID type
@@ -12,26 +13,29 @@ export type StoryId = string;
 /**
  * Story card icon classname
  */
-export type StoryCardIcon = 'info' | 'quality' | 'phone' | 'custom_filter' | 'star' | 'advanced' | 'adguard' | 'rocket';
+export type StoryCardIcon = 'info' | 'quality' | 'phone' | 'custom_filter' | 'star' | 'advanced' | 'rocket' | 'adblocking';
+
+export type StoryCardStyle = 'default' | 'warning' | 'redIcon';
 
 /**
  * Story background color classname
  */
-export type StoryBackgroundColor = 'aqua' | 'blue' | 'green' | 'purple' | 'sand' | 'sandBlue' | 'emerald';
+export type StoryBackgroundColor = 'aqua' | 'blue' | 'green' | 'purple' | 'sand' | 'sandBlue' | 'sandGreen' | 'emerald' | 'red';
 
 /**
  * Story frame image classname
  */
-export type StoryFrameImage = 'advanced' | 'devices' | 'extensions' | 'extra1' | 'extra2' | 'extra3' | 'filters1' | 'filters2' | 'filters3' | 'filters4' | 'filters5' | 'loginItem' | 'rate1' | 'rate2' | 'rate3' | 'ag_mini_mac_release_blogpost' | 'telemetry1' | 'telemetry3' | 'telemetry4';
+export type StoryFrameImage = 'advanced' | 'devices' | 'extensions' | 'extra1' | 'extra2' | 'extra3' | 'extra4' | 'filters1' | 'filters2' | 'filters3' | 'filters4' | 'filters5' | 'loginItem' | 'rate' | 'telemetry1' | 'telemetry2' | 'telemetry3' | 'telemetry4';
 
 /**
  * Main story model
  */
 export type StoryInfo = {
     /**
-     * Warning style for card
+     * Style for card
      */
-    warning?: boolean;
+    style?: StoryCardStyle;
+    /** */
     /**
      * Icon for card
      */
@@ -40,6 +44,10 @@ export type StoryInfo = {
      * Text for card
      */
     text: string;
+    /**
+     * Additional content for card
+     */
+    content?: JSX.Element;
     /**
      * Story display config
      */
@@ -119,4 +127,9 @@ export interface IStoryFrame {
      * @see FrameContent
      */
     component?: React.FC<{ isMASReleaseVariant: boolean, frameIdNavigation(frameId: string): void }>;
+
+    /**
+     * Callback to call when frame shown
+     */
+    onFrameShown?(): void;
 }

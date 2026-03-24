@@ -10,30 +10,26 @@ import { Text, Icon } from 'UILib';
 
 import s from './StoryCard.module.pcss';
 
-import type { StoryCardIcon } from 'Modules/tray/modules/stories/model';
-import type { TrayEvent } from 'Modules/tray/store/modules';
+import type { StoryInfo } from 'Modules/tray/modules/stories/model';
 
-export type StoryCardProps = {
-    warning?: boolean;
-    icon: StoryCardIcon;
-    text: string;
+export type StoryCardProps = Omit<StoryInfo, 'storyConfig'> & {
     storyIndex: number;
     setSelectedStoryIndex(index: number): void;
     className?: string;
-    telemetryEvent?: TrayEvent;
 };
 
 /**
  * Story card component
  */
 function StoryCardComponent({
-    warning,
+    style = 'default',
     icon,
     text,
     storyIndex,
     setSelectedStoryIndex,
     className,
     telemetryEvent,
+    content,
 }: StoryCardProps) {
     const { telemetry } = useTrayStore();
 
@@ -45,8 +41,9 @@ function StoryCardComponent({
     }, [setSelectedStoryIndex, storyIndex, telemetry, telemetryEvent]);
 
     return (
-        <div className={cx(s.StoryCard, warning && s.StoryCard__warning, className)} onClick={onClick}>
-            <Icon className={cx(s.StoryCard_icon, warning && s.StoryCard_icon__warning)} icon={icon} big />
+        <div className={cx(s.StoryCard, s[`StoryCard__${style}`], className)} onClick={onClick}>
+            <Icon className={cx(s.StoryCard_icon, s[`StoryCard_icon__${style}`])} icon={icon} big />
+            {content}
             <Text type="t2">{text}</Text>
         </div>
     );

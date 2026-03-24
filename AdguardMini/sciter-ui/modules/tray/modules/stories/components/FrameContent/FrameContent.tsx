@@ -34,7 +34,7 @@ export function FrameContent({
     }, [storyActionButtonHandle, actionButton]);
 
     return (
-        <>
+        <div className={s.FrameContent}>
             <div className={cx(s.FrameContent_image, s[image])} />
             <div>
                 <Text className={s.FrameContent_title} type="h4">{title}</Text>
@@ -49,6 +49,6 @@ export function FrameContent({
                 <Component isMASReleaseVariant={isMASReleaseVariant} frameIdNavigation={frameIdNavigation} />
             )}
             <div className={s.FrameContent_bottom} />
-        </>
+        </div>
     );
 }

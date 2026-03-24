@@ -305,3 +305,8 @@ You MUST follow the following rules for EVERY task that you perform:
    **Rationale**: Eliminates PATH-dependent behavior, removes reliance on shell
    init files and version managers (nvm, rbenv), and ensures reproducible builds
    regardless of developer environment.
+
+5. **Import resolution via bundler injections**: If an import is not found or appears to be missing, 
+   CHECK bundler inject configurations: **webpack**: `ProvidePlugin` in `scripts/webpack/webpack.config.base.js`. 
+   These variables are **globally available** without explicit imports in the source code. 
+   When reviewing code, do not flag missing imports for these injected globals.

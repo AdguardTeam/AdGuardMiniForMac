@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import numeral from '@adg/js-format-number';
 import noop from 'lodash/noop';
 
 import { OptionalStringValue, EmptyValue, StringValue, SubscriptionMessage, Subscription } from 'Apis/types';
@@ -10,12 +11,13 @@ import { getTdsLink, TDS_PARAMS } from 'Modules/common/utils/links';
 // import { StarStoryMainFrameButtons } from 'Modules/tray/modules/stories/components/StarStoryMainFrameButtons';
 import { TrayEvent } from 'Modules/tray/store/modules';
 import { RouteName as RouteNameSettings } from 'SettingsStore/modules/SettingsRouter';
+import theme from 'Theme';
 import { useTrayStore } from 'TrayLib/hooks';
-import { ExternalLink } from 'UILib';
+import { ExternalLink, Text } from 'UILib';
 
 import { telemetryStoryFrameButtonsWrapper } from '../components';
 
-import type { IStoryFrame, StoryInfo } from '../model';
+import type { IStoryFrame, StoryFrameImage, StoryInfo } from '../model';
 
 const openSafariPref = () => {
     window.API.settingsService.OpenSafariExtensionPreferences(new OptionalStringValue());
@@ -24,6 +26,17 @@ const openSafariPref = () => {
 const openLoginItemsSettings = () => {
     window.API.settingsService.OpenLoginItemsSettings(new EmptyValue());
 };
+
+/**
+ * Format stats number for statistics story
+ */
+export function formatNumber(value: number): string {
+    const num = numeral(value);
+    if (value < 1_000_000) {
+        return num.format('0,0');
+    }
+    return num.format('0.0a');
+}
 
 /**
  * "From" component value for TDS links
@@ -35,7 +48,7 @@ const STORIES_TDS_LINK_FROM = 'storyConstructor';
  * Implements logic for sorting and filtering stories
  */
 export function useStoriesConfig(): StoryInfo[] {
-    const { settings } = useTrayStore();
+    const { settings, telemetry } = useTrayStore();
 
     const requiredStories: StoryInfo[] = [];
     const stories: StoryInfo[] = [];
@@ -50,13 +63,14 @@ export function useStoriesConfig(): StoryInfo[] {
         storyCompleted,
         advancedBlocking,
         license,
+        statistics,
     } = settings;
 
     const { allExtensionEnabled, allowTelemetry } = traySettings || {};
 
     if (!allExtensionEnabled) {
         requiredStories.push({
-            warning: true,
+            style: 'warning',
             icon: 'info',
             text: translate('tray.story.adguard.extensions'),
             storyConfig: {
@@ -81,7 +95,7 @@ export function useStoriesConfig(): StoryInfo[] {
 
     if (!loginItemEnabled) {
         requiredStories.push({
-            warning: true,
+            style: 'warning',
             icon: 'info',
             text: translate('tray.story.login.item'),
             storyConfig: {
@@ -98,32 +112,52 @@ export function useStoriesConfig(): StoryInfo[] {
                         frameId: 'loginItem1',
                     },
                 ],
-                backgroundColor: 'purple',
+                backgroundColor: 'sand',
             },
         });
     }
 
-    if (settings.settings?.recentlyMigrated) {
-        stories.push({
-            icon: 'adguard',
-            text: translate('tray.story.meetAGMini.card'),
+    // Statistics story
+    if (typeof statistics.statistics?.total === 'number') {
+        const total = statistics.statistics?.total;
+        const emptyStats = !total;
+
+        const frames: StoryInfo['storyConfig']['frames'] = [{
+            title: translate('tray.story.statistics.title1', { adsBlocked: formatNumber(total) }),
+            description: emptyStats ? translate('tray.story.statistics.desc1.empty') : translate('tray.story.statistics.desc1'),
+            image: 'extra2',
+            actionButton: emptyStats ? {
+                title: translate('tray.story.statistics.action'),
+                action: openSafariPref,
+            } : undefined,
+            frameId: 'statistics1',
+        }];
+
+        if (!emptyStats) {
+            frames.push({
+                title: translate('tray.story.statistics.title2', { trackersBlocked: formatNumber(statistics.statistics?.privacy || 0) }),
+                description: translate('tray.story.statistics.desc2'),
+                image: 'telemetry2',
+                frameId: 'statistics2',
+                onFrameShown: () => {
+                    telemetry.trackEvent(TrayEvent.StoryStatisticSlideClick);
+                },
+            });
+        }
+
+        requiredStories.push({
+            icon: 'adblocking',
+            style: 'redIcon',
+            text: translate('tray.story.statistics'),
+            content: <Text className={cx(theme.color.red, theme.layout.marginBottomXxs)} type="h5">{formatNumber(total)}</Text>,
             storyConfig: {
-                id: 'meetAGMini',
-                frames: [{
-                    title: translate('tray.story.meetAGMini.card.title'),
-                    description: translate('tray.story.meetAGMini.card.desc'),
-                    image: 'ag_mini_mac_release_blogpost',
-                    frameId: 'meetAGMini1',
-                    actionButton: {
-                        title: translate('tray.story.meetAGMini.card.action'),
-                        action: () => window.OpenLinkInBrowser(getTdsLink(TDS_PARAMS.ag_mini_mac_release_blogpost)),
-                    },
-                }],
-                backgroundColor: 'green',
+                id: 'statistics',
+                frames,
+                backgroundColor: 'red',
             },
+            telemetryEvent: TrayEvent.StoryStatisticsClick,
         });
     }
-
     if (!isLicenseOrTrialActive) {
         stories.push({
             icon: 'quality',
@@ -167,7 +201,7 @@ export function useStoriesConfig(): StoryInfo[] {
                     },
                     frameId: 'devices1',
                 }],
-                backgroundColor: 'emerald',
+                backgroundColor: 'sandBlue',
             },
             telemetryEvent: TrayEvent.StoreUseLicenseClick,
         });
@@ -193,7 +227,7 @@ export function useStoriesConfig(): StoryInfo[] {
                     frameId: 'telemetry2',
                     title: translate('telemetry.story.frame.2.title'),
                     description: translate('telemetry.story.frame.2.desc', { link: (text: string) => <ExternalLink color="inheritColor" href={getTdsLink(TDS_PARAMS.privacy)}>{text}</ExternalLink> }),
-                    image: 'extra1',
+                    image: 'telemetry2',
                     component: telemetryStoryFrameButtonsWrapper(false),
                 }, {
                     frameId: 'telemetry3',
@@ -215,7 +249,7 @@ export function useStoriesConfig(): StoryInfo[] {
                     description: translate('telemetry.story.frame.4.desc'),
                     image: 'telemetry4',
                 }],
-                backgroundColor: 'sandBlue',
+                backgroundColor: 'sandGreen',
             },
             telemetryEvent: TrayEvent.TelemetryClick,
         });
@@ -271,15 +305,14 @@ export function useStoriesConfig(): StoryInfo[] {
     //         frames: [{
     //             title: translate('tray.story.rate.adguard'),
     //             description: translate('tray.story.rate.adguard.desc'),
-    //             image: 'rate1',
+    //             image: 'rate',
     //             component: StarStoryMainFrameButtons,
-    //             frameId: 'rate1',
+    //             frameId: 'rate',
     //         }],
-    //         backgroundColor: 'sandBlue',
+    //         backgroundColor: 'emerald',
     //     },
     //     telemetryEvent: TrayEvent.StoryLoveHearYouClick,
     // });
-
 
     const extraFrames: IStoryFrame[] = [
         {
@@ -299,6 +332,7 @@ export function useStoriesConfig(): StoryInfo[] {
     let extraDescription = '';
     let extraButtonTitle = '';
     let extraButtonAction = noop;
+    let extraImage: StoryFrameImage = 'extra3';
     if (trialAvailableDays > 0) {
         extraTitle = translate('tray.story.adguard.extra.title.3');
         extraDescription = translate('tray.story.adguard.extra.desc.3');
@@ -320,6 +354,7 @@ export function useStoriesConfig(): StoryInfo[] {
                 value: RouteNameSettings.advanced_blocking,
             }));
         };
+        extraImage = 'extra4';
     }
 
     if (!trialAvailableDays && !isLicenseOrTrialActive) {
@@ -353,7 +388,7 @@ export function useStoriesConfig(): StoryInfo[] {
         extraFrames.push({
             title: extraTitle,
             description: extraDescription,
-            image: 'extra3',
+            image: extraImage,
             actionButton: {
                 title: extraButtonTitle,
                 action: extraButtonAction,
@@ -368,7 +403,7 @@ export function useStoriesConfig(): StoryInfo[] {
         storyConfig: {
             id: 'extra',
             frames: extraFrames,
-            backgroundColor: 'sand',
+            backgroundColor: 'purple',
         },
         telemetryEvent: TrayEvent.StoryWhatIsExtraClick,
     });

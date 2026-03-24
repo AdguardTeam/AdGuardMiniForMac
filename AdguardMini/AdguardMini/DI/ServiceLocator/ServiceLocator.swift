@@ -111,7 +111,8 @@ private final class ServiceLocator {
         productInfo: self.productInfoStorage,
         userSettings: self.userSettingsService,
         sharedSettings: SharedDIContainer.shared.sharedSettingsStorage,
-        keychain: self.coreDIContainer.keychain
+        keychain: self.coreDIContainer.keychain,
+        safariExtensionStateService: self.safariExtensionStateService
     )
 
     private lazy var groupFolderFileService: GroupFolderFileService = GroupFolderFileServiceImpl(

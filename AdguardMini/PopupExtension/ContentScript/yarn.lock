@@ -2,19 +2,19 @@
 # yarn lockfile v1
 
 
-"@adguard/agtree@^3.2.2":
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/@adguard/agtree/-/agtree-3.2.2.tgz#e31d421897fed24d4ca4332dfb7ffe5aad63cfaa"
-  integrity sha512-Z0Z+zMf6POCG64BUK5Iif36pAj09vMNT3qZruiUj631EDDo3hiVBHTg9kBG62Qp+94zjO/QrAiKKTilN47cfwg==
+"@adguard/agtree@^4.0.1":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@adguard/agtree/-/agtree-4.0.2.tgz#81cde1ae0fbadaed2ded041e97b2c7a5c3588881"
+  integrity sha512-frg1DGOBldBgkAoc3rLBHZfH/t1sq36IbRyIIIEcbo7PRfTXt0b9aD1GTrplefnFfHl+Jx1GP7gY9ijSapLvCg==
   dependencies:
     "@adguard/css-tokenizer" "^1.2.0"
     camelcase-keys "^7.0.2"
     clone-deep "^4.0.1"
+    glob-to-regexp "^0.4.1"
     is-ip "3.1.0"
     json5 "^2.2.3"
     sprintf-js "^1.1.3"
     tldts "^5.7.112"
-    xregexp "^5.1.1"
     zod "3.24.4"
 
 "@adguard/assistant@^4.3.77":
@@ -32,20 +32,20 @@
   resolved "https://registry.yarnpkg.com/@adguard/extended-css/-/extended-css-2.1.1.tgz#53677a310cf39259f54dfce79b692b0a327a8bb7"
   integrity sha512-TsHZ20oUWhbtrzQ4w70B96oHkGBIUZg2FdMfkq4StGfLmXQb+kI7fQb6BtXP2D0bvraIHMq6/mtKExglDJ9vsg==
 
-"@adguard/safari-extension@^4.1.1":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@adguard/safari-extension/-/safari-extension-4.1.1.tgz#92ecf50e65e93befbe7e65690dcf49414b561858"
-  integrity sha512-iye2bA23hndboBhVEZsbMnDDb7VkQTT59LlQ2EnWFN4KenpnzmZEjW/wAa3jZnudTWbO/2adH5Q6tuVEvSekRw==
+"@adguard/safari-extension@^4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@adguard/safari-extension/-/safari-extension-4.2.1.tgz#dfd30b0289c2627ad45de8787de4c673b078bf53"
+  integrity sha512-cxyZS2gYC6usVmwSLg4vPK4WMrRTR9y18P0hRp1ditL6UbiNHGoTBUcEx37ZR2iJ7kQOyo1JtHzUaHOAtI17Ew==
   dependencies:
     "@adguard/extended-css" "2.1.1"
-    "@adguard/scriptlets" "2.2.9"
+    "@adguard/scriptlets" "2.2.16"
 
-"@adguard/scriptlets@2.2.9":
-  version "2.2.9"
-  resolved "https://registry.yarnpkg.com/@adguard/scriptlets/-/scriptlets-2.2.9.tgz#5ade873269aee425a8e3ff78d48dbf95258555fb"
-  integrity sha512-q3hHnjy7RKbRWa6HJ4zIOjUjtIV2myB1nQOrpTk39DrTde9cgpV5avQxl1msWhdeq/KvXh8dG8+yJSfesjcDQg==
+"@adguard/scriptlets@2.2.16":
+  version "2.2.16"
+  resolved "https://registry.yarnpkg.com/@adguard/scriptlets/-/scriptlets-2.2.16.tgz#1a0f695bb9d9ff49b46b0f29ecd256e63478f01c"
+  integrity sha512-CpLzFOIR3ypvGD7Zax2ZiP2Kjhb70scbtRDneQcRnBaO+cPDGwLp0hEzMdI6eBZ8Is53svWzNpqGr9gAVum4SA==
   dependencies:
-    "@adguard/agtree" "^3.2.2"
+    "@adguard/agtree" "^4.0.1"
     "@types/trusted-types" "^2.0.7"
     js-yaml "^3.14.1"
 
@@ -793,14 +793,6 @@
     "@babel/types" "^7.4.4"
     esutils "^2.0.2"
 
-"@babel/runtime-corejs3@^7.26.9":
-  version "7.27.0"
-  resolved "https://registry.yarnpkg.com/@babel/runtime-corejs3/-/runtime-corejs3-7.27.0.tgz#c766df350ec7a2caf3ed64e3659b100954589413"
-  integrity sha512-UWjX6t+v+0ckwZ50Y5ShZLnlk95pP5MyW/pon9tiYzl3+18pkTHTFNTKr7rQbfRXPkowt2QAn30o1b6oswszew==
-  dependencies:
-    core-js-pure "^3.30.2"
-    regenerator-runtime "^0.14.0"
-
 "@babel/runtime@^7.8.4":
   version "7.27.0"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.27.0.tgz#fbee7cf97c709518ecc1f590984481d5460d4762"
@@ -1437,11 +1429,6 @@ core-js-compat@^3.40.0:
   dependencies:
     browserslist "^4.24.4"
 
-core-js-pure@^3.30.2:
-  version "3.41.0"
-  resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.41.0.tgz#349fecad168d60807a31e83c99d73d786fe80811"
-  integrity sha512-71Gzp96T9YPk63aUvE5Q5qP+DryB4ZloUZPSOebGM88VNw8VNfvdA7z6kGA8iGOTEzAomsRidp4jXSmUIJsL+Q==
-
 cross-spawn@^7.0.2, cross-spawn@^7.0.6:
   version "7.0.6"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-7.0.6.tgz#8a58fe78f00dcd70c370451759dfbfaf03e8ee9f"
@@ -2025,6 +2012,11 @@ glob-parent@^6.0.2:
   integrity sha512-XxwI8EOhVQgWp6iDL+3b0r86f4d6AX6zSU55HfB4ydCEuXLXc5FcYeOu+nnGftS4TEju/11rt4KJPTMgbfmv4A==
   dependencies:
     is-glob "^4.0.3"
+
+glob-to-regexp@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/glob-to-regexp/-/glob-to-regexp-0.4.1.tgz#c75297087c851b9a578bd217dd59a92f59fe546e"
+  integrity sha512-lkX1HJXwyMcprw/5YUZc2s7DrpAiHB21/V+E1rHUrVNokkvB6bqMzT0VfV6/86ZNabt1k14YOIaT7nDvOX3Iiw==
 
 glob@^10.3.7:
   version "10.4.5"
@@ -3429,13 +3421,6 @@ wrappy@1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==
-
-xregexp@^5.1.1:
-  version "5.1.2"
-  resolved "https://registry.yarnpkg.com/xregexp/-/xregexp-5.1.2.tgz#ae4979868313d2f4dc4da9ab31ff5c2352fb969e"
-  integrity sha512-6hGgEMCGhqCTFEJbqmWrNIPqfpdirdGWkqshu7fFZddmTSfgv5Sn9D2SaKloR79s5VUiUlpwzg3CM3G6D3VIlw==
-  dependencies:
-    "@babel/runtime-corejs3" "^7.26.9"
 
 yallist@^3.0.2:
   version "3.1.1"

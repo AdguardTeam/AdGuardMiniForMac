@@ -2,11 +2,46 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+//
+//  Config.xcconfig
+//  AdGuardMini Private Configuration
+//
+
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-CONFIG_BASE_BUNDLE_ID = com.example
+//============= Bundle Identifiers =============
 
-CONFIG_TEAM = MY_TEAM_ID
-CONFIG_APP_ID = $(CONFIG_BASE_BUNDLE_ID).MY_PRODUCT_NAME
+// Base prefix for all bundle identifiers
+// Example: com.yourcompany or com.example.dev
+CONFIG_BASE_PREFIX = com.example
+
+// Main bundle identifier (base prefix + product name)
+// Example: com.yourcompany.adguardmini
+CONFIG_BASE_BUNDLE_ID = $(CONFIG_BASE_PREFIX).example
+
+//=============== Team Settings ================
+
+// Apple Developer Team ID is automatically taken from Xcode project settings
+// You can override it here if needed, otherwise it uses $(DEVELOPMENT_TEAM)
+CONFIG_TEAM = $(DEVELOPMENT_TEAM)
+
+//============= App Configuration ==============
+
+// Full application bundle identifier
+// Example: com.yourcompany.adguardmini or $(CONFIG_BASE_BUNDLE_ID).safari
+CONFIG_APP_ID = $(CONFIG_BASE_BUNDLE_ID).example
+
+// App group identifier for shared data between app and extensions
+// Format: <TEAM_ID>.<APP_ID>
 CONFIG_GROUP = $(CONFIG_TEAM).$(CONFIG_APP_ID)
+
+// macOS-specific app group (for platform-specific shared data)
+// Example: <TEAM_ID>.<BASE_PREFIX>.mac
+CONFIG_MAC_GROUP = $(CONFIG_TEAM).$(CONFIG_BASE_PREFIX).example
+
+//=============== Company Info =================
+
+// Company name displayed in the app
+// Example: Your Company Name Inc.
+CONFIG_COMPANY = Example Company

@@ -598,7 +598,6 @@ export class GlobalSettings extends pb_1.Message {
         releaseVariant?: ReleaseVariants;
         language?: string;
         debugLogging?: boolean;
-        recentlyMigrated?: boolean;
         allowTelemetry?: boolean;
         theme?: Theme;
     }) {
@@ -622,9 +621,6 @@ export class GlobalSettings extends pb_1.Message {
             }
             if ("debugLogging" in data && data.debugLogging != undefined) {
                 this.debugLogging = data.debugLogging;
-            }
-            if ("recentlyMigrated" in data && data.recentlyMigrated != undefined) {
-                this.recentlyMigrated = data.recentlyMigrated;
             }
             if ("allowTelemetry" in data && data.allowTelemetry != undefined) {
                 this.allowTelemetry = data.allowTelemetry;
@@ -670,12 +666,6 @@ export class GlobalSettings extends pb_1.Message {
     set debugLogging(value: boolean) {
         pb_1.Message.setField(this, 6, value);
     }
-    get recentlyMigrated() {
-        return pb_1.Message.getFieldWithDefault(this, 7, false) as boolean;
-    }
-    set recentlyMigrated(value: boolean) {
-        pb_1.Message.setField(this, 7, value);
-    }
     get allowTelemetry() {
         return pb_1.Message.getFieldWithDefault(this, 8, false) as boolean;
     }
@@ -695,7 +685,6 @@ export class GlobalSettings extends pb_1.Message {
         releaseVariant?: ReleaseVariants;
         language?: string;
         debugLogging?: boolean;
-        recentlyMigrated?: boolean;
         allowTelemetry?: boolean;
         theme?: Theme;
     }): GlobalSettings {
@@ -718,9 +707,6 @@ export class GlobalSettings extends pb_1.Message {
         if (data.debugLogging != null) {
             message.debugLogging = data.debugLogging;
         }
-        if (data.recentlyMigrated != null) {
-            message.recentlyMigrated = data.recentlyMigrated;
-        }
         if (data.allowTelemetry != null) {
             message.allowTelemetry = data.allowTelemetry;
         }
@@ -737,7 +723,6 @@ export class GlobalSettings extends pb_1.Message {
             releaseVariant?: ReleaseVariants;
             language?: string;
             debugLogging?: boolean;
-            recentlyMigrated?: boolean;
             allowTelemetry?: boolean;
             theme?: Theme;
         } = {};
@@ -758,9 +743,6 @@ export class GlobalSettings extends pb_1.Message {
         }
         if (this.debugLogging != null) {
             data.debugLogging = this.debugLogging;
-        }
-        if (this.recentlyMigrated != null) {
-            data.recentlyMigrated = this.recentlyMigrated;
         }
         if (this.allowTelemetry != null) {
             data.allowTelemetry = this.allowTelemetry;
@@ -786,8 +768,6 @@ export class GlobalSettings extends pb_1.Message {
             writer.writeString(5, this.language);
         if (this.debugLogging != false)
             writer.writeBool(6, this.debugLogging);
-        if (this.recentlyMigrated != false)
-            writer.writeBool(7, this.recentlyMigrated);
         if (this.allowTelemetry != false)
             writer.writeBool(8, this.allowTelemetry);
         if (this.theme != Theme.unknown)
@@ -818,9 +798,6 @@ export class GlobalSettings extends pb_1.Message {
                     break;
                 case 6:
                     message.debugLogging = reader.readBool();
-                    break;
-                case 7:
-                    message.recentlyMigrated = reader.readBool();
                     break;
                 case 8:
                     message.allowTelemetry = reader.readBool();

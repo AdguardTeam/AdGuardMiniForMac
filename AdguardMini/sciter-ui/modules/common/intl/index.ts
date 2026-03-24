@@ -2,7 +2,33 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import numeral from '@adg/js-format-number';
 import { createI18nInstance, createTranslatorShortcut } from '@adg/sciter-utils-kit';
+
+// Import js-format-number locales
+import '@adg/js-format-number/src/locales/cs';
+import '@adg/js-format-number/src/locales/da';
+import '@adg/js-format-number/src/locales/de';
+import '@adg/js-format-number/src/locales/es';
+import '@adg/js-format-number/src/locales/fi';
+import '@adg/js-format-number/src/locales/fr';
+import '@adg/js-format-number/src/locales/hu';
+import '@adg/js-format-number/src/locales/it';
+import '@adg/js-format-number/src/locales/ja';
+import '@adg/js-format-number/src/locales/ko';
+import '@adg/js-format-number/src/locales/nl';
+import '@adg/js-format-number/src/locales/pl';
+import '@adg/js-format-number/src/locales/pt_br';
+import '@adg/js-format-number/src/locales/pt_pt';
+import '@adg/js-format-number/src/locales/ru';
+import '@adg/js-format-number/src/locales/sk';
+import '@adg/js-format-number/src/locales/sl';
+import '@adg/js-format-number/src/locales/th';
+import '@adg/js-format-number/src/locales/tr';
+import '@adg/js-format-number/src/locales/uk';
+import '@adg/js-format-number/src/locales/vi';
+import '@adg/js-format-number/src/locales/zh_cn';
+import '@adg/js-format-number/src/locales/zh_tw';
 
 import arLang from './locales/ar.json';
 import beLang from './locales/be.json';
@@ -94,6 +120,20 @@ declare global {
  */
 export const i18nInstance = createI18nInstance(messages, 'en');
 
+// Available numeral locales
+const numeralLocales = new Set(['cs', 'da', 'de', 'es', 'fi', 'fr', 'hu', 'it', 'ja', 'ko', 'nl', 'pl', 'pt_br', 'pt_pt', 'ru', 'sk', 'sl', 'th', 'tr', 'uk', 'vi', 'zh_cn', 'zh_tw']);
+
+/**
+ * Function to save update numeral locale
+ * @param locale - locale code
+ */
+function updateNumeralLocale(locale: string) {
+    if (numeralLocales.has(locale)) {
+        numeral.locale(locale);
+    } else {
+        numeral.locale('en');
+    }
+}
 /**
  * Update current locale in translator library with custom function
  *
@@ -103,20 +143,26 @@ export function updateLanguage(language: string) {
     const locale = language.toLowerCase();
     if (messages[language as keyof typeof messages]) {
         i18nInstance.updateLanguage(locale as Locale);
+        updateNumeralLocale(locale);
     } else if (locale.includes('_')) {
         const [lang] = locale.split('_');
         if (messages[lang as keyof typeof messages]) {
             i18nInstance.updateLanguage(lang as Locale);
+            updateNumeralLocale(lang);
         }
     } else if (locale.includes('-')) {
         const [lang] = locale.split('-');
         if (messages[locale.replace('-', '_') as keyof typeof messages]) {
-            i18nInstance.updateLanguage(locale.replace('-', '_') as Locale);
+            const loc = locale.replace('-', '_') as Locale;
+            i18nInstance.updateLanguage(loc);
+            updateNumeralLocale(loc);
         } else if (messages[lang as keyof typeof messages]) {
             i18nInstance.updateLanguage(lang as Locale);
+            updateNumeralLocale(lang);
         }
     } else {
         i18nInstance.updateLanguage('en' as Locale);
+        numeral.locale('en');
     }
 }
 
