@@ -11,4 +11,5 @@ import Foundation
 
 final class ContentBlockerRequestHandler: ContentBlockerRequestHandlerBase {
     override static var blockerType: SafariBlockerType { .custom }
+    override static var subsystem: Subsystem { .cbCustom }
 }

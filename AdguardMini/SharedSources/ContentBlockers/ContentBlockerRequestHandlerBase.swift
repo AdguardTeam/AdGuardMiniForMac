@@ -48,6 +48,10 @@ class ContentBlockerRequestHandlerBase: NSObject {
         SafariBlockerType.general
     }
 
+    class var subsystem: Subsystem {
+        Subsystem.cbGeneral
+    }
+
     // MARK: Dependencies
 
     var filtersStorage: FiltersStorage!
@@ -56,6 +60,7 @@ class ContentBlockerRequestHandlerBase: NSObject {
     // MARK: Init
 
     override init() {
+        LogConfig.setupSharedLogger(for: Self.subsystem)
         super.init()
         self.setupServices()
     }
@@ -76,7 +81,7 @@ extension ContentBlockerRequestHandlerBase: NSExtensionRequestHandling {
         let fileSize = (try? FileManager.default.attributesOfItem(atPath: rulesUrl.path)[.size] as? Int) ?? -1
 
         LogInfo(
-            "beginRequest \(blockerType): "
+            "[DBG] beginRequest \(blockerType): "
             + "protection=\(protectionEnabled), "
             + "fileExists=\(fileExists), "
             + "fileSize=\(fileSize), "

@@ -18,6 +18,15 @@ enum Subsystem: CaseIterable {
     /// Helper subsystem name.
     case helper
 
+    // Content blockers
+
+    case cbGeneral
+    case cbPrivacy
+    case cbSecurity
+    case cbSocial
+    case cbOther
+    case cbCustom
+
     var name: String {
         switch self {
         case .mainApp:
@@ -26,6 +35,18 @@ enum Subsystem: CaseIterable {
             BuildConfig.AG_POPUP_EXTENSION_BUNDLEID
         case .helper:
             BuildConfig.AG_HELPER_ID
+        case .cbGeneral:
+            BuildConfig.AG_BLOCKER_GENERAL_BUNDLEID
+        case .cbPrivacy:
+            BuildConfig.AG_BLOCKER_PRIVACY_BUNDLEID
+        case .cbSecurity:
+            BuildConfig.AG_BLOCKER_SECURITY_BUNDLEID
+        case .cbSocial:
+            BuildConfig.AG_BLOCKER_SOCIAL_BUNDLEID
+        case .cbOther:
+            BuildConfig.AG_BLOCKER_OTHER_BUNDLEID
+        case .cbCustom:
+            BuildConfig.AG_BLOCKER_CUSTOM_BUNDLEID
         }
     }
 

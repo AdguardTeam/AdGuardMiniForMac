@@ -85,6 +85,12 @@
 		1675B75B2EFD8B50004D72B7 /* TelemetryEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1675B7592EFD7490004D72B7 /* TelemetryEvents.swift */; };
 		169664ED2E9FEE2F00E0B87E /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = 169664EC2E9FEE2F00E0B87E /* AdGuardMacLib */; };
 		169664EF2E9FF09C00E0B87E /* adguard-extra.js in Resources */ = {isa = PBXBuildFile; fileRef = 169664EE2E9FF09C00E0B87E /* adguard-extra.js */; };
+		16AFC5432F72CC4000C8334A /* LogConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5273422BBD65B800196F03 /* LogConfig.swift */; };
+		16AFC5442F72CC4000C8334A /* LogConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5273422BBD65B800196F03 /* LogConfig.swift */; };
+		16AFC5452F72CC4000C8334A /* LogConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5273422BBD65B800196F03 /* LogConfig.swift */; };
+		16AFC5462F72CC4000C8334A /* LogConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5273422BBD65B800196F03 /* LogConfig.swift */; };
+		16AFC5472F72CC4000C8334A /* LogConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5273422BBD65B800196F03 /* LogConfig.swift */; };
+		16AFC5482F72CC4000C8334A /* LogConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5273422BBD65B800196F03 /* LogConfig.swift */; };
 		D9606EDF2D75D228004E12B0 /* FLM in Frameworks */ = {isa = PBXBuildFile; productRef = D9606EDE2D75D228004E12B0 /* FLM */; };
 		D9606EE12D75D23B004E12B0 /* FLMBuilder in Frameworks */ = {isa = PBXBuildFile; productRef = D9606EE02D75D23B004E12B0 /* FLMBuilder */; };
 		EB00BB882ABAF71F007FA047 /* AGSEDesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = EB00BB872ABAF71F007FA047 /* AGSEDesignSystem */; };
@@ -2233,6 +2239,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB88F5CB2C0084C90033E2E8 /* BuildConfig.swift in Sources */,
+				16AFC5442F72CC4000C8334A /* LogConfig.swift in Sources */,
 				EB3F1C5B2BADC41000DD2717 /* SharedSettingsStorage.swift in Sources */,
 				EB5273632BBDA67C00196F03 /* Subsystem.swift in Sources */,
 			);
@@ -2243,6 +2250,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB88F5CC2C0084CA0033E2E8 /* BuildConfig.swift in Sources */,
+				16AFC5452F72CC4000C8334A /* LogConfig.swift in Sources */,
 				EB3F1C5C2BADC41100DD2717 /* SharedSettingsStorage.swift in Sources */,
 				EB5273642BBDA67D00196F03 /* Subsystem.swift in Sources */,
 			);
@@ -2253,6 +2261,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB88F5CD2C0084CB0033E2E8 /* BuildConfig.swift in Sources */,
+				16AFC5462F72CC4000C8334A /* LogConfig.swift in Sources */,
 				EB3F1C5D2BADC41100DD2717 /* SharedSettingsStorage.swift in Sources */,
 				EB5273652BBDA67D00196F03 /* Subsystem.swift in Sources */,
 			);
@@ -2263,6 +2272,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB88F5CE2C0084CB0033E2E8 /* BuildConfig.swift in Sources */,
+				16AFC5472F72CC4000C8334A /* LogConfig.swift in Sources */,
 				EB3F1C5E2BADC41200DD2717 /* SharedSettingsStorage.swift in Sources */,
 				EB5273662BBDA67E00196F03 /* Subsystem.swift in Sources */,
 			);
@@ -2273,6 +2283,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB88F5CF2C0084CC0033E2E8 /* BuildConfig.swift in Sources */,
+				16AFC5482F72CC4000C8334A /* LogConfig.swift in Sources */,
 				EB3F1C5F2BADC41200DD2717 /* SharedSettingsStorage.swift in Sources */,
 				EB5273672BBDA67E00196F03 /* Subsystem.swift in Sources */,
 			);
@@ -2311,6 +2322,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB88F5CA2C0084C90033E2E8 /* BuildConfig.swift in Sources */,
+				16AFC5432F72CC4000C8334A /* LogConfig.swift in Sources */,
 				EB3F1C5A2BADC41000DD2717 /* SharedSettingsStorage.swift in Sources */,
 				EB5273622BBDA67B00196F03 /* Subsystem.swift in Sources */,
 			);

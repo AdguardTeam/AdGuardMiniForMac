@@ -124,6 +124,7 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
                 // Stage 1: Get filters for conversion
 
                 var rawFilters = self.filterListManager.getActiveRulesInfo()
+                LogInfo("Filters to convert: \(rawFilters.count)")
 
                 try self.checkCancellation(progress)
 
@@ -161,6 +162,8 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
                 for await blocker in updatedBlockers {
                     blockersToReload.append(blocker)
                 }
+
+                LogDebug("All rules converted, reloading blockers")
 
                 try self.checkCancellation(progress)
 
