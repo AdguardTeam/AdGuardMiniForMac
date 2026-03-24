@@ -56,6 +56,7 @@ function SettingsControlComponent() {
 
     const [showResetModal, setShowResetModal] = useState(false);
     const [showHardwareModal, setShowHardwareModal] = useState(false);
+    const [showClearStatisticsModal, setShowClearStatisticsModal] = useState(false);
     const [hardwareModalLoader, setHardwareModalLoader] = useState(false);
     const [showTelemetryModal, setShowTelemetryModal] = useState(false);
     const [showConsentModal, setShowConsentModal] = useState<number[]>();
@@ -81,6 +82,11 @@ function SettingsControlComponent() {
     const onConsent = (mode: ImportMode) => {
         setShowConsentModal(undefined);
         settings.confirmImport(mode);
+    };
+
+    const onClearStatistics = () => {
+        setShowClearStatisticsModal(false);
+        settings.clearStatistics();
     };
 
     const onHardwareChange = () => {
@@ -204,6 +210,7 @@ function SettingsControlComponent() {
     return (
         <>
             <SettingsHeader
+                onClearStatistics={() => setShowClearStatisticsModal(true)}
                 onExport={onExport}
                 onImport={onImport}
                 onToggleResetModal={() => setShowResetModal(!showResetModal)}
@@ -230,12 +237,15 @@ function SettingsControlComponent() {
             <SettingsModals
                 filters={storeFilters}
                 hardwareAccModalProps={hardwareAccModalProps}
+                isClearStatisticsModalOpen={showClearStatisticsModal}
                 isHardwareModalLoaderOpen={hardwareModalLoader}
                 isHardwareModalOpen={showHardwareModal}
                 isResetModalOpen={showResetModal}
                 isTelemetryModalOpen={showTelemetryModal}
                 resetModalDescription={translate('reset.defaults.all.desc')}
                 showConsentModalFilterIds={showConsentModal}
+                onClearStatistics={onClearStatistics}
+                onCloseClearStatisticsModal={() => setShowClearStatisticsModal(false)}
                 onCloseResetModal={() => setShowResetModal(false)}
                 onCloseTelemetryModal={() => setShowTelemetryModal(false)}
                 onConfirmConsent={onConsent}

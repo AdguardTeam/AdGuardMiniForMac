@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import numeral from '@adg/js-format-number';
 import noop from 'lodash/noop';
 
 import { OptionalStringValue, EmptyValue, StringValue, SubscriptionMessage, Subscription } from 'Apis/types';
@@ -10,8 +11,9 @@ import { getTdsLink, TDS_PARAMS } from 'Modules/common/utils/links';
 // import { StarStoryMainFrameButtons } from 'Modules/tray/modules/stories/components/StarStoryMainFrameButtons';
 import { TrayEvent } from 'Modules/tray/store/modules';
 import { RouteName as RouteNameSettings } from 'SettingsStore/modules/SettingsRouter';
+import theme from 'Theme';
 import { useTrayStore } from 'TrayLib/hooks';
-import { ExternalLink } from 'UILib';
+import { ExternalLink, Text } from 'UILib';
 
 import { telemetryStoryFrameButtonsWrapper } from '../components';
 
@@ -26,6 +28,17 @@ const openLoginItemsSettings = () => {
 };
 
 /**
+ * Format stats number for statistics story
+ */
+export function formatNumber(value: number): string {
+    const num = numeral(value);
+    if (value < 1_000_000) {
+        return num.format('0,0');
+    }
+    return num.format('0.0a');
+}
+
+/**
  * "From" component value for TDS links
  */
 const STORIES_TDS_LINK_FROM = 'storyConstructor';
@@ -35,7 +48,7 @@ const STORIES_TDS_LINK_FROM = 'storyConstructor';
  * Implements logic for sorting and filtering stories
  */
 export function useStoriesConfig(): StoryInfo[] {
-    const { settings } = useTrayStore();
+    const { settings, telemetry } = useTrayStore();
 
     const requiredStories: StoryInfo[] = [];
     const stories: StoryInfo[] = [];
@@ -50,13 +63,14 @@ export function useStoriesConfig(): StoryInfo[] {
         storyCompleted,
         advancedBlocking,
         license,
+        statistics,
     } = settings;
 
     const { allExtensionEnabled, allowTelemetry } = traySettings || {};
 
     if (!allExtensionEnabled) {
         requiredStories.push({
-            warning: true,
+            style: 'warning',
             icon: 'info',
             text: translate('tray.story.adguard.extensions'),
             storyConfig: {
@@ -81,7 +95,7 @@ export function useStoriesConfig(): StoryInfo[] {
 
     if (!loginItemEnabled) {
         requiredStories.push({
-            warning: true,
+            style: 'warning',
             icon: 'info',
             text: translate('tray.story.login.item'),
             storyConfig: {
@@ -103,6 +117,47 @@ export function useStoriesConfig(): StoryInfo[] {
         });
     }
 
+    // Statistics story
+    if (typeof statistics.statistics?.total === 'number') {
+        const total = statistics.statistics?.total;
+        const emptyStats = !total;
+
+        const frames: StoryInfo['storyConfig']['frames'] = [{
+            title: translate('tray.story.statistics.title1', { adsBlocked: formatNumber(total) }),
+            description: emptyStats ? translate('tray.story.statistics.desc1.empty') : translate('tray.story.statistics.desc1'),
+            image: 'extra2',
+            actionButton: emptyStats ? {
+                title: translate('tray.story.statistics.action'),
+                action: openSafariPref,
+            } : undefined,
+            frameId: 'statistics1',
+        }];
+
+        if (!emptyStats) {
+            frames.push({
+                title: translate('tray.story.statistics.title2', { trackersBlocked: formatNumber(statistics.statistics?.privacy || 0) }),
+                description: translate('tray.story.statistics.desc2'),
+                image: 'telemetry2',
+                frameId: 'statistics2',
+                onFrameShown: () => {
+                    telemetry.trackEvent(TrayEvent.StoryStatisticSlideClick);
+                },
+            });
+        }
+
+        requiredStories.push({
+            icon: 'adblocking',
+            style: 'redIcon',
+            text: translate('tray.story.statistics'),
+            content: <Text className={cx(theme.color.red, theme.layout.marginBottomXxs)} type="h5">{formatNumber(total)}</Text>,
+            storyConfig: {
+                id: 'statistics',
+                frames,
+                backgroundColor: 'red',
+            },
+            telemetryEvent: TrayEvent.StoryStatisticsClick,
+        });
+    }
     if (!isLicenseOrTrialActive) {
         stories.push({
             icon: 'quality',
@@ -258,7 +313,6 @@ export function useStoriesConfig(): StoryInfo[] {
     //     },
     //     telemetryEvent: TrayEvent.StoryLoveHearYouClick,
     // });
-
 
     const extraFrames: IStoryFrame[] = [
         {

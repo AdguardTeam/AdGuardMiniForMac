@@ -8,9 +8,9 @@ import { TrayPage } from 'Modules/tray/store/modules';
 /* Service handles settings lists  */
 export class TrayCallbackServiceInternal implements ITrayCallbackServiceInternal {
     async OnTrayWindowVisibilityChange(param: BoolValue): Promise<EmptyValue> {
-        // Idk how it works, i will remain it as it is
         if (param.value) {
             store.settings.getSettings();
+            store.settings.getStatistics();
             store.telemetry.setPage(TrayPage.TrayMenu);
             store.telemetry.trackPageView();
         } else {

@@ -18,12 +18,15 @@ type Props = {
     isHardwareModalOpen: boolean;
     isResetModalOpen: boolean;
     isTelemetryModalOpen: boolean;
+    isClearStatisticsModalOpen: boolean;
     resetModalDescription: string;
     showConsentModalFilterIds: number[] | undefined;
     onCloseResetModal(): void;
     onCloseTelemetryModal(): void;
+    onCloseClearStatisticsModal(): void;
     onConfirmConsent(mode: ImportMode): void;
     onResetSubmit(): void;
+    onClearStatistics(): void;
 };
 
 /**
@@ -37,10 +40,13 @@ export function SettingsModals(props: Props) {
         isHardwareModalOpen,
         isResetModalOpen,
         isTelemetryModalOpen,
+        isClearStatisticsModalOpen,
         onCloseResetModal,
         onCloseTelemetryModal,
+        onCloseClearStatisticsModal,
         onConfirmConsent,
         onResetSubmit,
+        onClearStatistics,
         resetModalDescription,
         showConsentModalFilterIds,
     } = props;
@@ -71,6 +77,19 @@ export function SettingsModals(props: Props) {
                 <Modal
                     canClose={false}
                     loaderText={translate('applying.changes')}
+                />
+            )}
+            {isClearStatisticsModalOpen && (
+                <Modal
+                    childrenClassName={s.Settings_resetWarning}
+                    description={translate('clear.statistics.description')}
+                    submitAction={onClearStatistics}
+                    submitClassName={theme.button.redSubmit}
+                    submitText={translate('clear')}
+                    title={`${translate('clear.statistics.title')}?`}
+                    cancel
+                    submit
+                    onClose={onCloseClearStatisticsModal}
                 />
             )}
             {showConsentModalFilterIds && (

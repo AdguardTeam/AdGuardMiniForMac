@@ -89,6 +89,10 @@ export function StoriesLayer({
         return () => clearInterval(intervalRef.current);
     }, [currentFrameIndex, id, moveToNextStory, length, frame?.frameId, addCompletedStory, isFirstFrameReturnedBack]);
 
+    useEffect(() => {
+        frame?.onFrameShown?.();
+    }, [frame?.onFrameShown]);
+
     if (!frame) {
         return null;
     }
