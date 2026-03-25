@@ -6,7 +6,7 @@ import { observer } from 'mobx-react-lite';
 import { useEffect, useRef } from 'preact/hooks';
 
 import { useLottieElementAdapter, useOnboardingStore } from 'OnboardingLib/hooks';
-import { OnboardingSteps } from 'OnboardingStore/modules';
+import { OnboardingEvents, OnboardingSteps } from 'OnboardingStore/modules';
 
 import { Step } from '../Step';
 
@@ -14,7 +14,7 @@ import { Step } from '../Step';
  * Step "Ads"
  */
 function AdsComponent() {
-    const { steps } = useOnboardingStore();
+    const { steps, telemetry } = useOnboardingStore();
 
     const onSkip = () => {
         steps.setSkipTuning(true);
@@ -22,6 +22,7 @@ function AdsComponent() {
     };
 
     const onTune = () => {
+        telemetry.trackEvent(OnboardingEvents.TuneTheAppClick);
         steps.setSkipTuning(false);
         steps.setCurrentStep(OnboardingSteps.trackers);
     };

@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef } from 'preact/hooks';
 import { OptionalStringValue } from 'Apis/types';
 import { getCountableEntityStatuses } from 'Modules/common/utils/utils';
 import { useSettingsStore } from 'SettingsLib/hooks';
-import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType, NotificationsQueueVariant } from 'SettingsStore/modules';
+import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType, NotificationsQueueVariant, SettingsEvent } from 'SettingsStore/modules';
 
 /**
  * Shows a notification if the user has disabled one or more extensions
@@ -26,6 +26,7 @@ export function useShowEnableExtensionsNotification() {
 
     const openSafariPref = () => {
         window.API.settingsService.OpenSafariExtensionPreferences(new OptionalStringValue());
+        telemetry.trackEvent(SettingsEvent.FixItClick);
     };
 
     const closeNotification = useCallback(() => {

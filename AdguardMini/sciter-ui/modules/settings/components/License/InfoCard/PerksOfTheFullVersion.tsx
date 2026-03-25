@@ -194,7 +194,7 @@ function PerksOfTheFullVersionComponent({
                 if (trialAvailableDays > 0 && !isTrialActive) {
                     telemetry.trackEvent(SettingsEvent.Try14DaysClick);
                 } else {
-                    telemetry.trackEvent(SettingsEvent.SubscribeClick);
+                    telemetry.trackEvent(SettingsEvent.SubscribeTrialEndClick);
                 }
             }
         };

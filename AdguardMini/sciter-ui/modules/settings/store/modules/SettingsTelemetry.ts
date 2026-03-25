@@ -20,6 +20,7 @@ export enum SettingsPage {
     CreateRule = 'create_rule',
     FiltersScreen = 'filters_screen',
     SafariExtensions = 'safari_extensions',
+    ContactSupport = 'contact_support',
 }
 
 /**
@@ -58,7 +59,6 @@ export enum SettingsEvent {
     RealTimeUpdatesTryForFreeClick = 'real_time_updates_try_for_free_click',
     ResetToDefaultClick = 'reset_to_default_click',
     Try14DaysClick = 'try_14_days_click',
-    SubscribeClick = 'subscribe_click',
     LogInClick = 'log_in_click',
     RestoreClick = 'restore_click',
     ActivateViaCodeClick = 'activate_via_code_click',
@@ -78,6 +78,8 @@ export enum SettingsEvent {
     EnableUpdatesAbTest = 'enable_updates_ab_test',
     ExtraAbTest = 'extra_ab_test',
     RealTimeAbTest = 'real_time_ab_test',
+    FixItClick = 'fix_it_click',
+    SendReportABug = 'send_report_a_bug',
 }
 
 /**

@@ -25,8 +25,7 @@ function OnboardingComponent() {
 
     switch (currentStep) {
         case OnboardingSteps.start: {
-            tracker(OnboardingLayer.EulaScreen);
-            return <Start />;
+            return <Start trackPage={() => tracker(OnboardingLayer.EulaScreen)} />;
         }
         case OnboardingSteps.extensions: {
             tracker(OnboardingLayer.ExtensionsScreen);

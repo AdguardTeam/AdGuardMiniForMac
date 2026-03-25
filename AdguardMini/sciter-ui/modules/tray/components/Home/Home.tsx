@@ -104,7 +104,10 @@ function HomeComponent() {
         telemetry.trackEvent(TrayEvent.MainProtectionClick);
     }, [settings, telemetry]);
 
-    const navigateToUpdates = useCallback(() => router.changePath(TrayRoute.updates), [router]);
+    const navigateToUpdates = useCallback(() => {
+        telemetry.trackEvent(TrayEvent.UpdateClick);
+        router.changePath(TrayRoute.updates);
+    }, [router, telemetry]);
 
     /**
      * Handle click on arrows in stories cards box

@@ -38,6 +38,7 @@ export enum TrayEvent {
     TelemetryClick = 'telemetry_click',
     StoryStatisticsClick = 'story_statistics_click',
     StoryStatisticSlideClick = 'story_statistic_slide_click',
+    UpdateClick = 'update_click',
 }
 
 /**

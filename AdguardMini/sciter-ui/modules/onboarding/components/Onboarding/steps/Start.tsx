@@ -15,10 +15,15 @@ import { Text, Checkbox, Button, ExternalLink, AppUsageDataModal } from 'UILib';
 import startImage from './images/start.svg';
 import s from './Start.module.pcss';
 
+type StartProps = {
+    // We have to pass and call this function to track the page view here
+    // because user accepts sending telemetry data
+    trackPage(): void;
+};
 /**
  * Step "Start"
  */
-function StartComponent() {
+function StartComponent({ trackPage }: StartProps) {
     const { steps } = useOnboardingStore();
 
     const [checked, setChecked] = useState(false);
@@ -27,16 +32,16 @@ function StartComponent() {
 
     const { safariExtensionsStore } = steps;
 
-    const action = () => {
-        steps.setCurrentStep(
-            safariExtensionsStore.allExtensionsEnabled 
-                ? OnboardingSteps.ads 
-                : OnboardingSteps.extensions
-        );
-
+    const action = async () => {
         if (telemetry) {
-            window.API.settingsService.UpdateAllowTelemetry(new BoolValue({ value: true }));
+            await window.API.settingsService.UpdateAllowTelemetry(new BoolValue({ value: true }));
+            trackPage();
         }
+        steps.setCurrentStep(
+            safariExtensionsStore.allExtensionsEnabled
+                ? OnboardingSteps.ads
+                : OnboardingSteps.extensions,
+        );
     };
 
     const primaryButton = { action, label: translate('onboarding.start.btn'), disabled: !checked };

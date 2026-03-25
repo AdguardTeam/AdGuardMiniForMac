@@ -164,6 +164,7 @@ extension PopupView {
                 .store(in: &self.cancellableSet)
 
             self.$isProtectionEnabledForUrl
+                .dropFirst()
                 .removeDuplicates()
                 .sink { [weak self] newValue in
                     guard let self,

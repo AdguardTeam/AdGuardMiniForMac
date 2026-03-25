@@ -22,6 +22,7 @@ export enum OnboardingLayer {
 export enum OnboardingEvents {
     BlockTrackersYesClick = 'block_trackers_yes_click',
     BlockAnnoyancesYesClick = 'block_annoyances_yes_click',
+    TuneTheAppClick = 'tune_the_app_click',
 }
 
 /**

@@ -44,6 +44,8 @@ function RouteToPage(currentRoute: RouteName): SettingsPage | 'unknown' {
             return SettingsPage.FiltersScreen;
         case RouteName.safari_extensions:
             return SettingsPage.SafariExtensions;
+        case RouteName.contact_support:
+            return SettingsPage.ContactSupport;
         default:
             return 'unknown';
     }

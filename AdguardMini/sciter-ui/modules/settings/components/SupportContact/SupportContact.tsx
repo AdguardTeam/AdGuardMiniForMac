@@ -7,7 +7,7 @@ import { useEffect, useState } from 'preact/hooks';
 
 import { SupportMessage } from 'Apis/types';
 import { useSettingsStore } from 'SettingsLib/hooks';
-import { RouteName } from 'SettingsStore/modules';
+import { RouteName, SettingsEvent } from 'SettingsStore/modules';
 import th from 'Theme';
 import { Layout, Text, Input, Textarea, Checkbox, Button, Modal, Select } from 'UILib';
 import { isValidEmail } from 'Utils/email';
@@ -25,7 +25,7 @@ export type Subject = 'report_bug' | 'suggest' | 'other';
  * Contact support page of settings module
  */
 function SupportContactComponent() {
-    const { router, account: { license }, ui, ui: { supportContactFormData } } = useSettingsStore();
+    const { router, account: { license }, ui, ui: { supportContactFormData }, telemetry } = useSettingsStore();
 
     const themes: IOption<Subject>[] = [
         { value: 'report_bug', label: translate('support.contact.theme.report.bug') },
@@ -95,6 +95,10 @@ function SupportContactComponent() {
             return;
         }
         setSubmitDisabled(true);
+
+        if (theme.value === 'report_bug') {
+            telemetry.trackEvent(SettingsEvent.SendReportABug);
+        }
 
         // We don't add logs, when user suggest feature
         const sendLogs = theme.value === 'suggest' ? false : addLogs;
