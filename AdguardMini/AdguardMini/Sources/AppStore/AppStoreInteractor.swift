@@ -7,11 +7,11 @@
 //  AdguardMini
 //
 
+import AML
+import AppBackend
+import AppStore
 import Foundation
 import StoreKit
-
-import AML
-import AppStore
 
 // MARK: - AppStoreInteractor
 
@@ -89,5 +89,9 @@ final class AppStoreInteractorImpl: AppStoreInteractor, StoreApiDelegate {
         )
 
         LogInfo("Receipt validated: \(info.applicationKeyStatus)")
+
+        guard info.applicationKeyStatus == .valid else {
+            throw AppStoreInteractorError.invalidReceipt(status: "\(info.applicationKeyStatus)")
+        }
     }
 }
