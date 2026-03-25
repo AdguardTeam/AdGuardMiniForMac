@@ -8,11 +8,8 @@ set -e
 
 pushd "$(dirname $0)/../../"
 
-# Activate nvm and use Node.js 22 on CI
-if [ "${bamboo_agentId}" ]; then
-    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-    nvm use 22
-fi
+source bamboo-specs/scripts/include/setup_nvm.inc
+setup_nvm
 
 ./bamboo-specs/scripts/setup_ssh.sh
 ./configure.sh
