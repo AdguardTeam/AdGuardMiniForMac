@@ -24,6 +24,7 @@ protocol StatusBarItemController {
     var delegate: StatusBarItemControllerDelegate? { get set }
 
     func updateTrayIconVisibility(isHidden: Bool) async
+    func updateTrayIconVisibilityBySetting() async
     func updateStatusBarIcon() async
 
     func getTrayIconRect() async -> CGRect
@@ -42,8 +43,6 @@ final class StatusBarItemControllerImpl: StatusBarItemController {
 
     weak var delegate: StatusBarItemControllerDelegate?
 
-    private var statusBarItemIsHidden: Bool { !self.userSettingsManager.showInMenuBar }
-
     init(storage: SharedSettingsStorage, userSettingsManager: UserSettingsManager) {
         self.storage = storage
         self.userSettingsManager = userSettingsManager
@@ -53,22 +52,28 @@ final class StatusBarItemControllerImpl: StatusBarItemController {
     func updateTrayIconVisibility(isHidden: Bool) async {
         LogDebugTrace()
         if isHidden {
-            self.statusBarItemView = nil
+            self.statusBarItemView?.isVisible = false
             return
         }
 
         await self.updateStatusBarIcon()
     }
 
+    /// Updates the tray icon visibility accoring to the user setting (userSettingsManager.showInMenuBar)
+    ///
+    /// It is used to update tray icon visibility from an outside service where user settings not available.
+    /// For example: updates tray icon visibility after ProtectionService.setProtectionStatus call
+    /// (ProtectionService.setProtectionStatus calls if protection status changes via Safari Extension)
+    @MainActor
+    func updateTrayIconVisibilityBySetting() async {
+        LogDebug("Setting status bar icon visibility to \(self.userSettingsManager.showInMenuBar)")
+
+        self.statusBarItemView?.isVisible = self.userSettingsManager.showInMenuBar
+    }
+
     @MainActor
     func updateStatusBarIcon() async {
         LogDebug("Updating status bar icon")
-
-        if self.statusBarItemIsHidden {
-            LogDebug("Status bar item is hidden")
-            self.statusBarItemView = nil
-            return
-        }
 
         if self.statusBarItemView.isNil {
             LogDebug("Recreating status bar item")
@@ -85,6 +90,7 @@ final class StatusBarItemControllerImpl: StatusBarItemController {
         self.statusBarItemView?.setTarget(self)
         self.statusBarItemView?.setAction(#selector(self.handleStatusBarClicked))
         self.statusBarItemView?.listenEvents([.leftMouseUp, .rightMouseUp])
+        self.statusBarItemView?.isVisible = true
     }
 
     @MainActor

@@ -30,6 +30,11 @@ final class StatusBarItemView {
         }
     }
 
+    var isVisible: Bool {
+        get { self.statusItem.isVisible }
+        set { self.statusItem.isVisible = newValue }
+    }
+
     var globalRect: CGRect {
         guard let frame = self.statusItem.button?.frame,
               let globalFrame = self.statusItem.button?.window?.convertToScreen(frame) else {

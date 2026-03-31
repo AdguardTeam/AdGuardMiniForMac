@@ -63,6 +63,7 @@ final class ProtectionServiceImpl: ProtectionService {
         await self.safariExtensionManager.reloadAllContentBlockers()
         Task { @MainActor in
             await self.statusBarItemController.updateStatusBarIcon()
+            await self.statusBarItemController.updateTrayIconVisibilityBySetting()
         }
         LogInfo("Protection: \(isEnabled ? "enabled" : "disabled")")
     }
