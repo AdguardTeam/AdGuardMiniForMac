@@ -6409,7 +6409,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "ssh://git@bit.int.agrd.dev:7999/adguard-mac/sp-flm.git";
 			requirement = {
-				branch = 0.19.0;
+				branch = 0.20.2;
 				kind = branch;
 			};
 		};
