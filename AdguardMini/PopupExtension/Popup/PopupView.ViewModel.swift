@@ -206,7 +206,6 @@ extension PopupView {
             guard let url = url?.absoluteString else { return }
             self.performAction(actionName: .setFilteringStatusForUrl) {
                 _ = try await self.safariApi.setFilteringStatusWithUrl(url, isEnabled: isEnabled)
-                await self.safariApp.reloadActivePage()
             }
         }
 
