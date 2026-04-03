@@ -15,7 +15,14 @@ export class TrayCallbackServiceInternal implements ITrayCallbackServiceInternal
             store.telemetry.setPage(TrayPage.TrayMenu);
             store.telemetry.trackPageView();
         } else {
-            store.router.changePath(TrayRoute.home);
+            // On Tray close, if user is not on home page, set it to home, 
+            // because when user will open tray again, he will see the same page as before,
+            //  and it can be confusing if he was not on home page
+            if (store.router.currentPath !== TrayRoute.home) {
+                // Set page to unknown, for correct telemetry track
+                store.telemetry.setPage('unknown');
+                store.router.changePath(TrayRoute.home);
+            }
         }
 
         store.settings.getAdvancedBlocking();

@@ -193,6 +193,14 @@ function PerksOfTheFullVersionComponent({
             if (isMASReleaseVariant) {
                 if (trialAvailableDays > 0 && !isTrialActive) {
                     telemetry.trackEvent(SettingsEvent.Try14DaysClick);
+                } else if (isAppStoreSubscription || isFreeware) {
+                    telemetry.trackEvent(SettingsEvent.SubscribeTrialEndClick);
+                } else {
+                    telemetry.trackEvent(SettingsEvent.GetFullVersionClick);
+                }
+            } else {
+                if (!isLicenseExpired) {
+                    telemetry.trackEvent(SettingsEvent.GetFullVersionClick);
                 } else {
                     telemetry.trackEvent(SettingsEvent.SubscribeTrialEndClick);
                 }
