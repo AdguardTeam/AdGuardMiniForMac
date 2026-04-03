@@ -19,17 +19,13 @@
     &__hover {
         &:hover {
             border-radius: 8px;
-            background: var(--fills-buttons-secondary-button-hovered);
-        }
-
-        &:hover + .SettingsItem_container_routeBorder {
-            background: transparent;
+            background: var(--fills-backgrounds-page-background-hovered);
         }
     }
 
     &_defaultHovered {
         border-radius: 8px;
-        background: var(--fills-buttons-secondary-button-hovered);
+        background: var(--fills-backgrounds-page-background-hovered);
     }
 
     &_title {
@@ -45,9 +41,9 @@
         }
 
         &_routeBorder {
-            height: 43px;
+            height: *;
             width: 1px;
-            margin-top: 16px;
+            margin: 16px 1px;
             background: var(--stroke-dividers-item-divider-default);
         }
 
@@ -114,7 +110,7 @@
         }
 
         &_children {
-            margin-left: auto;
+            height: *;
         }
 
         &__withRoute {
