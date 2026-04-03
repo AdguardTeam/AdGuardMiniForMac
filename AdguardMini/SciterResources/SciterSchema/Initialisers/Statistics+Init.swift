@@ -10,10 +10,10 @@
 import BaseSciterSchema
 
 extension BlockerStatistics {
-    public init(total: Int, privacy: Int) {
+    public init(adsBlocked: Int, privacyBlocked: Int) {
         self.init()
-        self.total = Int64(total)
-        self.privacy = Int64(privacy)
+        self.adsBlocked = Int64(adsBlocked)
+        self.privacyBlocked = Int64(privacyBlocked)
     }
 }
 

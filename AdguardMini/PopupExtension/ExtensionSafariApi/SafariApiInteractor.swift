@@ -40,7 +40,7 @@ protocol SafariApiInteractor {
 
     func notifyWindowOpened() async throws
 
-    func reportBlockCounts(_ counts: [SafariBlockerType: Int]) async throws
+    func reportBlockCounts(_ counts: [SafariBlockerType: Int], adsBlockedTotal: Int) async throws
 }
 
 // MARK: - SafariApiInteractorImpl
@@ -141,10 +141,11 @@ final class SafariApiInteractorImpl: SafariApiInteractor {
         }
     }
 
-    func reportBlockCounts(_ counts: [SafariBlockerType: Int]) async throws {
-        let stringCounts = counts.reduce(into: [String: Int64]()) { result, pair in
+    func reportBlockCounts(_ counts: [SafariBlockerType: Int], adsBlockedTotal: Int) async throws {
+        var stringCounts = counts.reduce(into: [String: Int64]()) { result, pair in
             result[pair.key.bundleId] = Int64(pair.value)
         }
+        stringCounts[BlockingStatisticsKey.adsBlockedTotal] = Int64(adsBlockedTotal)
 
         try await withCheckedThrowingContinuation { continuation in
             self.safariApi.reportBlockCounts(stringCounts, reply: continuation.callback)

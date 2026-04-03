@@ -121,4 +121,66 @@ final class StatisticsStoreTests: XCTestCase {
         XCTAssertEqual(privacyResult, 20)
         XCTAssertEqual(securityResult, 30)
     }
+
+    // MARK: - Ads blocked total tests
+
+    func testAddAdsBlockedTotal_CreatesNewRecord() throws {
+        let store = try createInMemoryStore()
+
+        try store.addAdsBlockedTotal(5)
+
+        let result = try store.queryAdsBlockedTotal(for: .day)
+        XCTAssertEqual(result, 5)
+    }
+
+    func testAddAdsBlockedTotal_AccumulatesExistingRecord() throws {
+        let store = try createInMemoryStore()
+
+        try store.addAdsBlockedTotal(5)
+        try store.addAdsBlockedTotal(3)
+
+        let result = try store.queryAdsBlockedTotal(for: .day)
+        XCTAssertEqual(result, 8)
+    }
+
+    func testQueryAdsBlockedTotal_ReturnsOnlyReservedRecords() throws {
+        let store = try createInMemoryStore()
+
+        try store.addCounts([.general: 10, .privacy: 20])
+        try store.addAdsBlockedTotal(7)
+
+        let adsBlockedResult = try store.queryAdsBlockedTotal(for: .day)
+        XCTAssertEqual(adsBlockedResult, 7, "Ads-blocked total should only return reserved records")
+    }
+
+    func testPerBlockerQuery_DoesNotIncludeAdsBlockedTotalRecords() throws {
+        let store = try createInMemoryStore()
+
+        try store.addCounts([.general: 10, .privacy: 20])
+        try store.addAdsBlockedTotal(7)
+
+        let generalResult = try store.queryStatistics(for: .day, blockerType: .general)
+        let privacyResult = try store.queryStatistics(for: .day, blockerType: .privacy)
+
+        XCTAssertEqual(generalResult, 10)
+        XCTAssertEqual(privacyResult, 20)
+    }
+
+    func testAggregateQuery_ExcludesAdsBlockedTotalRecords() throws {
+        let store = try createInMemoryStore()
+
+        try store.addCounts([.general: 10, .privacy: 20])
+        try store.addAdsBlockedTotal(7)
+
+        // Aggregate query (nil blockerType) should only sum actual blocker rows.
+        let allResult = try store.queryStatistics(for: .day)
+        XCTAssertEqual(allResult, 30, "Aggregate query should sum per-blocker records only")
+    }
+
+    func testAdsBlockedTotalStorageKey_DoesNotOverlapWithBlockerTypes() {
+        XCTAssertFalse(
+            SafariBlockerType.allCases.contains { $0.rawValue == BlockingStatisticsKey.adsBlockedTotal },
+            "Reserved ads-blocked total key must not overlap with SafariBlockerType.rawValue"
+        )
+    }
 }

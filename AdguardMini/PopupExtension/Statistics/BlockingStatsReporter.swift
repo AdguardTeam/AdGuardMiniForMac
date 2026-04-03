@@ -13,10 +13,13 @@ import AML
 // MARK: - BlockingStatsReporter
 
 protocol BlockingStatsReporter {
-    func incrementCount(for blockerType: SafariBlockerType, by count: Int) async
-    func enqueueIncrement(for blockerType: SafariBlockerType, by count: Int)
+    func recordBlocking(pageHash: Int, urls: [URL], blockerType: SafariBlockerType) async
+    func enqueueBlocking(pageHash: Int, urls: [URL], blockerType: SafariBlockerType)
     func start() async
     func stop() async
+
+    func enqueueStart()
+    func enqueueStop()
 }
 
 // MARK: - BlockingStatsReporterImpl
@@ -28,6 +31,8 @@ actor BlockingStatsReporterImpl: BlockingStatsReporter {
     private let flushInterval: TimeInterval
 
     private var counters: [SafariBlockerType: Int] = [:]
+    private var pendingAdsBlockedTotal: Int = 0
+    private var deduplicationState = DeduplicationState()
     private var flushTask: Task<Void, Never>?
 
     // MARK: Init
@@ -40,7 +45,7 @@ actor BlockingStatsReporterImpl: BlockingStatsReporter {
     // MARK: Deinit
 
     deinit {
-        flushTask?.cancel()
+        self.flushTask?.cancel()
     }
 
     // MARK: Public methods
@@ -48,7 +53,7 @@ actor BlockingStatsReporterImpl: BlockingStatsReporter {
     func start() async {
         guard self.flushTask == nil else { return }
 
-        LogInfo("BlockingStatsReporter started with \(self.flushInterval)s interval")
+        LogDebug("BlockingStatsReporter started with \(self.flushInterval)s interval")
 
         self.flushTask = Task {
             while !Task.isCancelled {
@@ -64,29 +69,57 @@ actor BlockingStatsReporterImpl: BlockingStatsReporter {
         self.flushTask?.cancel()
         self.flushTask = nil
         await self.flush()
-        LogInfo("BlockingStatsReporter stopped")
+        self.deduplicationState = DeduplicationState()
+        LogDebug("BlockingStatsReporter stopped")
     }
 
-    func incrementCount(for blockerType: SafariBlockerType, by count: Int) async {
-        self.counters[blockerType, default: 0] += count
+    func recordBlocking(pageHash: Int, urls: [URL], blockerType: SafariBlockerType) async {
+        self.counters[blockerType, default: 0] += urls.count
+        for url in urls {
+            let delta = self.deduplicationState.recordCallback(
+                pageHash: pageHash,
+                url: url,
+                blockerType: blockerType
+            )
+            self.pendingAdsBlockedTotal += delta
+        }
     }
 
-    nonisolated func enqueueIncrement(for blockerType: SafariBlockerType, by count: Int) {
-        Task { await self.incrementCount(for: blockerType, by: count) }
+    nonisolated func enqueueStart() {
+        Task { await self.start() }
+    }
+
+    nonisolated func enqueueStop() {
+        Task { await self.stop() }
+    }
+
+    nonisolated func enqueueBlocking(pageHash: Int, urls: [URL], blockerType: SafariBlockerType) {
+        Task { await self.recordBlocking(pageHash: pageHash, urls: urls, blockerType: blockerType) }
     }
 
     // MARK: Private methods
 
     private func flush() async {
-        guard !self.counters.isEmpty else { return }
+        assert(self.pendingAdsBlockedTotal >= 0, "Pending ads-blocked total must not be negative")
+
+        guard !self.counters.isEmpty else {
+            assert(
+                self.pendingAdsBlockedTotal == 0,
+                "Pending ads-blocked total must be zero when there are no pending counters"
+            )
+            return
+        }
 
         let batch = self.counters
+        let batchAdsBlockedTotal = self.pendingAdsBlockedTotal
 
         let totalCount = batch.values.reduce(0, +)
-        LogDebug("Flushing statistics: \(batch.count) type(s), \(totalCount) total blocks")
+        LogDebug(
+            "Flushing statistics: \(batch.count) type(s), \(totalCount) total blocks, \(batchAdsBlockedTotal) ads-blocked"
+        )
 
         do {
-            try await self.safariApi.reportBlockCounts(batch)
+            try await self.safariApi.reportBlockCounts(batch, adsBlockedTotal: batchAdsBlockedTotal)
 
             for (blockerType, count) in batch {
                 self.counters[blockerType, default: 0] -= count
@@ -94,6 +127,11 @@ actor BlockingStatsReporterImpl: BlockingStatsReporter {
                     self.counters.removeValue(forKey: blockerType)
                 }
             }
+            self.pendingAdsBlockedTotal -= batchAdsBlockedTotal
+            assert(
+                self.pendingAdsBlockedTotal >= 0,
+                "Pending ads-blocked total must not become negative after flush"
+            )
             LogDebug("Statistics batch delivered successfully, counters reset")
         } catch {
             LogError("Failed to deliver statistics batch: \(error). Counters will accumulate.")

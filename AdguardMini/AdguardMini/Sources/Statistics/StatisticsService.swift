@@ -14,7 +14,9 @@ import AML
 
 protocol StatisticsService {
     func addBlockCounts(_ counts: [SafariBlockerType: Int])
+    func addAdsBlockedTotal(_ count: Int)
     func getStatistics(for period: StatisticsPeriod, blockerType: SafariBlockerType?) -> Int
+    func getAdsBlockedTotal(for period: StatisticsPeriod) -> Int
     func resetStatistics()
 }
 
@@ -31,7 +33,15 @@ final class NoOpStatisticsService: StatisticsService {
         // No-op: statistics unavailable
     }
 
+    func addAdsBlockedTotal(_ count: Int) {
+        // No-op: statistics unavailable
+    }
+
     func getStatistics(for period: StatisticsPeriod, blockerType: SafariBlockerType?) -> Int {
+        0
+    }
+
+    func getAdsBlockedTotal(for period: StatisticsPeriod) -> Int {
         0
     }
 
@@ -64,12 +74,30 @@ final class StatisticsServiceImpl: StatisticsService {
         }
     }
 
+    func addAdsBlockedTotal(_ count: Int) {
+        guard count > 0 else { return }
+        do {
+            try self.store.addAdsBlockedTotal(count)
+        } catch {
+            LogError("Failed to add ads-blocked total \(count): \(error)")
+        }
+    }
+
     func getStatistics(for period: StatisticsPeriod, blockerType: SafariBlockerType?) -> Int {
         do {
             return try self.store.queryStatistics(for: period, blockerType: blockerType)
         } catch {
             let blockerTypeDesc = blockerType.map { "blocker=\($0)" } ?? "all blockers"
             LogError("Failed to query statistics for period=\(period.displayName), \(blockerTypeDesc): \(error)")
+            return 0
+        }
+    }
+
+    func getAdsBlockedTotal(for period: StatisticsPeriod) -> Int {
+        do {
+            return try self.store.queryAdsBlockedTotal(for: period)
+        } catch {
+            LogError("Failed to query ads-blocked total for period=\(period.displayName): \(error)")
             return 0
         }
     }

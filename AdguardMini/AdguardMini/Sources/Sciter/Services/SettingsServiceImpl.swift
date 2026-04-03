@@ -337,10 +337,10 @@ extension Sciter {
         func getStatistics(_ message: StatisticsRequest, _ promise: @escaping (StatisticsResponse) -> Void) {
             let period = message.period.toDomain()
 
-            let total = self.statisticsService.getStatistics(for: period)
-            let privacy = self.statisticsService.getStatistics(for: period, blockerType: .privacy)
+            let adsBlocked = self.statisticsService.getAdsBlockedTotal(for: period)
+            let privacyBlocked = self.statisticsService.getStatistics(for: period, blockerType: .privacy)
 
-            let stats = BlockerStatistics(total: total, privacy: privacy)
+            let stats = BlockerStatistics(adsBlocked: adsBlocked, privacyBlocked: privacyBlocked)
 
             let response = StatisticsResponse(statistics: stats, period: message.period)
             promise(response)

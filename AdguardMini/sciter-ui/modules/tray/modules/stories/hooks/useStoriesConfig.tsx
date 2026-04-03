@@ -119,12 +119,14 @@ export function useStoriesConfig(): StoryInfo[] {
     }
 
     // Statistics story
-    if (typeof statistics.statistics?.total === 'number') {
-        const total = statistics.statistics?.total;
-        const emptyStats = !total;
+    const blockerStatistics = statistics.statistics as typeof statistics.statistics | undefined;
+    if (blockerStatistics && typeof blockerStatistics.adsBlocked === 'number') {
+        const adsBlocked = blockerStatistics.adsBlocked;
+        const privacyBlocked = blockerStatistics.privacyBlocked || 0;
+        const emptyStats = !adsBlocked && !privacyBlocked;
 
         const frames: StoryInfo['storyConfig']['frames'] = [{
-            title: translate('tray.story.statistics.title1', { adsBlocked: formatNumber(total) }),
+            title: translate('tray.story.statistics.title1', { adsBlocked: formatNumber(adsBlocked) }),
             description: emptyStats ? translate('tray.story.statistics.desc1.empty') : translate('tray.story.statistics.desc1'),
             image: 'extra2',
             actionButton: emptyStats ? {
@@ -136,7 +138,7 @@ export function useStoriesConfig(): StoryInfo[] {
 
         if (!emptyStats) {
             frames.push({
-                title: translate('tray.story.statistics.title2', { trackersBlocked: formatNumber(statistics.statistics?.privacy || 0) }),
+                title: translate('tray.story.statistics.title2', { trackersBlocked: formatNumber(privacyBlocked) }),
                 description: translate('tray.story.statistics.desc2'),
                 image: 'telemetry2',
                 frameId: 'statistics2',
@@ -150,7 +152,7 @@ export function useStoriesConfig(): StoryInfo[] {
             icon: 'adblocking',
             style: 'redIcon',
             text: translate('tray.story.statistics'),
-            content: <Text className={cx(theme.color.red, theme.layout.marginBottomXxs)} type="h5">{formatNumber(total)}</Text>,
+            content: <Text className={cx(theme.color.red, theme.layout.marginBottomXxs)} type="h5">{formatNumber(adsBlocked)}</Text>,
             storyConfig: {
                 id: 'statistics',
                 frames,

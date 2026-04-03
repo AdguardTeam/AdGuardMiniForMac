@@ -70,7 +70,9 @@ extension StatisticsPeriod: CustomStringConvertible {
 
 protocol StatisticsStore {
     func addCounts(_ counts: [SafariBlockerType: Int]) throws
+    func addAdsBlockedTotal(_ count: Int) throws
     func queryStatistics(for period: StatisticsPeriod, blockerType: SafariBlockerType?) throws -> Int
+    func queryAdsBlockedTotal(for period: StatisticsPeriod) throws -> Int
     func resetAll() throws
 }
 
@@ -94,6 +96,12 @@ final class StatisticsStoreImpl: StatisticsStore {
 
     private let persistentContainer: NSPersistentContainer
     private let context: NSManagedObjectContext
+
+    /// Reserved storage key for the deduplicated ads-blocked total record.
+    ///
+    /// This must not overlap with any `SafariBlockerType.rawValue`, because the
+    /// same Core Data field stores both per-blocker rows and the ads-blocked total row.
+    private static let adsBlockedTotalStorageKey = BlockingStatisticsKey.adsBlockedTotal
 
     // MARK: Init
 
@@ -164,13 +172,78 @@ final class StatisticsStoreImpl: StatisticsStore {
         }
     }
 
-    func queryStatistics(for period: StatisticsPeriod, blockerType: SafariBlockerType?) throws -> Int {
+    func addAdsBlockedTotal(_ count: Int) throws {
+        let today = Calendar.current.startOfDay(for: Date())
+        let count64 = Int64(count)
+
+        try self.context.performAndWait {
+            let fetchRequest: NSFetchRequest<DailyBlockCount> = DailyBlockCount.fetchRequest()
+            fetchRequest.predicate = NSPredicate(
+                format: "date == %@ AND blockerType == %@",
+                today as NSDate,
+                Self.adsBlockedTotalStorageKey
+            )
+            fetchRequest.fetchLimit = 1
+
+            let results = try self.context.fetch(fetchRequest)
+
+            if let existing = results.first {
+                existing.count += count64
+                LogDebug(
+                    "Updated ads-blocked total on \(today): \(existing.count - count64) + \(count) = \(existing.count)"
+                )
+            } else {
+                let newRecord = DailyBlockCount(context: self.context)
+                newRecord.date = today
+                newRecord.blockerType = Self.adsBlockedTotalStorageKey
+                newRecord.count = count64
+                LogDebug("Created ads-blocked total on \(today): \(count)")
+            }
+
+            if self.context.hasChanges {
+                try self.context.save()
+            }
+        }
+    }
+
+    func queryAdsBlockedTotal(for period: StatisticsPeriod) throws -> Int {
         try self.context.performAndWait {
             let fetchRequest: NSFetchRequest<DailyBlockCount> = DailyBlockCount.fetchRequest()
 
             let predicates = [
                 period.datePredicate(),
-                blockerType.map { NSPredicate(format: "blockerType == %@", $0.rawValue) }
+                NSPredicate(format: "blockerType == %@", Self.adsBlockedTotalStorageKey)
+            ].compactMap { $0 }
+
+            fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+
+            let results = try context.fetch(fetchRequest)
+            let total = results.reduce(Int64(0)) { partial, item in
+                partial + item.count
+            }
+
+            LogDebug("Query ads-blocked total for period=\(period.displayName): \(results.count) records, total: \(total)")
+            return Int(clamping: total)
+        }
+    }
+
+    func queryStatistics(for period: StatisticsPeriod, blockerType: SafariBlockerType?) throws -> Int {
+        try self.context.performAndWait {
+            let fetchRequest: NSFetchRequest<DailyBlockCount> = DailyBlockCount.fetchRequest()
+
+            let typePredicate: NSPredicate
+            if let blockerType {
+                typePredicate = NSPredicate(format: "blockerType == %@", blockerType.rawValue)
+            } else {
+                typePredicate = NSPredicate(
+                    format: "blockerType IN %@",
+                    SafariBlockerType.allCases.map { $0.rawValue }
+                )
+            }
+
+            let predicates = [
+                period.datePredicate(),
+                typePredicate
             ].compactMap { $0 }
 
             if !predicates.isEmpty {

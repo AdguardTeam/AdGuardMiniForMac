@@ -83,9 +83,9 @@ public struct BlockerStatistics: Sendable {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var total: Int64 = 0
+  public var adsBlocked: Int64 = 0
 
-  public var privacy: Int64 = 0
+  public var privacyBlocked: Int64 = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -153,7 +153,7 @@ extension StatisticsRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
 
 extension BlockerStatistics: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "BlockerStatistics"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}total\0\u{1}privacy\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}adsBlocked\0\u{1}privacyBlocked\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -161,26 +161,26 @@ extension BlockerStatistics: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularInt64Field(value: &self.total) }()
-      case 2: try { try decoder.decodeSingularInt64Field(value: &self.privacy) }()
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self.adsBlocked) }()
+      case 2: try { try decoder.decodeSingularInt64Field(value: &self.privacyBlocked) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.total != 0 {
-      try visitor.visitSingularInt64Field(value: self.total, fieldNumber: 1)
+    if self.adsBlocked != 0 {
+      try visitor.visitSingularInt64Field(value: self.adsBlocked, fieldNumber: 1)
     }
-    if self.privacy != 0 {
-      try visitor.visitSingularInt64Field(value: self.privacy, fieldNumber: 2)
+    if self.privacyBlocked != 0 {
+      try visitor.visitSingularInt64Field(value: self.privacyBlocked, fieldNumber: 2)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: BlockerStatistics, rhs: BlockerStatistics) -> Bool {
-    if lhs.total != rhs.total {return false}
-    if lhs.privacy != rhs.privacy {return false}
+    if lhs.adsBlocked != rhs.adsBlocked {return false}
+    if lhs.privacyBlocked != rhs.privacyBlocked {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

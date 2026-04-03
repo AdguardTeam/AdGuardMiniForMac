@@ -62,3 +62,10 @@ enum SafariBlockerType: String, Codable, CaseIterable {
         }
     }
 }
+
+enum BlockingStatisticsKey {
+    /// Reserved key used to transport and persist the deduplicated ads-blocked total.
+    ///
+    /// This value must never overlap with any `SafariBlockerType.rawValue`.
+    static let adsBlockedTotal = "adsBlockedTotal"
+}

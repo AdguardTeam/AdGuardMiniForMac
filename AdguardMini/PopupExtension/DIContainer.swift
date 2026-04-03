@@ -81,6 +81,5 @@ final class DIContainer {
         self.popupViewModel.popupViewControllerDelegate = self.safariController
 
         self.blockingStatsReporter = BlockingStatsReporterImpl(safariApi: self.safariApiInteractor)
-        Task { await self.blockingStatsReporter.start() }
     }
 }

@@ -328,10 +328,14 @@ extension SafariApiProvider: MainAppApi {
 
         LogDebug("Received block counts: \(counts)")
 
+        // Extract the deduplicated ads-blocked total before processing per-blocker counts.
+        var mutableCounts = counts
+        let adsBlockedTotal = mutableCounts.removeValue(forKey: BlockingStatisticsKey.adsBlockedTotal)
+
         var typedCounts: [SafariBlockerType: Int] = [:]
         var unknownBundleIds: [String] = []
 
-        for (bundleId, count) in counts {
+        for (bundleId, count) in mutableCounts {
             if let blockerType = SafariBlockerType(contentBlockerIdentifier: bundleId) {
                 typedCounts[blockerType] = Int(clamping: count)
             } else {
@@ -341,9 +345,18 @@ extension SafariApiProvider: MainAppApi {
 
         if !unknownBundleIds.isEmpty {
             LogWarn("Received block counts from unknown bundle IDs: \(unknownBundleIds)")
+            assertionFailure("Unknown bundle IDs in block counts payload")
         }
 
         self.statisticsService.addBlockCounts(typedCounts)
+
+        if let adsBlockedTotal {
+            self.statisticsService.addAdsBlockedTotal(Int(clamping: adsBlockedTotal))
+        } else {
+            LogWarn("Ads-blocked total is missing in block counts payload; skipping ads-blocked total update")
+            assertionFailure("Ads-blocked total is missing in block counts payload")
+        }
+
         reply(nil)
     }
 }

@@ -15,8 +15,8 @@ message StatisticsRequest {
 }
 
 message BlockerStatistics {
-    int64 total = 1;
-    int64 privacy = 2;
+    int64 adsBlocked = 1;
+    int64 privacyBlocked = 2;
 }
 
 message StatisticsResponse {

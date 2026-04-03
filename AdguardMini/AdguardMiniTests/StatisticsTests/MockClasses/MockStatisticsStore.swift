@@ -63,7 +63,9 @@ extension MockStatisticsStore {
 final class MockStatisticsStore: StatisticsStore {
     private let configuration: Configuration
     private(set) var addCountsCalls: [[SafariBlockerType: Int]] = []
+    private(set) var addAdsBlockedTotalCalls: [Int] = []
     private(set) var queryStatisticsCalls: [(period: StatisticsPeriod, blockerType: SafariBlockerType?)] = []
+    private(set) var queryAdsBlockedTotalCalls: [StatisticsPeriod] = []
     private(set) var resetAllCalls: Int = 0
 
     init(configuration: Configuration) {
@@ -77,8 +79,23 @@ final class MockStatisticsStore: StatisticsStore {
         }
     }
 
+    func addAdsBlockedTotal(_ count: Int) throws {
+        self.addAdsBlockedTotalCalls.append(count)
+        if self.configuration.shouldThrowOnAdd {
+            throw MockStatisticsStoreError.addCountsFailed
+        }
+    }
+
     func queryStatistics(for period: StatisticsPeriod, blockerType: SafariBlockerType?) throws -> Int {
         self.queryStatisticsCalls.append((period, blockerType))
+        if self.configuration.shouldThrowOnQuery {
+            throw MockStatisticsStoreError.queryFailed
+        }
+        return self.configuration.queryResult
+    }
+
+    func queryAdsBlockedTotal(for period: StatisticsPeriod) throws -> Int {
+        self.queryAdsBlockedTotalCalls.append(period)
         if self.configuration.shouldThrowOnQuery {
             throw MockStatisticsStoreError.queryFailed
         }

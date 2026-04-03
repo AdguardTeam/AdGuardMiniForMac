@@ -102,10 +102,13 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
         self.statsReporter = container.blockingStatsReporter
 
         super.init()
+
+        self.statsReporter.enqueueStart()
     }
 
     deinit {
-        LogDebug("\(self) deinit")
+        self.statsReporter.enqueueStop()
+        LogDebug("\(self) deinited")
     }
 
     // MARK: Overrides
@@ -124,7 +127,7 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 
         LogDebug("Content blocker \(blockerType) blocked \(urls.count) resource(s)")
 
-        self.statsReporter.enqueueIncrement(for: blockerType, by: urls.count)
+        self.statsReporter.enqueueBlocking(pageHash: page.hashValue, urls: urls, blockerType: blockerType)
     }
 
     // This is required by the signature of the function we're overwriting

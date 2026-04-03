@@ -81,55 +81,55 @@ export class StatisticsRequest extends pb_1.Message {
 export class BlockerStatistics extends pb_1.Message {
     #one_of_decls: number[][] = [];
     constructor(data?: any[] | {
-        total?: number;
-        privacy?: number;
+        adsBlocked?: number;
+        privacyBlocked?: number;
     }) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
         if (!Array.isArray(data) && typeof data == "object") {
-            if ("total" in data && data.total != undefined) {
-                this.total = data.total;
+            if ("adsBlocked" in data && data.adsBlocked != undefined) {
+                this.adsBlocked = data.adsBlocked;
             }
-            if ("privacy" in data && data.privacy != undefined) {
-                this.privacy = data.privacy;
+            if ("privacyBlocked" in data && data.privacyBlocked != undefined) {
+                this.privacyBlocked = data.privacyBlocked;
             }
         }
     }
-    get total() {
+    get adsBlocked() {
         return pb_1.Message.getFieldWithDefault(this, 1, 0) as number;
     }
-    set total(value: number) {
+    set adsBlocked(value: number) {
         pb_1.Message.setField(this, 1, value);
     }
-    get privacy() {
+    get privacyBlocked() {
         return pb_1.Message.getFieldWithDefault(this, 2, 0) as number;
     }
-    set privacy(value: number) {
+    set privacyBlocked(value: number) {
         pb_1.Message.setField(this, 2, value);
     }
     static fromObject(data: {
-        total?: number;
-        privacy?: number;
+        adsBlocked?: number;
+        privacyBlocked?: number;
     }): BlockerStatistics {
         const message = new BlockerStatistics({});
-        if (data.total != null) {
-            message.total = data.total;
+        if (data.adsBlocked != null) {
+            message.adsBlocked = data.adsBlocked;
         }
-        if (data.privacy != null) {
-            message.privacy = data.privacy;
+        if (data.privacyBlocked != null) {
+            message.privacyBlocked = data.privacyBlocked;
         }
         return message;
     }
     toObject() {
         const data: {
-            total?: number;
-            privacy?: number;
+            adsBlocked?: number;
+            privacyBlocked?: number;
         } = {};
-        if (this.total != null) {
-            data.total = this.total;
+        if (this.adsBlocked != null) {
+            data.adsBlocked = this.adsBlocked;
         }
-        if (this.privacy != null) {
-            data.privacy = this.privacy;
+        if (this.privacyBlocked != null) {
+            data.privacyBlocked = this.privacyBlocked;
         }
         return data;
     }
@@ -137,10 +137,10 @@ export class BlockerStatistics extends pb_1.Message {
     serialize(w: pb_1.BinaryWriter): void;
     serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
         const writer = w || new pb_1.BinaryWriter();
-        if (this.total != 0)
-            writer.writeInt64(1, this.total);
-        if (this.privacy != 0)
-            writer.writeInt64(2, this.privacy);
+        if (this.adsBlocked != 0)
+            writer.writeInt64(1, this.adsBlocked);
+        if (this.privacyBlocked != 0)
+            writer.writeInt64(2, this.privacyBlocked);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -151,10 +151,10 @@ export class BlockerStatistics extends pb_1.Message {
                 break;
             switch (reader.getFieldNumber()) {
                 case 1:
-                    message.total = reader.readInt64();
+                    message.adsBlocked = reader.readInt64();
                     break;
                 case 2:
-                    message.privacy = reader.readInt64();
+                    message.privacyBlocked = reader.readInt64();
                     break;
                 default: reader.skipField();
             }

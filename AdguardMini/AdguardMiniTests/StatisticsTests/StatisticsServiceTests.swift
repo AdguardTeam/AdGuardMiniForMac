@@ -85,9 +85,42 @@ final class StatisticsServiceTests: XCTestCase {
         let service = NoOpStatisticsService()
 
         service.addBlockCounts([.general: 10])
+        service.addAdsBlockedTotal(5)
         let result = service.getStatistics(for: .day)
+        let adsBlockedResult = service.getAdsBlockedTotal(for: .day)
         service.resetStatistics()
 
         XCTAssertEqual(result, 0)
+        XCTAssertEqual(adsBlockedResult, 0)
+    }
+
+    func testAddAdsBlockedTotal_DelegatesToStore() {
+        let mockStore = MockStatisticsStore.MockType.success(queryResult: 0).createObject()
+        let service = StatisticsServiceImpl(store: mockStore)
+
+        service.addAdsBlockedTotal(7)
+
+        XCTAssertEqual(mockStore.addAdsBlockedTotalCalls.count, 1)
+        XCTAssertEqual(mockStore.addAdsBlockedTotalCalls[0], 7)
+    }
+
+    func testGetAdsBlockedTotal_DelegatesToStore() {
+        let mockStore = MockStatisticsStore.MockType.success(queryResult: 42).createObject()
+        let service = StatisticsServiceImpl(store: mockStore)
+
+        let result = service.getAdsBlockedTotal(for: .day)
+
+        XCTAssertEqual(result, 42)
+        XCTAssertEqual(mockStore.queryAdsBlockedTotalCalls.count, 1)
+        XCTAssertEqual(mockStore.queryAdsBlockedTotalCalls[0], .day)
+    }
+
+    func testAddAdsBlockedTotal_Zero_IsIgnored() {
+        let mockStore = MockStatisticsStore.MockType.success(queryResult: 0).createObject()
+        let service = StatisticsServiceImpl(store: mockStore)
+
+        service.addAdsBlockedTotal(0)
+
+        XCTAssertEqual(mockStore.addAdsBlockedTotalCalls.count, 0, "Zero total should be skipped")
     }
 }
