@@ -7,11 +7,6 @@
   resolved "https://registry.yarnpkg.com/@aashutoshrathi/word-wrap/-/word-wrap-1.2.6.tgz#bd9154aec9983f77b3a034ecaa015c2e4201f6cf"
   integrity sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==
 
-"@adg/js-format-number@^1.1.5":
-  version "1.1.5"
-  resolved "https://art.int.agrd.dev/artifactory/api/npm/adguard-js/@adg/js-format-number/-/@adg/js-format-number-1.1.5.tgz#747322aaf65057e197e2682986115da5aec5600f"
-  integrity sha1-dHMiqvZQV+GX4mgphhFdpa7FYA8=
-
 "@adg/proto-generator@^1.7.1":
   version "1.7.1"
   resolved "https://art.int.agrd.dev/artifactory/api/npm/adguard-js/@adg/proto-generator/-/@adg/proto-generator-1.7.1.tgz#c6ce16ae86d500757e226e6f226780918b7f2b3c"

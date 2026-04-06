@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import numeral from '@adg/js-format-number';
 import noop from 'lodash/noop';
 
 import { OptionalStringValue, EmptyValue, StringValue, SubscriptionMessage, Subscription } from 'Apis/types';
+import { formatLocalizedNumber } from 'Common/lib/number';
 import { provideTrialDaysParam } from 'Common/utils/translate';
 import { getTdsLink, TDS_PARAMS } from 'Modules/common/utils/links';
 // import { StarStoryMainFrameButtons } from 'Modules/tray/modules/stories/components/StarStoryMainFrameButtons';
@@ -26,17 +26,6 @@ const openSafariPref = () => {
 const openLoginItemsSettings = () => {
     window.API.settingsService.OpenLoginItemsSettings(new EmptyValue());
 };
-
-/**
- * Format stats number for statistics story
- */
-export function formatNumber(value: number): string {
-    const num = numeral(value);
-    if (value < 1_000_000) {
-        return num.format('0,0');
-    }
-    return num.format('0.0a');
-}
 
 /**
  * "From" component value for TDS links
@@ -67,7 +56,8 @@ export function useStoriesConfig(): StoryInfo[] {
         statistics,
     } = settings;
 
-    const { allowTelemetry } = traySettings || {};
+    const { allowTelemetry, language: currentLanguage } = traySettings || {};
+    const language = currentLanguage || 'en';
 
     if (!safariExtensionsStore.allExtensionsEnabled) {
         requiredStories.push({
@@ -126,7 +116,7 @@ export function useStoriesConfig(): StoryInfo[] {
         const emptyStats = !adsBlocked && !privacyBlocked;
 
         const frames: StoryInfo['storyConfig']['frames'] = [{
-            title: translate('tray.story.statistics.title1', { adsBlocked: formatNumber(adsBlocked) }),
+            title: translate('tray.story.statistics.title1', { adsBlocked: formatLocalizedNumber(adsBlocked, language) }),
             description: emptyStats ? translate('tray.story.statistics.desc1.empty') : translate('tray.story.statistics.desc1'),
             image: 'extra2',
             actionButton: emptyStats ? {
@@ -138,7 +128,7 @@ export function useStoriesConfig(): StoryInfo[] {
 
         if (!emptyStats) {
             frames.push({
-                title: translate('tray.story.statistics.title2', { trackersBlocked: formatNumber(privacyBlocked) }),
+                title: translate('tray.story.statistics.title2', { trackersBlocked: formatLocalizedNumber(privacyBlocked, language) }),
                 description: translate('tray.story.statistics.desc2'),
                 image: 'telemetry2',
                 frameId: 'statistics2',
@@ -152,7 +142,7 @@ export function useStoriesConfig(): StoryInfo[] {
             icon: 'adblocking',
             style: 'redIcon',
             text: translate('tray.story.statistics'),
-            content: <Text className={cx(theme.color.red, theme.layout.marginBottomXxs)} type="h5">{formatNumber(adsBlocked)}</Text>,
+            content: <Text className={cx(theme.color.red, theme.layout.marginBottomXxs)} type="h5">{formatLocalizedNumber(adsBlocked, language)}</Text>,
             storyConfig: {
                 id: 'statistics',
                 frames,

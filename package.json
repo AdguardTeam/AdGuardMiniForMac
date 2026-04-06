@@ -29,10 +29,10 @@
     "locales:pull": "sciter-infra-utils locales-pull",
     "locales:pushMaster": "sciter-infra-utils locales-push",
     "theme:generate": "sciter-infra-utils generate-stylesheets ./AdguardMini/sciter-ui/modules/common/theme/default ADG",
-    "watchProject": "nodemon --exec ./AdguardMini/Scripts/rebuildDebugBuild.sh"
+    "watchProject": "nodemon --exec ./AdguardMini/Scripts/rebuildDebugBuild.sh",
+    "test:number": "tsc -p tsconfig.format-number-test.json && node --test build/tests/number/AdguardMini/sciter-ui/modules/common/lib/number/index.test.js"
   },
   "dependencies": {
-    "@adg/js-format-number": "^1.1.5",
     "@adg/sciter-utils-kit": "^0.6.4",
     "@adguard/rules-editor": "^1.3.1",
     "classix": "^2.1.32",

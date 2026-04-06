@@ -95,6 +95,7 @@ adguard-mini/
 │   │   ├── @types/                       # Custom TypeScript type definitions
 │   │   ├── modules/                      # UI modules
 │   │   │   ├── common/                   # Shared components, hooks, utils, intl
+│   │   │   │   └── lib/number/            # Localized number formatting library
 │   │   │   ├── tray/                     # System tray menu UI
 │   │   │   ├── settings/                 # Settings window UI
 │   │   │   ├── onboarding/               # Onboarding flow UI
