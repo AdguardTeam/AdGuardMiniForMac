@@ -70,27 +70,6 @@ if [[ "$1" == "dev" ]]; then
     popd
 
     check_latest_version "$SUPPORT_SCRIPTS_GIT" "$SUPPORT_SCRIPTS_TAG" "support-scripts"
-
-    # Clone SDD workflows
-
-    SDD_WORKFLOWS_TAG="v2.0.1"
-    if [ -z "$SDD_WORKFLOWS_GIT" ]; then
-        echo "Error: SDD_WORKFLOWS_GIT not set. Source ../adguard-mini-private/config.env or set via environment."
-        exit 1
-    else
-        SDD_TMP_DIR=$(mktemp -d)
-        git clone -c advice.detachedHead=false --depth 1 --branch "$SDD_WORKFLOWS_TAG" "$SDD_WORKFLOWS_GIT" "$SDD_TMP_DIR"
-
-        rm -f .windsurf/workflows/sdd-*.md \
-              .windsurf/workflows/doc-*.md \
-              .windsurf/workflows/dev-*.md
-
-        cp "$SDD_TMP_DIR"/templates/workflows/*.md .windsurf/workflows/
-        rm -rf "$SDD_TMP_DIR"
-        echo "SDD workflows updated ($SDD_WORKFLOWS_TAG)"
-
-        check_latest_version "$SDD_WORKFLOWS_GIT" "$SDD_WORKFLOWS_TAG" "SDD workflows"
-    fi
 fi
 
 bundle config --local path '.bundle/vendor'

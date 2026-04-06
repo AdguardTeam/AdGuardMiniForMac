@@ -243,11 +243,7 @@ fastlane/keychain/
 bin/
 buildServer.json
 
-specs/.current/
+specs/
+.sdd/
 
 support-scripts
-
-# SDD workflows (auto-cloned via configure.sh)
-.windsurf/workflows/sdd-*
-.windsurf/workflows/doc-*
-.windsurf/workflows/dev-*

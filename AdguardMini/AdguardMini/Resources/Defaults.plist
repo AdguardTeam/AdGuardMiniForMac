@@ -60,5 +60,7 @@
 	<string>__KEY_ONLY</string>
 	<key>abTests</key>
 	<string>__KEY_ONLY</string>
+	<key>migrationVersion</key>
+	<string>__KEY_ONLY</string>
 </dict>
 </plist>

@@ -31,6 +31,7 @@ extension UserSettings: UserSettingsManager {
         let wasMigratedFromLegacyAppKey = rawOf(.wasMigratedFromLegacyApp)
         let telemetryIdKey = rawOf(.telemetryId)
         let firstStartDateKey = rawOf(.firstStartDate)
+        let migrationVersionKey = rawOf(.migrationVersion)
 
         var dict: [String: Any] = [
             rawOf(.updateChannel): self.currentUpdateChannel,
@@ -43,6 +44,10 @@ extension UserSettings: UserSettingsManager {
 
         if let firstStartDate = defaults.object(forKey: firstStartDateKey) as? Date {
             dict[firstStartDateKey] = firstStartDate
+        }
+
+        if let buildNumber = defaults.object(forKey: migrationVersionKey) as? Int {
+            dict[migrationVersionKey] = buildNumber
         }
 
         return dict

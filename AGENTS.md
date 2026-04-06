@@ -286,6 +286,15 @@ You MUST follow the following rules for EVERY task that you perform:
 
    **Rationale**: Prevents regressions in platform code.
 
+2. **No `@testable import`**: Swift test files MUST NOT use `@testable import`.
+   Instead, source files under test MUST be added directly to the
+   `AdguardMiniTests` target in Xcode. This means tested code must have
+   `internal` or higher access level by default — do not add `public` solely
+   to satisfy tests.
+
+   **Rationale**: Avoids bypassing access control, keeps the test build honest,
+   and mirrors real client usage of the code under test.
+
 2. **Jest for TypeScript**: Jest is configured for TypeScript tests. Test files
    SHOULD follow the `*.test.ts` / `*.test.tsx` naming convention.
 
@@ -325,7 +334,7 @@ You MUST follow the following rules for EVERY task that you perform:
    init files and version managers (nvm, rbenv), and ensures reproducible builds
    regardless of developer environment.
 
-5. **Import resolution via bundler injections**: If an import is not found or appears to be missing, 
-   CHECK bundler inject configurations: **webpack**: `ProvidePlugin` in `scripts/webpack/webpack.config.base.js`. 
-   These variables are **globally available** without explicit imports in the source code. 
+5. **Import resolution via bundler injections**: If an import is not found or appears to be missing,
+   CHECK bundler inject configurations: **webpack**: `ProvidePlugin` in `scripts/webpack/webpack.config.base.js`.
+   These variables are **globally available** without explicit imports in the source code.
    When reviewing code, do not flag missing imports for these injected globals.

@@ -611,6 +611,8 @@
 				Filters/Models/BlockerConversionError.swift,
 				Filters/Models/SafariConversionResult.swift,
 				Filters/UrlFilteringChecker.swift,
+				Migration/BuildMigration/BuildMigration.swift,
+				Migration/BuildMigration/BuildMigrationStorage.swift,
 				SafariExtensions/Models/CurrentExtensionsStates.swift,
 				SafariExtensions/Models/CurrentExtensionState.swift,
 				SafariExtensions/Models/ReloadExtensionResult.swift,

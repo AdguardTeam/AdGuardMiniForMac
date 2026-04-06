@@ -228,6 +228,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             SettingsKey.asDict.merging(updatedFields) { $1 }
         )
 
+        if let currentBuild = Int(BuildConfig.AG_BUILD) {
+            await BuildMigration.run(
+                storage: BuildMigrationStorageImpl(),
+                currentBuild: currentBuild,
+                firstRun: self.userSettingsManager.firstRun
+            )
+        } else {
+            LogError("\(BuildMigration.tag) Invalid AG_BUILD: \(BuildConfig.AG_BUILD)")
+            assertionFailure("AG_BUILD must be a valid integer")
+        }
+
         await self.telemetryService.startSession()
 
         if !self.isDisplayReady() {
