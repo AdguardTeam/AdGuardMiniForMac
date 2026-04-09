@@ -163,7 +163,7 @@ module.exports = ({ webBuild }) => ({
                 WEB_BUILD: !!webBuild,
                 RESIZEABLE: false,
                 WIDTH: 360,
-                HEIGHT: 610,
+                HEIGHT: 582,
             }
         }),
         new HtmlWebpackPlugin({
