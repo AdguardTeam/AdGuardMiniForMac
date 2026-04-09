@@ -116,7 +116,7 @@ export function useStoriesConfig(): StoryInfo[] {
         const emptyStats = !adsBlocked && !privacyBlocked;
 
         const frames: StoryInfo['storyConfig']['frames'] = [{
-            title: translate('tray.story.statistics.title1', { adsBlocked: formatLocalizedNumber(adsBlocked, language) }),
+            title: translate.plural('tray.story.statistics.title1', adsBlocked, { adsBlocked: formatLocalizedNumber(adsBlocked, language) }),
             description: emptyStats ? translate('tray.story.statistics.desc1.empty') : translate('tray.story.statistics.desc1'),
             image: 'extra2',
             actionButton: emptyStats ? {
@@ -128,7 +128,7 @@ export function useStoriesConfig(): StoryInfo[] {
 
         if (!emptyStats) {
             frames.push({
-                title: translate('tray.story.statistics.title2', { trackersBlocked: formatLocalizedNumber(privacyBlocked, language) }),
+                title: translate.plural('tray.story.statistics.title2', privacyBlocked, { trackersBlocked: formatLocalizedNumber(privacyBlocked, language) }),
                 description: translate('tray.story.statistics.desc2'),
                 image: 'telemetry2',
                 frameId: 'statistics2',
