@@ -214,6 +214,43 @@ final class FiltersSupervisorImpl: RestartableServiceBase {
         }
         .value
     }
+
+    // MARK: - FLM Call Logging
+
+    private func flmLog(_ msg: String, debug: Bool) {
+        if debug { LogDebug(msg) } else { LogInfo(msg) }
+    }
+
+    private func flmCall<T>(
+        _ label: String = #function,
+        debug: Bool = false,
+        _ completion: @escaping () throws -> T
+    ) async throws -> T {
+        let callId = UUID.shortId
+        let start = Date()
+        self.flmLog("\(LogTag.flm) \(label) start (id: \(callId))", debug: debug)
+        do {
+            let result = try await self.asyncly(completion)
+            self.flmLog("\(LogTag.flm) \(label) end (id: \(callId)), \(start.elapsedMs())", debug: debug)
+            return result
+        } catch {
+            self.flmLog("\(LogTag.flm) \(label) end (error: \(error), id: \(callId)), \(start.elapsedMs())", debug: debug)
+            throw error
+        }
+    }
+
+    private func flmCall<T>(
+        _ label: String = #function,
+        debug: Bool = false,
+        _ completion: @escaping () -> T
+    ) async -> T {
+        let callId = UUID.shortId
+        let start = Date()
+        self.flmLog("\(LogTag.flm) \(label) start (id: \(callId))", debug: debug)
+        let result = await self.asyncly(completion)
+        self.flmLog("\(LogTag.flm) \(label) end (id: \(callId)), \(start.elapsedMs())", debug: debug)
+        return result
+    }
 }
 
 extension FiltersSupervisorImpl: FiltersSupervisor {
@@ -222,7 +259,7 @@ extension FiltersSupervisorImpl: FiltersSupervisor {
     }
 
     func getFiltersIndex() async -> FiltersIndex {
-        await self.asyncly {
+        await self.flmCall {
             let tags = self.filtersManager.getTags()
             let groups = self.filtersManager.getGroups()
             let filters = self.filtersManager.getAllFilters()
@@ -242,7 +279,7 @@ extension FiltersSupervisorImpl: FiltersSupervisor {
     }
 
     func removeFilters() async {
-        await self.asyncly {
+        await self.flmCall {
             let activeFilters = self.filtersManager.getActiveRulesInfo().map(\.filterId)
             self.filtersManager.setFilters(activeFilters, enabled: false)
             self.filtersManager.removeUserRules()
@@ -264,7 +301,7 @@ extension FiltersSupervisorImpl: FLMFatalErrorDelegate {
 
 extension FiltersSupervisorImpl: FlmApi.Interact {
     func setFilters(_ filterIds: [Int], enabled: Bool) async {
-        await self.asyncly {
+        await self.flmCall("setFilters(\(filterIds), enabled: \(enabled))") {
             self.filtersManager.setFilters(filterIds, enabled: enabled)
             if enabled {
                 Task {
@@ -280,14 +317,14 @@ extension FiltersSupervisorImpl: FlmApi.Interact {
     }
 
     func updateCustomFilterMetadata(_ filterId: Int, title: String, trusted: Bool) async {
-        await self.asyncly {
+        await self.flmCall("updateCustomFilterMetadata(\(filterId))") {
             self.filtersManager.updateCustomFilterMetadata(filterId, title: title, trusted: trusted)
             self.updateSafariFiltersOnSuccess()
         }
     }
 
     func removeCustomFilters(_ filterIds: [Int]) async throws {
-        try await self.asyncly {
+        try await self.flmCall("removeCustomFilters(\(filterIds))") {
             if !self.filtersManager.removeCustomFilters(filterIds) {
                 throw FiltersSupervisorError.cantRemoveCustomFilter
             }
@@ -301,7 +338,7 @@ extension FiltersSupervisorImpl: FlmApi.Interact {
         title: String?,
         description: String?
     ) async throws {
-        let filterId = await self.asyncly {
+        let filterId = await self.flmCall {
             self.filtersManager.installCustomFilter(
                 from: url,
                 isTrusted: isTrusted,
@@ -316,7 +353,7 @@ extension FiltersSupervisorImpl: FlmApi.Interact {
     }
 
     func installCustomFilter(_ filter: CustomFilterDTO) async -> Int {
-        await self.asyncly {
+        await self.flmCall {
             let result = self.filtersManager.installCustomFilterFromString(
                 subscriptionUrl: filter.downloadUrl,
                 lastDownloadTime: Date(timeIntervalSince1970: Double(filter.lastDownloadTime)),
@@ -332,13 +369,13 @@ extension FiltersSupervisorImpl: FlmApi.Interact {
     }
 
     func fetchFilterMetadata(from url: String) async -> FilterMetadata? {
-        await self.asyncly {
+        await self.flmCall {
             self.filtersManager.fetchFilterMetadata(from: url)
         }
     }
 
     func switchLanguageSpecific(_ state: Bool) async {
-        await self.asyncly {
+        await self.flmCall("switchLanguageSpecific(\(state))") {
             self.userSettingsService.languageSpecific = state
             self.updateSafariFiltersOnSuccess()
         }
@@ -349,50 +386,50 @@ extension FiltersSupervisorImpl: FlmApi.Interact {
 
 extension FiltersSupervisorImpl: FlmApi.ReadOnly {
     func getAllFilters() async -> [FilterInfo] {
-        await self.asyncly {
+        await self.flmCall(debug: true) {
             self.filtersManager.getAllFilters()
         }
     }
 
     func getStoredFilterMetadataWithRulesCount() async -> [(meta: FilterInfo, count: Int)] {
-        await self.asyncly {
+        await self.flmCall {
             self.filtersManager.getStoredFilterMetadataWithRulesCount()
         }
     }
 
     func getEnabledFilters() async -> [FilterInfo] {
-        await self.asyncly {
+        await self.flmCall(debug: true) {
             self.filtersManager.getEnabledFilters()
         }
     }
 
     func getEnabledFilterIds() async -> [Int] {
-        await self.asyncly {
+        await self.flmCall(debug: true) {
             let filters = self.filtersManager.getEnabledFilters()
             return filters.map(\.filterId)
         }
     }
 
     func getActiveRulesInfo() async -> [ActiveFilterInfo] {
-        await self.asyncly {
+        await self.flmCall {
             self.filtersManager.getActiveRulesInfo()
         }
     }
 
     func getGroups() async -> [FilterGroup] {
-        await self.asyncly {
+        await self.flmCall(debug: true) {
             self.filtersManager.getGroups()
         }
     }
 
     func getTags() async -> [FilterTag] {
-        await self.asyncly {
+        await self.flmCall(debug: true) {
             self.filtersManager.getTags()
         }
     }
 
     func getRules(for filterId: Int) async -> [FilterRule] {
-        await self.asyncly {
+        await self.flmCall("getRules(filterId: \(filterId))") {
             self.filtersManager.getRules(for: filterId)
         }
     }
@@ -418,19 +455,19 @@ extension FiltersSupervisorImpl: FlmApi.Transactions {
 
 extension FiltersSupervisorImpl: FlmApi.UserRules {
     func isUserRulesEnabled() async -> Bool {
-        await self.asyncly {
+        await self.flmCall(debug: true) {
             self.filtersManager.isUserRulesEnabled()
         }
     }
 
     func getUserRules() async -> [FilterRule] {
-        await self.asyncly {
+        await self.flmCall(debug: true) {
             self.filtersManager.getUserRules()
         }
     }
 
     func getUserRulesAsString() async -> String {
-        await asyncly {
+        await self.flmCall(debug: true) {
             self.filtersManager.getRulesContent(for: self.filtersSpecialIds.userRulesId)?.rules ?? ""
         }
     }
@@ -440,21 +477,21 @@ extension FiltersSupervisorImpl: FlmApi.UserRules {
     }
 
     func saveUserRules(_ rules: [FilterRule]) async {
-        await self.asyncly {
+        await self.flmCall("saveUserRules(rules: [\(rules.count) items])") {
             self.filtersManager.saveUserRules(rules)
             self.updateSafariFiltersOnSuccess()
         }
     }
 
     func saveUserRules(_ rules: String) async {
-        await self.asyncly {
+        await self.flmCall("saveUserRules(string)") {
             self.filtersManager.saveUserRules(rules)
             self.updateSafariFiltersOnSuccess()
         }
     }
 
     func addUserRule(_ newRuleText: String) async -> Bool {
-        await self.asyncly {
+        await self.flmCall {
             let result = self.filtersManager.addUserRule(newRuleText, toBeggining: true)
             self.updateSafariFiltersOnSuccess(result)
             return result
@@ -462,7 +499,7 @@ extension FiltersSupervisorImpl: FlmApi.UserRules {
     }
 
     func removeUserRules(_ option: UserRulesRemoveOption) async -> Bool {
-        await self.asyncly {
+        await self.flmCall("removeUserRules(\(option))") {
             let result = self.filtersManager.removeUserRules(option)
             self.updateSafariFiltersOnSuccess(result)
             return result
@@ -470,7 +507,7 @@ extension FiltersSupervisorImpl: FlmApi.UserRules {
     }
 
     func removeUserRules() async {
-        await self.asyncly {
+        await self.flmCall {
             self.filtersManager.removeUserRules()
             self.safariFiltersUpdater.updateSafariFilters()
         }
@@ -481,7 +518,9 @@ extension FiltersSupervisorImpl: FlmApi.UserRules {
 
 extension FiltersSupervisorImpl: FlmApi.Update {
     func filtersForceUpdate() {
+        LogInfo("\(LogTag.flm) filtersForceUpdate start")
         self.filtersManager.update(ignoringFiltersExpiration: true, pullMetadata: false)
+        LogInfo("\(LogTag.flm) filtersForceUpdate dispatched")
     }
 }
 
@@ -512,7 +551,6 @@ extension FiltersSupervisorImpl: FLMDelegate {}
 
 extension FiltersSupervisorImpl: FLMUpdateDelegate {
     func willStartFiltersUpdate() {
-        LogDebug("Filters update is going to start")
         self.eventBus.post(event: .filtersUpdateStarted, userInfo: nil)
     }
 
@@ -520,24 +558,25 @@ extension FiltersSupervisorImpl: FLMUpdateDelegate {
         switch result {
         case .success(let updated):
             self.userSettingsService.lastFiltersUpdateTime = Date()
-            LogDebug("Successfully updated \(updated.updatedList.count) filters")
+            LogInfo("\(LogTag.flm) filtersUpdate end (updated: \(updated.updatedList.count))")
             if updated.hasAnyUpdates {
                 self.updateSafariFiltersOnSuccess()
                 self.eventBus.post(event: .filtersRulesUpdated, userInfo: nil)
             }
             self.eventBus.post(event: .filterStatusResolved, userInfo: updated)
-        case .failure:
+        case .failure(let error):
+            LogInfo("\(LogTag.flm) filtersUpdate end (error: \(error))")
             self.eventBus.post(event: .filterStatusResolved, userInfo: nil)
         }
     }
 
     func didPullMetadata(_ error: Error?) {
         if let error {
-            LogError("Filters metadata update failed: \(error)")
+            LogError("\(LogTag.flm) didPullMetadata error: \(error)")
             return
         }
 
-        LogDebug("Filters metadata updated successfully")
+        LogInfo("\(LogTag.flm) didPullMetadata success")
         Task {
             let newIndex = await self.getFiltersIndex()
             self.eventBus.post(event: .filtersMetadataUpdated, userInfo: newIndex)
@@ -559,4 +598,11 @@ extension FiltersSupervisorImpl: FLMUpdatePeriodDelegate {
     var filtersFullUpdatePeriod: Double? {
         DeveloperConfigUtils[.filtersFullUpdatePeriod] as? Double
     }
+}
+
+// MARK: - UUID + shortId
+
+private extension UUID {
+    /// Generates a new UUID and returns its first 8 characters, used as a short identifier in logs.
+    static var shortId: String { String(UUID().uuidString.prefix(8)) }
 }

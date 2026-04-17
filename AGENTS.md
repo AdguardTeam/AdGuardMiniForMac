@@ -271,10 +271,18 @@ You MUST follow the following rules for EVERY task that you perform:
 
    **Rationale**: Ensures consistent TypeScript code style.
 
-3. **SPDX license headers**: New files MUST use SPDX format:
+3. **SPDX license headers**: New files MUST use SPDX format with a blank
+   comment line (`//`) between the two SPDX lines, followed by a file name
+   block:
    ```swift
    // SPDX-FileCopyrightText: AdGuard Software Limited
+   //
    // SPDX-License-Identifier: GPL-3.0-or-later
+
+   //
+   //  FileName.swift
+   //  AdguardMini
+   //
    ```
 
    **Rationale**: Required by project licensing policy (GPL-3.0-or-later).
