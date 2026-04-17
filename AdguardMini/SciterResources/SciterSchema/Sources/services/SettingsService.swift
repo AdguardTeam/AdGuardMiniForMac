@@ -142,6 +142,10 @@ public protocol SettingsServiceProtocol
 	func resetStatistics (
 						_ message: EmptyValue,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void
+	/// Update user rules editor window geometry
+	func updateUserRulesEditorGeometry (
+						_ message: WindowGeometry,
+						_ promise: @escaping (EmptyValue) -> Void) -> Void
 }
 
 // MARK: Protobuf Bridge definition
@@ -544,6 +548,18 @@ open class SettingsService: SciterBridge
 			inputType: EmptyValue.self,
 			outputType: EmptyValue.self,
 			method: cast.resetStatistics(_:_:),
+			message,
+			promise
+		)
+	}
+
+	/// Wrapper for `UpdateUserRulesEditorGeometry`
+	@objc func UpdateUserRulesEditorGeometry(_ message: Data, promise: @escaping (Data) -> Void)
+	{
+		swiftCall(
+			inputType: WindowGeometry.self,
+			outputType: EmptyValue.self,
+			method: cast.updateUserRulesEditorGeometry(_:_:),
 			message,
 			promise
 		)

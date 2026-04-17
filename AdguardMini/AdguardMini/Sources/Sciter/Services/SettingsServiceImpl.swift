@@ -129,14 +129,16 @@ extension Sciter {
 
         func getSettings(_ message: EmptyValue,
                          _ promise: @escaping (Settings) -> Void) {
-            promise(
-                self.userSettingsService.settings.toProto(
-                    userConsent: self.userSettingsService.userConsent,
-                    releaseVariant: ProductInfo.releaseVariant,
-                    language: Locales.navigatorLang,
-                    allowTelemetry: self.userSettingsService.allowTelemetry
-                )
+            var settings = self.userSettingsService.settings.toProto(
+                userConsent: self.userSettingsService.userConsent,
+                releaseVariant: ProductInfo.releaseVariant,
+                language: Locales.navigatorLang,
+                allowTelemetry: self.userSettingsService.allowTelemetry
             )
+            if let geometry = self.userSettingsService.userRulesEditorGeometry {
+                settings.userRulesEditorGeometry = geometry.toProto()
+            }
+            promise(settings)
         }
 
         func exportSettings(_ message: Path, _ promise: @escaping (OptionalError) -> Void) {
@@ -348,6 +350,12 @@ extension Sciter {
 
         func resetStatistics(_ message: EmptyValue, _ promise: @escaping (EmptyValue) -> Void) {
             self.statisticsService.resetStatistics()
+            promise(EmptyValue())
+        }
+
+        func updateUserRulesEditorGeometry(_ message: WindowGeometry,
+                                           _ promise: @escaping (EmptyValue) -> Void) {
+            self.userSettingsService.userRulesEditorGeometry = message.toWindowGeometryDTO()
             promise(EmptyValue())
         }
     }

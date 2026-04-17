@@ -607,6 +607,7 @@
 				Core/EventBus.swift,
 				Core/KeychainManager.swift,
 				Core/Models/QuitReaction.swift,
+				Core/Models/WindowGeometryDTO.swift,
 				Core/RestartableService.swift,
 				Filters/Models/BlockerConversionError.swift,
 				Filters/Models/SafariConversionResult.swift,

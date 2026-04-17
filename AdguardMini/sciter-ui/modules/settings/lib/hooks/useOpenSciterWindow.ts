@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { RulesEditorEvents } from 'Modules/common/utils/consts';
+import { validateGeometry } from 'Utils/windowGeometry';
 
 import { useSettingsStore } from './useSettingsStore';
 
@@ -56,6 +57,18 @@ export function useOpenSciterWindow(params: OpenSciterWindowParams) {
             return windowing.findWindowByParam('id', windowParams.id)!;
         }
 
+        const savedGeometry = windowing.getSavedGeometry(windowParams.id);
+        if (savedGeometry) {
+            const validated = validateGeometry(savedGeometry);
+            if (validated) {
+                return windowing.createWindow({
+                    ...windowParams,
+                    width: validated.width,
+                    height: validated.height,
+                });
+            }
+        }
+
         return windowing.createWindow(windowParams);
     };
 
@@ -78,6 +91,14 @@ export function useOpenSciterWindow(params: OpenSciterWindowParams) {
         }
 
         const targetWindow = getTargetWindow();
+
+        const savedGeometry = windowing.getSavedGeometry(windowParams.id);
+        if (savedGeometry) {
+            const validated = validateGeometry(savedGeometry);
+            if (validated) {
+                targetWindow.moveTo(validated.monitor, validated.x, validated.y, validated.width, validated.height);
+            }
+        }
 
         targetWindow.document.addEventListener('ready', () => {
             const webviewElement = getWebviewElement();

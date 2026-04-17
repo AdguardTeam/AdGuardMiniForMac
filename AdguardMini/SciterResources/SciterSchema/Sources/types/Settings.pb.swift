@@ -292,39 +292,107 @@ public enum Theme: SwiftProtobuf.Enum, Swift.CaseIterable {
 
 }
 
-/// Describes settings page
-public struct Settings: Sendable {
+/// Describes window geometry (position and size, monitor-relative)
+public struct WindowGeometry: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var launchOnStartup: Bool = false
+  public var x: Int32 = 0
 
-  public var showInMenuBar: Bool = false
+  public var y: Int32 = 0
 
-  public var hardwareAcceleration: Bool = false
+  public var width: Int32 = 0
 
-  public var autoFiltersUpdate: Bool = false
+  public var height: Int32 = 0
 
-  public var realTimeFiltersUpdate: Bool = false
-
-  public var quitReaction: QuitReaction = .unknown
-
-  public var debugLogging: Bool = false
-
-  public var releaseVariant: ReleaseVariants = .unknown
-
-  public var consentFiltersIds: [Int32] = []
-
-  public var language: String = String()
-
-  public var allowTelemetry: Bool = false
-
-  public var theme: Theme = .unknown
+  public var monitor: Int32 = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
+}
+
+/// Describes settings page
+public struct Settings: @unchecked Sendable {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var launchOnStartup: Bool {
+    get {return _storage._launchOnStartup}
+    set {_uniqueStorage()._launchOnStartup = newValue}
+  }
+
+  public var showInMenuBar: Bool {
+    get {return _storage._showInMenuBar}
+    set {_uniqueStorage()._showInMenuBar = newValue}
+  }
+
+  public var hardwareAcceleration: Bool {
+    get {return _storage._hardwareAcceleration}
+    set {_uniqueStorage()._hardwareAcceleration = newValue}
+  }
+
+  public var autoFiltersUpdate: Bool {
+    get {return _storage._autoFiltersUpdate}
+    set {_uniqueStorage()._autoFiltersUpdate = newValue}
+  }
+
+  public var realTimeFiltersUpdate: Bool {
+    get {return _storage._realTimeFiltersUpdate}
+    set {_uniqueStorage()._realTimeFiltersUpdate = newValue}
+  }
+
+  public var quitReaction: QuitReaction {
+    get {return _storage._quitReaction}
+    set {_uniqueStorage()._quitReaction = newValue}
+  }
+
+  public var debugLogging: Bool {
+    get {return _storage._debugLogging}
+    set {_uniqueStorage()._debugLogging = newValue}
+  }
+
+  public var releaseVariant: ReleaseVariants {
+    get {return _storage._releaseVariant}
+    set {_uniqueStorage()._releaseVariant = newValue}
+  }
+
+  public var consentFiltersIds: [Int32] {
+    get {return _storage._consentFiltersIds}
+    set {_uniqueStorage()._consentFiltersIds = newValue}
+  }
+
+  public var language: String {
+    get {return _storage._language}
+    set {_uniqueStorage()._language = newValue}
+  }
+
+  public var allowTelemetry: Bool {
+    get {return _storage._allowTelemetry}
+    set {_uniqueStorage()._allowTelemetry = newValue}
+  }
+
+  public var theme: Theme {
+    get {return _storage._theme}
+    set {_uniqueStorage()._theme = newValue}
+  }
+
+  public var userRulesEditorGeometry: WindowGeometry {
+    get {return _storage._userRulesEditorGeometry ?? WindowGeometry()}
+    set {_uniqueStorage()._userRulesEditorGeometry = newValue}
+  }
+  /// Returns true if `userRulesEditorGeometry` has been explicitly set.
+  public var hasUserRulesEditorGeometry: Bool {return _storage._userRulesEditorGeometry != nil}
+  /// Clears the value of `userRulesEditorGeometry`. Subsequent reads from it will return its default value.
+  public mutating func clearUserRulesEditorGeometry() {_uniqueStorage()._userRulesEditorGeometry = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 public struct UserConsent: Sendable {
@@ -568,9 +636,9 @@ extension Theme: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0Theme_unknown\0\u{1}Theme_system\0\u{1}Theme_light\0\u{1}Theme_dark\0")
 }
 
-extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = "Settings"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{3}real_time_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0")
+extension WindowGeometry: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "WindowGeometry"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}x\0\u{1}y\0\u{1}width\0\u{1}height\0\u{1}monitor\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -578,76 +646,195 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularBoolField(value: &self.launchOnStartup) }()
-      case 2: try { try decoder.decodeSingularBoolField(value: &self.showInMenuBar) }()
-      case 3: try { try decoder.decodeSingularBoolField(value: &self.hardwareAcceleration) }()
-      case 4: try { try decoder.decodeSingularBoolField(value: &self.autoFiltersUpdate) }()
-      case 5: try { try decoder.decodeSingularBoolField(value: &self.realTimeFiltersUpdate) }()
-      case 6: try { try decoder.decodeSingularEnumField(value: &self.quitReaction) }()
-      case 7: try { try decoder.decodeSingularBoolField(value: &self.debugLogging) }()
-      case 8: try { try decoder.decodeSingularEnumField(value: &self.releaseVariant) }()
-      case 9: try { try decoder.decodeRepeatedInt32Field(value: &self.consentFiltersIds) }()
-      case 10: try { try decoder.decodeSingularStringField(value: &self.language) }()
-      case 11: try { try decoder.decodeSingularBoolField(value: &self.allowTelemetry) }()
-      case 12: try { try decoder.decodeSingularEnumField(value: &self.theme) }()
+      case 1: try { try decoder.decodeSingularInt32Field(value: &self.x) }()
+      case 2: try { try decoder.decodeSingularInt32Field(value: &self.y) }()
+      case 3: try { try decoder.decodeSingularInt32Field(value: &self.width) }()
+      case 4: try { try decoder.decodeSingularInt32Field(value: &self.height) }()
+      case 5: try { try decoder.decodeSingularInt32Field(value: &self.monitor) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.launchOnStartup != false {
-      try visitor.visitSingularBoolField(value: self.launchOnStartup, fieldNumber: 1)
+    if self.x != 0 {
+      try visitor.visitSingularInt32Field(value: self.x, fieldNumber: 1)
     }
-    if self.showInMenuBar != false {
-      try visitor.visitSingularBoolField(value: self.showInMenuBar, fieldNumber: 2)
+    if self.y != 0 {
+      try visitor.visitSingularInt32Field(value: self.y, fieldNumber: 2)
     }
-    if self.hardwareAcceleration != false {
-      try visitor.visitSingularBoolField(value: self.hardwareAcceleration, fieldNumber: 3)
+    if self.width != 0 {
+      try visitor.visitSingularInt32Field(value: self.width, fieldNumber: 3)
     }
-    if self.autoFiltersUpdate != false {
-      try visitor.visitSingularBoolField(value: self.autoFiltersUpdate, fieldNumber: 4)
+    if self.height != 0 {
+      try visitor.visitSingularInt32Field(value: self.height, fieldNumber: 4)
     }
-    if self.realTimeFiltersUpdate != false {
-      try visitor.visitSingularBoolField(value: self.realTimeFiltersUpdate, fieldNumber: 5)
+    if self.monitor != 0 {
+      try visitor.visitSingularInt32Field(value: self.monitor, fieldNumber: 5)
     }
-    if self.quitReaction != .unknown {
-      try visitor.visitSingularEnumField(value: self.quitReaction, fieldNumber: 6)
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: WindowGeometry, rhs: WindowGeometry) -> Bool {
+    if lhs.x != rhs.x {return false}
+    if lhs.y != rhs.y {return false}
+    if lhs.width != rhs.width {return false}
+    if lhs.height != rhs.height {return false}
+    if lhs.monitor != rhs.monitor {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "Settings"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{3}real_time_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0\u{3}user_rules_editor_geometry\0")
+
+  fileprivate class _StorageClass {
+    var _launchOnStartup: Bool = false
+    var _showInMenuBar: Bool = false
+    var _hardwareAcceleration: Bool = false
+    var _autoFiltersUpdate: Bool = false
+    var _realTimeFiltersUpdate: Bool = false
+    var _quitReaction: QuitReaction = .unknown
+    var _debugLogging: Bool = false
+    var _releaseVariant: ReleaseVariants = .unknown
+    var _consentFiltersIds: [Int32] = []
+    var _language: String = String()
+    var _allowTelemetry: Bool = false
+    var _theme: Theme = .unknown
+    var _userRulesEditorGeometry: WindowGeometry? = nil
+
+      // This property is used as the initial default value for new instances of the type.
+      // The type itself is protecting the reference to its storage via CoW semantics.
+      // This will force a copy to be made of this reference when the first mutation occurs;
+      // hence, it is safe to mark this as `nonisolated(unsafe)`.
+      static nonisolated(unsafe) let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _launchOnStartup = source._launchOnStartup
+      _showInMenuBar = source._showInMenuBar
+      _hardwareAcceleration = source._hardwareAcceleration
+      _autoFiltersUpdate = source._autoFiltersUpdate
+      _realTimeFiltersUpdate = source._realTimeFiltersUpdate
+      _quitReaction = source._quitReaction
+      _debugLogging = source._debugLogging
+      _releaseVariant = source._releaseVariant
+      _consentFiltersIds = source._consentFiltersIds
+      _language = source._language
+      _allowTelemetry = source._allowTelemetry
+      _theme = source._theme
+      _userRulesEditorGeometry = source._userRulesEditorGeometry
     }
-    if self.debugLogging != false {
-      try visitor.visitSingularBoolField(value: self.debugLogging, fieldNumber: 7)
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
     }
-    if self.releaseVariant != .unknown {
-      try visitor.visitSingularEnumField(value: self.releaseVariant, fieldNumber: 8)
+    return _storage
+  }
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        // The use of inline closures is to circumvent an issue where the compiler
+        // allocates stack space for every case branch when no optimizations are
+        // enabled. https://github.com/apple/swift-protobuf/issues/1034
+        switch fieldNumber {
+        case 1: try { try decoder.decodeSingularBoolField(value: &_storage._launchOnStartup) }()
+        case 2: try { try decoder.decodeSingularBoolField(value: &_storage._showInMenuBar) }()
+        case 3: try { try decoder.decodeSingularBoolField(value: &_storage._hardwareAcceleration) }()
+        case 4: try { try decoder.decodeSingularBoolField(value: &_storage._autoFiltersUpdate) }()
+        case 5: try { try decoder.decodeSingularBoolField(value: &_storage._realTimeFiltersUpdate) }()
+        case 6: try { try decoder.decodeSingularEnumField(value: &_storage._quitReaction) }()
+        case 7: try { try decoder.decodeSingularBoolField(value: &_storage._debugLogging) }()
+        case 8: try { try decoder.decodeSingularEnumField(value: &_storage._releaseVariant) }()
+        case 9: try { try decoder.decodeRepeatedInt32Field(value: &_storage._consentFiltersIds) }()
+        case 10: try { try decoder.decodeSingularStringField(value: &_storage._language) }()
+        case 11: try { try decoder.decodeSingularBoolField(value: &_storage._allowTelemetry) }()
+        case 12: try { try decoder.decodeSingularEnumField(value: &_storage._theme) }()
+        case 13: try { try decoder.decodeSingularMessageField(value: &_storage._userRulesEditorGeometry) }()
+        default: break
+        }
+      }
     }
-    if !self.consentFiltersIds.isEmpty {
-      try visitor.visitPackedInt32Field(value: self.consentFiltersIds, fieldNumber: 9)
-    }
-    if !self.language.isEmpty {
-      try visitor.visitSingularStringField(value: self.language, fieldNumber: 10)
-    }
-    if self.allowTelemetry != false {
-      try visitor.visitSingularBoolField(value: self.allowTelemetry, fieldNumber: 11)
-    }
-    if self.theme != .unknown {
-      try visitor.visitSingularEnumField(value: self.theme, fieldNumber: 12)
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
+      if _storage._launchOnStartup != false {
+        try visitor.visitSingularBoolField(value: _storage._launchOnStartup, fieldNumber: 1)
+      }
+      if _storage._showInMenuBar != false {
+        try visitor.visitSingularBoolField(value: _storage._showInMenuBar, fieldNumber: 2)
+      }
+      if _storage._hardwareAcceleration != false {
+        try visitor.visitSingularBoolField(value: _storage._hardwareAcceleration, fieldNumber: 3)
+      }
+      if _storage._autoFiltersUpdate != false {
+        try visitor.visitSingularBoolField(value: _storage._autoFiltersUpdate, fieldNumber: 4)
+      }
+      if _storage._realTimeFiltersUpdate != false {
+        try visitor.visitSingularBoolField(value: _storage._realTimeFiltersUpdate, fieldNumber: 5)
+      }
+      if _storage._quitReaction != .unknown {
+        try visitor.visitSingularEnumField(value: _storage._quitReaction, fieldNumber: 6)
+      }
+      if _storage._debugLogging != false {
+        try visitor.visitSingularBoolField(value: _storage._debugLogging, fieldNumber: 7)
+      }
+      if _storage._releaseVariant != .unknown {
+        try visitor.visitSingularEnumField(value: _storage._releaseVariant, fieldNumber: 8)
+      }
+      if !_storage._consentFiltersIds.isEmpty {
+        try visitor.visitPackedInt32Field(value: _storage._consentFiltersIds, fieldNumber: 9)
+      }
+      if !_storage._language.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._language, fieldNumber: 10)
+      }
+      if _storage._allowTelemetry != false {
+        try visitor.visitSingularBoolField(value: _storage._allowTelemetry, fieldNumber: 11)
+      }
+      if _storage._theme != .unknown {
+        try visitor.visitSingularEnumField(value: _storage._theme, fieldNumber: 12)
+      }
+      try { if let v = _storage._userRulesEditorGeometry {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 13)
+      } }()
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Settings, rhs: Settings) -> Bool {
-    if lhs.launchOnStartup != rhs.launchOnStartup {return false}
-    if lhs.showInMenuBar != rhs.showInMenuBar {return false}
-    if lhs.hardwareAcceleration != rhs.hardwareAcceleration {return false}
-    if lhs.autoFiltersUpdate != rhs.autoFiltersUpdate {return false}
-    if lhs.realTimeFiltersUpdate != rhs.realTimeFiltersUpdate {return false}
-    if lhs.quitReaction != rhs.quitReaction {return false}
-    if lhs.debugLogging != rhs.debugLogging {return false}
-    if lhs.releaseVariant != rhs.releaseVariant {return false}
-    if lhs.consentFiltersIds != rhs.consentFiltersIds {return false}
-    if lhs.language != rhs.language {return false}
-    if lhs.allowTelemetry != rhs.allowTelemetry {return false}
-    if lhs.theme != rhs.theme {return false}
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._launchOnStartup != rhs_storage._launchOnStartup {return false}
+        if _storage._showInMenuBar != rhs_storage._showInMenuBar {return false}
+        if _storage._hardwareAcceleration != rhs_storage._hardwareAcceleration {return false}
+        if _storage._autoFiltersUpdate != rhs_storage._autoFiltersUpdate {return false}
+        if _storage._realTimeFiltersUpdate != rhs_storage._realTimeFiltersUpdate {return false}
+        if _storage._quitReaction != rhs_storage._quitReaction {return false}
+        if _storage._debugLogging != rhs_storage._debugLogging {return false}
+        if _storage._releaseVariant != rhs_storage._releaseVariant {return false}
+        if _storage._consentFiltersIds != rhs_storage._consentFiltersIds {return false}
+        if _storage._language != rhs_storage._language {return false}
+        if _storage._allowTelemetry != rhs_storage._allowTelemetry {return false}
+        if _storage._theme != rhs_storage._theme {return false}
+        if _storage._userRulesEditorGeometry != rhs_storage._userRulesEditorGeometry {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

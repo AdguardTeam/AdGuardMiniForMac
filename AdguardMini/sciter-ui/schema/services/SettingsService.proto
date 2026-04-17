@@ -73,4 +73,6 @@ service SettingsService {
     rpc GetStatistics(StatisticsRequest) returns (StatisticsResponse);
     /* Reset all statistics */
     rpc ResetStatistics(EmptyValue) returns (EmptyValue);
+    /* Update user rules editor window geometry */
+    rpc UpdateUserRulesEditorGeometry(WindowGeometry) returns (EmptyValue);
 }

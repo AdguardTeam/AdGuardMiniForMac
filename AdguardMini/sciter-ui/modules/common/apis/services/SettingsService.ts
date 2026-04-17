@@ -1,7 +1,7 @@
 /* This code was generated automatically by proto-parser tool version 1 */
 
 
-import { EmptyValue, Settings, BoolValue, UpdateQuitReactionMessage, Path, OptionalError, ImportSettingsConfirmation, GlobalSettings, SafariExtensions, Int32Value, OptionalStringValue, UserConsent, SupportMessage, StringValue, EffectiveThemeValue, UpdateThemeMessage, StatisticsRequest, StatisticsResponse } from '../types'
+import { EmptyValue, Settings, BoolValue, UpdateQuitReactionMessage, Path, OptionalError, ImportSettingsConfirmation, GlobalSettings, SafariExtensions, Int32Value, OptionalStringValue, UserConsent, SupportMessage, StringValue, EffectiveThemeValue, UpdateThemeMessage, StatisticsRequest, StatisticsResponse, WindowGeometry } from '../types'
 import { xcall } from 'ApiWindow';
 
 /* Service that handles settings  */
@@ -73,6 +73,8 @@ interface ISettingsService {
 	GetStatistics(param:StatisticsRequest): Promise<StatisticsResponse>;
 	/* Reset all statistics */
 	ResetStatistics(param:EmptyValue): Promise<EmptyValue>;
+	/* Update user rules editor window geometry */
+	UpdateUserRulesEditorGeometry(param:WindowGeometry): Promise<EmptyValue>;
 }
 
 /**
@@ -572,6 +574,21 @@ export class SettingsService implements ISettingsService {
 		const data = EmptyValue.deserializeBinary(res);
 
 		log.dbg('Response data', 'SettingsService.ResetStatistics', data.toObject());
+		return data;
+	};
+
+	/**
+	 * Update user rules editor window geometry
+	 * @param WindowGeometry param
+	 * @returns EmptyValue param
+	 */
+	UpdateUserRulesEditorGeometry = async (param: WindowGeometry): Promise<EmptyValue> => {
+		log.dbg('Request data', 'SettingsService.UpdateUserRulesEditorGeometry', param.toObject());
+
+		const res = await xcall('SettingsService.UpdateUserRulesEditorGeometry', param.serializeBinary().buffer);
+		const data = EmptyValue.deserializeBinary(res);
+
+		log.dbg('Response data', 'SettingsService.UpdateUserRulesEditorGeometry', data.toObject());
 		return data;
 	};
 

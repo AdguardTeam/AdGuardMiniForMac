@@ -24,6 +24,8 @@ import type { ImportMode, QuitReaction, SafariExtensionUpdate, Theme,
     SafariExtensions } from 'Apis/types';
 import type { SettingsStore } from 'SettingsStore';
 
+import { SciterWindowId } from './Windowing';
+
 /**
  * App Settings store
  */
@@ -370,6 +372,17 @@ export class Settings {
         this.settings = data;
         updateLanguage(data.language);
         log.setLogLevel(data.debugLogging ? LogLevel.DBG : LogLevel.ERR);
+
+        if (data.has_user_rules_editor_geometry) {
+            const geo = data.userRulesEditorGeometry;
+            this.rootStore.windowing.setSavedGeometry(SciterWindowId.USER_RULE_EDITOR, {
+                x: geo.x,
+                y: geo.y,
+                width: geo.width,
+                height: geo.height,
+                monitor: geo.monitor,
+            });
+        }
     }
 
     /**

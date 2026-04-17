@@ -46,6 +46,10 @@ interface SciterGlobal {
      * Creates a new sciter window instance
      */
     new(params: {
+        // Screen pixels, horizontal position of the window on screen
+        x?: number;
+        // Screen pixels, vertical position of the window from the top of the screen
+        y?: number;
         // Screen pixels, window width
         width: number;
         // Screen pixels, window height
@@ -59,6 +63,8 @@ interface SciterGlobal {
         // Instance of parent (owner window)
         // When owner will be closed or minimized this window will be closed/minimized too
         parent?: SciterWindow;
+        // Frame name for the new window. Can be used to target the window with links and forms
+        frameName?: string;
     }): SciterWindow;
 
     /**

@@ -4,6 +4,9 @@
 
 import { makeAutoObservable } from 'mobx';
 
+import { WindowGeometry as WindowGeometryProto } from 'Apis/types';
+import { type WindowGeometry, getWindowGeometry, MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT } from 'Utils/windowGeometry';
+
 import type { ColorTheme } from 'Utils/colorThemes';
 
 export enum SciterWindowId {
@@ -12,6 +15,8 @@ export enum SciterWindowId {
 
 export type CreateWindowParams = {
     id: SciterWindowId;
+    x?: number;
+    y?: number;
     width: number;
     height: number;
     caption: string;
@@ -24,6 +29,8 @@ const PATH_TO_WEBVIEW_HTML = 'this://app/webview.html';
  */
 export class Windowing {
     private readonly openedWindows = new Set<SciterWindowId>();
+
+    private readonly savedGeometries = new Map<SciterWindowId, WindowGeometry>();
 
     /**
      * Ctor
@@ -70,8 +77,9 @@ export class Windowing {
             ...windowParams,
             url: PATH_TO_WEBVIEW_HTML,
             parameters: { id },
-            parent: window.SciterWindow,
         });
+
+        newWindow.minSize = [MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT];
 
         this.setWindowOpened(id, true);
         this.focusWindow(id);
@@ -83,11 +91,35 @@ export class Windowing {
      * Closes the sciter window
      */
     public closeWindow(windowId: SciterWindowId) {
-        const window = this.findWindowByParam('id', windowId);
-        if (window) {
-            window.close();
+        const sciterWindow = this.findWindowByParam('id', windowId);
+        if (sciterWindow) {
+            const geometry = getWindowGeometry(sciterWindow);
+            this.savedGeometries.set(windowId, geometry);
+
+            if (windowId === SciterWindowId.USER_RULE_EDITOR) {
+                const { x, y, width, height, monitor } = geometry;
+                window.API.settingsService.UpdateUserRulesEditorGeometry(
+                    new WindowGeometryProto({ x, y, width, height, monitor }),
+                );
+            }
+
+            sciterWindow.close();
             this.setWindowOpened(windowId, false);
         }
+    }
+
+    /**
+     * Sets saved geometry for the specified window (e.g., restored from settings)
+     */
+    public setSavedGeometry(windowId: SciterWindowId, geometry: WindowGeometry) {
+        this.savedGeometries.set(windowId, geometry);
+    }
+
+    /**
+     * Returns saved geometry for the specified window, if available
+     */
+    public getSavedGeometry(windowId: SciterWindowId): WindowGeometry | undefined {
+        return this.savedGeometries.get(windowId);
     }
 
     /**

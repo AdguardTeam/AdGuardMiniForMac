@@ -22,6 +22,7 @@ protocol UserSettingsService: AnyObject {
     var userConsent:             [Int] { get set }
     var userActionLastDirectory: String { get set }
     var allowTelemetry:          Bool { get set }
+    var userRulesEditorGeometry: WindowGeometryDTO? { get set }
 
     // MARK: Properties with side effects
 
@@ -55,6 +56,9 @@ final class UserSettingsServiceImpl {
 
     @UserDefault(key: .lastFiltersUpdateTime, defaultValue: Date.distantPast)
     var lastFiltersUpdateTime: Date
+
+    @UserDefault(key: .userRulesEditorGeometry, defaultValue: nil)
+    private var userRulesEditorGeometryData: Data?
 
     init(
         keychain: KeychainManager,
@@ -117,6 +121,22 @@ extension UserSettingsServiceImpl: UserSettingsService {
     var allowTelemetry: Bool {
         get { self.userSettingsManager.allowTelemetry }
         set { self.userSettingsManager.allowTelemetry = newValue }
+    }
+
+    var userRulesEditorGeometry: WindowGeometryDTO? {
+        get {
+            guard let data = self.userRulesEditorGeometryData else {
+                return nil
+            }
+            return try? JSONDecoder().decode(WindowGeometryDTO.self, from: data)
+        }
+        set {
+            self.userRulesEditorGeometryData = if let newValue {
+                try? JSONEncoder().encode(newValue)
+            } else {
+                nil
+            }
+        }
     }
 
     // MARK: Properties with side effects and special setters

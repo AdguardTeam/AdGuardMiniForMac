@@ -45,9 +45,168 @@ export enum Theme {
     light = 2,
     dark = 3
 }
-export class Settings extends pb_1.Message {
+export class WindowGeometry extends pb_1.Message {
     #one_of_decls: number[][] = [];
     constructor(data?: any[] | {
+        x?: number;
+        y?: number;
+        width?: number;
+        height?: number;
+        monitor?: number;
+    }) {
+        super();
+        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+        if (!Array.isArray(data) && typeof data == "object") {
+            if ("x" in data && data.x != undefined) {
+                this.x = data.x;
+            }
+            if ("y" in data && data.y != undefined) {
+                this.y = data.y;
+            }
+            if ("width" in data && data.width != undefined) {
+                this.width = data.width;
+            }
+            if ("height" in data && data.height != undefined) {
+                this.height = data.height;
+            }
+            if ("monitor" in data && data.monitor != undefined) {
+                this.monitor = data.monitor;
+            }
+        }
+    }
+    get x() {
+        return pb_1.Message.getFieldWithDefault(this, 1, 0) as number;
+    }
+    set x(value: number) {
+        pb_1.Message.setField(this, 1, value);
+    }
+    get y() {
+        return pb_1.Message.getFieldWithDefault(this, 2, 0) as number;
+    }
+    set y(value: number) {
+        pb_1.Message.setField(this, 2, value);
+    }
+    get width() {
+        return pb_1.Message.getFieldWithDefault(this, 3, 0) as number;
+    }
+    set width(value: number) {
+        pb_1.Message.setField(this, 3, value);
+    }
+    get height() {
+        return pb_1.Message.getFieldWithDefault(this, 4, 0) as number;
+    }
+    set height(value: number) {
+        pb_1.Message.setField(this, 4, value);
+    }
+    get monitor() {
+        return pb_1.Message.getFieldWithDefault(this, 5, 0) as number;
+    }
+    set monitor(value: number) {
+        pb_1.Message.setField(this, 5, value);
+    }
+    static fromObject(data: {
+        x?: number;
+        y?: number;
+        width?: number;
+        height?: number;
+        monitor?: number;
+    }): WindowGeometry {
+        const message = new WindowGeometry({});
+        if (data.x != null) {
+            message.x = data.x;
+        }
+        if (data.y != null) {
+            message.y = data.y;
+        }
+        if (data.width != null) {
+            message.width = data.width;
+        }
+        if (data.height != null) {
+            message.height = data.height;
+        }
+        if (data.monitor != null) {
+            message.monitor = data.monitor;
+        }
+        return message;
+    }
+    toObject() {
+        const data: {
+            x?: number;
+            y?: number;
+            width?: number;
+            height?: number;
+            monitor?: number;
+        } = {};
+        if (this.x != null) {
+            data.x = this.x;
+        }
+        if (this.y != null) {
+            data.y = this.y;
+        }
+        if (this.width != null) {
+            data.width = this.width;
+        }
+        if (this.height != null) {
+            data.height = this.height;
+        }
+        if (this.monitor != null) {
+            data.monitor = this.monitor;
+        }
+        return data;
+    }
+    serialize(): Uint8Array;
+    serialize(w: pb_1.BinaryWriter): void;
+    serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+        const writer = w || new pb_1.BinaryWriter();
+        if (this.x != 0)
+            writer.writeInt32(1, this.x);
+        if (this.y != 0)
+            writer.writeInt32(2, this.y);
+        if (this.width != 0)
+            writer.writeInt32(3, this.width);
+        if (this.height != 0)
+            writer.writeInt32(4, this.height);
+        if (this.monitor != 0)
+            writer.writeInt32(5, this.monitor);
+        if (!w)
+            return writer.getResultBuffer();
+    }
+    static deserialize(bytes: Uint8Array | pb_1.BinaryReader): WindowGeometry {
+        const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new WindowGeometry();
+        while (reader.nextField()) {
+            if (reader.isEndGroup())
+                break;
+            switch (reader.getFieldNumber()) {
+                case 1:
+                    message.x = reader.readInt32();
+                    break;
+                case 2:
+                    message.y = reader.readInt32();
+                    break;
+                case 3:
+                    message.width = reader.readInt32();
+                    break;
+                case 4:
+                    message.height = reader.readInt32();
+                    break;
+                case 5:
+                    message.monitor = reader.readInt32();
+                    break;
+                default: reader.skipField();
+            }
+        }
+        return message;
+    }
+    serializeBinary(): Uint8Array {
+        return this.serialize();
+    }
+    static deserializeBinary(bytes: Uint8Array): WindowGeometry {
+        return WindowGeometry.deserialize(bytes);
+    }
+}
+export class Settings extends pb_1.Message {
+    #one_of_decls: number[][] = [[13]];
+    constructor(data?: any[] | ({
         launchOnStartup?: boolean;
         showInMenuBar?: boolean;
         hardwareAcceleration?: boolean;
@@ -60,7 +219,9 @@ export class Settings extends pb_1.Message {
         language?: string;
         allowTelemetry?: boolean;
         theme?: Theme;
-    }) {
+    } & (({
+        userRulesEditorGeometry?: WindowGeometry;
+    })))) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [9], this.#one_of_decls);
         if (!Array.isArray(data) && typeof data == "object") {
@@ -99,6 +260,9 @@ export class Settings extends pb_1.Message {
             }
             if ("theme" in data && data.theme != undefined) {
                 this.theme = data.theme;
+            }
+            if ("userRulesEditorGeometry" in data && data.userRulesEditorGeometry != undefined) {
+                this.userRulesEditorGeometry = data.userRulesEditorGeometry;
             }
         }
     }
@@ -174,6 +338,24 @@ export class Settings extends pb_1.Message {
     set theme(value: Theme) {
         pb_1.Message.setField(this, 12, value);
     }
+    get userRulesEditorGeometry() {
+        return pb_1.Message.getWrapperField(this, WindowGeometry, 13) as WindowGeometry;
+    }
+    set userRulesEditorGeometry(value: WindowGeometry) {
+        pb_1.Message.setOneofWrapperField(this, 13, this.#one_of_decls[0], value);
+    }
+    get has_user_rules_editor_geometry() {
+        return pb_1.Message.getField(this, 13) != null;
+    }
+    get _userRulesEditorGeometry() {
+        const cases: {
+            [index: number]: "none" | "userRulesEditorGeometry";
+        } = {
+            0: "none",
+            13: "userRulesEditorGeometry"
+        };
+        return cases[pb_1.Message.computeOneofCase(this, [13])];
+    }
     static fromObject(data: {
         launchOnStartup?: boolean;
         showInMenuBar?: boolean;
@@ -187,6 +369,7 @@ export class Settings extends pb_1.Message {
         language?: string;
         allowTelemetry?: boolean;
         theme?: Theme;
+        userRulesEditorGeometry?: ReturnType<typeof WindowGeometry.prototype.toObject>;
     }): Settings {
         const message = new Settings({});
         if (data.launchOnStartup != null) {
@@ -225,6 +408,9 @@ export class Settings extends pb_1.Message {
         if (data.theme != null) {
             message.theme = data.theme;
         }
+        if (data.userRulesEditorGeometry != null) {
+            message.userRulesEditorGeometry = WindowGeometry.fromObject(data.userRulesEditorGeometry);
+        }
         return message;
     }
     toObject() {
@@ -241,6 +427,7 @@ export class Settings extends pb_1.Message {
             language?: string;
             allowTelemetry?: boolean;
             theme?: Theme;
+            userRulesEditorGeometry?: ReturnType<typeof WindowGeometry.prototype.toObject>;
         } = {};
         if (this.launchOnStartup != null) {
             data.launchOnStartup = this.launchOnStartup;
@@ -278,6 +465,9 @@ export class Settings extends pb_1.Message {
         if (this.theme != null) {
             data.theme = this.theme;
         }
+        if (this.userRulesEditorGeometry != null) {
+            data.userRulesEditorGeometry = this.userRulesEditorGeometry.toObject();
+        }
         return data;
     }
     serialize(): Uint8Array;
@@ -308,6 +498,8 @@ export class Settings extends pb_1.Message {
             writer.writeBool(11, this.allowTelemetry);
         if (this.theme != Theme.unknown)
             writer.writeEnum(12, this.theme);
+        if (this.has_user_rules_editor_geometry)
+            writer.writeMessage(13, this.userRulesEditorGeometry, () => this.userRulesEditorGeometry.serialize(writer));
         if (!w)
             return writer.getResultBuffer();
     }
@@ -352,6 +544,9 @@ export class Settings extends pb_1.Message {
                     break;
                 case 12:
                     message.theme = reader.readEnum();
+                    break;
+                case 13:
+                    reader.readMessage(message.userRulesEditorGeometry, () => message.userRulesEditorGeometry = WindowGeometry.deserialize(reader));
                     break;
                 default: reader.skipField();
             }

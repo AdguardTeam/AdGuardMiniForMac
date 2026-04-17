@@ -4,6 +4,8 @@
 
 type PopupParams = { anchorAt: number; popupAt: number; x?: number; y?: number };
 
+type ScreenBoxWhat = 'frame' | 'workarea' | 'device' | 'isPrimary' | 'snapshot';
+
 type ElementState = { popup: boolean };
 
 interface HTMLElement {
@@ -86,6 +88,8 @@ declare type SciterWindow = {
      * Subscribe to window related events
      */
     on(eventName: 'activate', handler: (event: { reason: number }) => void): void;
+    on(eventName: 'move', handler: (event: Event) => void): void;
+    on(eventName: 'size', handler: (event: Event) => void): void;
     on(eventName: string, handler: (event: CustomEvent) => void): void;
 
     /**
@@ -145,4 +149,31 @@ declare type SciterWindow = {
      * Window box
      */
     box(boxPart: BoxPart, boxOf?: BoxOf, relTo?: RelTo, asPPX?: boolean): number | number[];
+
+    /**
+     * Reports geometry of monitor this window is on
+     *
+     * @link https://docs.sciter.com/docs/DOM/Window#screenbox
+     */
+    screenBox(what: ScreenBoxWhat, boxPart?: BoxPart, asPPX?: boolean): number | number[] | string | boolean;
+
+    /**
+     * Move/size window. Parameters are in PPX (physical screen pixels).
+     * If "client" is provided then x, y, width, height are treated as window client area coordinates.
+     *
+     * @link https://docs.sciter.com/docs/DOM/Window#move
+     */
+    move(x: number, y: number, width?: number, height?: number, client?: 'client'): void;
+
+    /**
+     * Move/size window to specific monitor using monitor-relative coordinates.
+     *
+     * @link https://docs.sciter.com/docs/DOM/Window#moveto
+     */
+    moveTo(monitor: number, x: number, y: number, width: number, height: number): void;
+
+    /**
+     * Monitor index this window is on
+     */
+    monitor: number;
 };
