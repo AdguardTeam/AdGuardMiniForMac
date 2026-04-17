@@ -117,6 +117,7 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
 
                     // Stage 1: Get filters for conversion
 
+                    var stageStart = Date()
                     var rawFilters = self.filterListManager.getActiveRulesInfo()
 
                     try self.checkCancellation(progress)
@@ -127,19 +128,24 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
                         }
                     }
 
+                    LogInfo("\(LogTag.safari) getActiveRulesInfo end (ID: \(updateId)), \(stageStart.elapsedMs())")
                     progress.completedUnitCount += 1
 
                     try self.checkCancellation(progress)
 
                     // Stage 2: Reset converted filters storage
 
+                    stageStart = Date()
                     self.safariFiltersStorage.resetStorage()
+                    LogInfo("\(LogTag.safari) resetStorage end (ID: \(updateId)), \(stageStart.elapsedMs())")
                     progress.completedUnitCount += 1
 
                     try self.checkCancellation(progress)
 
                     // Stage 3: Convert rules and save
 
+                    stageStart = Date()
+                    LogInfo("\(LogTag.safari) convertRulesAndSave start (ID: \(updateId))")
                     let updatedBlockers = self.safariConverter.convertRulesAndSave(
                         filters: rawFilters,
                         advanced: self.userSettingsService.advancedBlockingState.advancedRules,
@@ -151,6 +157,10 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
 
                     // Stage 4: Reload content blockers
 
+                    LogInfo("\(LogTag.safari) convertRulesAndSave end (ID: \(updateId)), \(stageStart.elapsedMs())")
+
+                    let reloadStart = Date()
+                    LogInfo("\(LogTag.safari) reloadContentBlockers start (ID: \(updateId))")
                     await withTaskGroup(of: Void.self) { group in
                         for await blocker in updatedBlockers {
                             group.addTask {
@@ -160,6 +170,7 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
                             }
                         }
                     }
+                    LogInfo("\(LogTag.safari) reloadContentBlockers end (ID: \(updateId)), \(reloadStart.elapsedMs())")
 
                     progress.completedUnitCount += 1
 

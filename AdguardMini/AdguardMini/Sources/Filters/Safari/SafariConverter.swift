@@ -148,12 +148,15 @@ final class SafariConverterImpl {
                         let safariBlockerType = group.key
                         taskGroup.addTask {
                             await delegate?.onStartConversion(blockerType: safariBlockerType)
+                            let convStart = Date()
+                            LogInfo("\(LogTag.safari) convertAndSave(\(safariBlockerType)) start")
                             let result = await self.convertAndSave(
                                 safariBlockerType: safariBlockerType,
                                 rules: group.rules,
                                 isAdvancedBlocking: true,
                                 progress: progress
                             )
+                            LogInfo("\(LogTag.safari) convertAndSave(\(safariBlockerType)) end, \(convStart.elapsedMs())")
                             return .init(blockerType: safariBlockerType, conversionInfo: result)
                         }
                     }

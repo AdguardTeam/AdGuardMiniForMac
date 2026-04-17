@@ -34,6 +34,8 @@ final class SafariExtensionManagerImpl: SafariExtensionManager {
             return await self.reloadAdvancedBlocking()
         }
 
+        let reloadStart = Date()
+        LogInfo("\(LogTag.safari) reloadContentBlocker(\(type)) start")
         var result: Bool
 
         do {
@@ -57,11 +59,11 @@ final class SafariExtensionManagerImpl: SafariExtensionManager {
                     continuation.resume(throwing: error)
                 }
             }
-            LogInfo("Blocker \(type) reloaded")
+            LogInfo("\(LogTag.safari) reloadContentBlocker(\(type)) end, \(reloadStart.elapsedMs())")
             await self.onEndReload(type, error: nil)
             result = true
         } catch {
-            LogError("Error when reloading the content blocker \(type): \(SafariError(error))")
+            LogError("\(LogTag.safari) reloadContentBlocker(\(type)) end (error: \(SafariError(error))), \(reloadStart.elapsedMs())")
             await self.onEndReload(type, error: error)
             result = false
         }

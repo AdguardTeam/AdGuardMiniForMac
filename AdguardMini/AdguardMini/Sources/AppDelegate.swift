@@ -59,6 +59,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: Private properties
 
+    private let metricKitSubscriber: MetricKitSubscriber = MetricKitSubscriberImpl()
     private var performQuit = false
     private var firstExitTry: Bool = true
     private var readyToTerminate: Bool = false
@@ -193,6 +194,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func startAppStep0() {
         Task { @MainActor in
             LogInfo("Start App Step 0")
+
+            self.metricKitSubscriber.start()
+
             do {
                 self.migrationSuccess = try await self.legacyMigrationService.tryMigrate()
             } catch {
