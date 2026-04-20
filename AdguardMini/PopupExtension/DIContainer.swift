@@ -80,6 +80,14 @@ final class DIContainer {
 
         self.popupViewModel.popupViewControllerDelegate = self.safariController
 
-        self.blockingStatsReporter = BlockingStatsReporterImpl(safariApi: self.safariApiInteractor)
+        let statsStore: StatisticsStore = {
+            do {
+                return try SharedStatisticsStoreImpl()
+            } catch {
+                LogError("Failed to initialize SharedStatisticsStore in PopupExtension: \(error)")
+                return NoOpStatisticsStore()
+            }
+        }()
+        self.blockingStatsReporter = BlockingStatsReporterImpl(statisticsStore: statsStore)
     }
 }

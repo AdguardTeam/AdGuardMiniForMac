@@ -56,7 +56,6 @@ final class SafariApiProvider: NSObject {
     private let telemetry: Telemetry.Service
     private let eventBus: EventBus
     private let keychain: KeychainManager
-    private let statisticsService: StatisticsService
 
     #if MAS
     private let appStoreRateUs: AppStoreRateUs?
@@ -75,7 +74,6 @@ final class SafariApiProvider: NSObject {
         telemetry: Telemetry.Service,
         keychain: KeychainManager,
         eventBus: EventBus,
-        statisticsService: StatisticsService,
         appStoreRateUs: AppStoreRateUs?
     ) {
         self.proxyStorage = proxyStorage
@@ -88,7 +86,6 @@ final class SafariApiProvider: NSObject {
         self.telemetry = telemetry
         self.keychain = keychain
         self.eventBus = eventBus
-        self.statisticsService = statisticsService
 
         #if MAS
         self.appStoreRateUs = appStoreRateUs
@@ -317,46 +314,6 @@ extension SafariApiProvider: MainAppApi {
         #if MAS
         self.appStoreRateUs?.onWindowOpened()
         #endif
-        reply(nil)
-    }
-
-    func reportBlockCounts(_ counts: [String: Int64], reply: @escaping (Error?) -> Void) {
-        guard !counts.isEmpty else {
-            reply(nil)
-            return
-        }
-
-        LogDebug("Received block counts: \(counts)")
-
-        // Extract the deduplicated ads-blocked total before processing per-blocker counts.
-        var mutableCounts = counts
-        let adsBlockedTotal = mutableCounts.removeValue(forKey: BlockingStatisticsKey.adsBlockedTotal)
-
-        var typedCounts: [SafariBlockerType: Int] = [:]
-        var unknownBundleIds: [String] = []
-
-        for (bundleId, count) in mutableCounts {
-            if let blockerType = SafariBlockerType(contentBlockerIdentifier: bundleId) {
-                typedCounts[blockerType] = Int(clamping: count)
-            } else {
-                unknownBundleIds.append(bundleId)
-            }
-        }
-
-        if !unknownBundleIds.isEmpty {
-            LogWarn("Received block counts from unknown bundle IDs: \(unknownBundleIds)")
-            assertionFailure("Unknown bundle IDs in block counts payload")
-        }
-
-        self.statisticsService.addBlockCounts(typedCounts)
-
-        if let adsBlockedTotal {
-            self.statisticsService.addAdsBlockedTotal(Int(clamping: adsBlockedTotal))
-        } else {
-            LogWarn("Ads-blocked total is missing in block counts payload; skipping ads-blocked total update")
-            assertionFailure("Ads-blocked total is missing in block counts payload")
-        }
-
         reply(nil)
     }
 }

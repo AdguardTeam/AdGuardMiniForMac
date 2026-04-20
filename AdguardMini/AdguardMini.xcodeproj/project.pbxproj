@@ -626,9 +626,6 @@
 				SafariExtensions/SafariExtensionStateStorage.swift,
 				SafariExtensions/SafariExtensionStatusManager/SafariExtensionStatusManagerProtocol.swift,
 				Sciter/SciterCallbackService/SciterCallbackService.swift,
-				Statistics/BlockingStatistics.xcdatamodeld,
-				Statistics/StatisticsService.swift,
-				Statistics/StatisticsStore.swift,
 			);
 			target = EB843F052B90ED15009179E0 /* AdguardMiniTests */;
 		};
@@ -871,6 +868,7 @@
 		16E54F182E69E4C0006C7856 /* FileSystem */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = FileSystem; sourceTree = "<group>"; };
 		16E54F732E69E4C2006C7856 /* ProductInfo */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (16E54F7A2E69E4C2006C7856 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 16E54F7B2E69E4C2006C7856 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ProductInfo; sourceTree = "<group>"; };
 		16E54F7D2E69E4C8006C7856 /* Storages */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Storages; sourceTree = "<group>"; };
+		16FA01012FE10A0000000001 /* Statistics */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Statistics; sourceTree = "<group>"; };
 		EB0A20A62D5B56C1002A8029 /* WebExtension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (EB0A20C52D5B56C1002A8029 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (Resources/_locales, ); path = WebExtension; sourceTree = "<group>"; };
 		EB1A0D9D2D81E81D006DB3CF /* Helper */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (EB1A0D9F2D81E81D006DB3CF /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Helper; sourceTree = "<group>"; };
 		EB1A0DA42D81EC17006DB3CF /* Utils */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (EB1A0DAE2D81ECC2006DB3CF /* PBXFileSystemSynchronizedBuildFileExceptionSet */, EB1A0DAF2D81ECC2006DB3CF /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 165BA8C02F1E509500511F4E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Utils; sourceTree = "<group>"; };
@@ -1168,6 +1166,7 @@
 				16E54F182E69E4C0006C7856 /* FileSystem */,
 				16209B4B2E0C267E00F0B9F5 /* ExtensionBrowserApi */,
 				16E54F732E69E4C2006C7856 /* ProductInfo */,
+				16FA01012FE10A0000000001 /* Statistics */,
 				16E54F7D2E69E4C8006C7856 /* Storages */,
 				EB1A0DA42D81EC17006DB3CF /* Utils */,
 				EC66B32A2A717FA100139963 /* Resources */,
@@ -1367,6 +1366,7 @@
 				16E54F182E69E4C0006C7856 /* FileSystem */,
 				16E54F732E69E4C2006C7856 /* ProductInfo */,
 				16E54F7D2E69E4C8006C7856 /* Storages */,
+				16FA01012FE10A0000000001 /* Statistics */,
 			);
 			name = AdguardMiniTests;
 			packageProductDependencies = (
@@ -1612,6 +1612,7 @@
 				16E54F182E69E4C0006C7856 /* FileSystem */,
 				16E54F732E69E4C2006C7856 /* ProductInfo */,
 				16E54F7D2E69E4C8006C7856 /* Storages */,
+				16FA01012FE10A0000000001 /* Statistics */,
 				EB1A0DA42D81EC17006DB3CF /* Utils */,
 			);
 			name = AdguardMini;
@@ -1690,6 +1691,7 @@
 				16E54EC82E69E4BA006C7856 /* CustomUrlSchemes */,
 				16E54F182E69E4C0006C7856 /* FileSystem */,
 				16E54F7D2E69E4C8006C7856 /* Storages */,
+				16FA01012FE10A0000000001 /* Statistics */,
 			);
 			name = PopupExtension;
 			packageProductDependencies = (

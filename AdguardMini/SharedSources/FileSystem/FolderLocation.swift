@@ -16,6 +16,7 @@ private enum Constants {
     static let filtersDb = "\(Self.appSupport)/Filters"
     static let convertedFilters = "\(Self.appSupport)/ConvertedFilters"
     static let sentryStorage = "\(Self.appSupport)/TmpStorage/Sentry"
+    static let statistics = "\(Self.appSupport)/Statistics"
 
     static let groupLog = "\(Self.library)/Logs/\(BuildConfig.AG_APP_ID)"
 }
@@ -27,6 +28,7 @@ enum FolderLocation {
     case convertedFilters
     case sentryStorage
     case groupLog
+    case statistics
     case custom(relativePath: String)
 
     var path: String {
@@ -35,6 +37,7 @@ enum FolderLocation {
         case .convertedFilters: Constants.convertedFilters
         case .sentryStorage:    Constants.sentryStorage
         case .groupLog:         Constants.groupLog
+        case .statistics:       Constants.statistics
         case .custom(let path): path
         }
     }

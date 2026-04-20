@@ -87,37 +87,67 @@ extension StatisticsStore {
 enum StatisticsStoreError: Error {
     case failedToLoadStore(Error)
     case failedToLoadStoreURL
+    case appGroupContainerUnavailable
 }
 
-// MARK: - StatisticsStoreImpl
+// MARK: - NoOpStatisticsStore
 
-final class StatisticsStoreImpl: StatisticsStore {
+/// A no-op statistics store used when the shared store is unavailable.
+final class NoOpStatisticsStore: StatisticsStore {
+    func addCounts(_ counts: [SafariBlockerType: Int]) throws {}
+    func addAdsBlockedTotal(_ count: Int) throws {}
+    func queryStatistics(for period: StatisticsPeriod, blockerType: SafariBlockerType?) throws -> Int { 0 }
+    func queryAdsBlockedTotal(for period: StatisticsPeriod) throws -> Int { 0 }
+    func resetAll() throws {}
+}
+
+// MARK: - SharedStatisticsStoreImpl
+
+/// A `StatisticsStore` backed by Core Data in the shared App Group container.
+///
+/// Both the main app and PopupExtension create their own instance pointing at
+/// the same SQLite file. SQLite's WAL mode ensures cross-process safety.
+final class SharedStatisticsStoreImpl: StatisticsStore {
     // MARK: Private properties
 
     private let persistentContainer: NSPersistentContainer
     private let context: NSManagedObjectContext
 
-    /// Reserved storage key for the deduplicated ads-blocked total record.
-    ///
-    /// This must not overlap with any `SafariBlockerType.rawValue`, because the
-    /// same Core Data field stores both per-blocker rows and the ads-blocked total row.
+    private static let modelName = "BlockingStatistics"
     private static let adsBlockedTotalStorageKey = BlockingStatisticsKey.adsBlockedTotal
 
     // MARK: Init
 
+    /// Production initializer: loads the Core Data model from the calling
+    /// target's bundle and places the SQLite file in the App Group container.
     init() throws {
-        let persistentContainer = NSPersistentContainer(name: "BlockingStatistics")
-
-        if let description = persistentContainer.persistentStoreDescriptions.first {
-            description.shouldMigrateStoreAutomatically = true
-            description.shouldInferMappingModelAutomatically = true
+        guard let containerURL = FileManager.default
+            .containerURL(forSecurityApplicationGroupIdentifier: BuildConfig.AG_MAC_GROUP)
+        else {
+            let error = StatisticsStoreError.appGroupContainerUnavailable
+            LogError("Cannot access App Group container for statistics store")
+            throw error
         }
 
+        let statisticsDir = containerURL.appendingPathComponent(
+            FolderLocation.statistics.path,
+            isDirectory: true
+        )
+        try FileManager.default.createDirectory(at: statisticsDir, withIntermediateDirectories: true)
+        let storeURL = statisticsDir.appendingPathComponent("\(Self.modelName).sqlite")
+
+        let persistentContainer = NSPersistentContainer(name: Self.modelName)
+
+        let description = NSPersistentStoreDescription(url: storeURL)
+        description.shouldMigrateStoreAutomatically = true
+        description.shouldInferMappingModelAutomatically = true
+        persistentContainer.persistentStoreDescriptions = [description]
+
         do {
-            let storeURL = try Self.loadPersistentStore(in: persistentContainer)
-            LogInfo("StatisticsStore initialized at \(storeURL.path)")
+            let loadedURL = try Self.loadPersistentStore(in: persistentContainer)
+            LogInfo("SharedStatisticsStore initialized at \(loadedURL.path)")
         } catch {
-            try Self.recoverPersistentStore(in: persistentContainer, after: error)
+            try Self.recoverPersistentStore(in: persistentContainer, storeURL: storeURL, after: error)
         }
 
         let context = persistentContainer.viewContext
@@ -127,6 +157,7 @@ final class StatisticsStoreImpl: StatisticsStore {
         self.context = context
     }
 
+    /// Test initializer: accepts a pre-configured container.
     init(persistentContainer: NSPersistentContainer) {
         let context = persistentContainer.viewContext
         context.automaticallyMergesChangesFromParent = true
@@ -189,9 +220,7 @@ final class StatisticsStoreImpl: StatisticsStore {
 
             if let existing = results.first {
                 existing.count += count64
-                LogDebug(
-                    "Updated ads-blocked total on \(today): \(existing.count - count64) + \(count) = \(existing.count)"
-                )
+                LogDebug("Updated ads-blocked total on \(today): \(existing.count - count64) + \(count) = \(existing.count)")
             } else {
                 let newRecord = DailyBlockCount(context: self.context)
                 newRecord.date = today
@@ -221,7 +250,6 @@ final class StatisticsStoreImpl: StatisticsStore {
             let total = results.reduce(Int64(0)) { partial, item in
                 partial + item.count
             }
-
             LogDebug("Query ads-blocked total for period=\(period.displayName): \(results.count) records, total: \(total)")
             return Int(clamping: total)
         }
@@ -251,14 +279,11 @@ final class StatisticsStoreImpl: StatisticsStore {
             }
 
             let results = try context.fetch(fetchRequest)
-
             let total = results.reduce(Int64(0)) { partial, item in
                 partial + item.count
             }
-
-            let blockerTypeDesc = blockerType.map { "blocker=\($0)" } ?? "all blockers"
+            let blockerTypeDesc = blockerType?.rawValue ?? "all"
             LogDebug("Query stats for period=\(period.displayName), \(blockerTypeDesc): \(results.count) records, total: \(total)")
-
             return Int(clamping: total)
         }
     }
@@ -271,7 +296,7 @@ final class StatisticsStoreImpl: StatisticsStore {
             try self.context.execute(deleteRequest)
             self.context.reset()
 
-            LogInfo("All statistics reset")
+            LogInfo("All shared statistics reset")
         }
     }
 
@@ -283,10 +308,9 @@ final class StatisticsStoreImpl: StatisticsStore {
 
         container.loadPersistentStores { storeDescription, error in
             loadedURL = storeDescription.url
-
             if let error {
                 loadError = error
-                LogError("Failed to load persistent Core Data store: \(error)")
+                LogError("Failed to load shared persistent Core Data store: \(error)")
             }
         }
 
@@ -296,20 +320,22 @@ final class StatisticsStoreImpl: StatisticsStore {
 
         guard let loadedURL else {
             let error = StatisticsStoreError.failedToLoadStoreURL
-            LogError("Persistent store loaded but URL is missing")
+            LogError("Shared persistent store loaded but URL is missing")
             throw error
         }
 
         return loadedURL
     }
 
-    private static func recoverPersistentStore(in container: NSPersistentContainer, after error: Error) throws {
-        guard let storeURL = container.persistentStoreDescriptions.first?.url else {
-            LogError("Failed to load store and store URL is nil - cannot recover")
-            throw StatisticsStoreError.failedToLoadStore(error)
-        }
-
-        LogError("Statistics store corrupted at \(storeURL.path). All accumulated statistics data will be lost. Original error: \(error)")
+    private static func recoverPersistentStore(
+        in container: NSPersistentContainer,
+        storeURL: URL,
+        after error: Error
+    ) throws {
+        LogError(
+            "Shared statistics store corrupted at \(storeURL.path). "
+            + "All accumulated statistics data will be lost. Original error: \(error)"
+        )
 
         do {
             try container.persistentStoreCoordinator.destroyPersistentStore(
@@ -317,16 +343,16 @@ final class StatisticsStoreImpl: StatisticsStore {
                 ofType: NSSQLiteStoreType,
                 options: nil
             )
-            LogInfo("Destroyed corrupted persistent store")
+            LogInfo("Destroyed corrupted shared persistent store")
         } catch {
-            LogError("Failed to destroy persistent store: \(error)")
+            LogError("Failed to destroy shared persistent store: \(error)")
         }
 
         do {
-            let recreatedStoreURL = try loadPersistentStore(in: container)
-            LogInfo("Fresh StatisticsStore created successfully at \(recreatedStoreURL.path)")
+            let recreatedURL = try loadPersistentStore(in: container)
+            LogInfo("Fresh SharedStatisticsStore created at \(recreatedURL.path)")
         } catch {
-            LogError("Failed to recreate statistics store: \(error)")
+            LogError("Failed to recreate shared statistics store: \(error)")
             throw StatisticsStoreError.failedToLoadStore(error)
         }
     }
