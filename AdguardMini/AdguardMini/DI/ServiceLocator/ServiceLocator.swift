@@ -265,10 +265,10 @@ private final class ServiceLocator {
 
     private lazy var statisticsService: StatisticsService = {
         do {
-            let store = try StatisticsStoreImpl()
+            let store = try SharedStatisticsStoreImpl()
             return StatisticsServiceImpl(store: store)
         } catch {
-            LogError("Failed to initialize StatisticsStore: \(error). Using no-op implementation.")
+            LogError("Failed to initialize SharedStatisticsStore: \(error). Using no-op implementation.")
             return NoOpStatisticsService()
         }
     }()
@@ -285,7 +285,6 @@ private final class ServiceLocator {
             telemetry: self.telemetryService,
             keychain: self.coreDIContainer.keychain,
             eventBus: self.eventBus,
-            statisticsService: self.statisticsService,
             appStoreRateUs: {
                 #if MAS
                 return self.appStoreRateUs

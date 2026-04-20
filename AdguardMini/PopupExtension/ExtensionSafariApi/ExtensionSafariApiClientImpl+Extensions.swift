@@ -116,13 +116,6 @@ extension ExtensionSafariApiClientImpl: MainAppApi {
             $0.notifyWindowOpened(reply: reply)
         }
     }
-
-    func reportBlockCounts(_ counts: [String: Int64], reply: @escaping (Error?) -> Void) {
-        LogDebugTrace()
-        self.withSafariApi(else: { reply(ExtensionSafariApiClientErrorCode.linkTimeout) }) {
-            $0.reportBlockCounts(counts, reply: reply)
-        }
-    }
 }
 
 // MARK: - SafariPopupApi implementation

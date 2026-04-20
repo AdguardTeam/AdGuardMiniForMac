@@ -27,7 +27,7 @@ protocol BlockingStatsReporter {
 actor BlockingStatsReporterImpl: BlockingStatsReporter {
     // MARK: Private properties
 
-    private let safariApi: SafariApiInteractor
+    private let statisticsStore: StatisticsStore
     private let flushInterval: TimeInterval
 
     private var counters: [SafariBlockerType: Int] = [:]
@@ -37,8 +37,8 @@ actor BlockingStatsReporterImpl: BlockingStatsReporter {
 
     // MARK: Init
 
-    init(safariApi: SafariApiInteractor, flushInterval: TimeInterval = 10.0) {
-        self.safariApi = safariApi
+    init(statisticsStore: StatisticsStore, flushInterval: TimeInterval = 10.0) {
+        self.statisticsStore = statisticsStore
         self.flushInterval = flushInterval
     }
 
@@ -119,7 +119,10 @@ actor BlockingStatsReporterImpl: BlockingStatsReporter {
         )
 
         do {
-            try await self.safariApi.reportBlockCounts(batch, adsBlockedTotal: batchAdsBlockedTotal)
+            try self.statisticsStore.addCounts(batch)
+            if batchAdsBlockedTotal > 0 {
+                try self.statisticsStore.addAdsBlockedTotal(batchAdsBlockedTotal)
+            }
 
             for (blockerType, count) in batch {
                 self.counters[blockerType, default: 0] -= count
@@ -132,9 +135,9 @@ actor BlockingStatsReporterImpl: BlockingStatsReporter {
                 self.pendingAdsBlockedTotal >= 0,
                 "Pending ads-blocked total must not become negative after flush"
             )
-            LogDebug("Statistics batch delivered successfully, counters reset")
+            LogDebug("Statistics batch written to shared store successfully, counters reset")
         } catch {
-            LogError("Failed to deliver statistics batch: \(error). Counters will accumulate.")
+            LogError("Failed to write statistics batch to shared store: \(error). Counters will accumulate.")
         }
     }
 }

@@ -346,3 +346,10 @@ You MUST follow the following rules for EVERY task that you perform:
    CHECK bundler inject configurations: **webpack**: `ProvidePlugin` in `scripts/webpack/webpack.config.base.js`.
    These variables are **globally available** without explicit imports in the source code.
    When reviewing code, do not flag missing imports for these injected globals.
+
+6. **Extension independence**: Safari extensions (content blockers, popup,
+   web extension) MUST remain functional when the main app is absent or not
+   running. The current codebase does not fully satisfy this goal, but you MUST
+   NOT make it worse. Any new code that causes an extension to lose
+   functionality (or fail entirely) solely because the main app is unavailable
+   is incorrect and MUST be reworked.
