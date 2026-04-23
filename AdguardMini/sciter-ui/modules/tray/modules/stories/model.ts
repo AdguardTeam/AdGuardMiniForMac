@@ -13,14 +13,14 @@ export type StoryId = string;
 /**
  * Story card icon classname
  */
-export type StoryCardIcon = 'info' | 'quality' | 'phone' | 'custom_filter' | 'star' | 'advanced' | 'rocket' | 'adblocking';
+export type StoryCardIcon = 'info' | 'quality' | 'phone' | 'custom_filter' | 'star' | 'advanced' | 'rocket' | 'adblocking' | 'tracking';
 
-export type StoryCardStyle = 'default' | 'warning' | 'redIcon';
+export type StoryCardStyle = 'default' | 'warning' | 'redIcon' | 'orangeIcon';
 
 /**
  * Story background color classname
  */
-export type StoryBackgroundColor = 'aqua' | 'blue' | 'green' | 'purple' | 'sand' | 'sandBlue' | 'sandGreen' | 'emerald' | 'red';
+export type StoryBackgroundColor = 'aqua' | 'blue' | 'green' | 'purple' | 'sand' | 'sandBlue' | 'sandGreen' | 'emerald' | 'red' | 'orange';
 
 /**
  * Story frame image classname
@@ -98,15 +98,24 @@ export interface IStoryFrame {
     /**
      * Story title
      */
-    title: string;
+    title?: string;
     /**
      * Story description
      */
-    description: string;
+    description?: string;
+    /**
+     * Story description element
+     */
+    descriptionElement?: JSX.Element;
     /**
      * Story image bound to the CSS class
      */
-    image: StoryFrameImage;
+    image?: StoryFrameImage;
+
+    /**
+     * Text to display instead of an image
+     */
+    imageText?: JSX.Element;
 
     /**
      * Basic action button for frame

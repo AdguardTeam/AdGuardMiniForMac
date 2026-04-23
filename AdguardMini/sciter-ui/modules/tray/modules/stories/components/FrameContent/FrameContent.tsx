@@ -24,7 +24,7 @@ export type FrameContentProps = {
 export function FrameContent({
     frame, storyActionButtonHandle, isMASReleaseVariant, frameIdNavigation,
 }: FrameContentProps) {
-    const { title, description, image, actionButton, component: Component } = frame;
+    const { title, description, descriptionElement, image, imageText, actionButton, component: Component } = frame;
 
     const handleAction = useCallback(() => {
         storyActionButtonHandle();
@@ -35,10 +35,15 @@ export function FrameContent({
 
     return (
         <div className={s.FrameContent}>
-            <div className={cx(s.FrameContent_image, s[image])} />
+            {imageText
+                ? <div className={s.FrameContent_imageText}>{imageText}</div>
+                : <div className={cx(s.FrameContent_image, image && s[image])} />}
             <div>
-                <Text className={s.FrameContent_title} type="h4">{title}</Text>
-                <Text className={s.FrameContent_description} type="t1">{description}</Text>
+                {title && (<Text className={s.FrameContent_title} type="h4">{title}</Text>)}
+                {description && (
+                    <Text className={s.FrameContent_description} type="t1">{description}</Text>
+                )}
+                {descriptionElement}
             </div>
             {actionButton && (
                 <Button className={cx(s.FrameContent_button, theme.button.storyButton)} type="submit" onClick={handleAction}>

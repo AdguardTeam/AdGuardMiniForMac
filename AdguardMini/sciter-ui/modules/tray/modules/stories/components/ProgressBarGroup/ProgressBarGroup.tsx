@@ -14,7 +14,6 @@ type ProgressBarGroupProps = {
     currentFrameIndex: number;
     onFrameClick(index: number): void;
     onClose(): void;
-    isFirstFrameReturnedBack: boolean;
 };
 
 /**
@@ -25,23 +24,23 @@ export function ProgressBarGroup({
     currentFrameIndex,
     onFrameClick,
     onClose,
-    isFirstFrameReturnedBack,
 }: ProgressBarGroupProps) {
     const framesRunner = Array.from({ length: framesCount }, (_, index) => index);
 
+    const showProgressBar = framesCount > 1;
+
     return (
         <div className={s.ProgressBar}>
-            {framesRunner.map((frameIndex) => (
+            {showProgressBar && framesRunner.map((frameIndex) => (
                 <ProgressBarElement
                     key={frameIndex}
                     currentFrameIndex={currentFrameIndex}
                     frameIndex={frameIndex}
-                    isFirstFrameReturnedBack={isFirstFrameReturnedBack}
                     onFrameClick={onFrameClick}
                 />
             ))}
             <Button
-                className={s.ProgressBar_close}
+                className={cx(s.ProgressBar_close, !showProgressBar && s.ProgressBar_close__solo)}
                 icon="cross"
                 iconClassName={theme.button.whiteIcon}
                 type="icon"

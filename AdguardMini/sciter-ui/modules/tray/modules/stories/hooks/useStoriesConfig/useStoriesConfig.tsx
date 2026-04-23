@@ -15,9 +15,11 @@ import theme from 'Theme';
 import { useTrayStore } from 'TrayLib/hooks';
 import { ExternalLink, Text } from 'UILib';
 
-import { telemetryStoryFrameButtonsWrapper } from '../components';
+import { telemetryStoryFrameButtonsWrapper } from '../../components';
 
-import type { IStoryFrame, StoryFrameImage, StoryInfo } from '../model';
+import type { IStoryFrame, StoryFrameImage, StoryInfo } from '../../model';
+
+import s from './StoriesConfig.module.pcss';
 
 const openSafariPref = () => {
     window.API.settingsService.OpenSafariExtensionPreferences(new OptionalStringValue());
@@ -37,7 +39,7 @@ const STORIES_TDS_LINK_FROM = 'storyConstructor';
  * Implements logic for sorting and filtering stories
  */
 export function useStoriesConfig(): StoryInfo[] {
-    const { settings, telemetry } = useTrayStore();
+    const { settings } = useTrayStore();
 
     const requiredStories: StoryInfo[] = [];
     const stories: StoryInfo[] = [];
@@ -108,47 +110,83 @@ export function useStoriesConfig(): StoryInfo[] {
         });
     }
 
-    // Statistics story
+    const statisticsEmptyDesc = (
+        <div className={s.StoriesConfig_statistics}>
+            <Text type="t1">{translate('tray.story.statistics.desc.empty1')}</Text>
+            <ul className={s.StoriesConfig_statistics_list}>
+                {translate('tray.story.statistics.desc.empty2', {
+                    li: (text: string) => <li><Text type="t1">{text}</Text></li>
+                })}
+            </ul>
+        </div>
+    );
+
+    const getStatisticsDescriptionContent = (blocked: number, description: string) => {
+        if (blocked === 0) {
+            return { descriptionElement: statisticsEmptyDesc };
+        }
+        return { description };
+    };
+
+    // Statistics story — ads blocked
     const blockerStatistics = statistics.statistics as typeof statistics.statistics | undefined;
     if (blockerStatistics && typeof blockerStatistics.adsBlocked === 'number') {
         const adsBlocked = blockerStatistics.adsBlocked;
-        const privacyBlocked = blockerStatistics.privacyBlocked || 0;
-        const emptyStats = !adsBlocked && !privacyBlocked;
 
-        const frames: StoryInfo['storyConfig']['frames'] = [{
-            title: translate.plural('tray.story.statistics.title1', adsBlocked, { adsBlocked: formatLocalizedNumber(adsBlocked, language) }),
-            description: emptyStats ? translate('tray.story.statistics.desc1.empty') : translate('tray.story.statistics.desc1'),
-            image: 'extra2',
-            actionButton: emptyStats ? {
-                title: translate('tray.story.statistics.action'),
-                action: openSafariPref,
-            } : undefined,
-            frameId: 'statistics1',
-        }];
-
-        if (!emptyStats) {
-            frames.push({
-                title: translate.plural('tray.story.statistics.title2', privacyBlocked, { trackersBlocked: formatLocalizedNumber(privacyBlocked, language) }),
-                description: translate('tray.story.statistics.desc2'),
-                image: 'telemetry2',
-                frameId: 'statistics2',
-                onFrameShown: () => {
-                    telemetry.trackEvent(TrayEvent.StoryStatisticSlideClick);
-                },
-            });
-        }
-
+        // Ads blocked card — always a single frame
         requiredStories.push({
             icon: 'adblocking',
             style: 'redIcon',
-            text: translate('tray.story.statistics'),
+            text: translate.plural('tray.story.statistics', adsBlocked),
             content: <Text className={cx(theme.color.red, theme.layout.marginBottomXxs)} type="h5">{formatLocalizedNumber(adsBlocked, language)}</Text>,
             storyConfig: {
                 id: 'statistics',
-                frames,
+                frames: [{
+                    ...getStatisticsDescriptionContent(adsBlocked, translate('tray.story.statistics.desc')),
+                    imageText: (
+                        <div>
+                            <Text type='h0'>{formatLocalizedNumber(adsBlocked, language)}</Text>
+                            <Text type='h4'>{translate.plural('tray.story.statistics', adsBlocked)}</Text>
+                        </div>
+                    ),
+                    actionButton: adsBlocked === 0 ? {
+                        title: translate('tray.story.statistics.action'),
+                        action: openSafariPref,
+                    } : undefined,
+                    frameId: 'statistics1',
+                }],
                 backgroundColor: 'red',
             },
             telemetryEvent: TrayEvent.StoryStatisticsClick,
+        });
+    }
+    if (blockerStatistics && typeof blockerStatistics.privacyBlocked === 'number') {
+        const privacyBlocked = blockerStatistics.privacyBlocked;
+        // Privacy blocked card — always a single frame
+        requiredStories.push({
+            icon: 'tracking',
+            style: 'orangeIcon',
+            text: translate.plural('tray.story.statistics.privacy', privacyBlocked),
+            content: <Text className={cx(theme.color.orange, theme.layout.marginBottomXxs)} type="h5">{formatLocalizedNumber(privacyBlocked, language)}</Text>,
+            storyConfig: {
+                id: 'statisticsPrivacy',
+                frames: [{
+                    ...getStatisticsDescriptionContent(privacyBlocked, translate('tray.story.statistics.privacy.desc')),
+                    imageText: (
+                        <div>
+                            <Text type='h0'>{formatLocalizedNumber(privacyBlocked, language)}</Text>
+                            <Text type='h4'>{translate.plural('tray.story.statistics.privacy', privacyBlocked)}</Text>
+                        </div>
+                    ),
+                    actionButton: privacyBlocked === 0 ? {
+                        title: translate('tray.story.statistics.action'),
+                        action: openSafariPref,
+                    } : undefined,
+                    frameId: 'statisticsPrivacy1',
+                }],
+                backgroundColor: 'orange',
+            },
+            telemetryEvent: TrayEvent.StoryStatisticSlideClick,
         });
     }
     if (!isLicenseOrTrialActive) {

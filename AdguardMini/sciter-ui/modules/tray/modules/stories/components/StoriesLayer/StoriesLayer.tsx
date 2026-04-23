@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { useCallback, useRef, useReducer, useEffect } from 'preact/hooks';
+import { useCallback, useReducer, useEffect } from 'preact/hooks';
 
 import { actions, navigationReducer } from 'Modules/tray/modules/stories/reducers';
 
-import { FrameContent, NavigationArrows, ProgressBarGroup, STORY_ANIMATION_DURATION } from '..';
+import { FrameContent, NavigationArrows, ProgressBarGroup } from '..';
 
 import s from './StoriesLayer.module.pcss';
 
@@ -32,7 +32,6 @@ export function StoriesLayer({
     addCompletedStory,
     isMASReleaseVariant,
 }: StoriesLayerProps) {
-    const intervalRef = useRef<NodeJS.Timer>();
     const [navigation, dispatch] = useReducer(navigationReducer, story);
     const { currentFrameIndex, length, id, isFirstFrameReturnedBack } = navigation;
 
@@ -73,25 +72,25 @@ export function StoriesLayer({
         if (currentFrameIndex === 0) {
             dispatch(actions.resetFirstFrame());
         }
-
-        intervalRef.current = setInterval(() => {
-            // If this tick would exceed the last frame, complete and move on
-            if (currentFrameIndex >= length - 1) {
-                clearInterval(intervalRef.current);
-                addCompletedStory(id);
-                moveToNextStory();
-                return;
-            }
-
-            dispatch(actions.next());
-        }, STORY_ANIMATION_DURATION);
-
-        return () => clearInterval(intervalRef.current);
-    }, [currentFrameIndex, id, moveToNextStory, length, frame?.frameId, addCompletedStory, isFirstFrameReturnedBack]);
+    }, [currentFrameIndex, isFirstFrameReturnedBack]);
 
     useEffect(() => {
         frame?.onFrameShown?.();
     }, [frame?.onFrameShown]);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.code === 'ArrowRight') {
+                handleNext();
+            } else if (e.code === 'ArrowLeft') {
+                handlePrevious();
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [handleNext, handlePrevious]);
 
     if (!frame) {
         return null;
@@ -110,11 +109,11 @@ export function StoriesLayer({
                 <ProgressBarGroup
                     currentFrameIndex={progressBarCurrentIndex}
                     framesCount={story.length}
-                    isFirstFrameReturnedBack={isFirstFrameReturnedBack}
                     onClose={handleClose}
                     onFrameClick={handleFrameClick}
                 />
                 <NavigationArrows
+                    hideLeft={currentFrameIndex === 0}
                     onNext={handleNext}
                     onPrevious={handlePrevious}
                 />
