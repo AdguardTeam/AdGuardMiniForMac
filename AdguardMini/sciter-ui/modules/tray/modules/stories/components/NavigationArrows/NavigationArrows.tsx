@@ -10,17 +10,20 @@ import s from './NavigationArrows.module.pcss';
 type NavigationArrowsProps = {
     onPrevious(): void;
     onNext(): void;
+    hideLeft?: boolean;
 };
 
 /**
  * Navigation arrows component for stories
  */
-export function NavigationArrows({ onPrevious, onNext }: NavigationArrowsProps) {
+export function NavigationArrows({ onPrevious, onNext, hideLeft }: NavigationArrowsProps) {
     return (
         <>
-            <div className={s.NavigationArrows_left} onClick={onPrevious}>
-                <Icon className={cx(theme.button.whiteIcon, s.NavigationArrows_left_icon)} icon="arrow_left" />
-            </div>
+            {!hideLeft && (
+                <div className={s.NavigationArrows_left} onClick={onPrevious}>
+                    <Icon className={cx(theme.button.whiteIcon, s.NavigationArrows_left_icon)} icon="arrow_left" />
+                </div>
+            )}
             <div className={s.NavigationArrows_right} onClick={onNext}>
                 <Icon className={cx(theme.button.whiteIcon, s.NavigationArrows_right_icon)} icon="arrow_left" />
             </div>
