@@ -34,7 +34,10 @@ private enum ToolbarState {
 
 /// An object that prepares data to determine the current state of the layout and popup icon.
 protocol PopupStatePreparer {
-    func prepareState(window: SFSafariWindow, toolbarItem: SFSafariToolbarItem) async -> PopupState
+    func prepareState(
+        window: SFSafariWindow,
+        tabStats: TabStats
+    ) async -> PopupState
 }
 
 // MARK: - PopupStatePreparerImpl
@@ -48,8 +51,14 @@ final class PopupStatePreparerImpl: PopupStatePreparer {
         self.safariApp = safariApp
     }
 
-    func prepareState(window: SFSafariWindow, toolbarItem: SFSafariToolbarItem) async -> PopupState {
-        let appState = try? await self.safariApi.appState()
+    func prepareState(
+        window: SFSafariWindow,
+        tabStats: TabStats
+    ) async -> PopupState {
+        async let appStateResult = self.safariApi.appState()
+        async let propertiesResult = self.safariApp.getPropertiesOfActivePage(in: window)
+
+        let appState = try? await appStateResult
         LogInfo("appState: \(String(describing: appState))")
 
         if let logLevel = appState?.logLevel,
@@ -70,9 +79,10 @@ final class PopupStatePreparerImpl: PopupStatePreparer {
                 "Protection is not enabled or api state is unknown"
             )
         }
-        guard let properties = await self.safariApp.getPropertiesOfActivePage(in: window) else {
+        guard let properties = await propertiesResult else {
             return self.prepareState(
                 isProtectionEnabled: isProtectionEnabled,
+                isProtectionEnabledForCurrentUrl: true,
                 toolbarState: .on,
                 toolbarEnabled: true,
                 "Can't get properties: some object is nil"
@@ -81,6 +91,7 @@ final class PopupStatePreparerImpl: PopupStatePreparer {
         guard let url = properties.url else {
             return self.prepareState(
                 isProtectionEnabled: isProtectionEnabled,
+                isProtectionEnabledForCurrentUrl: true,
                 toolbarState: .on,
                 toolbarEnabled: false,
                 "Unknown scheme"

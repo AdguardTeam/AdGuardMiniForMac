@@ -49,11 +49,12 @@ struct PopupToggleCell: View {
             ),
             action: { self.isOn.toggle() }
         ) {
-            HStack(spacing: Space.compact) {
+            HStack(alignment: .top, spacing: Space.compact) {
                 PopupCell(
                     configuration: .init(
                         content: .init(
                             title: content.title,
+                            subtitleLines: content.subtitleLines,
                             leftIcon: content.leftIcon
                         ),
                         appearance: appearance.updatingPaddings(EdgeInsets()),
@@ -80,7 +81,7 @@ fileprivate extension PopupCell.Configuration.Appearance {
     func updatingPaddings(_ newPaddings: EdgeInsets) -> Self {
         Self(
             titleConfiguration: self.titleConfiguration,
-            hintConfiguration: self.hintConfiguration,
+            subtitleConfiguration: self.subtitleConfiguration,
             leftIconColor: self.leftIconColor,
             paddings: newPaddings
         )
@@ -110,7 +111,7 @@ struct PopupToggleCell_Previews: PreviewProvider {
                     ),
                     appearance: .init(
                         titleConfiguration: .domain(),
-                        hintConfiguration: .subtitle(
+                        subtitleConfiguration: .subtitle(
                             alignment: .leading,
                             multilineTextAlignment: .leading
                         ),
@@ -128,7 +129,7 @@ struct PopupToggleCell_Previews: PreviewProvider {
                     ),
                     appearance: .init(
                         titleConfiguration: .domain(),
-                        hintConfiguration: .subtitle(
+                        subtitleConfiguration: .subtitle(
                             alignment: .leading,
                             multilineTextAlignment: .leading
                         ),
@@ -152,7 +153,7 @@ struct PopupToggleCell_Previews: PreviewProvider {
                     ),
                     appearance: .init(
                         titleConfiguration: .domain(),
-                        hintConfiguration: .subtitle(
+                        subtitleConfiguration: .subtitle(
                             alignment: .leading,
                             multilineTextAlignment: .leading
                         ),
@@ -170,7 +171,7 @@ struct PopupToggleCell_Previews: PreviewProvider {
                     ),
                     appearance: .init(
                         titleConfiguration: .domain(),
-                        hintConfiguration: .subtitle(
+                        subtitleConfiguration: .subtitle(
                             alignment: .leading,
                             multilineTextAlignment: .leading
                         ),

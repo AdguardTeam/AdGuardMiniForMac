@@ -20,7 +20,7 @@ extension PopupCell.Configuration {
             content: content,
             appearance: .init(
                 titleConfiguration: .popupCell(),
-                hintConfiguration: .subtitle(
+                subtitleConfiguration: .subtitle(
                     alignment: .leading,
                     multilineTextAlignment: .leading
                 ),
@@ -33,17 +33,18 @@ extension PopupCell.Configuration {
 
 #Preview("Primary cell") {
     func makeContent(
-        hint: String? = nil
+        subtitleLines: [String] = []
     ) -> PopupCell.Configuration.Content {
         .init(
             title: "Block element",
-            hint: hint,
+            subtitleLines: subtitleLines,
             leftIcon: SEImage.Popup.target
         )
     }
 
     let baseContent = makeContent()
-    let fullContent = makeContent(hint: "Protection is off for this website as it may interfere with its operation")
+    let hintText = "Protection is off for this website as it may interfere with its operation"
+    let fullContent = makeContent(subtitleLines: [hintText])
 
     return VStack(spacing: 16) {
         PopupCell(

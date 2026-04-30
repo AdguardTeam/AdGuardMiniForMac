@@ -94,7 +94,7 @@ struct PopupCellButton_Previews: PreviewProvider {
                 isEnabled: true,
                 title: "Report an issue",
                 leftIcon: SEImage.Popup.dislike,
-                leftIconColor: Palette.Icon.attentionIcon,
+                leftIconColor: Palette.Icon.productTertiaryIcon,
                 backgroundColor: Constants.backgroundColor
             )
 
@@ -102,7 +102,7 @@ struct PopupCellButton_Previews: PreviewProvider {
                 isEnabled: false,
                 title: "Report an issue",
                 leftIcon: SEImage.Popup.dislike,
-                leftIconColor: Palette.Icon.attentionIcon,
+                leftIconColor: Palette.Icon.productTertiaryIcon,
                 backgroundColor: Constants.backgroundColor
             )
         }

@@ -11,7 +11,7 @@ SPDX-License-Identifier = "GPL-3.0-or-later"
 SPDX-FileComment = "Media Kit"
 
 [[annotations]]
-path = ["**/locales/*.json", "**/*.strings"]
+path = ["**/locales/*.json", "**/*.strings", "**/*.stringsdict"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "AdGuard Software Limited"
 SPDX-License-Identifier = "GPL-3.0-or-later"

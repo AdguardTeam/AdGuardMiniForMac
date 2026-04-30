@@ -12,16 +12,16 @@ import SwiftUI
 extension PopupCell.Configuration {
     struct Content {
         var title: String
-        var hint: String?
+        var subtitleLines: [String] = []
         var leftIcon: Image
 
         init(
             title: String,
-            hint: String? = nil,
+            subtitleLines: [String] = [],
             leftIcon: Image
         ) {
             self.title = title
-            self.hint = hint
+            self.subtitleLines = subtitleLines
             self.leftIcon = leftIcon
         }
     }

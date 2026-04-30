@@ -13,7 +13,8 @@ extension DomainView {
     public struct Configuration {
         let domain: String
         let hint: String?
-        let protectionTitle: String
+        let adsBlockedText: String?
+        let trackersBlockedText: String?
         let attentionConfiguration: AttentionConfiguration
         let blockElementConfiguration: ButtonConfiguration
         let reportAnIssueConfiguration: ButtonConfiguration
@@ -24,7 +25,8 @@ extension DomainView {
             state: State,
             domain: String,
             hint: String?,
-            protectionTitle: String,
+            adsBlockedText: String?,
+            trackersBlockedText: String?,
             attentionConfiguration: AttentionConfiguration,
             blockElementConfiguration: ButtonConfiguration,
             reportAnIssueConfiguration: ButtonConfiguration,
@@ -32,7 +34,8 @@ extension DomainView {
         ) {
             self.domain = domain
             self.hint = hint
-            self.protectionTitle = protectionTitle
+            self.adsBlockedText = adsBlockedText
+            self.trackersBlockedText = trackersBlockedText
             self.attentionConfiguration = attentionConfiguration
             self.blockElementConfiguration = blockElementConfiguration
             self.reportAnIssueConfiguration = reportAnIssueConfiguration

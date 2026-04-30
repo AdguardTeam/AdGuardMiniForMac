@@ -24,9 +24,9 @@ struct PopupCell: View {
     // MARK: UI
 
     var body: some View {
-        VStack {
+        VStack(spacing: Space.tiny) {
             self.mainBody
-            self.hintBody
+            self.subtitleBody
         }
         .padding(self.configuration.appearance.paddings)
     }
@@ -51,21 +51,24 @@ struct PopupCell: View {
                     : appearance.titleConfiguration.color.disabledColor
                 )
                 .textStyle(appearance.titleConfiguration)
-                .accessibility(hint: Text(content.hint ?? ""))
+                .accessibility(hint: Text(content.subtitleLines.joined(separator: "\n")))
                 .accessibility(hidden: self.titleAccessibilityHidden)
             Spacer()
         }
     }
 
     @ViewBuilder
-    private var hintBody: some View {
-        if let hint = self.configuration.content.hint {
-            Text(hint)
-                .textStyle(
-                    self.configuration.appearance.hintConfiguration
-                )
-                .accessibility(hidden: true)
-                .padding(.leading, Margin.extraLarge)
+    private var subtitleBody: some View {
+        if !self.configuration.content.subtitleLines.isEmpty,
+           let subtitleConfig = self.configuration.appearance.subtitleConfiguration {
+            VStack(alignment: .leading, spacing: Space.tiny) {
+                ForEach(self.configuration.content.subtitleLines, id: \.self) { line in
+                    Text(line)
+                        .textStyle(subtitleConfig)
+                        .accessibility(hidden: true)
+                }
+            }
+            .padding(.leading, Margin.extraLarge)
         }
     }
 }
@@ -77,12 +80,12 @@ struct PopupCell_Previews: PreviewProvider {
                 configuration: .init(
                     content: .init(
                         title: "fonts.google.com",
-                        hint: "Protection is off for this website as it may interfere with its operation",
+                        subtitleLines: ["Protection is off for this website as it may interfere with its operation"],
                         leftIcon: SEImage.Popup.webBrowsingSecurity
                     ),
                     appearance: .init(
                         titleConfiguration: .domain(),
-                        hintConfiguration: .subtitle(
+                        subtitleConfiguration: .subtitle(
                             alignment: .leading,
                             multilineTextAlignment: .leading
                         ),
