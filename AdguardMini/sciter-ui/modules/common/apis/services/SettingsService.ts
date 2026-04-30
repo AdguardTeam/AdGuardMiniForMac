@@ -73,6 +73,8 @@ interface ISettingsService {
 	GetStatistics(param:StatisticsRequest): Promise<StatisticsResponse>;
 	/* Reset all statistics */
 	ResetStatistics(param:EmptyValue): Promise<EmptyValue>;
+	/* Updates Safari toolbar badge visibility */
+	UpdateShowSafariToolbarBadge(param:BoolValue): Promise<EmptyValue>;
 }
 
 /**
@@ -572,6 +574,21 @@ export class SettingsService implements ISettingsService {
 		const data = EmptyValue.deserializeBinary(res);
 
 		log.dbg('Response data', 'SettingsService.ResetStatistics', data.toObject());
+		return data;
+	};
+
+	/**
+	 * Updates Safari toolbar badge visibility
+	 * @param BoolValue param
+	 * @returns EmptyValue param
+	 */
+	UpdateShowSafariToolbarBadge = async (param: BoolValue): Promise<EmptyValue> => {
+		log.dbg('Request data', 'SettingsService.UpdateShowSafariToolbarBadge', param.toObject());
+
+		const res = await xcall('SettingsService.UpdateShowSafariToolbarBadge', param.serializeBinary().buffer);
+		const data = EmptyValue.deserializeBinary(res);
+
+		log.dbg('Response data', 'SettingsService.UpdateShowSafariToolbarBadge', data.toObject());
 		return data;
 	};
 

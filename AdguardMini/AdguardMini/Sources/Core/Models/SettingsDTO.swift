@@ -18,4 +18,5 @@ struct SettingsDTO: Codable, Equatable {
     let showInMenuBar: Bool
     let quitReaction: QuitReaction
     let theme: Theme
+    let showSafariToolbarBadge: Bool
 }

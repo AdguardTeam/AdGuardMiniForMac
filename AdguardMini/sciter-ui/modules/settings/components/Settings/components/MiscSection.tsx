@@ -15,6 +15,8 @@ type Props = {
     onToggleDebugLogging(value: boolean): void;
     onOpenTelemetryModal(): void;
     onExportLogs(): void;
+    showSafariToolbarBadge: boolean;
+    updateShowSafariToolbarBadge(value: boolean): void;
 };
 
 /**
@@ -28,6 +30,8 @@ export function MiscSection(props: Props) {
         onOpenTelemetryModal,
         onToggleAllowTelemetry,
         onToggleDebugLogging,
+        showSafariToolbarBadge,
+        updateShowSafariToolbarBadge,
     } = props;
 
     return (
@@ -50,6 +54,11 @@ export function MiscSection(props: Props) {
                     ),
                 })}
                 value={allowTelemetry}
+            />
+            <SettingsItemSwitch
+                setValue={updateShowSafariToolbarBadge}
+                title={translate('settings.safari.toolbar.badge')}
+                value={showSafariToolbarBadge}
             />
             <SettingsItemSwitch
                 additionalText={(

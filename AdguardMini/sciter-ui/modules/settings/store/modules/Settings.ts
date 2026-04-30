@@ -281,6 +281,17 @@ export class Settings {
     }
 
     /**
+     * Update showSafariToolbarBadge setting
+     * @param value Whether to show the Safari toolbar badge
+     */
+    public updateShowSafariToolbarBadge(value: boolean) {
+        const newValue = this.updateHelper();
+        window.API.settingsService.UpdateShowSafariToolbarBadge(new BoolValue({ value }));
+        newValue.showSafariToolbarBadge = value;
+        this.commitSettings(newValue);
+    }
+
+    /**
      * Update allowTelemetry setting
      */
     public updateAllowTelemetry(value: boolean) {

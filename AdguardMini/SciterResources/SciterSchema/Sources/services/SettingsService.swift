@@ -142,6 +142,10 @@ public protocol SettingsServiceProtocol
 	func resetStatistics (
 						_ message: EmptyValue,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void
+	/// Updates Safari toolbar badge visibility
+	func updateShowSafariToolbarBadge (
+						_ message: BoolValue,
+						_ promise: @escaping (EmptyValue) -> Void) -> Void
 }
 
 // MARK: Protobuf Bridge definition
@@ -544,6 +548,18 @@ open class SettingsService: SciterBridge
 			inputType: EmptyValue.self,
 			outputType: EmptyValue.self,
 			method: cast.resetStatistics(_:_:),
+			message,
+			promise
+		)
+	}
+
+	/// Wrapper for `UpdateShowSafariToolbarBadge`
+	@objc func UpdateShowSafariToolbarBadge(_ message: Data, promise: @escaping (Data) -> Void)
+	{
+		swiftCall(
+			inputType: BoolValue.self,
+			outputType: EmptyValue.self,
+			method: cast.updateShowSafariToolbarBadge(_:_:),
 			message,
 			promise
 		)

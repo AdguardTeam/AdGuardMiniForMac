@@ -60,6 +60,7 @@ export class Settings extends pb_1.Message {
         language?: string;
         allowTelemetry?: boolean;
         theme?: Theme;
+        showSafariToolbarBadge?: boolean;
     }) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [9], this.#one_of_decls);
@@ -99,6 +100,9 @@ export class Settings extends pb_1.Message {
             }
             if ("theme" in data && data.theme != undefined) {
                 this.theme = data.theme;
+            }
+            if ("showSafariToolbarBadge" in data && data.showSafariToolbarBadge != undefined) {
+                this.showSafariToolbarBadge = data.showSafariToolbarBadge;
             }
         }
     }
@@ -174,6 +178,12 @@ export class Settings extends pb_1.Message {
     set theme(value: Theme) {
         pb_1.Message.setField(this, 12, value);
     }
+    get showSafariToolbarBadge() {
+        return pb_1.Message.getFieldWithDefault(this, 13, false) as boolean;
+    }
+    set showSafariToolbarBadge(value: boolean) {
+        pb_1.Message.setField(this, 13, value);
+    }
     static fromObject(data: {
         launchOnStartup?: boolean;
         showInMenuBar?: boolean;
@@ -187,6 +197,7 @@ export class Settings extends pb_1.Message {
         language?: string;
         allowTelemetry?: boolean;
         theme?: Theme;
+        showSafariToolbarBadge?: boolean;
     }): Settings {
         const message = new Settings({});
         if (data.launchOnStartup != null) {
@@ -225,6 +236,9 @@ export class Settings extends pb_1.Message {
         if (data.theme != null) {
             message.theme = data.theme;
         }
+        if (data.showSafariToolbarBadge != null) {
+            message.showSafariToolbarBadge = data.showSafariToolbarBadge;
+        }
         return message;
     }
     toObject() {
@@ -241,6 +255,7 @@ export class Settings extends pb_1.Message {
             language?: string;
             allowTelemetry?: boolean;
             theme?: Theme;
+            showSafariToolbarBadge?: boolean;
         } = {};
         if (this.launchOnStartup != null) {
             data.launchOnStartup = this.launchOnStartup;
@@ -278,6 +293,9 @@ export class Settings extends pb_1.Message {
         if (this.theme != null) {
             data.theme = this.theme;
         }
+        if (this.showSafariToolbarBadge != null) {
+            data.showSafariToolbarBadge = this.showSafariToolbarBadge;
+        }
         return data;
     }
     serialize(): Uint8Array;
@@ -308,6 +326,8 @@ export class Settings extends pb_1.Message {
             writer.writeBool(11, this.allowTelemetry);
         if (this.theme != Theme.unknown)
             writer.writeEnum(12, this.theme);
+        if (this.showSafariToolbarBadge != false)
+            writer.writeBool(13, this.showSafariToolbarBadge);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -352,6 +372,9 @@ export class Settings extends pb_1.Message {
                     break;
                 case 12:
                     message.theme = reader.readEnum();
+                    break;
+                case 13:
+                    message.showSafariToolbarBadge = reader.readBool();
                     break;
                 default: reader.skipField();
             }

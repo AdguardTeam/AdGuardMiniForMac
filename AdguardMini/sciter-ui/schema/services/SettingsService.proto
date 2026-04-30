@@ -73,4 +73,7 @@ service SettingsService {
     rpc GetStatistics(StatisticsRequest) returns (StatisticsResponse);
     /* Reset all statistics */
     rpc ResetStatistics(EmptyValue) returns (EmptyValue);
+    /* Updates Safari toolbar badge visibility */
+    rpc UpdateShowSafariToolbarBadge(BoolValue) returns (EmptyValue);
+    
 }

@@ -16,6 +16,7 @@ message Settings {
     string language = 10;
     bool allow_telemetry = 11;
     Theme theme = 12;
+    bool show_safari_toolbar_badge = 13;
 }
 
 message UserConsent {

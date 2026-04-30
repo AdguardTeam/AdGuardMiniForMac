@@ -322,6 +322,8 @@ public struct Settings: Sendable {
 
   public var theme: Theme = .unknown
 
+  public var showSafariToolbarBadge: Bool = false
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -570,7 +572,7 @@ extension Theme: SwiftProtobuf._ProtoNameProviding {
 
 extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "Settings"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{3}real_time_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{3}real_time_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0\u{3}show_safari_toolbar_badge\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -590,6 +592,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       case 10: try { try decoder.decodeSingularStringField(value: &self.language) }()
       case 11: try { try decoder.decodeSingularBoolField(value: &self.allowTelemetry) }()
       case 12: try { try decoder.decodeSingularEnumField(value: &self.theme) }()
+      case 13: try { try decoder.decodeSingularBoolField(value: &self.showSafariToolbarBadge) }()
       default: break
       }
     }
@@ -632,6 +635,9 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     if self.theme != .unknown {
       try visitor.visitSingularEnumField(value: self.theme, fieldNumber: 12)
     }
+    if self.showSafariToolbarBadge != false {
+      try visitor.visitSingularBoolField(value: self.showSafariToolbarBadge, fieldNumber: 13)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -648,6 +654,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     if lhs.language != rhs.language {return false}
     if lhs.allowTelemetry != rhs.allowTelemetry {return false}
     if lhs.theme != rhs.theme {return false}
+    if lhs.showSafariToolbarBadge != rhs.showSafariToolbarBadge {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

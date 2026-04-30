@@ -23,7 +23,8 @@ extension Settings {
         consentFiltersIds: [Int32] = [],
         releaseVariant: ReleaseVariants = .standAlone,
         language: String = "",
-        allowTelemetry: Bool = false
+        allowTelemetry: Bool = false,
+        showSafariToolbarBadge: Bool = false
     ) {
         self.init()
         self.launchOnStartup = launchOnStartup
@@ -38,5 +39,6 @@ extension Settings {
         self.releaseVariant = releaseVariant
         self.language = language
         self.allowTelemetry = allowTelemetry
+        self.showSafariToolbarBadge = showSafariToolbarBadge
     }
 }

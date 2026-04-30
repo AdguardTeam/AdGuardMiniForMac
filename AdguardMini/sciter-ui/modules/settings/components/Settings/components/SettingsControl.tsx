@@ -48,6 +48,7 @@ function SettingsControlComponent() {
             allowTelemetry,
             quitReaction,
             theme: themeSetting,
+            showSafariToolbarBadge,
         },
         userActionLastDirectory,
         incomeHardwareAcceleration,
@@ -232,6 +233,8 @@ function SettingsControlComponent() {
                 onOpenTelemetryModal={() => setShowTelemetryModal(true)}
                 onToggleAllowTelemetry={(value) => settings.updateAllowTelemetry(value)}
                 onToggleDebugLogging={(value) => settings.updateDebugLogging(value)}
+                showSafariToolbarBadge={showSafariToolbarBadge}
+                updateShowSafariToolbarBadge={(value) => settings.updateShowSafariToolbarBadge(value)}
             />
             <div className={theme.layout.bottomPadding} />
             <SettingsModals
