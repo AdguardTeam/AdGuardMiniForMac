@@ -75,6 +75,8 @@ interface ISettingsService {
 	ResetStatistics(param:EmptyValue): Promise<EmptyValue>;
 	/* Update user rules editor window geometry */
 	UpdateUserRulesEditorGeometry(param:WindowGeometry): Promise<EmptyValue>;
+	/* Updates show state of Safari Toolbar Badge */
+	UpdateShowSafariToolbarBadge(param:BoolValue): Promise<EmptyValue>;
 }
 
 /**
@@ -589,6 +591,21 @@ export class SettingsService implements ISettingsService {
 		const data = EmptyValue.deserializeBinary(res);
 
 		log.dbg('Response data', 'SettingsService.UpdateUserRulesEditorGeometry', data.toObject());
+		return data;
+	};
+
+	/**
+	 * Updates show state of Safari Toolbar Badge
+	 * @param BoolValue param
+	 * @returns EmptyValue param
+	 */
+	UpdateShowSafariToolbarBadge = async (param: BoolValue): Promise<EmptyValue> => {
+		log.dbg('Request data', 'SettingsService.UpdateShowSafariToolbarBadge', param.toObject());
+
+		const res = await xcall('SettingsService.UpdateShowSafariToolbarBadge', param.serializeBinary().buffer);
+		const data = EmptyValue.deserializeBinary(res);
+
+		log.dbg('Response data', 'SettingsService.UpdateShowSafariToolbarBadge', data.toObject());
 		return data;
 	};
 

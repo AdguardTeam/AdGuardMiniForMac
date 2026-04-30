@@ -388,6 +388,11 @@ public struct Settings: @unchecked Sendable {
   /// Clears the value of `userRulesEditorGeometry`. Subsequent reads from it will return its default value.
   public mutating func clearUserRulesEditorGeometry() {_uniqueStorage()._userRulesEditorGeometry = nil}
 
+  public var showSafariToolbarBadge: Bool {
+    get {return _storage._showSafariToolbarBadge}
+    set {_uniqueStorage()._showSafariToolbarBadge = newValue}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -688,7 +693,7 @@ extension WindowGeometry: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
 
 extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "Settings"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{3}real_time_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0\u{3}user_rules_editor_geometry\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{3}real_time_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0\u{3}user_rules_editor_geometry\0\u{3}show_safari_toolbar_badge\0")
 
   fileprivate class _StorageClass {
     var _launchOnStartup: Bool = false
@@ -704,6 +709,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     var _allowTelemetry: Bool = false
     var _theme: Theme = .unknown
     var _userRulesEditorGeometry: WindowGeometry? = nil
+    var _showSafariToolbarBadge: Bool = false
 
       // This property is used as the initial default value for new instances of the type.
       // The type itself is protecting the reference to its storage via CoW semantics.
@@ -727,6 +733,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       _allowTelemetry = source._allowTelemetry
       _theme = source._theme
       _userRulesEditorGeometry = source._userRulesEditorGeometry
+      _showSafariToolbarBadge = source._showSafariToolbarBadge
     }
   }
 
@@ -758,6 +765,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         case 11: try { try decoder.decodeSingularBoolField(value: &_storage._allowTelemetry) }()
         case 12: try { try decoder.decodeSingularEnumField(value: &_storage._theme) }()
         case 13: try { try decoder.decodeSingularMessageField(value: &_storage._userRulesEditorGeometry) }()
+        case 14: try { try decoder.decodeSingularBoolField(value: &_storage._showSafariToolbarBadge) }()
         default: break
         }
       }
@@ -809,6 +817,9 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       try { if let v = _storage._userRulesEditorGeometry {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 13)
       } }()
+      if _storage._showSafariToolbarBadge != false {
+        try visitor.visitSingularBoolField(value: _storage._showSafariToolbarBadge, fieldNumber: 14)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -831,6 +842,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         if _storage._allowTelemetry != rhs_storage._allowTelemetry {return false}
         if _storage._theme != rhs_storage._theme {return false}
         if _storage._userRulesEditorGeometry != rhs_storage._userRulesEditorGeometry {return false}
+        if _storage._showSafariToolbarBadge != rhs_storage._showSafariToolbarBadge {return false}
         return true
       }
       if !storagesAreEqual {return false}

@@ -146,6 +146,10 @@ public protocol SettingsServiceProtocol
 	func updateUserRulesEditorGeometry (
 						_ message: WindowGeometry,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void
+	/// Updates show state of Safari Toolbar Badge
+	func updateShowSafariToolbarBadge (
+						_ message: BoolValue,
+						_ promise: @escaping (EmptyValue) -> Void) -> Void
 }
 
 // MARK: Protobuf Bridge definition
@@ -560,6 +564,18 @@ open class SettingsService: SciterBridge
 			inputType: WindowGeometry.self,
 			outputType: EmptyValue.self,
 			method: cast.updateUserRulesEditorGeometry(_:_:),
+			message,
+			promise
+		)
+	}
+
+	/// Wrapper for `UpdateShowSafariToolbarBadge`
+	@objc func UpdateShowSafariToolbarBadge(_ message: Data, promise: @escaping (Data) -> Void)
+	{
+		swiftCall(
+			inputType: BoolValue.self,
+			outputType: EmptyValue.self,
+			method: cast.updateShowSafariToolbarBadge(_:_:),
 			message,
 			promise
 		)

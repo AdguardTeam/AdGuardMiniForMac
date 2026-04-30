@@ -75,4 +75,7 @@ service SettingsService {
     rpc ResetStatistics(EmptyValue) returns (EmptyValue);
     /* Update user rules editor window geometry */
     rpc UpdateUserRulesEditorGeometry(WindowGeometry) returns (EmptyValue);
+    /* Updates Safari toolbar badge visibility */
+    rpc UpdateShowSafariToolbarBadge(BoolValue) returns (EmptyValue);
+    
 }

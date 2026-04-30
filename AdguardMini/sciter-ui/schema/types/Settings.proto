@@ -26,6 +26,7 @@ message Settings {
     bool allow_telemetry = 11;
     Theme theme = 12;
     optional WindowGeometry user_rules_editor_geometry = 13;
+    bool show_safari_toolbar_badge = 14;
 }
 
 message UserConsent {

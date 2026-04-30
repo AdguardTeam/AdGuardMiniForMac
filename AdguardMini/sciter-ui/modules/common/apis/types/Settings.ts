@@ -219,6 +219,7 @@ export class Settings extends pb_1.Message {
         language?: string;
         allowTelemetry?: boolean;
         theme?: Theme;
+        showSafariToolbarBadge?: boolean;
     } & (({
         userRulesEditorGeometry?: WindowGeometry;
     })))) {
@@ -263,6 +264,9 @@ export class Settings extends pb_1.Message {
             }
             if ("userRulesEditorGeometry" in data && data.userRulesEditorGeometry != undefined) {
                 this.userRulesEditorGeometry = data.userRulesEditorGeometry;
+            }
+            if ("showSafariToolbarBadge" in data && data.showSafariToolbarBadge != undefined) {
+                this.showSafariToolbarBadge = data.showSafariToolbarBadge;
             }
         }
     }
@@ -347,6 +351,12 @@ export class Settings extends pb_1.Message {
     get has_user_rules_editor_geometry() {
         return pb_1.Message.getField(this, 13) != null;
     }
+    get showSafariToolbarBadge() {
+        return pb_1.Message.getFieldWithDefault(this, 14, false) as boolean;
+    }
+    set showSafariToolbarBadge(value: boolean) {
+        pb_1.Message.setField(this, 14, value);
+    }
     get _userRulesEditorGeometry() {
         const cases: {
             [index: number]: "none" | "userRulesEditorGeometry";
@@ -370,6 +380,7 @@ export class Settings extends pb_1.Message {
         allowTelemetry?: boolean;
         theme?: Theme;
         userRulesEditorGeometry?: ReturnType<typeof WindowGeometry.prototype.toObject>;
+        showSafariToolbarBadge?: boolean;
     }): Settings {
         const message = new Settings({});
         if (data.launchOnStartup != null) {
@@ -411,6 +422,9 @@ export class Settings extends pb_1.Message {
         if (data.userRulesEditorGeometry != null) {
             message.userRulesEditorGeometry = WindowGeometry.fromObject(data.userRulesEditorGeometry);
         }
+        if (data.showSafariToolbarBadge != null) {
+            message.showSafariToolbarBadge = data.showSafariToolbarBadge;
+        }
         return message;
     }
     toObject() {
@@ -428,6 +442,7 @@ export class Settings extends pb_1.Message {
             allowTelemetry?: boolean;
             theme?: Theme;
             userRulesEditorGeometry?: ReturnType<typeof WindowGeometry.prototype.toObject>;
+            showSafariToolbarBadge?: boolean;
         } = {};
         if (this.launchOnStartup != null) {
             data.launchOnStartup = this.launchOnStartup;
@@ -468,6 +483,9 @@ export class Settings extends pb_1.Message {
         if (this.userRulesEditorGeometry != null) {
             data.userRulesEditorGeometry = this.userRulesEditorGeometry.toObject();
         }
+        if (this.showSafariToolbarBadge != null) {
+            data.showSafariToolbarBadge = this.showSafariToolbarBadge;
+        }
         return data;
     }
     serialize(): Uint8Array;
@@ -500,6 +518,8 @@ export class Settings extends pb_1.Message {
             writer.writeEnum(12, this.theme);
         if (this.has_user_rules_editor_geometry)
             writer.writeMessage(13, this.userRulesEditorGeometry, () => this.userRulesEditorGeometry.serialize(writer));
+        if (this.showSafariToolbarBadge != false)
+            writer.writeBool(14, this.showSafariToolbarBadge);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -547,6 +567,9 @@ export class Settings extends pb_1.Message {
                     break;
                 case 13:
                     reader.readMessage(message.userRulesEditorGeometry, () => message.userRulesEditorGeometry = WindowGeometry.deserialize(reader));
+                    break;
+                case 14:
+                    message.showSafariToolbarBadge = reader.readBool();
                     break;
                 default: reader.skipField();
             }

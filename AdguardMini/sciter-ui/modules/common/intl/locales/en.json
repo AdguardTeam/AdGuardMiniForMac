@@ -353,6 +353,7 @@
     "settings.enable.extensions.all.desc": "All Safari extensions are off",
     "settings.enable.extensions.btn": "Fix it",
     "settings.miscellaneous": "Miscellaneous",
+    "settings.safari.toolbar.badge": "Indicate the number of blocked ads on the AdGuard Mini icon in Safari",
     "settings.debug": "Debug logging",
     "settings.debug.desc": "Records detailed logs to help with troubleshooting. Turn it on to reproduce the problem, then send us the logs",
     "settings.debug.warning": "May use more battery — turn it off after exporting the logs",

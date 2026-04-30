@@ -23,6 +23,7 @@ protocol UserSettingsService: AnyObject {
     var userActionLastDirectory: String { get set }
     var allowTelemetry:          Bool { get set }
     var userRulesEditorGeometry: WindowGeometryDTO? { get set }
+    var showSafariToolbarBadge:  Bool { get set }
 
     // MARK: Properties with side effects
 
@@ -123,6 +124,11 @@ extension UserSettingsServiceImpl: UserSettingsService {
         set { self.userSettingsManager.allowTelemetry = newValue }
     }
 
+    var showSafariToolbarBadge: Bool {
+        get { self.sharedSettingsStorage.showSafariToolbarBadge }
+        set { self.sharedSettingsStorage.showSafariToolbarBadge = newValue }
+    }
+
     var userRulesEditorGeometry: WindowGeometryDTO? {
         get {
             guard let data = self.userRulesEditorGeometryData else {
@@ -169,14 +175,15 @@ extension UserSettingsServiceImpl: UserSettingsService {
     var settings: SettingsDTO {
         get {
             SettingsDTO(
-                autoFiltersUpdate:     self.autoFiltersUpdate,
-                realTimeFiltersUpdate: self.realTimeFiltersUpdate,
-                debugLogging:         self.keychain.debugLogging,
-                hardwareAcceleration: self.userSettingsManager.hardwareAcceleration,
-                launchOnStartup:      self.sharedSettingsStorage.launchOnStartup,
-                showInMenuBar:        self.userSettingsManager.showInMenuBar,
-                quitReaction:         self.userSettingsManager.quitReaction,
-                theme:                self.theme
+                autoFiltersUpdate:      self.autoFiltersUpdate,
+                realTimeFiltersUpdate:  self.realTimeFiltersUpdate,
+                debugLogging:           self.keychain.debugLogging,
+                hardwareAcceleration:   self.userSettingsManager.hardwareAcceleration,
+                launchOnStartup:        self.sharedSettingsStorage.launchOnStartup,
+                showInMenuBar:          self.userSettingsManager.showInMenuBar,
+                quitReaction:           self.userSettingsManager.quitReaction,
+                theme:                  self.theme,
+                showSafariToolbarBadge: self.showSafariToolbarBadge
             )
         }
         set(obj) {
@@ -189,6 +196,7 @@ extension UserSettingsServiceImpl: UserSettingsService {
             self.sharedSettingsStorage.launchOnStartup = obj.launchOnStartup
             self.userSettingsManager.showInMenuBar = obj.showInMenuBar
             self.userSettingsManager.quitReaction = obj.quitReaction
+            self.sharedSettingsStorage.showSafariToolbarBadge = obj.showSafariToolbarBadge
         }
     }
 

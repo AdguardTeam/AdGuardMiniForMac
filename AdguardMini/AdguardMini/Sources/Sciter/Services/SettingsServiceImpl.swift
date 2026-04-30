@@ -127,6 +127,12 @@ extension Sciter {
             promise(EmptyValue())
         }
 
+        func updateShowSafariToolbarBadge(_ message: BoolValue,
+                                          _ promise: @escaping (EmptyValue) -> Void) {
+            self.userSettingsService.showSafariToolbarBadge = message.value
+            promise(EmptyValue())
+        }
+
         func getSettings(_ message: EmptyValue,
                          _ promise: @escaping (Settings) -> Void) {
             var settings = self.userSettingsService.settings.toProto(
