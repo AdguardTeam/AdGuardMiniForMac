@@ -2,7 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { CustomTelemetryEvent, PageView, TelemetryEvent } from '../apis/types/Telemetry';
+import { RecordEventRequest } from 'Apis/requests/TelemetryService';
+import { CustomTelemetryEvent, PageView } from 'Apis/types/Telemetry';
 
 /**
  * Telemetry relay for tracking pages and events
@@ -42,7 +43,7 @@ export class TelemetryRelay<Pages extends string, Events extends string> {
      * Tracks a page view event
      */
     public trackPageView() {
-        window.API.telemetryService.RecordEvent(new TelemetryEvent({
+        window.API.Execute(new RecordEventRequest({
             pageView: new PageView({
                 name: this.currentPage as string,
                 refName: this.previousPage as string,
@@ -55,7 +56,7 @@ export class TelemetryRelay<Pages extends string, Events extends string> {
      * @param eventName The name of the event to track
      */
     public trackEvent(eventName: Events) {
-        window.API.telemetryService.RecordEvent(new TelemetryEvent({
+        window.API.Execute(new RecordEventRequest({
             customEvent: new CustomTelemetryEvent({
                 name: eventName,
                 refName: this.currentPage as string,

@@ -4,7 +4,7 @@
 
 import { createContext } from 'preact';
 
-import { EmptyValue } from 'Apis/types';
+import { GetEffectiveThemeRequest } from 'Apis/requests/TrayService';
 import { Action } from 'Modules/common/utils/EventAction';
 
 import {
@@ -60,7 +60,7 @@ export class TrayStore {
      * Get effective theme
      */
     public async getEffectiveTheme(): Promise<EffectiveTheme> {
-        const { value } = await window.API.trayService.GetEffectiveTheme(new EmptyValue());
+        const { value } = await window.API.Execute(new GetEffectiveThemeRequest());
         return value;
     }
 }

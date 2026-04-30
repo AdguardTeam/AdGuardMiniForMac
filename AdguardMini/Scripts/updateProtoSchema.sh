@@ -60,9 +60,15 @@ echo "Cleanup and make dirs"
 echo "=================================================================="
 echo
 
-find "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/callbacks" -type f -name "*.ts" -delete
-find "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/services" -type f -name "*.ts" -delete
-find "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/types" -type f -name "*.ts" -delete
+if [ -d "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/callbacks" ]; then
+    find "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/callbacks" -type f -name "*.ts" -delete
+fi
+if [ -d "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/requests" ]; then
+    find "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/requests" -type f -name "*.ts" -delete
+fi
+if [ -d "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/types" ]; then
+    find "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/types" -type f -name "*.ts" -delete
+fi
 find "$SWIFT_SCHEMA_OUTPUT_DIR" -type f -name "*.swift" -delete
 
 echo "Done!"

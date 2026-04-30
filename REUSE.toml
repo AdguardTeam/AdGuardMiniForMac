@@ -97,7 +97,7 @@ SPDX-FileComment = "Generated from proto schemas"
 [[annotations]]
 path = [
     "AdguardMini/sciter-ui/modules/common/apis/types/**/*.ts",
-    "AdguardMini/sciter-ui/modules/common/apis/services/**/*.ts",
+    "AdguardMini/sciter-ui/modules/common/apis/requests/**/*.ts",
     "AdguardMini/sciter-ui/modules/common/apis/callbacks/**/*.ts"
 ]
 precedence = "aggregate"

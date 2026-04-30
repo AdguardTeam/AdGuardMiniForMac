@@ -4,7 +4,7 @@
 
 import { createContext } from 'preact';
 
-import { EmptyValue } from 'Apis/types';
+import { GetEffectiveThemeRequest } from 'Apis/requests/OnboardingService';
 import { Action } from 'Modules/common/utils/EventAction';
 
 import {
@@ -51,7 +51,7 @@ export class OnboardingStore {
      * Get effective theme
      */
     public async getEffectiveTheme(): Promise<EffectiveTheme> {
-        const { value } = await window.API.onboardingService.GetEffectiveTheme(new EmptyValue());
+        const { value } = await window.API.Execute(new GetEffectiveThemeRequest());
         return value;
     }
 }

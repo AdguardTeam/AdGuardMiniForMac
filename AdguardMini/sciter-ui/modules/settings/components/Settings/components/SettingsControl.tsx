@@ -5,7 +5,7 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'preact/hooks';
 
-import { Path } from 'Apis/types';
+import { ShowInFinderRequest } from 'Apis/requests/InternalService';
 import { selectFile } from 'Common/utils/selectFile';
 import { useSettingsStore } from 'SettingsLib/hooks';
 import { getNotificationSettingsImportFailedText, getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
@@ -77,7 +77,7 @@ function SettingsControlComponent() {
     }, [incomeHardwareAcceleration]);
 
     const showInFinder = (path: string) => {
-        window.API.internalService.ShowInFinder(new Path({ path }));
+        window.API.Execute(new ShowInFinderRequest({ path }));
     };
 
     const onConsent = (mode: ImportMode) => {

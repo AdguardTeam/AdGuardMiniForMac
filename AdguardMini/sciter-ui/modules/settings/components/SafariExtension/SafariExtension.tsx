@@ -4,7 +4,8 @@
 
 import { observer } from 'mobx-react-lite';
 
-import { OptionalStringValue, SafariExtensionStatus } from 'Apis/types';
+import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SettingsService';
+import { SafariExtensionStatus } from 'Apis/types';
 import { TDS_PARAMS, getTdsLink } from 'Common/utils/links';
 import { useSettingsStore } from 'SettingsLib/hooks';
 import { RouteName } from 'SettingsStore/modules';
@@ -78,7 +79,7 @@ export function SafariExtensionComponent() {
     useUpdateSafariExtensions();
 
     const openSafariPref = (id: string) => {
-        window.API.settingsService.OpenSafariExtensionPreferences(new OptionalStringValue({ value: id }));
+        window.API.Execute(new OpenSafariExtensionPreferencesRequest({ value: id }));
     };
 
     const getInfoTextFromStatus = (extension: SafariExtensionEnt, filtersIds: number[]) => {

@@ -2,7 +2,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { EmptyValue, StringValue } from 'Apis/types';
+import { RequestOpenAppStoreReviewRequest } from 'Apis/requests/AccountService';
+import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
+import { RequestOpenSettingsPageRequest } from 'Apis/requests/SettingsService';
 import { getTdsLink, TDS_PARAMS } from 'Modules/common/utils/links';
 import { RouteName } from 'SettingsStore/modules/SettingsRouter';
 
@@ -22,15 +24,15 @@ export function StarStoryMainFrameButtons({
         <PrimaryAndSecondaryButtons
             primaryButtonAction={() => {
                 if (isMASReleaseVariant) {
-                    window.API.accountService.RequestOpenAppStoreReview(new EmptyValue());
+                    window.API.Execute(new RequestOpenAppStoreReviewRequest());
                 } else {
                     window.OpenLinkInBrowser(getTdsLink(TDS_PARAMS.trustpilot, RouteName.support));
                 }
             }}
             primaryButtonTitle={isMASReleaseVariant ? translate('tray.story.rate.adguard.appstore.action') : translate('tray.story.rate.adguard.trustpilot.action')}
             secondaryButtonAction={() => {
-                window.API.internalService.OpenSettingsWindow(new EmptyValue());
-                window.API.settingsService.RequestOpenSettingsPage(new StringValue({
+                window.API.Execute(new OpenSettingsWindowRequest());
+                window.API.Execute(new RequestOpenSettingsPageRequest({
                     value: RouteName.support,
                 }));
             }}

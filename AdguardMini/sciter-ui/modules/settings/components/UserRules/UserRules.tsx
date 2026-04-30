@@ -6,7 +6,7 @@ import { useSearch } from '@adg/sciter-utils-kit';
 import { observer } from 'mobx-react-lite';
 import { useState, useEffect, useRef } from 'preact/hooks';
 
-import { Path } from 'Apis/types';
+import { ShowInFinderRequest } from 'Apis/requests/InternalService';
 import { getFormattedDateTime } from 'Common/utils/date';
 import { TDS_PARAMS, getTdsLink } from 'Common/utils/links';
 import { selectFile } from 'Common/utils/selectFile';
@@ -115,7 +115,7 @@ function UserRulesComponent() {
     }, [ui, ui.userRulesScrollTop, isRuleEditorWindowOpened, rulesToRender.length]);
 
     const showInFinder = (path: string) => {
-        window.API.internalService.ShowInFinder(new Path({ path }));
+        window.API.Execute(new ShowInFinderRequest({ path }));
     };
 
     const onImportRules = () => {

@@ -7,10 +7,10 @@
   resolved "https://registry.yarnpkg.com/@aashutoshrathi/word-wrap/-/word-wrap-1.2.6.tgz#bd9154aec9983f77b3a034ecaa015c2e4201f6cf"
   integrity sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==
 
-"@adg/proto-generator@^1.7.1":
-  version "1.7.1"
-  resolved "https://art.int.agrd.dev/artifactory/api/npm/adguard-js/@adg/proto-generator/-/@adg/proto-generator-1.7.1.tgz#c6ce16ae86d500757e226e6f226780918b7f2b3c"
-  integrity sha1-xs4WrobVAHV+Im5vImeAkYt/Kzw=
+"@adg/proto-generator@^1.8.0":
+  version "1.8.0"
+  resolved "https://art.int.agrd.dev/artifactory/api/npm/adguard-js/@adg/proto-generator/-/@adg/proto-generator-1.8.0.tgz#3fb905497ffda1c0abc154bda5bd290d8eaad3ef"
+  integrity sha1-P7kFSX/9ocCrwVS9pb0pDY6q0+8=
   dependencies:
     google-protobuf "^3.19.1"
     protoc-gen-ts "^0.8.1"
@@ -43,16 +43,17 @@
     util "^0.12.5"
     zip-lib "^0.7.3"
 
-"@adg/sciter-utils-kit@^0.6.4":
-  version "0.6.4"
-  resolved "https://art.int.agrd.dev/artifactory/api/npm/adguard-js/@adg/sciter-utils-kit/-/@adg/sciter-utils-kit-0.6.4.tgz#75044cd6e56ace98a72e5030f6248bcc6a2378d0"
-  integrity sha1-dQRM1uVqzpinLlAw9iSLzGojeNA=
+"@adg/sciter-utils-kit@^0.7.0":
+  version "0.7.0"
+  resolved "https://art.int.agrd.dev/artifactory/api/npm/adguard-js/@adg/sciter-utils-kit/-/@adg/sciter-utils-kit-0.7.0.tgz#4dbf8b9906f39fb48b030a14d31f2ef67e55e05d"
+  integrity sha1-Tb+LmQbzn7SLAwoU0x8u9n5V4F0=
   dependencies:
     "@adguard/translate" "^1.0.2"
     "@types/crypto-js" "^4.1.1"
     crypto-js "^4.1.1"
     eslint "^7.32.0"
     fuse.js "6.5.3"
+    google-protobuf "3.19.1"
     is-valid-domain "0.1.6"
     lodash "^4.17.21"
     polyfill-crypto.getrandomvalues "^1.0.0"
@@ -4201,6 +4202,11 @@ globby@^13.1.1:
     ignore "^5.2.4"
     merge2 "^1.4.1"
     slash "^4.0.0"
+
+google-protobuf@3.19.1:
+  version "3.19.1"
+  resolved "https://registry.yarnpkg.com/google-protobuf/-/google-protobuf-3.19.1.tgz#5af5390e8206c446d8f49febaffd4b7f4ac28f41"
+  integrity sha512-Isv1RlNC+IzZzilcxnlVSf+JvuhxmY7DaxYCBy+zPS9XVuJRtlTTIXR9hnZ1YL1MMusJn/7eSy2swCzZIomQSg==
 
 google-protobuf@^3.19.1:
   version "3.21.4"

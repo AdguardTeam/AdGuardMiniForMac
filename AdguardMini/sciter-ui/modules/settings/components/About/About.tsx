@@ -104,7 +104,7 @@ export function AboutComponent() {
 
     // const onClickRateUs = () => {
     //     if (isMASReleaseVariant) {
-    //         window.API.accountService.RequestOpenAppStoreReview(new EmptyValue());
+    //         window.API.Execute(new RequestOpenAppStoreReviewRequest());
     //     } else {
     //         window.OpenLinkInBrowser(getTdsLink(TDS_PARAMS.trustpilot, RouteName.support));
     //     }

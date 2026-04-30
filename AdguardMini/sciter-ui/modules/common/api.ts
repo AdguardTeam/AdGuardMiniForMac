@@ -2,51 +2,18 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import {
-    AccountService,
-    AdvancedBlockingService,
-    AppInfoService,
-    FiltersService,
-    InternalService,
-    SettingsService,
-    UserRulesService,
-    OnboardingService,
-    TrayService,
-    TelemetryService,
-} from 'Apis/services';
 import 'Apis/ExtendLicense';
 
-/**
- * API facade
- */
-export class API {
-    public readonly internalService = new InternalService();
-
-    public readonly filtersService = new FiltersService();
-
-    public readonly accountService = new AccountService();
-
-    public readonly advancedBlockingService = new AdvancedBlockingService();
-
-    public readonly appInfoService = new AppInfoService();
-
-    public readonly settingsService = new SettingsService();
-
-    public readonly userRulesService = new UserRulesService();
-
-    public readonly onboardingService = new OnboardingService();
-
-    public readonly trayService = new TrayService();
-
-    public readonly telemetryService = new TelemetryService();
-}
+import { ApiServiceExecutor } from '@adg/sciter-utils-kit';
+import { xcall } from 'ApiWindow';
 
 // @TODO: MOVE THIS TO declaration.d.ts
 declare global {
-    const API: API;
     interface Window {
-        API: API;
+        API: ApiServiceExecutor;
     }
 }
 
-window.API = new API();
+window.API = new ApiServiceExecutor();
+
+window.xcallWrapper = xcall;

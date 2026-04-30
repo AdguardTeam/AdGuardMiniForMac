@@ -5,7 +5,7 @@
 import { observer } from 'mobx-react-lite';
 import { useState, useEffect } from 'preact/hooks';
 
-import { Path } from 'Apis/types';
+import { CheckCustomFilterRequest } from 'Apis/requests/FiltersService';
 import { selectFile } from 'Modules/common/utils/selectFile';
 import { useSettingsStore } from 'Modules/settings/lib/hooks';
 import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType } from 'Modules/settings/store/modules';
@@ -53,9 +53,7 @@ function AddCustomFilterModalComponent({
         }
 
         if (!filterInfo) {
-            const resp = await window.API.filtersService.CheckCustomFilter(new Path({
-                path: url,
-            }));
+            const resp = await window.API.Execute(new CheckCustomFilterRequest({ path: url }));
 
             if (resp.has_filter) {
                 setFilterInfo(resp.filter);

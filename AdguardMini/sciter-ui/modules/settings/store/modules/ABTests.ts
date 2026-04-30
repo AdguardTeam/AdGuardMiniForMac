@@ -4,7 +4,8 @@
 
 import { makeAutoObservable } from 'mobx';
 
-import { ActiveABTest, ABTestOption, EmptyValue } from 'Apis/types';
+import { GetActiveABTestsRequest } from 'Apis/requests/TelemetryService';
+import { ActiveABTest, ABTestOption } from 'Apis/types';
 
 type ABTestsMap = Map<ActiveABTest, ABTestOption>;
 
@@ -46,7 +47,7 @@ export class ABTests {
      * Load active A/B tests from the backend
      */
     public async loadActiveABTests() {
-        const resp = await window.API.telemetryService.GetActiveABTests(new EmptyValue());
+        const resp = await window.API.Execute(new GetActiveABTestsRequest());
         const next: ABTestsMap = new Map();
 
         const activeTests = Array.isArray(resp.activeTests) ? resp.activeTests : [];

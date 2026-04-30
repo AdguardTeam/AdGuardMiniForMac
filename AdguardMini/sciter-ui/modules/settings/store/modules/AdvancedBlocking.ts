@@ -4,6 +4,7 @@
 
 import { makeAutoObservable } from 'mobx';
 
+import { GetAdvancedBlockingRequest, UpdateAdvancedBlockingRequest } from 'Apis/requests/AdvancedBlockingService';
 import { AdvancedBlocking as AdvancedBlockingEnt, EmptyValue } from 'Apis/types';
 import { withLast } from 'Common/utils/queue';
 
@@ -36,7 +37,7 @@ export class AdvancedBlocking {
      * Get AdvancedBlocking from swift
      */
     public async getAdvancedBlocking() {
-        const resp = await window.API.advancedBlockingService.GetAdvancedBlocking(new EmptyValue());
+        const resp = await window.API.Execute(new GetAdvancedBlockingRequest());
         this.setAdvancedBlocking(resp);
     }
 
@@ -52,7 +53,7 @@ export class AdvancedBlocking {
      */
     private readonly commitAdvancedBlocking = withLast<AdvancedBlockingEnt, EmptyValue>(
         async (data: AdvancedBlockingEnt) => {
-            return window.API.advancedBlockingService.UpdateAdvancedBlocking(data);
+            return window.API.Execute(new UpdateAdvancedBlockingRequest(data));
         },
         'commitAdvancedBlocking',
     );

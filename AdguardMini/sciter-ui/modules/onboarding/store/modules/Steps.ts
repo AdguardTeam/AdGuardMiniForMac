@@ -4,7 +4,10 @@
 
 import { makeAutoObservable } from 'mobx';
 
-import { EmptyValue, FiltersIndex, OptionalStringValue, FiltersUpdate, UserConsent } from 'Apis/types';
+import { GetFiltersIndexRequest, GetFiltersMetadataRequest, UpdateFiltersRequest } from 'Apis/requests/FiltersService';
+import { GetSafariExtensionsRequest, GetSystemLanguageRequest, OpenSafariExtensionPreferencesRequest, UpdateConsentRequest } from 'Apis/requests/SettingsService';
+import { OnboardingDidCompleteRequest } from 'Apis/requests/OnboardingService';
+import { FiltersIndex, OptionalStringValue, FiltersUpdate, UserConsent } from 'Apis/types';
 import { SafariExtensionsStore } from 'Common/stores/SafariExtensionsStore';
 import { updateLanguage } from 'Intl';
 
@@ -97,7 +100,7 @@ export class Steps {
      * Get filters index to enable specific filters on steps
      */
     private async getFiltersIndex() {
-        const index = await window.API.filtersService.GetFiltersIndex(new EmptyValue());
+        const index = await window.API.Execute(new GetFiltersIndexRequest());
         this.setFiltersIndex(index);
         this.getFilters();
     }
@@ -106,7 +109,7 @@ export class Steps {
      * Get safari protection status
      */
     public async getSafariExtensions() {
-        const ext = await window.API.settingsService.GetSafariExtensions(new EmptyValue());
+        const ext = await window.API.Execute(new GetSafariExtensionsRequest());
         this.setSafariExtensions(ext);
     }
 
@@ -121,7 +124,7 @@ export class Steps {
      * Get system language
      */
     public async getSystemLanguage() {
-        const ext = await window.API.settingsService.GetSystemLanguage(new EmptyValue());
+        const ext = await window.API.Execute(new GetSystemLanguageRequest());
         this.setSystemLanguage(ext.value);
     }
 
@@ -149,7 +152,7 @@ export class Steps {
      * Get filters index to enable specific filters on steps
      */
     private async getFilters() {
-        const index = await window.API.filtersService.GetFiltersMetadata(new EmptyValue());
+        const index = await window.API.Execute(new GetFiltersMetadataRequest());
         this.setAnnoyanceFilters(index);
     }
 
@@ -185,7 +188,7 @@ export class Steps {
      * Opens the Safari settings
      */
     public async openSafariSettings() {
-        await window.API.settingsService.OpenSafariExtensionPreferences(new OptionalStringValue());
+        await window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
         this.setSafariSettingsHasBeenOpened(true);
     }
 
@@ -201,7 +204,7 @@ export class Steps {
      */
     private async updateFilters(ids: number[]) {
         const filters = new FiltersUpdate({ ids, isEnabled: true });
-        await window.API.filtersService.UpdateFilters(filters);
+        await window.API.Execute(new UpdateFiltersRequest(filters));
     }
 
     /**
@@ -257,8 +260,8 @@ export class Steps {
             await this.updateFilters(ids);
         }
         if (this.annoyanceHasBeenAccepted) {
-            await window.API.settingsService.UpdateConsent(new UserConsent({ filtersIds: ids }));
+            await window.API.Execute(new UpdateConsentRequest(new UserConsent({ filtersIds: ids })));
         }
-        await window.API.onboardingService.OnboardingDidComplete(new EmptyValue());
+        await window.API.Execute(new OnboardingDidCompleteRequest());
     }
 }

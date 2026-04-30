@@ -4,7 +4,8 @@
 
 import { observer } from 'mobx-react-lite';
 
-import { EmptyValue, StringValue } from 'Apis/types';
+import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
+import { RequestOpenSettingsPageRequest } from 'Apis/requests/SettingsService';
 import { RouteName as SettingsRouteName } from 'SettingsStore/modules/SettingsRouter';
 import { Button } from 'UILib';
 
@@ -27,12 +28,10 @@ function ContactSupportLinkComponent({ text, onClick, className }: ContactSuppor
             onClick={(e) => {
                 e?.stopPropagation();
                 onClick?.();
-                API.internalService.OpenSettingsWindow(new EmptyValue());
-                API.settingsService.RequestOpenSettingsPage(
-                    new StringValue({
-                        value: SettingsRouteName.contact_support,
-                    }),
-                );
+                window.API.Execute(new OpenSettingsWindowRequest());
+                window.API.Execute(new RequestOpenSettingsPageRequest({
+                    value: SettingsRouteName.contact_support,
+                }));
             }}
         >
             {text}

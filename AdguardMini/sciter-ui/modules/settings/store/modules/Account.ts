@@ -5,7 +5,8 @@
 import isNull from 'lodash/isNull';
 import { makeAutoObservable } from 'mobx';
 
-import { EmptyValue, Subscription, SubscriptionMessage, LicenseStatus, AppStoreSubscription, StringValue, WebActivateResult, LicenseOrError } from 'Apis/types';
+import { EnterActivationCodeRequest, GetLicenseRequest, GetSubscriptionsInfoRequest, GetTrialAvailableDaysRequest, RefreshLicenseRequest, RequestActivateRequest, RequestBindRequest, RequestLogoutRequest, RequestOpenAppStoreRequest, RequestOpenSubscriptionsRequest, RequestRenewRequest, RequestRestorePurchasesRequest, RequestSubscribeRequest } from 'Apis/requests/AccountService';
+import { Subscription, LicenseStatus, AppStoreSubscription, WebActivateResult, LicenseOrError } from 'Apis/types';
 
 import type { LicenseOrErrorExtended } from 'Apis/ExtendLicense';
 import type { AppStoreSubscriptionsMessage } from 'Apis/types';
@@ -243,9 +244,7 @@ export class Account {
             value: true,
         });
 
-        const { hasError } = await API.accountService.RequestSubscribe(
-            new SubscriptionMessage({ subscriptionType }),
-        );
+        const { hasError } = await window.API.Execute(new RequestSubscribeRequest({ subscriptionType }));
 
         if (hasError) {
             this.updateActivationFlowStatus({
@@ -268,7 +267,7 @@ export class Account {
     public async getLicense() {
         this.getSubscriptionsInfo();
         this.getTrialAvailability();
-        const resp = await window.API.accountService.GetLicense(new EmptyValue());
+        const resp = await window.API.Execute(new GetLicenseRequest());
         this.setLicense(resp as unknown as LicenseOrErrorExtended);
     }
 
@@ -284,7 +283,7 @@ export class Account {
      * Request to refresh the license
      */
     public async refreshLicense() {
-        return API.accountService.RefreshLicense(new EmptyValue());
+        return window.API.Execute(new RefreshLicenseRequest());
     }
 
     /**
@@ -314,7 +313,7 @@ export class Account {
      * Gets trial availability status
      */
     public async getTrialAvailability() {
-        const { value } = await API.accountService.GetTrialAvailableDays(new EmptyValue());
+        const { value } = await window.API.Execute(new GetTrialAvailableDaysRequest());
         this.setIsTrialAvailable(value);
     }
 
@@ -322,9 +321,7 @@ export class Account {
      * Activates the license by the activation code
      */
     public async activateLicenseByCode(activationCode: string) {
-        const response = await API.accountService.EnterActivationCode(
-            new StringValue({ value: activationCode }),
-        );
+        const response = await window.API.Execute(new EnterActivationCodeRequest({ value: activationCode }));
 
         const { error: { hasError } } = response;
 
@@ -347,7 +344,7 @@ export class Account {
             value: true,
         });
 
-        const { hasError } = await window.API.accountService.RequestRestorePurchases(new EmptyValue());
+        const { hasError } = await window.API.Execute(new RequestRestorePurchasesRequest());
 
         if (hasError) {
             this.setActivationFlowResult(ActivationFlowResult.restoreFailure);
@@ -362,7 +359,7 @@ export class Account {
             type: ActivationFlowStatusType.isCheckingLicenseStatus,
             value: true,
         });
-        const { result } = await window.API.accountService.RequestActivate(new EmptyValue());
+        const { result } = await window.API.Execute(new RequestActivateRequest());
         if (result === WebActivateResult.cancelled) {
             this.resetActivationFlowStatus();
         }
@@ -372,30 +369,30 @@ export class Account {
      * Request to open the bind page
      */
     public async requestBindLicense() {
-        await window.API.accountService.RequestBind(
-            new StringValue({ value: this.license.license?.licenseKey?.getHiddenValue() || '' }),
-        );
+        await window.API.Execute(new RequestBindRequest(
+            { value: this.license.license?.licenseKey?.getHiddenValue() || '' },
+        ));
     }
 
     /**
      * Request to open the renewal page
      */
     public requestRenewLicense(licenseKey: string) {
-        window.API.accountService.RequestRenew(new StringValue({ value: licenseKey }));
+        window.API.Execute(new RequestRenewRequest({ value: licenseKey }));
     }
 
     /**
      * Request logout
      */
     public async requestLogout() {
-        return window.API.accountService.RequestLogout(new EmptyValue());
+        return window.API.Execute(new RequestLogoutRequest());
     }
 
     /**
      * Receive app store subscriptions info
      */
     public async getSubscriptionsInfo() {
-        const result = await window.API.accountService.GetSubscriptionsInfo(new EmptyValue());
+        const result = await window.API.Execute(new GetSubscriptionsInfoRequest());
 
         this.setSubscriptionsInfo(result);
         return result;
@@ -453,13 +450,13 @@ export class Account {
      * Request to open the subscriptions page
      */
     public async requestOpenSubscriptions() {
-        return window.API.accountService.RequestOpenSubscriptions(new EmptyValue());
+        return window.API.Execute(new RequestOpenSubscriptionsRequest());
     }
 
     /**
      * Request to open the app store page
      */
     public async requestOpenAppStore() {
-        return window.API.accountService.RequestOpenAppStore(new EmptyValue());
+        return window.API.Execute(new RequestOpenAppStoreRequest());
     }
 }

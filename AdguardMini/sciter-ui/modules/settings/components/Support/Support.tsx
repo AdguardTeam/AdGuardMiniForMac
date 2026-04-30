@@ -4,7 +4,7 @@
 
 import { observer } from 'mobx-react-lite';
 
-import { EmptyValue } from 'Apis/types';
+import { reportAnIssueRequest } from 'Apis/requests/InternalService';
 import { TDS_PARAMS, getTdsLink } from 'Common/utils/links';
 // import { useSettingsStore } from 'Modules/settings/lib/hooks';
 import { RouteName } from 'SettingsStore/modules';
@@ -16,7 +16,7 @@ import { SettingsTitle } from '../SettingsTitle';
 import type { SettingsItemLinkProps } from '../SettingsItem';
 
 const clickHandler = () => {
-    window.API.internalService.reportAnIssue(new EmptyValue());
+    window.API.Execute(new reportAnIssueRequest());
 };
 
 /**
@@ -54,7 +54,7 @@ function SupportComponent() {
         description: translate('support.rate.desc'),
         onClick: () => {
             if (settings.isMASReleaseVariant) {
-                window.API.accountService.RequestOpenAppStoreReview(new EmptyValue());
+                window.API.Execute(new RequestOpenAppStoreReviewRequest());
             } else {
                 window.OpenLinkInBrowser(getTdsLink(TDS_PARAMS.trustpilot, RouteName.support));
             }

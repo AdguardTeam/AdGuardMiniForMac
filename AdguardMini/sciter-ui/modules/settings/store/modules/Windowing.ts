@@ -4,7 +4,7 @@
 
 import { makeAutoObservable } from 'mobx';
 
-import { WindowGeometry as WindowGeometryProto } from 'Apis/types';
+import { UpdateUserRulesEditorGeometryRequest } from 'Apis/requests/SettingsService';
 import { type WindowGeometry, getWindowGeometry, MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT } from 'Utils/windowGeometry';
 
 import type { ColorTheme } from 'Utils/colorThemes';
@@ -98,9 +98,9 @@ export class Windowing {
 
             if (windowId === SciterWindowId.USER_RULE_EDITOR) {
                 const { x, y, width, height, monitor } = geometry;
-                window.API.settingsService.UpdateUserRulesEditorGeometry(
-                    new WindowGeometryProto({ x, y, width, height, monitor }),
-                );
+                window.API.Execute(new UpdateUserRulesEditorGeometryRequest(
+                    { x, y, width, height, monitor },
+                ));
             }
 
             sciterWindow.close();

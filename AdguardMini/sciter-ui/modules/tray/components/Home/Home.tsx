@@ -7,7 +7,9 @@ import { observer } from 'mobx-react-lite';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { Fragment } from 'preact/jsx-runtime';
 
-import { EmptyValue, OptionalStringValue } from 'Apis/types';
+import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SettingsService';
+import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
+import { OptionalStringValue } from 'Apis/types';
 import { getCountableEntityStatuses } from 'Common/utils/utils';
 import theme from 'Theme';
 import { useTheme, useTrayStore } from 'TrayLib/hooks';
@@ -32,7 +34,7 @@ const STORY_SWITCH_INTERACTABLE_AREA_WIDTH = 156;
  * Opens Safari preferences window
  */
 const openSafariPreferences = () => {
-    window.API.settingsService.OpenSafariExtensionPreferences(new OptionalStringValue());
+    window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
 };
 
 /**
@@ -168,7 +170,7 @@ function HomeComponent() {
     });
 
     const openSettingsWindow = useCallback(() => {
-        API.internalService.OpenSettingsWindow(new EmptyValue());
+        window.API.Execute(new OpenSettingsWindowRequest());
         telemetry.trackEvent(TrayEvent.SettingsClick);
     }, [telemetry]);
 

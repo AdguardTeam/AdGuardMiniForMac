@@ -5,17 +5,10 @@
 import { LogLevel } from '@adg/sciter-utils-kit';
 import { makeAutoObservable } from 'mobx';
 
+import { ExportLogsRequest, ExportSettingsRequest, ForceRestartOnHardwareAccelerationImportRequest, GetContentBlockersRulesLimitRequest, GetSafariExtensionsRequest, GetSettingsRequest, GetUserActionLastDirectoryRequest, ImportSettingsConfirmRequest, ImportSettingsRequest, OpenLoginItemsSettingsRequest, ResetSettingsRequest, ResetStatisticsRequest, UpdateAllowTelemetryRequest, UpdateAutoFiltersUpdateRequest, UpdateConsentRequest, UpdateDebugLoggingRequest, UpdateHardwareAccelerationRequest, UpdateLaunchOnStartupRequest, UpdateQuitReactionRequest, UpdateRealTimeFiltersUpdateRequest, UpdateShowInMenuBarRequest, UpdateThemeRequest, UpdateUserActionLastDirectoryRequest, UpdateShowSafariToolbarBadgeRequest } from 'Apis/requests/SettingsService';
 import {
-    UserConsent,
-    EmptyValue,
-    Path,
     Settings as SettingsEnt,
-    BoolValue,
-    UpdateQuitReactionMessage,
-    ImportSettingsConfirmation,
     ReleaseVariants,
-    StringValue,
-    UpdateThemeMessage,
 } from 'Apis/types';
 import { SafariExtensionsStore } from 'Common/stores/SafariExtensionsStore';
 import { updateLanguage } from 'Intl';
@@ -96,14 +89,14 @@ export class Settings {
      * Open settings login item
      */
     public openLoginItemsSettings() {
-        window.API.settingsService.OpenLoginItemsSettings(new EmptyValue());
+        window.API.Execute(new OpenLoginItemsSettingsRequest());
     }
 
     /**
      * Get app settings
      */
     public async getSettings() {
-        const resp = await window.API.settingsService.GetSettings(new EmptyValue());
+        const resp = await window.API.Execute(new GetSettingsRequest());
         this.setSettings(resp);
     }
 
@@ -111,7 +104,7 @@ export class Settings {
      * Get user action last directory
      */
     public async getUserActionLastDirectory() {
-        const resp = await window.API.settingsService.GetUserActionLastDirectory(new EmptyValue());
+        const resp = await window.API.Execute(new GetUserActionLastDirectoryRequest());
         this.setUserActionLastDirectory(resp.value);
     }
 
@@ -119,7 +112,7 @@ export class Settings {
      * Update user action last directory
      */
     public updateUserActionLastDirectory(value: string) {
-        window.API.settingsService.UpdateUserActionLastDirectory(new StringValue({ value }));
+        window.API.Execute(new UpdateUserActionLastDirectoryRequest({ value }));
         this.setUserActionLastDirectory(value);
     }
 
@@ -135,7 +128,7 @@ export class Settings {
      * @param path path to save file
      */
     public async exportSettings(path: string) {
-        return window.API.settingsService.ExportSettings(new Path({ path }));
+        return window.API.Execute(new ExportSettingsRequest({ path }));
     }
 
     /**
@@ -143,14 +136,14 @@ export class Settings {
      * @param path path to read file
      */
     public async importSettings(path: string) {
-        await window.API.settingsService.ImportSettings(new Path({ path }));
+        await window.API.Execute(new ImportSettingsRequest({ path }));
     }
 
     /**
      * Reset settings to defaults
      */
     public async resetSettings() {
-        const resp = await window.API.settingsService.ResetSettings(new EmptyValue());
+        const resp = await window.API.Execute(new ResetSettingsRequest());
         this.setSettings(resp);
     }
 
@@ -160,7 +153,7 @@ export class Settings {
     public updateLaunchOnStartup(data: boolean) {
         const newValue = this.updateHelper();
         newValue.launchOnStartup = data;
-        window.API.settingsService.UpdateLaunchOnStartup(new BoolValue({ value: data }));
+        window.API.Execute(new UpdateLaunchOnStartupRequest({ value: data }));
         this.commitSettings(newValue);
     }
 
@@ -169,8 +162,8 @@ export class Settings {
      */
     public async getSafariExtensions() {
         const [ext, limit] = await Promise.all([
-            window.API.settingsService.GetSafariExtensions(new EmptyValue()),
-            window.API.settingsService.GetContentBlockersRulesLimit(new EmptyValue()),
+            window.API.Execute(new GetSafariExtensionsRequest()),
+            window.API.Execute(new GetContentBlockersRulesLimitRequest()),
         ]);
         this.setSafariExtensions(ext);
         this.setContentBlockersRulesLimit(limit.value);
@@ -210,7 +203,7 @@ export class Settings {
     public updateShowInMenuBar(data: boolean) {
         const newValue = this.updateHelper();
         newValue.showInMenuBar = data;
-        window.API.settingsService.UpdateShowInMenuBar(new BoolValue({ value: data }));
+        window.API.Execute(new UpdateShowInMenuBarRequest({ value: data }));
         this.commitSettings(newValue);
     }
 
@@ -220,7 +213,7 @@ export class Settings {
     public updateHardwareAcceleration(data: boolean) {
         const newValue = this.updateHelper();
         newValue.hardwareAcceleration = data;
-        window.API.settingsService.UpdateHardwareAcceleration(new BoolValue({ value: data }));
+        window.API.Execute(new UpdateHardwareAccelerationRequest({ value: data }));
         this.commitSettings(newValue);
     }
 
@@ -228,7 +221,7 @@ export class Settings {
      * Force restart sciter, used when hardware acceleration is imported, ui will be restarted
      */
     public restartAppToApplyHardwareAcceleration() {
-        window.API.settingsService.ForceRestartOnHardwareAccelerationImport(new EmptyValue());
+        window.API.Execute(new ForceRestartOnHardwareAccelerationImportRequest());
         this.setIncomingHardwareAcceleration(undefined);
     }
 
@@ -238,7 +231,7 @@ export class Settings {
     public updateAutoFiltersUpdate(data: boolean) {
         const newValue = this.updateHelper();
         newValue.autoFiltersUpdate = data;
-        window.API.settingsService.UpdateAutoFiltersUpdate(new BoolValue({ value: data }));
+        window.API.Execute(new UpdateAutoFiltersUpdateRequest({ value: data }));
         this.commitSettings(newValue);
     }
 
@@ -248,7 +241,7 @@ export class Settings {
     public updateRealTimeFiltersUpdate(data: boolean) {
         const newValue = this.updateHelper();
         newValue.realTimeFiltersUpdate = data;
-        window.API.settingsService.UpdateRealTimeFiltersUpdate(new BoolValue({ value: data }));
+        window.API.Execute(new UpdateRealTimeFiltersUpdateRequest({ value: data }));
         this.commitSettings(newValue);
     }
 
@@ -258,7 +251,7 @@ export class Settings {
     public updateQuitReaction(data: QuitReaction) {
         const newValue = this.updateHelper();
         newValue.quitReaction = data;
-        window.API.settingsService.UpdateQuitReaction(new UpdateQuitReactionMessage({ reaction: data }));
+        window.API.Execute(new UpdateQuitReactionRequest({ reaction: data }));
         this.commitSettings(newValue);
     }
 
@@ -268,7 +261,7 @@ export class Settings {
     public updateTheme(data: Theme) {
         const newValue = this.updateHelper();
         newValue.theme = data;
-        window.API.settingsService.UpdateTheme(new UpdateThemeMessage({ theme: data }));
+        window.API.Execute(new UpdateThemeRequest({ theme: data }));
         this.commitSettings(newValue);
     }
 
@@ -277,7 +270,7 @@ export class Settings {
      */
     public updateDebugLogging(value: boolean) {
         const newValue = this.updateHelper();
-        window.API.settingsService.UpdateDebugLogging(new BoolValue({ value }));
+        window.API.Execute(new UpdateDebugLoggingRequest({ value }));
         newValue.debugLogging = value;
         this.commitSettings(newValue);
     }
@@ -288,7 +281,7 @@ export class Settings {
      */
     public updateShowSafariToolbarBadge(value: boolean) {
         const newValue = this.updateHelper();
-        window.API.settingsService.UpdateShowSafariToolbarBadge(new BoolValue({ value }));
+        window.API.Execute(new UpdateShowSafariToolbarBadgeRequest({ value }));
         newValue.showSafariToolbarBadge = value;
         this.commitSettings(newValue);
     }
@@ -298,7 +291,7 @@ export class Settings {
      */
     public updateAllowTelemetry(value: boolean) {
         const newValue = this.updateHelper();
-        window.API.settingsService.UpdateAllowTelemetry(new BoolValue({ value }));
+        window.API.Execute(new UpdateAllowTelemetryRequest({ value }));
         newValue.allowTelemetry = value;
         this.commitSettings(newValue);
     }
@@ -308,7 +301,7 @@ export class Settings {
      * @param path path to save file
      */
     public async exportLogs(path: string) {
-        const error = await window.API.settingsService.ExportLogs(new Path({ path }));
+        const error = await window.API.Execute(new ExportLogsRequest({ path }));
         if (error.hasError) {
             return error;
         }
@@ -318,7 +311,7 @@ export class Settings {
      * Updater for user consent
      */
     public async updateUserConsent(data: number[]) {
-        await window.API.settingsService.UpdateConsent(new UserConsent({ filtersIds: data }));
+        await window.API.Execute(new UpdateConsentRequest({ filtersIds: data }));
         const settings = this.updateHelper();
         settings.consentFiltersIds = data;
         this.setSettings(settings);
@@ -329,7 +322,7 @@ export class Settings {
      */
     public confirmImport(mode: ImportMode) {
         this.confirmMode = mode;
-        window.API.settingsService.ImportSettingsConfirm(new ImportSettingsConfirmation({ mode }));
+        window.API.Execute(new ImportSettingsConfirmRequest({ mode }));
     }
 
     /**
@@ -343,7 +336,7 @@ export class Settings {
      * Clear statistics
      */
     public clearStatistics() {
-        window.API.settingsService.ResetStatistics(new EmptyValue());
+        window.API.Execute(new ResetStatisticsRequest());
     }
 
     /**

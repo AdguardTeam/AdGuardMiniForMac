@@ -5,7 +5,12 @@
 import { LogLevel } from '@adg/sciter-utils-kit';
 import { makeAutoObservable } from 'mobx';
 
-import { EmptyValue, GlobalSettings, LicenseOrError, LicenseStatus, ReleaseVariants, StatisticsPeriod, StatisticsRequest, StatisticsResponse, StringValue } from 'Apis/types';
+import { CheckApplicationVersionRequest, GetSafariExtensionsRequest, GetStatisticsRequest, GetTraySettingsRequest, RequestOpenSettingsPageRequest, UpdateTraySettingsRequest } from 'Apis/requests/SettingsService';
+import { GetAdvancedBlockingRequest } from 'Apis/requests/AdvancedBlockingService';
+import { GetLicenseRequest, GetTrialAvailableDaysRequest } from 'Apis/requests/AccountService';
+import { GetFiltersMetadataRequest, RequestFiltersUpdateRequest } from 'Apis/requests/FiltersService';
+import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
+import { GlobalSettings, LicenseOrError, LicenseStatus, ReleaseVariants, StatisticsPeriod, StatisticsResponse } from 'Apis/types';
 import { SafariExtensionsStore } from 'Common/stores/SafariExtensionsStore';
 import { updateLanguage } from 'Intl';
 
@@ -173,7 +178,7 @@ export class SettingsStore {
      * Get tray settings
      */
     public async getSettings() {
-        const data = await window.API.settingsService.GetTraySettings(new EmptyValue());
+        const data = await window.API.Execute(new GetTraySettingsRequest());
         this.setSettings(data);
     }
 
@@ -181,7 +186,7 @@ export class SettingsStore {
      * Get statistics
      */
     public async getStatistics() {
-        const data = await window.API.settingsService.GetStatistics(new StatisticsRequest({
+        const data = await window.API.Execute(new GetStatisticsRequest({
             period: StatisticsPeriod.all,
         }));
         this.setStatistics(data);
@@ -191,7 +196,7 @@ export class SettingsStore {
      * Get status of Advanced blocking
      */
     public async getAdvancedBlocking() {
-        const data = await window.API.advancedBlockingService.GetAdvancedBlocking(new EmptyValue());
+        const data = await window.API.Execute(new GetAdvancedBlockingRequest());
         this.setAdvancedBlocking(data);
     }
 
@@ -202,14 +207,14 @@ export class SettingsStore {
         const newValue = this.buildGlobalSettings();
         newValue.enabled = enabled;
         this.setSettings(newValue);
-        await window.API.settingsService.UpdateTraySettings(newValue);
+        await window.API.Execute(new UpdateTraySettingsRequest(newValue));
     }
 
     /**
      * Gets trial availability status
      */
     public async getTrialAvailability() {
-        const { value } = await window.API.accountService.GetTrialAvailableDays(new EmptyValue());
+        const { value } = await window.API.Execute(new GetTrialAvailableDaysRequest());
         this.setIsTrialAvailable(value);
     }
 
@@ -222,7 +227,7 @@ export class SettingsStore {
         }
         this.getFiltersMetadata();
 
-        window.API.filtersService.RequestFiltersUpdate(new EmptyValue());
+        window.API.Execute(new RequestFiltersUpdateRequest());
 
         this.lastTimeUpdate = Date.now();
 
@@ -234,7 +239,7 @@ export class SettingsStore {
      * Start the process of checking version updates
      */
     public checkApplicationVersion() {
-        window.API.settingsService.CheckApplicationVersion(new EmptyValue());
+        window.API.Execute(new CheckApplicationVersionRequest());
         this.newVersionAvailable = undefined;
     }
 
@@ -242,7 +247,7 @@ export class SettingsStore {
      * Force retry filters update
      */
     public tryAgainFiltersUpdate() {
-        window.API.filtersService.RequestFiltersUpdate(new EmptyValue());
+        window.API.Execute(new RequestFiltersUpdateRequest());
         this.filtersUpdateResult = null;
         this.filtersUpdating = true;
     }
@@ -290,7 +295,7 @@ export class SettingsStore {
      * Filters data for updates
      */
     public async getFiltersMetadata() {
-        const filters = await window.API.filtersService.GetFiltersMetadata(new EmptyValue());
+        const filters = await window.API.Execute(new GetFiltersMetadataRequest());
         this.setFilters(filters);
     }
 
@@ -312,7 +317,7 @@ export class SettingsStore {
      * Receive user current license
      */
     public async getLicense() {
-        const resp = await window.API.accountService.GetLicense(new EmptyValue());
+        const resp = await window.API.Execute(new GetLicenseRequest());
         this.setLicense(resp);
     }
 
@@ -327,7 +332,7 @@ export class SettingsStore {
      * Get safari protection status
      */
     public async getSafariExtensions() {
-        const ext = await window.API.settingsService.GetSafariExtensions(new EmptyValue());
+        const ext = await window.API.Execute(new GetSafariExtensionsRequest());
         this.setSafariExtensions(ext);
     }
 
@@ -335,8 +340,8 @@ export class SettingsStore {
      * Use to open paywall screen
      */
     public requestOpenPaywallScreen() {
-        window.API.internalService.OpenSettingsWindow(new EmptyValue());
-        window.API.settingsService.RequestOpenSettingsPage(new StringValue({ value: 'paywall' }));
+        window.API.Execute(new OpenSettingsWindowRequest());
+        window.API.Execute(new RequestOpenSettingsPageRequest({ value: 'paywall' }));
     }
 
     /**

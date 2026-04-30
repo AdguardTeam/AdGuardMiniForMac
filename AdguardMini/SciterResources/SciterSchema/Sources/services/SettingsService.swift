@@ -146,7 +146,7 @@ public protocol SettingsServiceProtocol
 	func updateUserRulesEditorGeometry (
 						_ message: WindowGeometry,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void
-	/// Updates show state of Safari Toolbar Badge
+	/// Updates Safari toolbar badge visibility
 	func updateShowSafariToolbarBadge (
 						_ message: BoolValue,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void

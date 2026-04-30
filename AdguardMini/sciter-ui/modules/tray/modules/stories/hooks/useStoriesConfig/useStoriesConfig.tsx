@@ -4,7 +4,10 @@
 
 import noop from 'lodash/noop';
 
-import { OptionalStringValue, EmptyValue, StringValue, SubscriptionMessage, Subscription } from 'Apis/types';
+import { OpenLoginItemsSettingsRequest, OpenSafariExtensionPreferencesRequest, RequestOpenSettingsPageRequest } from 'Apis/requests/SettingsService';
+import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
+import { RequestSubscribeRequest } from 'Apis/requests/AccountService';
+import { OptionalStringValue, Subscription } from 'Apis/types';
 import { formatLocalizedNumber } from 'Common/lib/number';
 import { provideTrialDaysParam } from 'Common/utils/translate';
 import { getTdsLink, TDS_PARAMS } from 'Modules/common/utils/links';
@@ -22,11 +25,11 @@ import type { IStoryFrame, StoryFrameImage, StoryInfo } from '../../model';
 import s from './StoriesConfig.module.pcss';
 
 const openSafariPref = () => {
-    window.API.settingsService.OpenSafariExtensionPreferences(new OptionalStringValue());
+    window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
 };
 
 const openLoginItemsSettings = () => {
-    window.API.settingsService.OpenLoginItemsSettings(new EmptyValue());
+    window.API.Execute(new OpenLoginItemsSettingsRequest());
 };
 
 /**
@@ -224,8 +227,8 @@ export function useStoriesConfig(): StoryInfo[] {
                     actionButton: {
                         title: translate('tray.story.other.devices.action'),
                         action: () => {
-                            window.API.internalService.OpenSettingsWindow(new EmptyValue());
-                            window.API.settingsService.RequestOpenSettingsPage(new StringValue({
+                            window.API.Execute(new OpenSettingsWindowRequest());
+                            window.API.Execute(new RequestOpenSettingsPageRequest({
                                 value: RouteNameSettings.license,
                             }));
                         },
@@ -268,8 +271,8 @@ export function useStoriesConfig(): StoryInfo[] {
                     actionButton: {
                         title: translate('telemetry.story.frame.button.settings'),
                         action: () => {
-                            window.API.internalService.OpenSettingsWindow(new EmptyValue());
-                            window.API.settingsService.RequestOpenSettingsPage(new StringValue({
+                            window.API.Execute(new OpenSettingsWindowRequest());
+                            window.API.Execute(new RequestOpenSettingsPageRequest({
                                 value: RouteNameSettings.settings,
                             }));
                         },
@@ -369,8 +372,9 @@ export function useStoriesConfig(): StoryInfo[] {
         extraDescription = translate('tray.story.adguard.extra.desc.3');
         extraButtonTitle = translate.plural('tray.story.adguard.extra.action.3.trial', trialAvailableDays, provideTrialDaysParam(trialAvailableDays));
         extraButtonAction = () => {
-            window.API.internalService.OpenSettingsWindow(new EmptyValue());
-            window.API.settingsService.RequestOpenSettingsPage(new StringValue({
+            window.API.Execute(new OpenSettingsWindowRequest());
+            window.API.Execute(new RequestOpenSettingsPageRequest
+                ({
                 value: RouteNameSettings.license,
             }));
         };
@@ -380,8 +384,9 @@ export function useStoriesConfig(): StoryInfo[] {
         extraDescription = translate('tray.story.adguard.extra.desc.4');
         extraButtonTitle = translate('tray.story.adguard.extra.action.4');
         extraButtonAction = () => {
-            window.API.internalService.OpenSettingsWindow(new EmptyValue());
-            window.API.settingsService.RequestOpenSettingsPage(new StringValue({
+            window.API.Execute(new OpenSettingsWindowRequest());
+            window.API.Execute(new RequestOpenSettingsPageRequest
+                ({
                 value: RouteNameSettings.advanced_blocking,
             }));
         };
@@ -393,16 +398,16 @@ export function useStoriesConfig(): StoryInfo[] {
         extraDescription = translate('tray.story.adguard.extra.desc.3');
         extraButtonTitle = translate('tray.story.adguard.extra.action.3');
         extraButtonAction = () => {
-            window.API.internalService.OpenSettingsWindow(new EmptyValue());
-            window.API.settingsService.RequestOpenSettingsPage(new StringValue({
+            window.API.Execute(new OpenSettingsWindowRequest());
+            window.API.Execute(new RequestOpenSettingsPageRequest({
                 value: RouteNameSettings.license,
             }));
             if (license.license?.appStoreSubscription || (settings.isMASReleaseVariant)) {
                 settings.requestOpenPaywallScreen();
             } else {
-                API.accountService.RequestSubscribe(
-                    new SubscriptionMessage({ subscriptionType: Subscription.standalone }),
-                );
+                window.API.Execute(new RequestSubscribeRequest(
+                    { subscriptionType: Subscription.standalone },
+                ));
             }
         };
     }

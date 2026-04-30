@@ -4,7 +4,8 @@
 
 import { observer } from 'mobx-react-lite';
 
-import { StringValue, Subscription } from 'Apis/types';
+import { RequestRenewRequest } from 'Apis/requests/AccountService';
+import { Subscription } from 'Apis/types';
 import { provideTrialDaysParam } from 'Common/utils/translate';
 import { useSettingsStore } from 'SettingsLib/hooks';
 import { SettingsEvent } from 'SettingsStore/modules';
@@ -181,7 +182,7 @@ function PerksOfTheFullVersionComponent({
         const onClickHandler = () => {
             const key = account.license.license?.licenseKey?.getHiddenValue() || '';
             if (isTrialActive) {
-                window.API.accountService.RequestRenew(new StringValue({ value: key }));
+                window.API.Execute(new RequestRenewRequest({ value: key }));
             } else if (isLicenseExpired) {
                 account.requestRenewLicense(key);
             } else if (isAppStoreSubscription || (isMASReleaseVariant && isFreeware)) {

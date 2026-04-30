@@ -5,7 +5,8 @@
 import { observer } from 'mobx-react-lite';
 import { useState } from 'preact/hooks';
 
-import { Subscription, StringValue, ABTestOption, ActiveABTest } from 'Apis/types';
+import { RequestRenewRequest } from 'Apis/requests/AccountService';
+import { Subscription, ABTestOption, ActiveABTest } from 'Apis/types';
 import { useABTest, useSettingsStore, useTheme } from 'SettingsLib/hooks';
 import { RouteName, SettingsEvent } from 'SettingsStore/modules';
 import { Logo, Layout, Text, Button } from 'UILib';
@@ -40,7 +41,7 @@ function MenuComponent() {
     const handleGetFullVersionClick = () => {
         const key = account.license.license?.licenseKey?.getHiddenValue() || '';
         if (isTrialActive) {
-            window.API.accountService.RequestRenew(new StringValue({ value: key }));
+            window.API.Execute(new RequestRenewRequest({ value: key }));
         } else if (isLicenseExpired) {
             account.requestRenewLicense(key);
         } else if (isAppStoreSubscription || (settings.isMASReleaseVariant && isFreeware)) {

@@ -5,7 +5,8 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect } from 'preact/hooks';
 
-import { EmptyValue, ReleaseVariants } from 'Apis/types';
+import { RequestApplicationUpdateRequest } from 'Apis/requests/SettingsService';
+import { ReleaseVariants } from 'Apis/types';
 import { ADGUARD_MINI_TITLE } from 'Common/utils/consts';
 import theme from 'Theme';
 import { useTrayStore, useMoreFrequentUpdatesNotify, useDateFormat, DATE_FORMAT } from 'TrayLib/hooks';
@@ -75,7 +76,7 @@ function CheckUpdatesComponent() {
     }
 
     const onUpdate = () => {
-        window.API.settingsService.RequestApplicationUpdate(new EmptyValue());
+        window.API.Execute(new RequestApplicationUpdateRequest());
     };
 
     const onFiltersFix = () => {

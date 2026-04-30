@@ -4,16 +4,12 @@
 
 import { makeAutoObservable, observable, runInAction } from 'mobx';
 
+import { ConfirmAddCustomFilterRequest, DeleteCustomFiltersRequest, GetEnabledFiltersIdsRequest, GetFiltersGroupedByExtensionsRequest, GetFiltersIndexRequest, GetFiltersMetadataRequest, UpdateCustomFilterRequest, UpdateFiltersRequest, UpdateLanguageSpecificRequest } from 'Apis/requests/FiltersService';
 import {
     FiltersGroupedByExtensions,
-    CustomFilterToAdd,
-    CustomFilterUpdateRequest,
-    EmptyValue,
     Filters as FiltersEnt,
     FiltersIndex,
-    CustomFiltersToDelete,
     FiltersUpdate,
-    BoolValue,
 } from 'Apis/types';
 
 import type { Filter } from 'Apis/types';
@@ -76,9 +72,7 @@ export class Filters {
      * Delete custom filters
      */
     private async deleteCustomFilters(filtersIds: Filter['id'][]) {
-        const error = await window.API.filtersService.DeleteCustomFilters(
-            new CustomFiltersToDelete({ filtersIds }),
-        );
+        const error = await window.API.Execute(new DeleteCustomFiltersRequest({ filtersIds }));
 
         if (error.hasError) {
             return error;
@@ -92,7 +86,7 @@ export class Filters {
      * Get filters settings from swift
      */
     public async getFilters() {
-        const resp = await window.API.filtersService.GetFiltersMetadata(new EmptyValue());
+        const resp = await window.API.Execute(new GetFiltersMetadataRequest());
         this.setFilters(resp);
     }
 
@@ -100,7 +94,7 @@ export class Filters {
      * Get enabled filters ids
      */
     public async getEnabledFilters() {
-        const resp = await window.API.filtersService.GetEnabledFiltersIds(new EmptyValue());
+        const resp = await window.API.Execute(new GetEnabledFiltersIdsRequest());
         this.setEnabledFilters(resp.ids);
     }
 
@@ -138,7 +132,7 @@ export class Filters {
      * Get filters index from swift
      */
     public async getFiltersIndex() {
-        const index = await window.API.filtersService.GetFiltersIndex(new EmptyValue());
+        const index = await window.API.Execute(new GetFiltersIndexRequest());
         this.setIndex(index);
     }
 
@@ -183,7 +177,7 @@ export class Filters {
         this.updateLocalEnabledFilters(ids, isEnabled);
 
         const data = new FiltersUpdate({ ids, isEnabled });
-        const hasError = await window.API.filtersService.UpdateFilters(data);
+        const hasError = await window.API.Execute(new UpdateFiltersRequest(data));
 
         if (hasError.hasError) {
             this.setEnabledFilters(prevState);
@@ -219,7 +213,7 @@ export class Filters {
      * @param isTrusted
      */
     public async updateCustomFilter(filterId: number, title: string, isTrusted: boolean) {
-        const error = await window.API.filtersService.UpdateCustomFilter(new CustomFilterUpdateRequest({
+        const error = await window.API.Execute(new UpdateCustomFilterRequest({
             filterId,
             title,
             isTrusted,
@@ -299,7 +293,7 @@ export class Filters {
      * Add custom filter
      */
     public async addCustomFilter(url: string, title: string, isTrusted: boolean) {
-        const error = await window.API.filtersService.ConfirmAddCustomFilter(new CustomFilterToAdd({
+        const error = await window.API.Execute(new ConfirmAddCustomFilterRequest({
             url, title, trusted: isTrusted,
         }));
         if (error.hasError) {
@@ -312,7 +306,7 @@ export class Filters {
      * Request info of enabled filters divided by extensions
      */
     public async getFiltersGroupedByExtension() {
-        const data = await window.API.filtersService.GetFiltersGroupedByExtensions(new EmptyValue());
+        const data = await window.API.Execute(new GetFiltersGroupedByExtensionsRequest());
         this.setFiltersGroupedByExtension(data);
     }
 
@@ -328,7 +322,7 @@ export class Filters {
      * @param value bool - current value of language specific
      */
     public updateLanguageSpecific(value: boolean) {
-        window.API.filtersService.UpdateLanguageSpecific(new BoolValue({ value }));
+        window.API.Execute(new UpdateLanguageSpecificRequest({ value }));
         this.languageSpecific = value;
     }
 

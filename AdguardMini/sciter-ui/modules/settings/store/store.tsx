@@ -4,7 +4,7 @@
 
 import { createContext } from 'preact';
 
-import { EmptyValue } from 'Apis/types';
+import { GetEffectiveThemeRequest } from 'Apis/requests/SettingsService';
 import { Action } from 'Common/utils/EventAction';
 
 import {
@@ -113,7 +113,7 @@ export class SettingsStore {
      * Get effective theme
      */
     public async getEffectiveTheme(): Promise<EffectiveTheme> {
-        const { value } = await window.API.settingsService.GetEffectiveTheme(new EmptyValue());
+        const { value } = await window.API.Execute(new GetEffectiveThemeRequest());
         return value;
     }
 

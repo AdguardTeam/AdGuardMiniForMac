@@ -4,7 +4,8 @@
 
 import { makeAutoObservable } from 'mobx';
 
-import { EmptyValue, Path, StringValue, UserRule, UserRules as UserRulesEnt } from 'Apis/types';
+import { AddUserRuleRequest, ExportUserRulesRequest, GetUserRulesRequest, ImportUserRulesRequest, ResetUserRulesRequest, UpdateUserRulesRequest } from 'Apis/requests/UserRulesService';
+import { UserRule, UserRules as UserRulesEnt } from 'Apis/types';
 import { withLast } from 'Common/utils/queue';
 
 import type { OptionalError, UserRulesCallbackState } from 'Apis/types';
@@ -54,7 +55,7 @@ export class UserRules {
      * Get user rules
      */
     public async getUserRules() {
-        const resp = await window.API.userRulesService.GetUserRules(new EmptyValue());
+        const resp = await window.API.Execute(new GetUserRulesRequest());
         this.setUserRules(resp);
     }
 
@@ -63,7 +64,7 @@ export class UserRules {
      * @param rule new rule
      */
     public async addUserRule(rule: string) {
-        const error = await window.API.userRulesService.AddUserRule(new StringValue({ value: rule }));
+        const error = await window.API.Execute(new AddUserRuleRequest({ value: rule }));
         if (error.hasError) {
             return error;
         }
@@ -81,7 +82,7 @@ export class UserRules {
         const prevUserRules = newRules.rules.map((r) => new UserRule({ rule: r.rule, enabled: r.enabled }));
         newRules.rules = rules;
         this.setUserRules(newRules);
-        const error = await window.API.userRulesService.UpdateUserRules(newRules);
+        const error = await window.API.Execute(new UpdateUserRulesRequest(newRules));
         if (error.hasError) {
             return [error, prevUserRules];
         }
@@ -93,7 +94,7 @@ export class UserRules {
      * @param path path to save file
      */
     public async exportUserRules(path: string) {
-        const error = await window.API.userRulesService.ExportUserRules(new Path({ path }));
+        const error = await window.API.Execute(new ExportUserRulesRequest({ path }));
         if (error.hasError) {
             return error;
         }
@@ -104,7 +105,7 @@ export class UserRules {
      * @param path path to read file
      */
     public async importUserRules(path: string) {
-        const resp = await window.API.userRulesService.ImportUserRules(new Path({ path }));
+        const resp = await window.API.Execute(new ImportUserRulesRequest({ path }));
         this.setUserRules(resp);
     }
 
@@ -112,7 +113,7 @@ export class UserRules {
      * Reset user rules to defaults
      */
     public async resetUserRules() {
-        const resp = await window.API.userRulesService.ResetUserRules(new EmptyValue());
+        const resp = await window.API.Execute(new ResetUserRulesRequest());
         this.setUserRules(resp);
     }
 
@@ -140,7 +141,7 @@ export class UserRules {
      * Saves only last element
      */
     private readonly commitUserRules = withLast<UserRulesEnt, OptionalError>(async (data) => {
-        return window.API.userRulesService.UpdateUserRules(data);
+        return window.API.Execute(new UpdateUserRulesRequest(data));
     }, 'commitUserRules');
 
     /**

@@ -4,7 +4,9 @@
 
 import { makeAutoObservable } from 'mobx';
 
-import { AppInfo as AppInfoEnt, EmptyValue } from 'Apis/types';
+import { GetAboutRequest } from 'Apis/requests/AppInfoService';
+import { CheckApplicationVersionRequest, RequestApplicationUpdateRequest } from 'Apis/requests/SettingsService';
+import { AppInfo as AppInfoEnt } from 'Apis/types';
 
 import type { SettingsStore } from 'SettingsStore';
 
@@ -47,7 +49,7 @@ export class AppInfo {
      * receive app info from sciter
      */
     public async getAppInfo() {
-        const resp = await window.API.appInfoService.GetAbout(new EmptyValue());
+        const resp = await window.API.Execute(new GetAboutRequest());
         this.setAppInfo(resp);
     }
 
@@ -65,7 +67,7 @@ export class AppInfo {
         if (Date.now() < (this.lastTimeUpdate || 0) + CHECK_UPDATES_INTERVAL) {
             return;
         }
-        window.API.settingsService.CheckApplicationVersion(new EmptyValue());
+        window.API.Execute(new CheckApplicationVersionRequest());
     }
 
     /**
@@ -79,7 +81,7 @@ export class AppInfo {
      * Request update of application
      */
     public async requestUpdate() {
-        window.API.settingsService.RequestApplicationUpdate(new EmptyValue());
+        window.API.Execute(new RequestApplicationUpdateRequest());
     }
 
     /**

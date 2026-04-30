@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { BoolValue } from 'Apis/types';
+import { UpdateAllowTelemetryRequest } from 'Apis/requests/SettingsService';
 
 import { PrimaryAndSecondaryButtons } from './PrimaryAndSecondaryButtons/PrimaryAndSecondaryButtons';
 
@@ -19,7 +19,7 @@ export const telemetryStoryFrameButtonsWrapper = (showLearnMore: boolean) => fun
     return (
         <PrimaryAndSecondaryButtons
             primaryButtonAction={() => {
-                window.API.settingsService.UpdateAllowTelemetry(new BoolValue({ value: true }));
+                window.API.Execute(new UpdateAllowTelemetryRequest({ value: true }));
                 frameIdNavigation('telemetry4');
             }}
             primaryButtonTitle={translate('telemetry.story.frame.button.share')}

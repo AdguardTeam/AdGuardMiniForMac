@@ -4,6 +4,7 @@
 
 import { useCallback, useEffect, useRef } from 'preact/hooks';
 
+import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SettingsService';
 import { OptionalStringValue } from 'Apis/types';
 import { getCountableEntityStatuses } from 'Modules/common/utils/utils';
 import { useSettingsStore } from 'SettingsLib/hooks';
@@ -25,7 +26,7 @@ export function useShowEnableExtensionsNotification() {
     );
 
     const openSafariPref = () => {
-        window.API.settingsService.OpenSafariExtensionPreferences(new OptionalStringValue());
+        window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
         telemetry.trackEvent(SettingsEvent.FixItClick);
     };
 

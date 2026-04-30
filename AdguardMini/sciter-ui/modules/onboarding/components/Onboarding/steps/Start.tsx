@@ -5,7 +5,7 @@
 import { observer } from 'mobx-react-lite';
 import { useState } from 'preact/hooks';
 
-import { BoolValue } from 'Apis/types';
+import { UpdateAllowTelemetryRequest } from 'Apis/requests/SettingsService';
 import { getTdsLink, TDS_PARAMS } from 'Modules/common/utils/links';
 import { useOnboardingStore } from 'OnboardingLib/hooks';
 import { OnboardingSteps } from 'OnboardingStore/modules';
@@ -34,7 +34,7 @@ function StartComponent({ trackPage }: StartProps) {
 
     const action = async () => {
         if (telemetry) {
-            await window.API.settingsService.UpdateAllowTelemetry(new BoolValue({ value: true }));
+            await window.API.Execute(new UpdateAllowTelemetryRequest({ value: true }));
             trackPage();
         }
         steps.setCurrentStep(

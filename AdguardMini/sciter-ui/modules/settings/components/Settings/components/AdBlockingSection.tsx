@@ -4,6 +4,7 @@
 
 import { observer } from 'mobx-react-lite';
 
+import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SettingsService';
 import { OptionalStringValue } from 'Apis/types';
 import { getCountableEntityStatuses } from 'Modules/common/utils/utils';
 import { useSettingsStore } from 'SettingsLib/hooks';
@@ -39,9 +40,7 @@ export const AdBlockingSection = observer(() => {
                     type="text"
                     onClick={(e) => {
                         e?.stopPropagation();
-                        window.API.settingsService.OpenSafariExtensionPreferences(
-                            new OptionalStringValue(),
-                        );
+                        window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
                     }}
                 >
                     <Text className={theme.color.orange} type="t2">

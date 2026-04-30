@@ -5,7 +5,7 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'preact/hooks';
 
-import { SupportMessage } from 'Apis/types';
+import { SendFeedbackMessageRequest } from 'Apis/requests/SettingsService';
 import { useSettingsStore } from 'SettingsLib/hooks';
 import { RouteName, SettingsEvent } from 'SettingsStore/modules';
 import th from 'Theme';
@@ -103,7 +103,7 @@ function SupportContactComponent() {
         // We don't add logs, when user suggest feature
         const sendLogs = theme.value === 'suggest' ? false : addLogs;
 
-        const { hasError } = await window.API.settingsService.SendFeedbackMessage(new SupportMessage({
+        const { hasError } = await window.API.Execute(new SendFeedbackMessageRequest({
             email,
             message,
             addLogs: sendLogs,
