@@ -27,7 +27,7 @@ export class StoryNavigation {
      *
      */
     public get length() {
-        return this.storyInfo.totalFrames || this.storyInfo.frames.length;
+        return Math.min(this.storyInfo.totalFrames || this.storyInfo.frames.length, this.storyInfo.frames.length);
     }
 
     /**

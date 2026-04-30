@@ -33,11 +33,14 @@ export function FlushCompletedStories({ children, currentStory }: FlushCompleted
     useEffect(() => {
         // Save new order only on unmount
         return () => {
-            completedStoriesRef.current.forEach((storyId) => {
+            // Avoid duplicate writes when the same story is completed more than once.
+            const completedStories = [...new Set(completedStoriesRef.current)];
+
+            completedStories.forEach((storyId) => {
                 settings.setCompletedStory(storyId);
             });
         };
-    }, []);
+    }, [settings]);
 
     return children({ addCompletedStory: onStoryCompleted });
 }

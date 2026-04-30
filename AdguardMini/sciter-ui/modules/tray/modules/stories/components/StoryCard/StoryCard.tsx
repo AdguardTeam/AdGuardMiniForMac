@@ -10,11 +10,11 @@ import { Text, Icon } from 'UILib';
 
 import s from './StoryCard.module.pcss';
 
-import type { StoryInfo } from 'Modules/tray/modules/stories/model';
+import type { StoryId, StoryInfo } from 'Modules/tray/modules/stories/model';
 
 export type StoryCardProps = Omit<StoryInfo, 'storyConfig'> & {
-    storyIndex: number;
-    setSelectedStoryIndex(index: number): void;
+    storyId: StoryId;
+    setSelectedStoryId(storyId: StoryId): void;
     className?: string;
 };
 
@@ -25,8 +25,8 @@ function StoryCardComponent({
     style = 'default',
     icon,
     text,
-    storyIndex,
-    setSelectedStoryIndex,
+    storyId,
+    setSelectedStoryId,
     className,
     telemetryEvent,
     content,
@@ -34,11 +34,11 @@ function StoryCardComponent({
     const { telemetry } = useTrayStore();
 
     const onClick = useCallback(() => {
-        setSelectedStoryIndex(storyIndex);
+        setSelectedStoryId(storyId);
         if (telemetryEvent) {
             telemetry.trackEvent(telemetryEvent);
         }
-    }, [setSelectedStoryIndex, storyIndex, telemetry, telemetryEvent]);
+    }, [setSelectedStoryId, storyId, telemetry, telemetryEvent]);
 
     return (
         <div className={cx(s.StoryCard, s[`StoryCard__${style}`], className)} onClick={onClick}>

@@ -5,7 +5,7 @@
         "moduleResolution": "node",
         "strict": true,
         "esModuleInterop": true,
-        "outDir": "build/tests/number",
+        "outDir": "build/tests",
         "rootDir": ".",
         "resolveJsonModule": true,
         "declaration": false,
@@ -13,6 +13,6 @@
         "skipLibCheck": true
     },
     "include": [
-        "AdguardMini/sciter-ui/modules/common/lib/number/**/*.ts"
+        "AdguardMini/sciter-ui/tests/**/*.ts"
     ]
 }

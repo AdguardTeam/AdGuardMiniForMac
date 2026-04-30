@@ -104,6 +104,7 @@ adguard-mini/
 │   │   │   ├── inline/                   # Inline element blocking UI
 │   │   │   └── lottie/                   # Lottie animations
 │   │   ├── schema/                       # Protobuf schema definitions
+│   │   ├── tests/                        # Shared TypeScript node:test suites
 │   │   └── scripts/                      # Webpack configs, lint, build scripts
 │   └── sciter-js-sdk/                    # Sciter JS SDK (vendored)
 ├── fastlane/                             # Fastlane automation (Ruby)

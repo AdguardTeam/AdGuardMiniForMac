@@ -30,7 +30,7 @@
     "locales:pushMaster": "sciter-infra-utils locales-push",
     "theme:generate": "sciter-infra-utils generate-stylesheets ./AdguardMini/sciter-ui/modules/common/theme/default ADG",
     "watchProject": "nodemon --exec ./AdguardMini/Scripts/rebuildDebugBuild.sh",
-    "test:number": "tsc -p tsconfig.format-number-test.json && node --test build/tests/number/AdguardMini/sciter-ui/modules/common/lib/number/index.test.js"
+    "test:node": "tsc -p tsconfig.node-tests.json && node --test build/tests/AdguardMini/sciter-ui/tests/**/*.test.js"
   },
   "dependencies": {
     "@adg/sciter-utils-kit": "^0.6.4",

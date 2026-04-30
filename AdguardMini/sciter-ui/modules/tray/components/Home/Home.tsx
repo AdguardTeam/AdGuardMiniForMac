@@ -4,7 +4,7 @@
 
 import { clamp } from '@adg/sciter-utils-kit';
 import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { Fragment } from 'preact/jsx-runtime';
 
 import { EmptyValue, OptionalStringValue } from 'Apis/types';
@@ -19,8 +19,11 @@ import { StoryNavigation } from '../../modules/stories/classes';
 import { StoriesLayer, StoryCard } from '../../modules/stories/components';
 import { FlushCompletedStories } from '../../modules/stories/components/FlushCompletedStories';
 import { useStoriesConfig } from '../../modules/stories/hooks';
+import { resolveStoryEntryFrame } from '../../modules/stories/utils/navigationBoundary';
 
 import s from './Home.module.pcss';
+
+import type { StoryId } from '../../modules/stories/model';
 
 const STORIES_CONTAINER_WIDTH = 344;
 const STORY_SWITCH_INTERACTABLE_AREA_WIDTH = 156;
@@ -41,10 +44,80 @@ function HomeComponent() {
     const { settings: traySettings } = settings;
 
     const stories = useStoriesConfig();
-    const [storyIndex, setStoryIndex] = useState(-1);
+    const [selectedStoryId, setSelectedStoryId] = useState<StoryId | null>(null);
+    // Snapshot of Home cards order used during story-session navigation.
+    const [storiesNavigationOrder, setStoriesNavigationOrder] = useState<StoryId[]>([]);
+    const [storyEntryMode, setStoryEntryMode] = useState<'first' | 'last'>('first');
     const [isLoading, setIsLoading] = useState(false);
-    const moveToNextStory = useCallback(() => setStoryIndex((prev) => prev + 1), []);
-    const closeStories = useCallback(() => setStoryIndex(-1), []);
+
+    const storiesById = useMemo(() => {
+        return new Map(stories.map(({ storyConfig }) => [storyConfig.id, storyConfig] as const));
+    }, [stories]);
+    const orderedStoryIds = storiesNavigationOrder.length > 0
+        ? storiesNavigationOrder
+        : stories.map(({ storyConfig }) => storyConfig.id);
+
+    const currentStoryIndex = selectedStoryId !== null
+        ? orderedStoryIds.findIndex((storyId) => storyId === selectedStoryId)
+        : -1;
+
+    // Finds previous/next story using the captured order, skipping stories no longer present.
+    const getAdjacentStoryId = useCallback((direction: -1 | 1) => {
+        if (currentStoryIndex < 0) {
+            return null;
+        }
+
+        for (
+            let nextIndex = currentStoryIndex + direction;
+            nextIndex >= 0 && nextIndex < orderedStoryIds.length;
+            nextIndex += direction
+        ) {
+            const candidateStoryId = orderedStoryIds[nextIndex];
+            if (storiesById.has(candidateStoryId)) {
+                return candidateStoryId;
+            }
+        }
+
+        return null;
+    }, [currentStoryIndex, orderedStoryIds, storiesById]);
+
+    // Freeze the current Home order at open time to keep in-story navigation consistent.
+    const openStory = useCallback((storyId: StoryId) => {
+        setStoriesNavigationOrder(stories.map(({ storyConfig }) => storyConfig.id));
+        setStoryEntryMode('first');
+        setSelectedStoryId(storyId);
+    }, [stories]);
+
+    const moveToNextStory = useCallback(() => {
+        const nextStoryId = getAdjacentStoryId(1);
+
+        if (nextStoryId === null) {
+            setStoryEntryMode('first');
+            setStoriesNavigationOrder([]);
+            setSelectedStoryId(null);
+            return;
+        }
+
+        setStoryEntryMode('first');
+        setSelectedStoryId(nextStoryId);
+    }, [getAdjacentStoryId]);
+
+    const moveToPreviousStory = useCallback(() => {
+        const previousStoryId = getAdjacentStoryId(-1);
+
+        if (previousStoryId === null) {
+            return;
+        }
+
+        setStoryEntryMode('last');
+        setSelectedStoryId(previousStoryId);
+    }, [getAdjacentStoryId]);
+
+    const closeStories = useCallback(() => {
+        setStoryEntryMode('first');
+        setStoriesNavigationOrder([]);
+        setSelectedStoryId(null);
+    }, []);
 
     const [isDarkTheme, setIsDarkTheme] = useState(false);
 
@@ -207,8 +280,18 @@ function HomeComponent() {
         }
     };
 
-    const currentStory = stories[storyIndex]?.storyConfig
-        ? new StoryNavigation(stories[storyIndex]?.storyConfig) : undefined;
+    const currentStoryConfig = selectedStoryId !== null
+        ? storiesById.get(selectedStoryId)
+        : undefined;
+    const currentStory = currentStoryConfig
+        ? new StoryNavigation(currentStoryConfig)
+        : undefined;
+
+    if (currentStory && storyEntryMode === 'last') {
+        // Enter previous story from its last visible frame.
+        const entryIndex = resolveStoryEntryFrame(currentStory.length, 'last');
+        currentStory.setIndex(entryIndex);
+    }
 
     return (
         <Fragment>
@@ -219,8 +302,10 @@ function HomeComponent() {
                             key={currentStory!.id}
                             addCompletedStory={addCompletedStory}
                             closeStories={closeStories}
+                            hasPreviousStory={getAdjacentStoryId(-1) !== null}
                             isMASReleaseVariant={settings.isMASReleaseVariant}
                             moveToNextStory={moveToNextStory}
+                            moveToPreviousStory={moveToPreviousStory}
                             story={currentStory!}
                         />
                     )}
@@ -306,12 +391,12 @@ function HomeComponent() {
                             onScroll={handleStoriesCardsScroll}
                         >
                             <div className={s.Home_stories_container}>
-                                {stories.map((props, index) => (
+                                {stories.map((props) => (
                                     <StoryCard
                                         {...props}
                                         key={props.storyConfig.id}
-                                        setSelectedStoryIndex={setStoryIndex}
-                                        storyIndex={index}
+                                        setSelectedStoryId={openStory}
+                                        storyId={props.storyConfig.id}
                                     />
                                 ))}
                             </div>
