@@ -31,6 +31,7 @@ final class DIContainer {
     let sharedSettingsStorage: SharedSettingsStorage = SharedSettingsStorageImpl()
     let mainAppDiscovery: MainAppDiscovery = MainAppDiscoveryImpl()
     let blockingStatsReporter: BlockingStatsReporter
+    let perTabStatsTracker: PerTabStatsTracker = PerTabStatsTracker()
 
     // MARK: Private properties
 
@@ -71,7 +72,9 @@ final class DIContainer {
             advancedBlocker: self.advancedBlockerHandler,
             mainAppDiscovery: self.mainAppDiscovery,
             safariApp: self.safariApp,
-            validationStatePreparer: self.validationStatePreparer
+            validationStatePreparer: self.validationStatePreparer,
+            perTabStatsTracker: self.perTabStatsTracker,
+            sharedSettingsStorage: self.sharedSettingsStorage
         )
         safariApi.delegate = self.popupViewModel
         self.mainView = PopupView(viewModel: self.popupViewModel)

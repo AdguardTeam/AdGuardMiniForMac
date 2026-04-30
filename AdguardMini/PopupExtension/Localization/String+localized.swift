@@ -18,15 +18,10 @@ extension String.localized
         /** Domain view - Item title "Secure page" */
         static public let item_title_secure_page : String = { .localized.string ("item_title_secure_page", in: "Localizable") }()
 
-        /** `"Protection is off for this website as it may interfere with its operation"` */
+        /** `"Website protection disabled"` */
         /** */
-        /** Domain view - Domain Item hint "Protection is off for this domain" */
+        /** Domain view - Domain Item hint "Website protection disabled" */
         static public let item_hint_domain_protection_off : String = { .localized.string ("item_hint_domain_protection_off", in: "Localizable") }()
-
-        /** `"Protection"` */
-        /** */
-        /** Domain view - Item title "Protection" */
-        static public let item_title_protection : String = { .localized.string ("item_title_protection", in: "Localizable") }()
 
         /** `"Some extensions are off"` */
         /** */
@@ -52,6 +47,16 @@ extension String.localized
         /** */
         /** Domain view - Item title "Rate AdGuard Mini" */
         static public let item_title_rate_adguard_mini : String = { .localized.string ("item_title_rate_adguard_mini", in: "Localizable") }()
+
+        /** `"%d ads blocked"` */
+        /** */
+        /** Domain view - Stats label "{count} ad(s) blocked" */
+        static public let item_stats_ads_blocked : String = { .localized.string ("item_stats_ads_blocked", in: "Localizable") }()
+
+        /** `"%d trackers blocked"` */
+        /** */
+        /** Domain view - Stats label "{count} tracker(s) blocked" */
+        static public let item_stats_trackers_blocked : String = { .localized.string ("item_stats_trackers_blocked", in: "Localizable") }()
 
         /** `"Protection is disabled"` */
         /** */

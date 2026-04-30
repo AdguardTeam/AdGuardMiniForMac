@@ -87,6 +87,7 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
     private let advancedBlockerHandler: AdvancedBlockerHandler
     private let appDiscovery: MainAppDiscovery
     private let statsReporter: BlockingStatsReporter
+    private let perTabStatsTracker: PerTabStatsTracker
 
     // MARK: Init
 
@@ -100,6 +101,7 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
         self.advancedBlockerHandler = container.advancedBlockerHandler
         self.appDiscovery = container.mainAppDiscovery
         self.statsReporter = container.blockingStatsReporter
+        self.perTabStatsTracker = container.perTabStatsTracker
 
         super.init()
 
@@ -127,7 +129,20 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 
         LogDebug("Content blocker \(blockerType) blocked \(urls.count) resource(s)")
 
+        Task {
+            await self.perTabStatsTracker.trackBlocked(on: page, urls: urls, blockerType: blockerType)
+            await self.perTabStatsTracker.evictStaleEntries()
+            SFSafariApplication.setToolbarItemsNeedUpdate()
+        }
+
         self.statsReporter.enqueueBlocking(pageHash: page.hashValue, urls: urls, blockerType: blockerType)
+    }
+
+    override func page(_ page: SFSafariPage, willNavigateTo url: URL?) {
+        Task {
+            await self.perTabStatsTracker.resetStats(on: page, to: url)
+            SFSafariApplication.setToolbarItemsNeedUpdate()
+        }
     }
 
     // This is required by the signature of the function we're overwriting

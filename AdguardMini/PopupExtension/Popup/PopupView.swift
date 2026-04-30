@@ -74,8 +74,17 @@ struct PopupView: View {
                     hasAttention: !self.viewModel.isAllExtensionsEnabled
                 ),
                 domain: self.viewModel.domain,
-                hint: .localized.base.item_hint_domain_protection_off,
-                protectionTitle: .localized.base.item_title_protection,
+                hint: self.viewModel.isSystemPage
+                    ? nil
+                    : .localized.base.item_hint_domain_protection_off,
+                adsBlockedText: self.formatStatsLine(
+                    count: self.viewModel.adsBlocked,
+                    format: .localized.base.item_stats_ads_blocked
+                ),
+                trackersBlockedText: self.formatStatsLine(
+                    count: self.viewModel.trackersBlocked,
+                    format: .localized.base.item_stats_trackers_blocked
+                ),
                 attentionConfiguration: .init(
                     title: .localized.base.item_attention_title_extensions_off,
                     buttonText: .localized.base.item_attention_button_title_fix_it,
@@ -95,6 +104,12 @@ struct PopupView: View {
 //                )
             )
         )
+    }
+
+    private func formatStatsLine(count: Int, format: String) -> String? {
+        guard !self.viewModel.isSystemPage else { return nil }
+        let formatted = NumberFormatter.localizedString(from: NSNumber(value: count), number: .decimal)
+        return String.localizedStringWithFormat(format, count, formatted)
     }
 
     @ViewBuilder

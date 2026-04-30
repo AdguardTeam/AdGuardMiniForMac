@@ -43,6 +43,7 @@ extension ExchangeSettingsModel {
         var advancedRules: Bool?
         var adguardExtra: Bool?
         var launchOnStartup: Bool?
+        var showSafariToolbarBadge: Bool?
 
         // App level settings
 

@@ -40,30 +40,31 @@
       "zh-Hant": "Chinese Traditional (Taiwan)"
     },
     "localizable_files": [
-        "AdguardMini/sciter-ui/modules/common/intl/locales/en.json",
-        "AdguardMini/AdguardMini/Resources/en.lproj/Localizable.strings",
-        "AdguardMini/PopupExtension/Resources/en.lproj/*.strings",
-        "AdguardMini/GeneralContentBlocker/en.lproj/InfoPlist.strings",
-        "AdguardMini/PrivacyContentBlocker/en.lproj/InfoPlist.strings",
-        "AdguardMini/SecurityContentBlocker/en.lproj/InfoPlist.strings",
-        "AdguardMini/SocialContentBlocker/en.lproj/InfoPlist.strings",
-        "AdguardMini/OtherContentBlocker/en.lproj/InfoPlist.strings",
-        "AdguardMini/CustomContentBlocker/en.lproj/InfoPlist.strings"
+      "AdguardMini/sciter-ui/modules/common/intl/locales/en.json",
+      "AdguardMini/AdguardMini/Resources/en.lproj/Localizable.strings",
+      "AdguardMini/PopupExtension/Resources/en.lproj/*.strings",
+      "AdguardMini/PopupExtension/Resources/en.lproj/*.stringsdict",
+      "AdguardMini/GeneralContentBlocker/en.lproj/InfoPlist.strings",
+      "AdguardMini/PrivacyContentBlocker/en.lproj/InfoPlist.strings",
+      "AdguardMini/SecurityContentBlocker/en.lproj/InfoPlist.strings",
+      "AdguardMini/SocialContentBlocker/en.lproj/InfoPlist.strings",
+      "AdguardMini/OtherContentBlocker/en.lproj/InfoPlist.strings",
+      "AdguardMini/CustomContentBlocker/en.lproj/InfoPlist.strings"
     ],
     "metadata": {
-        "sciter_locales_file_index": 0,
-        "folders_map": {
-          "PopupExtension": "popup-extension",
-          "[\\w]*ContentBlocker": "content-blockers"
-        },
-        "filename_map": {
-          "GeneralContentBlocker/en.lproj/InfoPlist.strings": "contentblocker_general_InfoPlist.strings",
-          "PrivacyContentBlocker/en.lproj/InfoPlist.strings": "contentblocker_privacy_InfoPlist.strings",
-          "SecurityContentBlocker/en.lproj/InfoPlist.strings": "contentblocker_security_InfoPlist.strings",
-          "SocialContentBlocker/en.lproj/InfoPlist.strings": "contentblocker_social_InfoPlist.strings",
-          "OtherContentBlocker/en.lproj/InfoPlist.strings": "contentblocker_other_InfoPlist.strings",
-          "CustomContentBlocker/en.lproj/InfoPlist.strings": "contentblocker_custom_InfoPlist.strings"
-        }
+      "sciter_locales_file_index": 0,
+      "folders_map": {
+        "PopupExtension": "popup-extension",
+        "[\\w]*ContentBlocker": "content-blockers"
+      },
+      "filename_map": {
+        "GeneralContentBlocker/en.lproj/InfoPlist.strings": "contentblocker_general_InfoPlist.strings",
+        "PrivacyContentBlocker/en.lproj/InfoPlist.strings": "contentblocker_privacy_InfoPlist.strings",
+        "SecurityContentBlocker/en.lproj/InfoPlist.strings": "contentblocker_security_InfoPlist.strings",
+        "SocialContentBlocker/en.lproj/InfoPlist.strings": "contentblocker_social_InfoPlist.strings",
+        "OtherContentBlocker/en.lproj/InfoPlist.strings": "contentblocker_other_InfoPlist.strings",
+        "CustomContentBlocker/en.lproj/InfoPlist.strings": "contentblocker_custom_InfoPlist.strings"
+      }
     }
   }
 ]

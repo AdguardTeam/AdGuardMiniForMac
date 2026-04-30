@@ -35,19 +35,16 @@ public struct DomainView: View {
 
     public var body: some View {
         VStack(spacing: Space.zero) {
-            self.separator
             self.domain
             self.separator
-            self.protection
-            self.separator
+            Spacer.fixed(height: Margin.small)
             self.blockElement
-            self.separator
             self.reportAnIssue
-            self.separator
 //            self.rateAdguardMini
             if self.configuration.state.hasAttention {
                 self.attention
             }
+            Spacer.fixed(height: Margin.small)
         }
     }
 
@@ -62,41 +59,31 @@ public struct DomainView: View {
 
     @ViewBuilder
     private var domain: some View {
-        PopupCell(
-            configuration: .init(
-                content: .init(
-                    title: self.configuration.domain,
-                    hint: self.hintText,
-                    leftIcon: SEImage.Popup.webBrowsingSecurity
-                ),
-                appearance: .init(
-                    titleConfiguration: .domain(),
-                    hintConfiguration: .subtitle(
-                        alignment: .leading,
-                        multilineTextAlignment: .leading
-                    ),
-                    leftIconColor: Palette.Icon.productIcon
-                )
-            )
-        )
-    }
+        let lines: [String] = {
+            if let hint = self.hintText { return [hint] }
+            guard self.isProtectionEnabled else { return [] }
+            var result: [String] = []
+            if let adsText = self.configuration.adsBlockedText { result.append(adsText) }
+            if let trackersText = self.configuration.trackersBlockedText { result.append(trackersText) }
+            return result
+        }()
 
-    @ViewBuilder
-    private var protection: some View {
         PopupToggleCell(
             isOn: self.$isProtectionEnabled,
             configuration: .init(
                 content: .init(
-                    title: self.configuration.protectionTitle,
-                    leftIcon: SEImage.Popup.safari
+                    title: self.configuration.domain,
+                    subtitleLines: lines,
+                    leftIcon: SEImage.Popup.webBrowsingSecurity
                 ),
                 appearance: .init(
-                    titleConfiguration: .popupCell(),
-                    hintConfiguration: .subtitle(
+                    titleConfiguration: .domain(),
+                    subtitleConfiguration: .subtitle(
                         alignment: .leading,
                         multilineTextAlignment: .leading
                     ),
-                    leftIconColor: Palette.Icon.productIcon
+                    leftIconColor: Palette.Icon.productIcon,
+                    paddings: EdgeInsets(side: Margin.regular)
                 ),
                 isEnabled: !self.configuration.state.isDisabled
             )
@@ -120,7 +107,7 @@ public struct DomainView: View {
             isEnabled: !self.configuration.state.isDisabled,
             title: self.configuration.reportAnIssueConfiguration.title,
             leftIcon: SEImage.Popup.dislike,
-            leftIconColor: Palette.Icon.attentionIcon,
+            leftIconColor: Palette.Icon.productTertiaryIcon,
             action: self.configuration.reportAnIssueConfiguration.action
         )
     }
@@ -149,6 +136,13 @@ public struct DomainView: View {
     }
 }
 
+private extension Spacer {
+    static func fixed(height: CGFloat) -> some View {
+        Self(minLength: height)
+            .frame(height: height)
+    }
+}
+
 // MARK: - DomainView_Previews
 
 private enum PreviewBuilder {
@@ -158,9 +152,10 @@ private enum PreviewBuilder {
         hasAttention: Bool = false,
         domain: String = Self.defaultDomain,
         hint: String = Self.defaultHint,
+        adsBlockedText: String? = "2 ads blocked",
+        trackersBlockedText: String? = "5 trackers blocked",
         attentionTitle: String = Self.attentionTitle,
         attentionButtonTitle: String = Self.attentionButtonTitle,
-        protectionTitle: String = Self.protectionTitle,
         blockElementTitle: String = Self.blockElementTitle,
         reportAnIssueTitle: String = Self.reportAnIssueTitle,
 //        rateAdguardMiniConfiguration: String = Self.rateAdguardMiniConfiguration
@@ -181,7 +176,8 @@ private enum PreviewBuilder {
                     ),
                     domain: domain,
                     hint: hint,
-                    protectionTitle: protectionTitle,
+                    adsBlockedText: isProtectionEnabled ? adsBlockedText : nil,
+                    trackersBlockedText: isProtectionEnabled ? trackersBlockedText : nil,
                     attentionConfiguration: .init(
                         title: attentionTitle,
                         buttonText: attentionButtonTitle
@@ -212,11 +208,14 @@ private enum PreviewBuilder {
 
     static let defaultDomain = "fonts.google.com"
     static let defaultHint = "Protection is off for this website as it may interfere with its operation"
-    static let protectionTitle = "Protection"
     static let attentionTitle = "Some extensions are off"
     static let attentionButtonTitle = "Some extensions are off"
     static let blockElementTitle = "Block element"
     static let reportAnIssueTitle = "Report an issue"
+    static let oneAdBlocked = "1 ad blocked"
+    static let manyAdsBlocked = "1,234 ads blocked"
+    static let oneTrackerBlocked = "1 tracker blocked"
+    static let manyTrackersBlocked = "30,009 trackers blocked"
 //    static let rateAdguardMiniConfiguration = "Rate AdGuard Mini"
 }
 
@@ -268,15 +267,58 @@ private enum PreviewBuilder {
             PreviewBuilder.buildDomainView(
                 isDisabled: true,
                 domain: "Secure page",
-                hint: "Technically, you shouldn't see this text."
+                hint: "Technically, you shouldn't see this text.",
+                adsBlockedText: nil,
+                trackersBlockedText: nil
             )
 
             PreviewBuilder.buildDomainView(
                 isDisabled: true,
                 hasAttention: true,
                 domain: "Secure page",
-                hint: "Technically, you shouldn't see this text."
+                hint: "Technically, you shouldn't see this text.",
+                adsBlockedText: nil,
+                trackersBlockedText: nil
             )
+        }
+        .padding()
+    }
+}
+
+#Preview("Domain with stats") {
+    Group {
+        VStack {
+            VStack(spacing: Space.compact) {
+                Text("Single digit")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                PreviewBuilder.buildDomainView(
+                    adsBlockedText: PreviewBuilder.oneAdBlocked,
+                    trackersBlockedText: PreviewBuilder.oneTrackerBlocked
+                )
+            }
+            .padding(.vertical)
+
+            VStack(spacing: Space.compact) {
+                Text("Large numbers")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                PreviewBuilder.buildDomainView(
+                    adsBlockedText: PreviewBuilder.manyAdsBlocked,
+                    trackersBlockedText: PreviewBuilder.manyTrackersBlocked
+                )
+            }
+
+            VStack(spacing: Space.compact) {
+                Text("No stats")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                PreviewBuilder.buildDomainView(
+                    adsBlockedText: nil,
+                    trackersBlockedText: nil
+                )
+            }
+            .padding(.vertical)
         }
         .padding()
     }

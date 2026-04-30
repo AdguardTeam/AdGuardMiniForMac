@@ -34,7 +34,7 @@ extension Text.Configuration {
         isMultiline: Bool = false
     ) -> Self {
         .init(
-            font: Typography.Style.t1CondensedRegular.font,
+            font: Typography.Style.t2CondensedRegular.font,
             color: color,
             isMultiline: isMultiline
         )
@@ -60,7 +60,7 @@ extension Text.Configuration {
         multilineTextAlignment: TextAlignment = .center
     ) -> Self {
         .init(
-            font: Typography.Style.t1CondensedRegular.font,
+            font: Typography.Style.t2CondensedRegular.font,
             color: Palette.Text.description,
             isMultiline: isMultiline,
             alignment: alignment,

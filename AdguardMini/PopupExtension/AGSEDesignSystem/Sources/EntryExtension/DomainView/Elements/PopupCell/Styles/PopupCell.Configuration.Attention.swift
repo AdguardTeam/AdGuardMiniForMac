@@ -19,7 +19,7 @@ extension PopupCell.Configuration {
             content: .init(title: title, leftIcon: SEImage.Popup.attention),
             appearance: .init(
                 titleConfiguration: .popupCell(color: Palette.Text.attention),
-                hintConfiguration: .subtitle(),
+                subtitleConfiguration: .subtitle(),
                 leftIconColor: Palette.Icon.attentionIcon
             ),
             isEnabled: isEnabled

@@ -801,6 +801,8 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				DeduplicationState.swift,
+				PerTabStatsTracker.swift,
+				"SFSafariTab+TabKey.swift",
 			);
 			target = EB843F052B90ED15009179E0 /* AdguardMiniTests */;
 		};

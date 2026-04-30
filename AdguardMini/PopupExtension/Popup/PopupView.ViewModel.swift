@@ -55,10 +55,22 @@ extension PopupView {
         private let mainAppDiscovery: MainAppDiscovery
         private let safariApp: SafariApp
         private let validationStatePreparer: PopupStatePreparer
+        private let perTabStatsTracker: PerTabStatsTracker
+        private let sharedSettingsStorage: SharedSettingsStorage
 
         private var lastTimestamp: EBATimestamp = .zero
 
         private var isInValidation: Bool = false
+
+        /// When `true`, the next `validateToolbarItem` call will perform a full
+        /// validation with XPC queries. Set to `true` on state-changing events
+        /// (app state push, protection toggle, main app launch). Reset to `false`
+        /// after a successful full validation.
+        private var stateNeedsFullRefresh: Bool = true
+
+        /// URLs where the user paused per-site protection. Checked synchronously
+        /// in `renderToolbar` to suppress the badge without waiting for XPC.
+        private var pausedUrls: Set<String> = []
 
         private var runningAppMonitor = NSWorkspace.shared
             .publisher(for: \.runningApplications)
@@ -87,6 +99,9 @@ extension PopupView {
 
         @Published var isProtectionEnabledForUrl: Bool = true
 
+        @Published private(set) var adsBlocked: Int = 0
+        @Published private(set) var trackersBlocked: Int = 0
+
         var isBusy: Bool { self.popupState == .loading }
         var isPauseButtonAvailable: Bool { self.popupLayout == .domain }
 
@@ -97,13 +112,17 @@ extension PopupView {
             advancedBlocker: AdvancedBlockerHandler,
             mainAppDiscovery: MainAppDiscovery,
             safariApp: SafariApp,
-            validationStatePreparer: PopupStatePreparer
+            validationStatePreparer: PopupStatePreparer,
+            perTabStatsTracker: PerTabStatsTracker,
+            sharedSettingsStorage: SharedSettingsStorage
         ) {
             self.safariApi = safariApi
             self.advancedBlocker = advancedBlocker
             self.mainAppDiscovery = mainAppDiscovery
             self.safariApp = safariApp
             self.validationStatePreparer = validationStatePreparer
+            self.perTabStatsTracker = perTabStatsTracker
+            self.sharedSettingsStorage = sharedSettingsStorage
             self.setupPublishers()
         }
 
@@ -174,6 +193,14 @@ extension PopupView {
 
                     LogDebug("User protection status changed: \(newValue)")
                     self.setFilteringStatusWithUrl(self.currentUrl, isEnabled: newValue)
+                    let urlString = self.currentUrl?.absoluteString ?? ""
+                    if !newValue {
+                        self.adsBlocked = 0
+                        self.trackersBlocked = 0
+                        self.pausedUrls.insert(urlString)
+                    } else {
+                        self.pausedUrls.remove(urlString)
+                    }
                     self.sendTelemetryAsync(
                         .action(
                             .protectionPopupClick,
@@ -192,6 +219,7 @@ extension PopupView {
                     guard running else { return }
                     // Mark stale synchronously to prevent a one-frame switch to domain before refresh starts
                     self.isOnboardingStateFresh = false
+                    self.stateNeedsFullRefresh = true
                     Task { @MainActor in
                         // Main app just started; ensure we refresh and then revalidate toolbar
                         await self.refreshPrereqs(markStale: false, triggerToolbarUpdate: true)
@@ -204,12 +232,15 @@ extension PopupView {
 
         private func setFilteringStatusWithUrl(_ url: URL?, isEnabled: Bool) {
             guard let url = url?.absoluteString else { return }
+            self.stateNeedsFullRefresh = true
             self.performAction(actionName: .setFilteringStatusForUrl) {
                 _ = try await self.safariApi.setFilteringStatusWithUrl(url, isEnabled: isEnabled)
+                self.safariApp.setToolbarItemsNeedUpdate()
             }
         }
 
         private func setProtectionStatus(_ enabled: Bool) {
+            self.stateNeedsFullRefresh = true
             self.performAction(actionName: enabled ? .setProtectionStatusToEnabled : .setProtectionStatusToDisabled) {
                 let timestamp = try await self.safariApi.setProtectionStatus(enabled)
                 let appState = try await self.safariApi.appState(after: timestamp)
@@ -245,11 +276,13 @@ extension PopupView {
         @MainActor
         private func refreshPrereqs(markStale: Bool, triggerToolbarUpdate: Bool = false) async {
             if markStale { self.isOnboardingStateFresh = false }
-            if let completed = try? await self.safariApi.isOnboardingCompleted() {
+            async let completedResult = self.safariApi.isOnboardingCompleted()
+            async let allEnabledResult = self.safariApi.isAllExtensionsEnabled()
+            if let completed = try? await completedResult {
                 self.isOnboardingCompleted = completed
                 self.isOnboardingStateFresh = true
             }
-            if let allEnabled = try? await self.safariApi.isAllExtensionsEnabled() {
+            if let allEnabled = try? await allEnabledResult {
                 self.isAllExtensionsEnabled = allEnabled
             }
             if triggerToolbarUpdate {
@@ -433,9 +466,6 @@ extension PopupView.ViewModel: ToolbarHandler {
         LogDebugTrace()
 
         Task { @MainActor in
-            // Refresh prerequisites without triggering another toolbar update
-            await self.refreshPrereqs(markStale: false, triggerToolbarUpdate: false)
-
             await self.performToolbarValidation(window: window, validationHandler: validationHandler)
         }
     }
@@ -451,28 +481,63 @@ extension PopupView.ViewModel: ToolbarHandler {
             return
         }
 
-        if !self.isMainAppRunning || !self.isOnboardingStateFresh || !self.isOnboardingCompleted {
-            LogDebug("Main App is \(self.isMainAppRunning ? "" : "not ")running, onboardingFresh=\(self.isOnboardingStateFresh), onboarding is \(self.isOnboardingCompleted ? "" : "not ")completed -- state: false, result: true")
-            toolbarItem.setImage(SEImage.Toolbar.nsToolbarOff)
-            validationHandler(true, "")
+        // Step 1: Answer Safari immediately from cached state + fresh tab stats.
+        // Gating the badge counter on XPC caused multi-second lag when the main app was cold.
+        let tabStats = await self.perTabStatsTracker.getStatsForActiveTab(in: window)
+        self.renderToolbar(toolbarItem: toolbarItem, tabStats: tabStats, validationHandler: validationHandler)
+        if await self.safariApp.getActiveWindow() == window {
+            self.adsBlocked = tabStats.adsBlocked
+            self.trackersBlocked = tabStats.trackersBlocked
+        }
+
+        // Step 2: Refresh the cached per-URL state via XPC in the background.
+        // Safari triggers the next validation naturally on focus, navigation, or blocking events.
+        // Deliberately skip `setToolbarItemsNeedUpdate()` to avoid an infinite re-validate loop.
+        // Empty `tabStats.url` (tabs with no blocks yet) would otherwise cause such a loop.
+        let cachedUrlString = self.currentUrl?.absoluteString ?? ""
+        guard self.stateNeedsFullRefresh || tabStats.url.isEmpty || tabStats.url != cachedUrlString else { return }
+
+        await self.refreshPrereqs(markStale: false, triggerToolbarUpdate: false)
+        let state = await self.validationStatePreparer.prepareState(window: window, tabStats: tabStats)
+        self.stateNeedsFullRefresh = false
+
+        guard await self.safariApp.getActiveWindow() == window else {
+            LogDebug("Skipping @Published update for non-active window")
             return
         }
 
-        let state = await self.validationStatePreparer.prepareState(
-            window: window,
-            toolbarItem: toolbarItem
-        )
-        let popupIconState = state.popupIconState
-        let protectionForUrlState = state.protectionForUrlState
         self.isProtectionEnabled = state.isProtectionEnabled
-        self.currentUrl = protectionForUrlState.currentUrl
+        self.currentUrl = state.protectionForUrlState.currentUrl
 
         self.isInValidation = true
-        self.isProtectionEnabledForUrl = protectionForUrlState.isProtectionEnabledForCurrentUrl
+        self.isProtectionEnabledForUrl = state.protectionForUrlState.isProtectionEnabledForCurrentUrl
         self.isInValidation = false
 
-        toolbarItem.setImage(popupIconState.toolbarImage)
-        validationHandler(popupIconState.enabled, popupIconState.message)
+        // Re-render now that XPC has returned with the accurate per-URL state.
+        // Skipped for secure/system pages (empty tabStats.url) to avoid an infinite validation loop.
+        if !tabStats.url.isEmpty {
+            self.safariApp.setToolbarItemsNeedUpdate()
+        }
+    }
+
+    @MainActor
+    private func renderToolbar(
+        toolbarItem: SFSafariToolbarItem,
+        tabStats: TabStats,
+        validationHandler: (Bool, String) -> Void
+    ) {
+        let ready = self.isMainAppRunning && self.isOnboardingStateFresh && self.isOnboardingCompleted
+        // Use the cached per-URL protection state only when the URL matches currentUrl exactly.
+        // For any URL mismatch (tab switch, navigation) or secure/system page (empty URL),
+        // Optimistically assume protection is on — XPC will correct if needed.
+        let cachedUrlString = self.currentUrl?.absoluteString ?? ""
+        let urlMatches = !tabStats.url.isEmpty && tabStats.url == cachedUrlString
+        let isProtectedForUrl = !urlMatches || self.isProtectionEnabledForUrl
+        let isOn = ready && self.isProtectionEnabled && isProtectedForUrl
+        let isPaused = self.pausedUrls.contains(tabStats.url)
+        let badgeText = isOn && !isPaused && self.sharedSettingsStorage.showSafariToolbarBadge ? tabStats.badgeText : ""
+        toolbarItem.setImage(isOn ? SEImage.Toolbar.nsToolbarOn : SEImage.Toolbar.nsToolbarOff)
+        validationHandler(true, badgeText)
     }
 }
 
@@ -483,6 +548,7 @@ extension PopupView.ViewModel: ExtensionSafariApiClientDelegate {
         DispatchQueue.main.async { [weak self, appState] in
             guard let self else { return }
 
+            self.stateNeedsFullRefresh = true
             self.handleAppStateChanged(appState.lastCheckTime)
             self.isProtectionEnabled = appState.isProtectionEnabled
             self.setRawLogLevel(from: appState.logLevel)

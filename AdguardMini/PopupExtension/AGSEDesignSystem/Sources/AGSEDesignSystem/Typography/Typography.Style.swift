@@ -26,7 +26,7 @@ extension Typography {
             case .t1CondensedRegular:
                 return .init(fontStyle: .sfPro, fontSize: 16)
             case .t2CondensedRegular:
-                return .init(fontStyle: .sfPro, fontSize: 12)
+                return .init(fontStyle: .sfPro, fontSize: 14)
             case .t3:
                 return .init(fontStyle: .sfProDisplay, fontSize: 12)
             case .domain:
