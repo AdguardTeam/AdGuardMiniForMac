@@ -439,12 +439,9 @@ export function useStoriesConfig(): StoryInfo[] {
         telemetryEvent: TrayEvent.StoryWhatIsExtraClick,
     });
 
-    stories.sort((a) => {
-        if (storyCompleted.has(a.storyConfig?.id)) {
-            return 1;
-        }
-        return 0;
-    });
+    // Keep incomplete stories first and completed stories last.
+    // Equal groups keep their relative order from construction above.
+    stories.sort((a, b) => Number(storyCompleted.has(a.storyConfig.id)) - Number(storyCompleted.has(b.storyConfig.id)));
 
     return [...requiredStories, ...stories];
 }

@@ -5,10 +5,10 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { resolveNumberLocale, formatLocalizedNumber, compactThreshold, projectSupportedNumberLocales } from './index';
-import { NUMBER_LOCALE_RULES } from './rules';
+import { resolveNumberLocale, formatLocalizedNumber, compactThreshold, projectSupportedNumberLocales } from '../../modules/common/lib/number/index';
+import { NUMBER_LOCALE_RULES } from '../../modules/common/lib/number/rules';
 
-import twosky from '../../../../../../.twosky.json';
+import twosky from '../../../../.twosky.json';
 
 test('resolves locale aliases to canonical formatter locales', () => {
     assert.equal(resolveNumberLocale('pt-BR').id, 'pt_br');

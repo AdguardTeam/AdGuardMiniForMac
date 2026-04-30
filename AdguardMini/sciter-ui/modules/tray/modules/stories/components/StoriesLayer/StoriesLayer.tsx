@@ -5,6 +5,7 @@
 import { useCallback, useReducer, useEffect } from 'preact/hooks';
 
 import { actions, navigationReducer } from 'Modules/tray/modules/stories/reducers';
+import { resolveBackTransition } from 'Modules/tray/modules/stories/utils/navigationBoundary';
 
 import { FrameContent, NavigationArrows, ProgressBarGroup } from '..';
 
@@ -16,6 +17,8 @@ import type { StoryId } from 'Modules/tray/modules/stories/model';
 type StoriesLayerProps = {
     story: StoryNavigation;
     moveToNextStory(): void;
+    moveToPreviousStory(): void;
+    hasPreviousStory: boolean;
     closeStories(): void;
     addCompletedStory(storyId: StoryId): void;
     isMASReleaseVariant: boolean;
@@ -28,6 +31,8 @@ type StoriesLayerProps = {
 export function StoriesLayer({
     story,
     moveToNextStory,
+    moveToPreviousStory,
+    hasPreviousStory,
     closeStories,
     addCompletedStory,
     isMASReleaseVariant,
@@ -45,8 +50,17 @@ export function StoriesLayer({
     }, []);
 
     const handlePrevious = useCallback(() => {
-        dispatch(actions.prev());
-    }, []);
+        const transition = resolveBackTransition(currentFrameIndex, hasPreviousStory);
+
+        if (transition === 'story') {
+            moveToPreviousStory();
+            return;
+        }
+
+        if (transition === 'frame') {
+            dispatch(actions.prev());
+        }
+    }, [currentFrameIndex, hasPreviousStory, moveToPreviousStory]);
 
     const handleNext = useCallback(() => {
         if (currentFrameIndex >= length - 1) {
@@ -113,7 +127,7 @@ export function StoriesLayer({
                     onFrameClick={handleFrameClick}
                 />
                 <NavigationArrows
-                    hideLeft={currentFrameIndex === 0}
+                    hideLeft={currentFrameIndex === 0 && !hasPreviousStory}
                     onNext={handleNext}
                     onPrevious={handlePrevious}
                 />
