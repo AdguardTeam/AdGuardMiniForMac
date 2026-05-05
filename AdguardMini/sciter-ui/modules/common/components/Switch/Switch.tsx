@@ -38,7 +38,12 @@ export function Switch({
             className={cx(s.switch, className)}
             htmlFor={id}
             tabIndex={0}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+                e.stopPropagation();
+                if (!disabled) {
+                    onChange(!checked);
+                }
+            }}
         >
             <input
                 checked={checked}
@@ -49,7 +54,6 @@ export function Switch({
                 type="checkbox"
                 onInput={(e) => {
                     e.stopPropagation();
-                    onChange(e.currentTarget.checked);
                 }}
             />
             <div
