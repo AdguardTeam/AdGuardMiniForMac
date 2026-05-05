@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "ประกอบด้วยกฎจากตัวกรองสำหรับบล็อกตัวติดตามและเว็บ analytics";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "ความเป็นส่วนตัวของ AdGuard";

@@ -1,12 +1,6 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "صفحه امن";
 
-/* Domain view - Domain Item hint "Protection is off for this domain" */
-"item_hint_domain_protection_off" = "محافظت برای این تارنما غیرفعال شده است زیرا ممکن است در عملکرد آن اختلال ایجاد کند";
-
-/* Domain view - Item title "Protection" */
-"item_title_protection" = "حفاظت";
-
 /* Domain view - Item title "Some extensions are off" */
 "item_attention_title_extensions_off" = "برخی افزونه‌ها غیر فعال هستند";
 

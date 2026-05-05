@@ -1,12 +1,6 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "Säker sida";
 
-/* Domain view - Domain Item hint "Protection is off for this domain" */
-"item_hint_domain_protection_off" = "Skyddet är avstängt för denna webbplats eftersom det kan störa dess funktion";
-
-/* Domain view - Item title "Protection" */
-"item_title_protection" = "Skydd";
-
 /* Domain view - Item title "Some extensions are off" */
 "item_attention_title_extensions_off" = "Vissa tillägg är avstängda";
 

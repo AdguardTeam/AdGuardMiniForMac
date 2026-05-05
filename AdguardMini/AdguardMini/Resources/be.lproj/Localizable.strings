@@ -1,11 +1,32 @@
+/* Common - App displayed name. */
+"app_displayed_name" = "AdGuard Mini";
+
+/* App Menu - "Preferences..." title. */
+"app_menu_preferences_title" = "Параметры...";
+
+/* App Menu - "Hide AdGuard Mini" title. */
+"app_menu_hide_title" = "Схаваць AdGuard Mini";
+
 /* App Menu - "Hide Others" title. */
 "app_menu_hide_others_title" = "Схаваць іншыя";
 
 /* App Menu - "Close" title. */
 "app_menu_close_title" = "Закрыць";
 
+/* App Menu - "Quit AdGuard Mini" title. */
+"app_menu_quit_title" = "Выйсці з AdGuard Mini";
+
+/* Terminating app Alert - Message text "Quit AdGuard Mini?" */
+"terminate_app_alert_message_text" = "Выйсці з AdGuard Mini?";
+
+/* Terminating app Alert - Button title "Run in background" */
+"terminate_app_alert_button_title_run_in_background" = "Запусціць у фонавым рэжыме";
+
 /* Terminating app Alert - Button title "Quit" */
 "terminate_app_alert_button_title_quit" = "Выйсці";
+
+/* Name of the crashed application for title of the crash reporter */
+"crash_reporter_title_adguard_component" = "Кампанент AdGuard Mini";
 
 /* Crash Reporter UI (SFBCrashReporterWindowController) */
 "window_controller_crash_reporter" = "Адпраўка справаздачы аб збоі: %1$@ (%2$@)";
@@ -16,8 +37,20 @@
 /* Request user about restarting AdGuard Mini */
 "restarting_request_quit" = "Выйсці";
 
+/* Request user about restarting AdGuard Mini */
+"restarting_request_message_title" = "Перазапусціць AdGuard Mini";
+
+/* Request user about restarting AdGuard Mini */
+"restarting_request_message_text" = "Налады былі скінуты. Перазапусціце AdGuard Mini, каб аднавіць яго функцыянальнасць";
+
 /* Title on Close button in error message */
 "close_button" = "Закрыць";
 
 /* Request user about resetting AdGuard Mini */
 "reset_setting_button" = "Скінуць";
+
+/* Request user about resetting AdGuard Mini */
+"reset_settings_message" = "Скінуць налады AdGuard Mini?";
+
+/* Request user about resetting AdGuard Mini */
+"reseting_settings_request" = "Усе налады AdGuard Mini будуць скінуты да прадвызначаных значэнняў. Карыстальніцкія налады будуць выдалены";

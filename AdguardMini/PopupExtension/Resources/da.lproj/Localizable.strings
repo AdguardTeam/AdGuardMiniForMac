@@ -1,11 +1,8 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "Sikker side";
 
-/* Domain view - Domain Item hint "Protection is off for this domain" */
-"item_hint_domain_protection_off" = "Beskyttelse er slået fra for dette websted, da det kan forstyrre dets funktion";
-
-/* Domain view - Item title "Protection" */
-"item_title_protection" = "Beskyttelse";
+/* Domain view - Domain Item hint "Website protection disabled" */
+"item_hint_domain_protection_off" = "Webstedsbeskyttelse slået fra";
 
 /* Domain view - Item title "Some extensions are off" */
 "item_attention_title_extensions_off" = "Nogle udvidelser er slået fra";
@@ -21,6 +18,12 @@
 
 /* Domain view - Item title "Rate AdGuard Mini" */
 "item_title_rate_adguard_mini" = "Bedøm AdGuard Mini";
+
+/* Domain view - Stats label "{count} ad(s) blocked" */
+"item_stats_ads_blocked" = "%d annoncer blokeret";
+
+/* Domain view - Stats label "{count} tracker(s) blocked" */
+"item_stats_trackers_blocked" = "%d trackere blokeret";
 
 /* Info view - Title "Protection is disabled" */
 "info_title_protection_disabled" = "Beskyttelsen er deaktiveret";

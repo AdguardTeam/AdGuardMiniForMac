@@ -1,11 +1,8 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "Geschützte Seite";
 
-/* Domain view - Domain Item hint "Protection is off for this domain" */
-"item_hint_domain_protection_off" = "Der Schutz für diese Website ist deaktiviert, da er den Betrieb der Website stören kann";
-
-/* Domain view - Item title "Protection" */
-"item_title_protection" = "Schutz";
+/* Domain view - Domain Item hint "Website protection disabled" */
+"item_hint_domain_protection_off" = "Website-Schutz deaktiviert";
 
 /* Domain view - Item title "Some extensions are off" */
 "item_attention_title_extensions_off" = "Einige Erweiterungen sind deaktiviert";
@@ -17,10 +14,16 @@
 "item_title_block_element" = "Element blockieren";
 
 /* Domain view - Item title "Report an issue" */
-"item_title_report_an_issue" = "Fehler melden";
+"item_title_report_an_issue" = "Diese Webseite melden";
 
 /* Domain view - Item title "Rate AdGuard Mini" */
 "item_title_rate_adguard_mini" = "AdGuard Mini bewerten";
+
+/* Domain view - Stats label "{count} ad(s) blocked" */
+"item_stats_ads_blocked" = "%d Anzeigen blockiert";
+
+/* Domain view - Stats label "{count} tracker(s) blocked" */
+"item_stats_trackers_blocked" = "%d Tracker blockiert";
 
 /* Info view - Title "Protection is disabled" */
 "info_title_protection_disabled" = "Schutz ist deaktiviert";

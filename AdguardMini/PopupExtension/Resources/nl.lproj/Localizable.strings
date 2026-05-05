@@ -1,11 +1,8 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "Beveiligde pagina";
 
-/* Domain view - Domain Item hint "Protection is off for this domain" */
-"item_hint_domain_protection_off" = "Bescherming is uitgeschakeld voor deze website omdat het mogelijk de werking ervan kan verstoren";
-
-/* Domain view - Item title "Protection" */
-"item_title_protection" = "Bescherming";
+/* Domain view - Domain Item hint "Website protection disabled" */
+"item_hint_domain_protection_off" = "Website-bescherming uitgeschakeld";
 
 /* Domain view - Item title "Some extensions are off" */
 "item_attention_title_extensions_off" = "Sommige uitbreidingen zijn uitgeschakeld";
@@ -21,6 +18,12 @@
 
 /* Domain view - Item title "Rate AdGuard Mini" */
 "item_title_rate_adguard_mini" = "AdGuard Mini beoordelen";
+
+/* Domain view - Stats label "{count} ad(s) blocked" */
+"item_stats_ads_blocked" = "%d advertenties geblokkeerd";
+
+/* Domain view - Stats label "{count} tracker(s) blocked" */
+"item_stats_trackers_blocked" = "%d volgers geblokkeerd";
 
 /* Info view - Title "Protection is disabled" */
 "info_title_protection_disabled" = "Bescherming is uitgeschakeld";

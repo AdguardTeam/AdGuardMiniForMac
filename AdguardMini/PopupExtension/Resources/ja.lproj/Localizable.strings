@@ -1,12 +1,6 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "セキュアページ";
 
-/* Domain view - Domain Item hint "Protection is off for this domain" */
-"item_hint_domain_protection_off" = "ウェブサイトの動作への支障を防ぐために、このウェブサイトに対して保護機能は無効になっています。";
-
-/* Domain view - Item title "Protection" */
-"item_title_protection" = "AdGuardによる保護";
-
 /* Domain view - Item title "Some extensions are off" */
 "item_attention_title_extensions_off" = "一部の拡張機能がオフになっています";
 

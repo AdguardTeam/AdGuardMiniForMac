@@ -1,12 +1,6 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "Güvenli sayfa";
 
-/* Domain view - Domain Item hint "Protection is off for this domain" */
-"item_hint_domain_protection_off" = "Sitenin sorunsuz çalışması için koruma bu sitede devre dışı bırakıldı";
-
-/* Domain view - Item title "Protection" */
-"item_title_protection" = "Koruma";
-
 /* Domain view - Item title "Some extensions are off" */
 "item_attention_title_extensions_off" = "Bazı uzantılar kapalı";
 
@@ -21,6 +15,12 @@
 
 /* Domain view - Item title "Rate AdGuard Mini" */
 "item_title_rate_adguard_mini" = "AdGuard Mini'yi derecelendir";
+
+/* Domain view - Stats label "{count} ad(s) blocked" */
+"item_stats_ads_blocked" = "%d reklam engellendi";
+
+/* Domain view - Stats label "{count} tracker(s) blocked" */
+"item_stats_trackers_blocked" = "%d izleyici engellendi";
 
 /* Info view - Title "Protection is disabled" */
 "info_title_protection_disabled" = "Koruma devre dışı bırakıldı";

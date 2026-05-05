@@ -1,11 +1,5 @@
 /* Domain view - Item title "Secure page" */
-"item_title_secure_page" = "صفحة آمنة";
-
-/* Domain view - Domain Item hint "Protection is off for this domain" */
-"item_hint_domain_protection_off" = "تم إيقاف الحماية لهذا الموقع لأنه قد يتداخل مع تشغيله";
-
-/* Domain view - Item title "Protection" */
-"item_title_protection" = "الحماية";
+"item_title_secure_page" = "الصفحة أمان";
 
 /* Domain view - Item title "Some extensions are off" */
 "item_attention_title_extensions_off" = "بعض الامتدادات معطلة";

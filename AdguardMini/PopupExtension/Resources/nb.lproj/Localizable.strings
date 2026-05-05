@@ -1,12 +1,6 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "Sikker side";
 
-/* Domain view - Domain Item hint "Protection is off for this domain" */
-"item_hint_domain_protection_off" = "Beskyttelsen er av for dette nettstedet fordi det kan forstyrre dets drift";
-
-/* Domain view - Item title "Protection" */
-"item_title_protection" = "Beskyttelse";
-
 /* Domain view - Item title "Some extensions are off" */
 "item_attention_title_extensions_off" = "Noen utvidelser er avskrudd";
 

@@ -1,17 +1,20 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "Бяспечная старонка";
 
-/* Domain view - Item title "Protection" */
-"item_title_protection" = "Абарона";
-
 /* Domain view - Item title "Some extensions are off" */
-"item_attention_title_extensions_off" = "Некаторыя пашырэнні адключаны";
+"item_attention_title_extensions_off" = "Некаторыя пашырэнні выключаны";
 
 /* Domain view - Item button title "Fix it" */
 "item_attention_button_title_fix_it" = "Выправіць";
 
+/* Domain view - Item title "Block element" */
+"item_title_block_element" = "Блакіраваць элемент";
+
 /* Domain view - Item title "Report an issue" */
 "item_title_report_an_issue" = "Паведаміць аб праблеме";
+
+/* Domain view - Item title "Rate AdGuard Mini" */
+"item_title_rate_adguard_mini" = "Ацаніць AdGuard Mini";
 
 /* Info view - Title "Protection is disabled" */
 "info_title_protection_disabled" = "Абарона адключана";
@@ -22,8 +25,32 @@
 /* Info view - Button title "Enable" */
 "info_button_title_enable" = "Уключыць";
 
+/* Info view - Button title "Enabling..." */
+"info_button_title_enabling" = "Уключэнне...";
+
+/* Info view - Title "AdGuard Mini is not launched" */
+"info_title_main_app_not_running" = "AdGuard Mini не запушчаны";
+
+/* Info view - Title "Failed to launch AdGuard Mini" */
+"info_title_failed_launch_main_app" = "Не ўдалося запусціць AdGuard Mini";
+
+/* Info view - Button title "Launch AdGuard Mini" */
+"info_button_title_launch" = "Запусціць AdGuard Mini";
+
+/* Info view - Button title "Launching..." */
+"info_button_title_launching" = "Запуск...";
+
 /* Info view - Title "Something went wrong" */
 "info_title_something_went_wrong" = "Нешта пайшло не так";
+
+/* Info view - Title "Failed to restart AdGuard Mini" */
+"info_title_failed_restart_main_app" = "Не ўдалося перазапусціць AdGuard Mini";
+
+/* Info view - Button title "Restart AdGuard Mini" */
+"info_button_title_restart" = "Перазапусціць AdGuard Mini";
+
+/* Info view - Button title "Launching..." */
+"info_button_title_restarting" = "Перазапуск...";
 
 /* Info view - Common button title "Try again" */
 "info_common_button_title_try_again" = "Паспрабаваць яшчэ раз";
@@ -33,3 +60,9 @@
 
 /* Info view - Common subtitle after an error occurs */
 "info_error_subtitle" = "Паўтарыце спробу або звярніцеся у службу падтрымкі";
+
+/* Info view - Button title "Open AdGuard Mini" */
+"info_button_title_open_main_app" = "Адкрыць AdGuard Mini";
+
+/* Info view - Button title "Opening..." */
+"info_button_title_opening" = "Адкрыццё...";

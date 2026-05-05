@@ -1,12 +1,6 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "Zaščitena stran";
 
-/* Domain view - Domain Item hint "Protection is off for this domain" */
-"item_hint_domain_protection_off" = "Zaščita je izklopljena za to spletno stran, saj lahko moti njeno delovanje.";
-
-/* Domain view - Item title "Protection" */
-"item_title_protection" = "Zaščita";
-
 /* Domain view - Item title "Some extensions are off" */
 "item_attention_title_extensions_off" = "Nekatere razširitve so izklopljene";
 

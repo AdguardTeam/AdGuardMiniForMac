@@ -1,3 +1,6 @@
+/* Common - App displayed name. */
+"app_displayed_name" = "AdGuard Mini";
+
 /* App Menu - "Hide Others" title. */
 "app_menu_hide_others_title" = "ซ่อนอื่น ๆ";
 

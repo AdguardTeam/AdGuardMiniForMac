@@ -1,6 +1,9 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "หน้าเว็บที่ปลอดภัย";
 
+/* Domain view - Item title "Some extensions are off" */
+"item_attention_title_extensions_off" = "ส่วนขยายบางตัวถูกปิดใช้งาน";
+
 /* Domain view - Item button title "Fix it" */
 "item_attention_button_title_fix_it" = "ซ่อมมัน";
 
@@ -13,5 +16,14 @@
 /* Info view - Button title "Enable" */
 "info_button_title_enable" = "เปิดใช้งาน";
 
+/* Info view - Button title "Launch AdGuard Mini" */
+"info_button_title_launch" = "เปิดใช้งาน AdGuard Mini";
+
 /* Info view - Common button title "Try again" */
 "info_common_button_title_try_again" = "ลองอีกครั้ง";
+
+/* Info view - Base common subtitle "Your data may be exposed" */
+"info_base_common_subtitle" = "ข้อมูลของคุณอาจถูกเปิดเผย";
+
+/* Info view - Common subtitle after an error occurs */
+"info_error_subtitle" = "กรุณาลองอีกครั้งหรือติดต่อฝ่ายสนับสนุน";

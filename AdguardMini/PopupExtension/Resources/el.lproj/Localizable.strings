@@ -1,12 +1,6 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "Ασφαλής σελίδα";
 
-/* Domain view - Domain Item hint "Protection is off for this domain" */
-"item_hint_domain_protection_off" = "Η προστασία είναι απενεργοποιημένη για αυτήν την ιστοσελίδα καθώς ενδέχεται να επηρεάσει τη λειτουργία της";
-
-/* Domain view - Item title "Protection" */
-"item_title_protection" = "Προστασία";
-
 /* Domain view - Item title "Some extensions are off" */
 "item_attention_title_extensions_off" = "Κάποιες επεκτάσεις είναι απενεργοποιημένες";
 

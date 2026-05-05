@@ -1,12 +1,6 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "보안 페이지";
 
-/* Domain view - Domain Item hint "Protection is off for this domain" */
-"item_hint_domain_protection_off" = "이 웹사이트는 작동을 방해할 수 있으므로 보호 기능이 꺼져 있습니다.";
-
-/* Domain view - Item title "Protection" */
-"item_title_protection" = "보호";
-
 /* Domain view - Item title "Some extensions are off" */
 "item_attention_title_extensions_off" = "일부 확장 프로그램이 꺼져 있습니다.";
 
