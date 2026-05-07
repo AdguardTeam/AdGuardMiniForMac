@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { observer } from 'mobx-react-lite';
+import { provideContactSupportParam } from 'SettingsLib/utils/translate';
 
 import { useSettingsStore } from 'SettingsLib/hooks';
 import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType } from 'SettingsStore/modules';
@@ -23,14 +24,26 @@ function ResetLicenseModalComponent({
 
     const handleResetLicense = async () => {
         onClose();
-        await account.requestLogout();
-        notification.notify({
-            message: translate('license.reset.notify'),
-            notificationContext: NotificationContext.info,
-            type: NotificationsQueueType.success,
-            iconType: NotificationsQueueIconType.done,
-            closeable: true,
-        });
+        const { hasError } = await account.requestLogout();
+        if (hasError) {
+            notification.notify({
+                message: translate('notification.license.reset.failed', provideContactSupportParam({
+                    className: tx.color.linkGreen,
+                })),
+                notificationContext: NotificationContext.info,
+                type: NotificationsQueueType.warning,
+                iconType: NotificationsQueueIconType.error,
+                closeable: true,
+            });
+        } else {
+            notification.notify({
+                message: translate('license.reset.notify'),
+                notificationContext: NotificationContext.info,
+                type: NotificationsQueueType.success,
+                iconType: NotificationsQueueIconType.done,
+                closeable: true,
+            });
+        }
     };
 
     return (

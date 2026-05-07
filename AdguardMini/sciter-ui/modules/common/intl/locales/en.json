@@ -482,6 +482,7 @@
     "notification.user.rules.delete": "User rule deleted <b>%rule%</b>",
     "notification.user.rules.delete.all": "All user rules deleted",
     "notification.license.refresh.failed": "Failed to get the license info. Please try again or <contactSupport>contact support</contactSupport>",
+    "notification.license.reset.failed": "Failed to reset license. Please try again or <contactSupport>contact support</contactSupport>",
     "notification.custom.filter.added": "Filter <b>%name%</b> added",
     "notification.custom.filter.removed": "Filter <b>%name%</b> removed",
     "notification.all.custom.filters.removed": "All custom filters removed",
