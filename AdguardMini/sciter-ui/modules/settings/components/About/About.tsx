@@ -46,7 +46,7 @@ export function AboutComponent() {
         },
         {
             label: translate('about.versions'),
-            href: getTdsLink(TDS_PARAMS.github, RouteName.about),
+            href: getTdsLink(TDS_PARAMS.versions, RouteName.about),
         },
         {
             label: translate('about.acknowledgments'),

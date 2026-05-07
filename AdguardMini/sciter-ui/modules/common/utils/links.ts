@@ -26,7 +26,7 @@ enum TDS_PARAMS {
     eula = 'eula',
     privacy = 'privacy',
     acknowledgments = 'acknowledgments',
-    github = 'github',
+    versions = 'versions',
     faq_safari = 'faq_safari',
     incorrect_blocking = 'incorrect_blocking',
     appstore = 'appstore',
