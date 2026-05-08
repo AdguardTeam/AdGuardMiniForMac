@@ -12,7 +12,7 @@ import XCTest
 final class StatisticsServiceTests: XCTestCase {
     func testAddBlockCounts_DelegatesToStore() {
         let mockStore = MockStatisticsStore.MockType.success(queryResult: 0).createObject()
-        let service = StatisticsServiceImpl(store: mockStore)
+        let service = StatisticsServiceImpl(store: mockStore, sharedSettings: MockSharedSettingsStorage())
 
         service.addBlockCounts([.general: 10])
 
@@ -22,7 +22,7 @@ final class StatisticsServiceTests: XCTestCase {
 
     func testGetStatistics_DelegatesToStore() {
         let mockStore = MockStatisticsStore.MockType.success(queryResult: 42).createObject()
-        let service = StatisticsServiceImpl(store: mockStore)
+        let service = StatisticsServiceImpl(store: mockStore, sharedSettings: MockSharedSettingsStorage())
 
         let result = service.getStatistics(for: .day)
 
@@ -34,7 +34,7 @@ final class StatisticsServiceTests: XCTestCase {
 
     func testGetStatistics_WithBlockerType_DelegatesToStore() {
         let mockStore = MockStatisticsStore.MockType.success(queryResult: 42).createObject()
-        let service = StatisticsServiceImpl(store: mockStore)
+        let service = StatisticsServiceImpl(store: mockStore, sharedSettings: MockSharedSettingsStorage())
 
         let result = service.getStatistics(for: .week, blockerType: .privacy)
 
@@ -46,7 +46,7 @@ final class StatisticsServiceTests: XCTestCase {
 
     func testAddBlockCounts_StoreThrows_DoesNotCrash() {
         let mockStore = MockStatisticsStore.MockType.throwOnAdd.createObject()
-        let service = StatisticsServiceImpl(store: mockStore)
+        let service = StatisticsServiceImpl(store: mockStore, sharedSettings: MockSharedSettingsStorage())
 
         service.addBlockCounts([.general: 10])
 
@@ -55,7 +55,7 @@ final class StatisticsServiceTests: XCTestCase {
 
     func testGetStatistics_StoreThrows_ReturnsZero() {
         let mockStore = MockStatisticsStore.MockType.throwOnQuery.createObject()
-        let service = StatisticsServiceImpl(store: mockStore)
+        let service = StatisticsServiceImpl(store: mockStore, sharedSettings: MockSharedSettingsStorage())
 
         let result = service.getStatistics(for: .day)
 
@@ -65,16 +65,18 @@ final class StatisticsServiceTests: XCTestCase {
 
     func testResetStatistics_DelegatesToStore() {
         let mockStore = MockStatisticsStore.MockType.success(queryResult: 0).createObject()
-        let service = StatisticsServiceImpl(store: mockStore)
+        let mockSettings = MockSharedSettingsStorage()
+        let service = StatisticsServiceImpl(store: mockStore, sharedSettings: mockSettings)
 
         service.resetStatistics()
 
         XCTAssertEqual(mockStore.resetAllCalls, 1)
+        XCTAssertEqual(mockSettings.updateStatisticsResetTokenCalls, 1)
     }
 
     func testResetStatistics_StoreThrows_DoesNotCrash() {
         let mockStore = MockStatisticsStore.MockType.throwOnReset.createObject()
-        let service = StatisticsServiceImpl(store: mockStore)
+        let service = StatisticsServiceImpl(store: mockStore, sharedSettings: MockSharedSettingsStorage())
 
         service.resetStatistics()
 
@@ -96,7 +98,7 @@ final class StatisticsServiceTests: XCTestCase {
 
     func testAddAdsBlockedTotal_DelegatesToStore() {
         let mockStore = MockStatisticsStore.MockType.success(queryResult: 0).createObject()
-        let service = StatisticsServiceImpl(store: mockStore)
+        let service = StatisticsServiceImpl(store: mockStore, sharedSettings: MockSharedSettingsStorage())
 
         service.addAdsBlockedTotal(7)
 
@@ -106,7 +108,7 @@ final class StatisticsServiceTests: XCTestCase {
 
     func testGetAdsBlockedTotal_DelegatesToStore() {
         let mockStore = MockStatisticsStore.MockType.success(queryResult: 42).createObject()
-        let service = StatisticsServiceImpl(store: mockStore)
+        let service = StatisticsServiceImpl(store: mockStore, sharedSettings: MockSharedSettingsStorage())
 
         let result = service.getAdsBlockedTotal(for: .day)
 
@@ -117,7 +119,7 @@ final class StatisticsServiceTests: XCTestCase {
 
     func testAddAdsBlockedTotal_Zero_IsIgnored() {
         let mockStore = MockStatisticsStore.MockType.success(queryResult: 0).createObject()
-        let service = StatisticsServiceImpl(store: mockStore)
+        let service = StatisticsServiceImpl(store: mockStore, sharedSettings: MockSharedSettingsStorage())
 
         service.addAdsBlockedTotal(0)
 

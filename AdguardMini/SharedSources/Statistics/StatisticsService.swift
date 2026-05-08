@@ -56,11 +56,13 @@ final class StatisticsServiceImpl: StatisticsService {
     // MARK: Private properties
 
     private let store: StatisticsStore
+    private let sharedSettings: SharedSettingsStorage
 
     // MARK: Init
 
-    init(store: StatisticsStore) {
+    init(store: StatisticsStore, sharedSettings: SharedSettingsStorage) {
         self.store = store
+        self.sharedSettings = sharedSettings
     }
 
     // MARK: Public methods
@@ -105,6 +107,7 @@ final class StatisticsServiceImpl: StatisticsService {
     func resetStatistics() {
         do {
             try self.store.resetAll()
+            self.sharedSettings.updateStatisticsResetToken()
         } catch {
             LogError("Failed to reset statistics: \(error)")
         }

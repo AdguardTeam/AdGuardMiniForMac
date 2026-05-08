@@ -37,41 +37,37 @@ actor PerTabStatsTracker {
         static let evictionDelay: TimeInterval = 24.hours
     }
 
-    private var tabData: [String: TabStats] = [:]
-    private var deduplicationStates: [String: DeduplicationState] = [:]
+    private var tabData: [Int: TabStats] = [:]
+    private var deduplicationStates: [Int: DeduplicationState] = [:]
 
     // MARK: Tracking
 
     /// Records a blocking event for a specific page/tab.
     ///
     /// - Parameters:
-    ///   - page: The Safari page where blocking occurred.
+    ///   - pageHash: Stable page identity (`page.hashValue`), captured
+    ///     synchronously in the handler before spawning a Task.
     ///   - urls: The blocked resource URLs.
     ///   - blockerType: The type of content blocker that fired.
-    func trackBlocked(on page: SFSafariPage, urls: [URL], blockerType: SafariBlockerType) async {
-        let tab = await page.containingTab()
-        guard let tabKey = tab.tabKey() else {
-            LogError("Cannot generate tab key")
-            return
-        }
-
+    ///   - page: The Safari page (used only to query the current URL).
+    func trackBlocked(pageHash: Int, urls: [URL], blockerType: SafariBlockerType, page: SFSafariPage) async {
         let pageUrl = await page.properties()?.url?.absoluteString ?? ""
 
-        var stats = self.tabData[tabKey] ?? TabStats()
+        var stats = self.tabData[pageHash] ?? TabStats()
 
         // Reset if the URL changed (navigation)
         if stats.url != pageUrl {
             stats = TabStats(url: pageUrl)
-            self.deduplicationStates[tabKey] = DeduplicationState()
+            self.deduplicationStates[pageHash] = DeduplicationState()
         }
 
         if blockerType == .privacy {
             stats.trackersBlocked += urls.count
         } else {
             for url in urls {
-                let delta = self.deduplicationStates[tabKey, default: DeduplicationState()]
+                let delta = self.deduplicationStates[pageHash, default: DeduplicationState()]
                     .recordCallback(
-                        pageHash: page.hashValue,
+                        pageHash: pageHash,
                         url: url,
                         blockerType: blockerType
                     )
@@ -80,7 +76,7 @@ actor PerTabStatsTracker {
         }
 
         stats.lastTimeUpdated = Date().timeIntervalSince1970
-        self.tabData[tabKey] = stats
+        self.tabData[pageHash] = stats
     }
 
     // MARK: Querying
@@ -94,14 +90,14 @@ actor PerTabStatsTracker {
     /// In that case empty stats for the new URL are returned, eliminating any
     /// race between `willNavigateTo` / `resetStats` and `validateToolbarItem`.
     func getStatsForActiveTab(in window: SFSafariWindow) async -> TabStats {
-        guard let tab = await window.activeTab(),
-              let tabKey = tab.tabKey() else {
+        guard let page = await window.activeTab()?.activePage() else {
             return TabStats()
         }
 
-        let stored = self.tabData[tabKey] ?? TabStats()
+        let pageHash = page.hashValue
+        let stored = self.tabData[pageHash] ?? TabStats()
 
-        let currentUrl = await tab.activePage()?.properties()?.url?.absoluteString
+        let currentUrl = await page.properties()?.url?.absoluteString
         if let currentUrl, !currentUrl.isEmpty, stored.url != currentUrl {
             return TabStats(url: currentUrl)
         }
@@ -111,21 +107,20 @@ actor PerTabStatsTracker {
 
     // MARK: Lifecycle
 
-    /// Resets stats for a specific page (called on navigation reset).
+    /// Resets stats for a page (called on navigation).
+    ///
+    /// This method has **no suspension points**, so it executes atomically on
+    /// the actor. If a `trackBlocked` Task was suspended (awaiting
+    /// `page.properties()`) when this runs, `trackBlocked` will read the
+    /// freshly reset `tabData` upon resumption and accumulate on top of it.
     ///
     /// - Parameters:
-    ///   - page: The Safari page that is navigating away.
-    ///   - newUrl: The destination URL reported by `willNavigateTo`. Using this
-    ///     parameter avoids a race condition where `page.properties()` still
-    ///     returns the old URL, and eliminates the unreliable `activePage`
-    ///     identity check that could cause the reset to be skipped entirely.
-    func resetStats(on page: SFSafariPage, to newUrl: URL?) async {
-        let tab = await page.containingTab()
-        guard let tabKey = tab.tabKey() else { return }
-
+    ///   - pageHash: Stable page identity (`page.hashValue`).
+    ///   - newUrl: The destination URL reported by `willNavigateTo`.
+    func resetStats(pageHash: Int, to newUrl: URL?) {
         let pageUrl = newUrl?.absoluteString ?? ""
-        self.tabData[tabKey] = TabStats(url: pageUrl)
-        self.deduplicationStates[tabKey] = DeduplicationState()
+        self.tabData[pageHash] = TabStats(url: pageUrl)
+        self.deduplicationStates[pageHash] = DeduplicationState()
     }
 
     /// Removes entries older than `evictionDelay`.

@@ -104,6 +104,9 @@ echo
 source "`dirname $0`/Support/Scripts/include/configure_python.inc"
 
 if [ "$1" == "dev" ]; then
+    # Install Node.js dependencies
+    bin/yarn install
+
     # Install protoc tools
     "`dirname $0`/Support/Scripts/install_protoc_tools.sh"
 

@@ -266,7 +266,10 @@ private final class ServiceLocator {
     private lazy var statisticsService: StatisticsService = {
         do {
             let store = try SharedStatisticsStoreImpl()
-            return StatisticsServiceImpl(store: store)
+            return StatisticsServiceImpl(
+                store: store,
+                sharedSettings: SharedDIContainer.shared.sharedSettingsStorage
+            )
         } catch {
             LogError("Failed to initialize SharedStatisticsStore: \(error). Using no-op implementation.")
             return NoOpStatisticsService()
