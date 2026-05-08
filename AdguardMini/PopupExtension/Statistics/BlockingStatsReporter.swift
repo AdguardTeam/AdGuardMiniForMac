@@ -15,11 +15,6 @@ import AML
 protocol BlockingStatsReporter {
     func recordBlocking(pageHash: Int, urls: [URL], blockerType: SafariBlockerType) async
     func enqueueBlocking(pageHash: Int, urls: [URL], blockerType: SafariBlockerType)
-    func start() async
-    func stop() async
-
-    func enqueueStart()
-    func enqueueStop()
 }
 
 // MARK: - BlockingStatsReporterImpl
@@ -28,6 +23,7 @@ actor BlockingStatsReporterImpl: BlockingStatsReporter {
     // MARK: Private properties
 
     private let statisticsStore: StatisticsStore
+    private let sharedSettings: SharedSettingsStorage
     private let flushInterval: TimeInterval
 
     private var counters: [SafariBlockerType: Int] = [:]
@@ -35,11 +31,16 @@ actor BlockingStatsReporterImpl: BlockingStatsReporter {
     private var deduplicationState = DeduplicationState()
     private var flushTask: Task<Void, Never>?
 
+    /// Tracks the last-known reset token to detect external resets.
+    private var lastKnownResetToken: String?
+
     // MARK: Init
 
-    init(statisticsStore: StatisticsStore, flushInterval: TimeInterval = 10.0) {
+    init(statisticsStore: StatisticsStore, sharedSettings: SharedSettingsStorage, flushInterval: TimeInterval = 10.0) {
         self.statisticsStore = statisticsStore
+        self.sharedSettings = sharedSettings
         self.flushInterval = flushInterval
+        self.lastKnownResetToken = sharedSettings.statisticsResetToken
     }
 
     // MARK: Deinit
@@ -50,30 +51,9 @@ actor BlockingStatsReporterImpl: BlockingStatsReporter {
 
     // MARK: Public methods
 
-    func start() async {
-        guard self.flushTask == nil else { return }
-
-        LogDebug("BlockingStatsReporter started with \(self.flushInterval)s interval")
-
-        self.flushTask = Task {
-            while !Task.isCancelled {
-                try? await Task.sleep(seconds: self.flushInterval)
-
-                guard !Task.isCancelled else { break }
-                await self.flush()
-            }
-        }
-    }
-
-    func stop() async {
-        self.flushTask?.cancel()
-        self.flushTask = nil
-        await self.flush()
-        self.deduplicationState = DeduplicationState()
-        LogDebug("BlockingStatsReporter stopped")
-    }
-
     func recordBlocking(pageHash: Int, urls: [URL], blockerType: SafariBlockerType) async {
+        self.ensureFlushTaskRunning()
+
         self.counters[blockerType, default: 0] += urls.count
         for url in urls {
             let delta = self.deduplicationState.recordCallback(
@@ -85,22 +65,40 @@ actor BlockingStatsReporterImpl: BlockingStatsReporter {
         }
     }
 
-    nonisolated func enqueueStart() {
-        Task { await self.start() }
-    }
-
-    nonisolated func enqueueStop() {
-        Task { await self.stop() }
-    }
-
     nonisolated func enqueueBlocking(pageHash: Int, urls: [URL], blockerType: SafariBlockerType) {
         Task { await self.recordBlocking(pageHash: pageHash, urls: urls, blockerType: blockerType) }
     }
 
     // MARK: Private methods
 
+    private func ensureFlushTaskRunning() {
+        guard self.flushTask == nil else { return }
+
+        LogDebug("BlockingStatsReporter: starting flush task with \(self.flushInterval)s interval")
+
+        self.flushTask = Task {
+            while !Task.isCancelled {
+                try? await Task.sleep(seconds: self.flushInterval)
+
+                guard !Task.isCancelled else { break }
+                await self.flush()
+            }
+        }
+    }
+
     private func flush() async {
         assert(self.pendingAdsBlockedTotal >= 0, "Pending ads-blocked total must not be negative")
+
+        // Detect external reset (e.g. main app reset statistics)
+        let currentToken = self.sharedSettings.statisticsResetToken
+        if currentToken != self.lastKnownResetToken {
+            LogInfo("Statistics reset detected (token changed). Discarding stale in-memory counters.")
+            self.counters = [:]
+            self.pendingAdsBlockedTotal = 0
+            self.deduplicationState = DeduplicationState()
+            self.lastKnownResetToken = currentToken
+            return
+        }
 
         guard !self.counters.isEmpty else {
             assert(

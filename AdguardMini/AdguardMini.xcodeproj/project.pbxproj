@@ -91,6 +91,7 @@
 		EB0532072C4FDD400054CF62 /* SharedSettingsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3F1C582BADC40400DD2717 /* SharedSettingsStorage.swift */; };
 		EB08495D2AB33E4900222913 /* DIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB08495C2AB33E4900222913 /* DIContainer.swift */; };
 		EB1A0DA22D81EB6D006DB3CF /* SharedSettingsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3F1C582BADC40400DD2717 /* SharedSettingsStorage.swift */; };
+		EB1A0DA32D81EB6D006DB3CF /* SharedSettingsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3F1C582BADC40400DD2717 /* SharedSettingsStorage.swift */; };
 		EB3B75182C948EC500D9512F /* AppBackend in Frameworks */ = {isa = PBXBuildFile; productRef = EB3B75172C948EC500D9512F /* AppBackend */; };
 		EB3F1C592BADC40400DD2717 /* SharedSettingsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3F1C582BADC40400DD2717 /* SharedSettingsStorage.swift */; };
 		EB3F1C5A2BADC41000DD2717 /* SharedSettingsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3F1C582BADC40400DD2717 /* SharedSettingsStorage.swift */; };
@@ -802,7 +803,6 @@
 			membershipExceptions = (
 				DeduplicationState.swift,
 				PerTabStatsTracker.swift,
-				"SFSafariTab+TabKey.swift",
 			);
 			target = EB843F052B90ED15009179E0 /* AdguardMiniTests */;
 		};
@@ -2224,6 +2224,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EB1A0DA32D81EB6D006DB3CF /* SharedSettingsStorage.swift in Sources */,
 				EB88F5D02C0084CC0033E2E8 /* BuildConfig.swift in Sources */,
 				EB93A68F2C240B12003D84A5 /* UserDefaults.swift in Sources */,
 				EB88F5D42C00868A0033E2E8 /* SensitiveBuildConfig.swift in Sources */,

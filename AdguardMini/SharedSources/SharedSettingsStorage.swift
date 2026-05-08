@@ -20,6 +20,7 @@ enum SharedSettingsKey: String, CaseIterable {
     case launchOnStartup         = "launchOnStartup"
     case advancedRulesEnabled    = "advancedRules"
     case showSafariToolbarBadge  = "showSafariToolbarBadge"
+    case statisticsResetToken    = "statisticsResetToken"
 }
 
 /// The storage responsible for working the settings available to all applications in the app group.
@@ -30,7 +31,9 @@ protocol SharedSettingsStorage: AnyObject {
     var launchOnStartup: Bool { get set }
     var advancedRules: Bool { get set }
     var showSafariToolbarBadge: Bool { get set }
+    var statisticsResetToken: String? { get }
 
+    func updateStatisticsResetToken()
     func resetStorage()
 }
 
@@ -77,6 +80,14 @@ final class SharedSettingsStorageImpl: SharedSettingsStorage {
         set {
             self.sharedUserDefaults.set(newValue, forKey: SharedSettingsKey.showSafariToolbarBadge.rawValue)
         }
+    }
+
+    var statisticsResetToken: String? {
+        self.sharedUserDefaults.string(forKey: SharedSettingsKey.statisticsResetToken.rawValue)
+    }
+
+    func updateStatisticsResetToken() {
+        self.sharedUserDefaults.set(UUID().uuidString, forKey: SharedSettingsKey.statisticsResetToken.rawValue)
     }
 
     init() {

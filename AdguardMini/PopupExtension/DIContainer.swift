@@ -91,6 +91,9 @@ final class DIContainer {
                 return NoOpStatisticsStore()
             }
         }()
-        self.blockingStatsReporter = BlockingStatsReporterImpl(statisticsStore: statsStore)
+        self.blockingStatsReporter = BlockingStatsReporterImpl(
+            statisticsStore: statsStore,
+            sharedSettings: self.sharedSettingsStorage
+        )
     }
 }

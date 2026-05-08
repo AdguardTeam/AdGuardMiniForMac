@@ -104,12 +104,9 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
         self.perTabStatsTracker = container.perTabStatsTracker
 
         super.init()
-
-        self.statsReporter.enqueueStart()
     }
 
     deinit {
-        self.statsReporter.enqueueStop()
         LogDebug("\(self) deinited")
     }
 
@@ -129,18 +126,25 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 
         LogDebug("Content blocker \(blockerType) blocked \(urls.count) resource(s)")
 
+        let pageHash = page.hashValue
         Task {
-            await self.perTabStatsTracker.trackBlocked(on: page, urls: urls, blockerType: blockerType)
+            await self.perTabStatsTracker.trackBlocked(
+                pageHash: pageHash,
+                urls: urls,
+                blockerType: blockerType,
+                page: page
+            )
             await self.perTabStatsTracker.evictStaleEntries()
             SFSafariApplication.setToolbarItemsNeedUpdate()
         }
 
-        self.statsReporter.enqueueBlocking(pageHash: page.hashValue, urls: urls, blockerType: blockerType)
+        self.statsReporter.enqueueBlocking(pageHash: pageHash, urls: urls, blockerType: blockerType)
     }
 
     override func page(_ page: SFSafariPage, willNavigateTo url: URL?) {
+        let pageHash = page.hashValue
         Task {
-            await self.perTabStatsTracker.resetStats(on: page, to: url)
+            await self.perTabStatsTracker.resetStats(pageHash: pageHash, to: url)
             SFSafariApplication.setToolbarItemsNeedUpdate()
         }
     }
