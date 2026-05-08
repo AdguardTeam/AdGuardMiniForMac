@@ -50,6 +50,10 @@ export class UI {
     // Used in Safari protection page to show report problem button once open
     public reportProblemLabelStatus: ReportProblemVariant = ReportProblemVariant.NotShown;
 
+    // Used to show the screen with instructions on how to enable Safari extensions
+    // when the user has all extensions disabled
+    public showSafariExtensionsEnableScreen = false;
+
     /**
      *
      */
@@ -74,6 +78,14 @@ export class UI {
      */
     public setUserRulesScrollTop(value: number) {
         this.userRulesScrollTop = value;
+    }
+
+    /**
+     * Set whether to show the Safari extensions enable screen
+     * @param value bool - should show Enable extensions
+     */
+    public setShowSafariExtensionsEnableScreen(value: boolean) {
+        this.showSafariExtensionsEnableScreen = value;
     }
 
     /**

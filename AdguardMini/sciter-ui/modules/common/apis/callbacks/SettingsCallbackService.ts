@@ -19,6 +19,8 @@ export interface ISettingsCallbackService {
 	OnSettingsPageRequested(param: ArrayBuffer): Promise<EmptyValue>;
 	/* Fires when effective theme changed */
 	OnEffectiveThemeChanged(param: ArrayBuffer): Promise<EmptyValue>;
+	/* Settings window was requested to open from tray */
+	OnSettingsWindowOpened(param: ArrayBuffer): Promise<EmptyValue>;
 }
 
 /* Service handles settings lists- private part for operations with unmarshalled params */
@@ -39,6 +41,8 @@ export interface ISettingsCallbackServiceInternal {
 	OnSettingsPageRequested(param: StringValue): Promise<EmptyValue>;
 	/* Fires when effective theme changed*/
 	OnEffectiveThemeChanged(param: EffectiveThemeValue): Promise<EmptyValue>;
+	/* Settings window was requested to open from tray*/
+	OnSettingsWindowOpened(param: EmptyValue): Promise<EmptyValue>;
 }
 
 /* Service handles settings lists */
@@ -175,6 +179,22 @@ export class SettingsCallbackService implements ISettingsCallbackService {
 		}
 		log.dbg('Callback data', 'SettingsCallbackService.OnEffectiveThemeChanged', arg.toObject());
 		await this.settingsCallbackServiceInternal.OnEffectiveThemeChanged(arg);
+		return new EmptyValue();
+	};
+	/**
+	 * Settings window was requested to open from tray
+	 * @param ArrayBuffer param
+	 * @returns EmptyValue param
+	 */
+	OnSettingsWindowOpened = async (param: ArrayBuffer): Promise<EmptyValue> => {
+		const bytes = new Uint8Array(param);
+		const arg = EmptyValue.deserializeBinary(bytes);
+
+		if (!arg) {
+			throw new Error(`Empty parameter in SettingsCallbackService.OnSettingsWindowOpened: ${ param }`);
+		}
+		log.dbg('Callback data', 'SettingsCallbackService.OnSettingsWindowOpened', arg.toObject());
+		await this.settingsCallbackServiceInternal.OnSettingsWindowOpened(arg);
 		return new EmptyValue();
 	};
 }

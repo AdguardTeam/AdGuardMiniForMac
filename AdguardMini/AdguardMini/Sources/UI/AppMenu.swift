@@ -15,13 +15,14 @@ enum MenuType {
     case context
 }
 
-extension AppMenu: SciterAppControllerDependent, UserSettingsManagerDependent {}
+extension AppMenu: SciterAppControllerDependent, EventBusDependent, UserSettingsManagerDependent {}
 
 final class AppMenu: NSMenu, NSMenuItemValidation, NSMenuDelegate {
     // MARK: DI
 
     var sciterAppController: SciterAppsController!
     var userSettingsManager: UserSettingsManager!
+    var eventBus: EventBus!
 
     // MARK: UI
 
@@ -153,6 +154,7 @@ final class AppMenu: NSMenu, NSMenuItemValidation, NSMenuDelegate {
     @objc
     private func preferencesHandler(_ sender: Any?) {
         self.sciterAppController.showApp(.settings)
+        self.eventBus.post(event: .settingsWindowOpened, userInfo: nil)
     }
 
     @objc

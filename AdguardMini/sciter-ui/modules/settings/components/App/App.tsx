@@ -21,6 +21,7 @@ import { NotificationsRenderer } from '../NotificationsRenderer';
 import { PaywallController } from '../Paywall';
 import { Router } from '../Router';
 import { Tooltip } from '../Tooltip';
+import { EnableExtensionsController } from '../EnableExtensionsController';
 
 import './App.pcss';
 import {
@@ -87,6 +88,7 @@ function AppComponent() {
                 <PaywallController />
                 <MigrationFiltersConsentController />
                 <ActivationFlowStatusController />
+                <EnableExtensionsController />
                 <Router />
                 {createPortal(<NotificationsRenderer />, notifyContainer)}
                 {createPortal(<Tooltip />, tooltipContainer)}

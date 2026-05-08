@@ -41,6 +41,8 @@ enum Event: String {
     case networkStatusChanged = "NetworkStatusChanged"
 
     case effectiveThemeChanged = "EffectiveThemeChanged"
+
+    case settingsWindowOpened = "SettingsWindowOpened"
 }
 
 private extension Notification.Name {

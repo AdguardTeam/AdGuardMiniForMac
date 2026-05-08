@@ -85,4 +85,10 @@ async OnSafariExtensionUpdate(param: SafariExtensionUpdate): Promise<EmptyValue>
     
         return new EmptyValue();
     }
+
+    /* Fires when settings window is opened */
+    async OnSettingsWindowOpened(param: EmptyValue): Promise<EmptyValue> {
+        store.ui.setShowSafariExtensionsEnableScreen(true);
+        return new EmptyValue();
+    }
 }

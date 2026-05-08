@@ -39,4 +39,8 @@ public class SettingsCallbackService: SwiftBridge
 	@discardableResult public func onEffectiveThemeChanged (_ message: EffectiveThemeValue) -> EmptyValue {
 		return self.sciterCall(message, function: "SettingsCallbackService.OnEffectiveThemeChanged")
 	}
+	/// Settings window was requested to open from tray
+	@discardableResult public func onSettingsWindowOpened (_ message: EmptyValue) -> EmptyValue {
+		return self.sciterCall(message, function: "SettingsCallbackService.OnSettingsWindowOpened")
+	}
 }

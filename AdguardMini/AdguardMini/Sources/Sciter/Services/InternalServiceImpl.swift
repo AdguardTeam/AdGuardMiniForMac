@@ -15,6 +15,7 @@ import AML
 
 extension Sciter.InternalServiceImpl:
     SciterAppControllerDependent,
+    EventBusDependent,
     SupportDependent {}
 
 extension Sciter {
@@ -24,6 +25,7 @@ extension Sciter {
 
         var sciterAppController: SciterAppsController!
         var support: Support!
+        var eventBus: EventBus!
 
         override init() {
             super.init()
@@ -36,6 +38,7 @@ extension Sciter {
         func openSettingsWindow(_ message: EmptyValue, _ promise: @escaping (EmptyValue) -> Void) {
             Task { @MainActor in
                 self.sciterAppController.showApp(.settings)
+                self.eventBus.post(event: .settingsWindowOpened, userInfo: nil)
 
                 promise(EmptyValue())
             }

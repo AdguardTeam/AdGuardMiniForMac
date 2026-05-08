@@ -17,7 +17,7 @@ import type { UseColorTheme } from 'Utils/colorThemes';
 type EnableAdGuardExtensionsProps = {
     privacyPolicyUrl: string;
     useTheme: UseColorTheme;
-} & Pick<TemplateProps, 'buttons'>;
+} & Pick<TemplateProps, 'buttons' | 'containerClassName'>;
 
 /**
  * Enable AdGuard extensions view
@@ -26,6 +26,7 @@ export function EnableAdGuardExtensions({
     privacyPolicyUrl,
     useTheme,
     buttons,
+    containerClassName,
 }: EnableAdGuardExtensionsProps) {
     const [isDarkTheme, setIsDarkTheme] = useState(false);
 
@@ -36,6 +37,7 @@ export function EnableAdGuardExtensions({
     return (
         <Template
             buttons={buttons}
+            containerClassName={containerClassName}
             description={(
                 // FIXME: Bug in sciter 6.0.2.16-rev-1
                 // If <b> tag isn't wrapped, its color, font-weight, font-family are unset

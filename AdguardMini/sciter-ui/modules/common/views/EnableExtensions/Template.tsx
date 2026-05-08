@@ -18,6 +18,7 @@ export type TemplateProps = {
     title: string;
     description: ComponentChild;
     buttons: [Nullable<ActionButtonProps>, Nullable<ActionButtonProps>?];
+    containerClassName?: string;
 };
 
 /**
@@ -31,9 +32,10 @@ export function Template({
     title,
     description,
     buttons,
+    containerClassName,
 }: TemplateProps) {
     return (
-        <div className={s.Template_container}>
+        <div className={cx(s.Template_container, containerClassName)}>
             {headerSlot || <div className={s.Template_gap} />}
             <div className={imageBig ? s.Template_imgBig : s.Template_img}>
                 <img className={isPng ? s.Template_img_png : s.Template_img_source} src={image} />

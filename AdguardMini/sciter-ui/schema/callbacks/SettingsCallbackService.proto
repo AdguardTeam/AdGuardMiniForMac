@@ -22,4 +22,6 @@ service SettingsCallbackService {
     rpc OnSettingsPageRequested(StringValue) returns (EmptyValue);
     /* Fires when effective theme changed */
     rpc OnEffectiveThemeChanged(EffectiveThemeValue) returns (EmptyValue);
+    /* Settings window was requested to open from tray */
+    rpc OnSettingsWindowOpened(EmptyValue) returns (EmptyValue);
 }

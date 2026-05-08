@@ -96,6 +96,8 @@ final class SciterCallbackServiceImpl: RestartableServiceBase, SciterCallbackSer
             event: .effectiveThemeChanged
         )
 
+        self.subscribe(selector: #selector(self.onSettingsWindowOpened), event: .settingsWindowOpened)
+
         LogDebug("Initialized")
     }
 
@@ -241,6 +243,12 @@ final class SciterCallbackServiceImpl: RestartableServiceBase, SciterCallbackSer
                     self?.settingsCallbacks.onEffectiveThemeChanged(theme)
                 }
             }
+        }
+    }
+
+    @objc func onSettingsWindowOpened(_: Notification) {
+        self.runAsyncIfStarted { [weak self] in
+            self?.settingsCallbacks.onSettingsWindowOpened(EmptyValue())
         }
     }
 
