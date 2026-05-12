@@ -1,6 +1,9 @@
 /* Common - App displayed name. */
 "app_displayed_name" = "AdGuard Mini";
 
+/* App Menu - "About" title. */
+"app_menu_about_title" = "Аб AdGuard Mini";
+
 /* App Menu - "Preferences..." title. */
 "app_menu_preferences_title" = "Параметры...";
 
@@ -9,6 +12,9 @@
 
 /* App Menu - "Hide Others" title. */
 "app_menu_hide_others_title" = "Схаваць іншыя";
+
+/* App Menu - "Show All" title. */
+"app_menu_show_all_title" = "Паказаць усе";
 
 /* App Menu - "Close" title. */
 "app_menu_close_title" = "Закрыць";
@@ -19,11 +25,17 @@
 /* Terminating app Alert - Message text "Quit AdGuard Mini?" */
 "terminate_app_alert_message_text" = "Выйсці з AdGuard Mini?";
 
+/* Terminating app Alert - Informative text */
+"terminate_app_alert_informative_text" = "Дазвольце AdGuard Mini працаваць у фонавым рэжыме, каб кіраваць фільтрацыяй і аўтаматычна правяраць абнаўленні фільтраў";
+
 /* Terminating app Alert - Button title "Run in background" */
 "terminate_app_alert_button_title_run_in_background" = "Запусціць у фонавым рэжыме";
 
 /* Terminating app Alert - Button title "Quit" */
 "terminate_app_alert_button_title_quit" = "Выйсці";
+
+/* Terminating app Alert - Suppression Button title "Don’t ask me again" */
+"terminate_app_alert_suppression_button_title" = "Больш не пытаць мяне";
 
 /* Name of the crashed application for title of the crash reporter */
 "crash_reporter_title_adguard_component" = "Кампанент AdGuard Mini";
@@ -54,3 +66,9 @@
 
 /* Request user about resetting AdGuard Mini */
 "reseting_settings_request" = "Усе налады AdGuard Mini будуць скінуты да прадвызначаных значэнняў. Карыстальніцкія налады будуць выдалены";
+
+/* Notify the user that the application cannot be run from the current location. */
+"error_running_app" = "Перамясціце AdGuard Mini у папку «Праграмы»";
+
+/* Notify the user that the application should be moved to the Applications folder. */
+"error_running_app_message" = "AdGuard Mini павінен знаходзіцца ў папцы «Праграмы», каб праграма магла запусціцца.\nПерамясціце праграму туды і паспрабуйце яшчэ раз";

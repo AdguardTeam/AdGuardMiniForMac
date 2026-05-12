@@ -1,5 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-  <dict/>
+  <dict>
+    <key>item_stats_ads_blocked</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%2$@ рекламу заблоковано</string>
+        <key>few</key>
+        <string>%2$@ реклами заблоковано</string>
+        <key>many</key>
+        <string>%2$@ реклам заблоковано</string>
+        <key>other</key>
+        <string>%2$@ реклам заблоковано</string>
+      </dict>
+    </dict>
+    <key>item_stats_trackers_blocked</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%2$@ відстежувач заблоковано</string>
+        <key>few</key>
+        <string>%2$@ відстежувачі заблоковано</string>
+        <key>many</key>
+        <string>%2$@ відстежувачів заблоковано</string>
+        <key>other</key>
+        <string>%2$@ відстежувачів заблоковано</string>
+      </dict>
+    </dict>
+  </dict>
 </plist>

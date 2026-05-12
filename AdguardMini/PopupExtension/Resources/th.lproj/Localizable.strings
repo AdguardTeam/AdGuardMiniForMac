@@ -19,6 +19,9 @@
 /* Info view - Button title "Launch AdGuard Mini" */
 "info_button_title_launch" = "เปิดใช้งาน AdGuard Mini";
 
+/* Info view - Button title "Restart AdGuard Mini" */
+"info_button_title_restart" = "คุณต้องรีสตาร์ท AdGuard";
+
 /* Info view - Common button title "Try again" */
 "info_common_button_title_try_again" = "ลองอีกครั้ง";
 
