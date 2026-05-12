@@ -1,6 +1,9 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "Güvenli sayfa";
 
+/* Domain view - Domain Item hint "Website protection disabled" */
+"item_hint_domain_protection_off" = "Site koruması devre dışı";
+
 /* Domain view - Item title "Some extensions are off" */
 "item_attention_title_extensions_off" = "Bazı uzantılar kapalı";
 
