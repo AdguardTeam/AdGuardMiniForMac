@@ -1,6 +1,9 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "Zabezpečená stránka";
 
+/* Domain view - Domain Item hint "Website protection disabled" */
+"item_hint_domain_protection_off" = "Ochrana webových stránek vypnuta";
+
 /* Domain view - Item title "Some extensions are off" */
 "item_attention_title_extensions_off" = "Některá rozšíření jsou vypnutá";
 
@@ -15,6 +18,12 @@
 
 /* Domain view - Item title "Rate AdGuard Mini" */
 "item_title_rate_adguard_mini" = "Ohodnotit AdGuard Mini";
+
+/* Domain view - Stats label "{count} ad(s) blocked" */
+"item_stats_ads_blocked" = "Reklam zablokováno: %d";
+
+/* Domain view - Stats label "{count} tracker(s) blocked" */
+"item_stats_trackers_blocked" = "Slídičů zablokováno: %d";
 
 /* Info view - Title "Protection is disabled" */
 "info_title_protection_disabled" = "Ochrana je vypnuta";

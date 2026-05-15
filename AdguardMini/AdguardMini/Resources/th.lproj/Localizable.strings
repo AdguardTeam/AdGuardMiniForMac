@@ -1,6 +1,15 @@
 /* Common - App displayed name. */
 "app_displayed_name" = "AdGuard Mini";
 
+/* App Menu - "About" title. */
+"app_menu_about_title" = "เกี่ยวกับ AdGuard Mini";
+
+/* App Menu - "Preferences..." title. */
+"app_menu_preferences_title" = "การตั้งค่า...";
+
+/* App Menu - "Hide AdGuard Mini" title. */
+"app_menu_hide_title" = "ซ่อน AdGuard Mini";
+
 /* App Menu - "Hide Others" title. */
 "app_menu_hide_others_title" = "ซ่อนอื่น ๆ";
 
@@ -10,8 +19,26 @@
 /* App Menu - "Close" title. */
 "app_menu_close_title" = "ปิด";
 
+/* App Menu - "Quit AdGuard Mini" title. */
+"app_menu_quit_title" = "ออกจาก AdGuard Mini";
+
+/* Terminating app Alert - Message text "Quit AdGuard Mini?" */
+"terminate_app_alert_message_text" = "ต้องการออกจาก AdGuard Mini หรือไม่?";
+
+/* Terminating app Alert - Informative text */
+"terminate_app_alert_informative_text" = "เพื่อจัดการการกรองและตรวจสอบการอัปเดตตัวกรองโดยอัตโนมัติ ให้ AdGuard Mini ทำงานในพื้นหลัง";
+
+/* Terminating app Alert - Button title "Run in background" */
+"terminate_app_alert_button_title_run_in_background" = "ทำงานในพื้นหลัง";
+
 /* Terminating app Alert - Button title "Quit" */
 "terminate_app_alert_button_title_quit" = "ออก";
+
+/* Terminating app Alert - Suppression Button title "Don’t ask me again" */
+"terminate_app_alert_suppression_button_title" = "อย่าถามฉันอีก";
+
+/* Name of the crashed application for title of the crash reporter */
+"crash_reporter_title_adguard_component" = "คอมโพเนนต์ของ AdGuard Mini";
 
 /* Crash Reporter UI (SFBCrashReporterWindowController) */
 "window_controller_crash_reporter" = "ตัวรายงานข้อขัดข้อง: %1$@ (%2$@)";
@@ -22,8 +49,26 @@
 /* Request user about restarting AdGuard Mini */
 "restarting_request_quit" = "ออก";
 
+/* Request user about restarting AdGuard Mini */
+"restarting_request_message_title" = "คุณต้องรีสตาร์ท AdGuard";
+
+/* Request user about restarting AdGuard Mini */
+"restarting_request_message_text" = "จำเป็นต้องรีสตาร์ทเพื่อให้ AdGuard กลับมาทำงาน คลิก \"รีสตาร์ท\" เพื่อดำเนินการนี้";
+
 /* Title on Close button in error message */
 "close_button" = "ปิด";
 
 /* Request user about resetting AdGuard Mini */
 "reset_setting_button" = "รีเซ็ต";
+
+/* Request user about resetting AdGuard Mini */
+"reset_settings_message" = "รีเซ็ตการตั้งค่า AdGuard Mini คุณแน่ใจหรือไม่?";
+
+/* Request user about resetting AdGuard Mini */
+"reseting_settings_request" = "หากคุณคลิก \"รีเซ็ต\" AdGuard Mini จะพยายามรีเซ็ตการตั้งค่าของคุณทั้งหมด รวมถึงตัวกรองที่เปิดใช้งานและกฎตัวกรองที่กำหนดเอง หลังจากรีสตาร์ท AdGuard Mini จะทำงานเหมือนกับหลังจากเปิดใช้งานครั้งแรก";
+
+/* Notify the user that the application cannot be run from the current location. */
+"error_running_app" = "ไม่สามารถเรียกใช้ AdGuard Mini จากตำแหน่งนี้ได้!";
+
+/* Notify the user that the application should be moved to the Applications folder. */
+"error_running_app_message" = "AdGuard Mini จำเป็นต้องอยู่ในโฟลเดอร์ Applications เพื่อใช้งาน\nกรุณาย้ายไปที่นั่นแล้วลองใหม่อีกครั้ง";

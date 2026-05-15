@@ -11,6 +11,7 @@
     "nothing.selected": "Nada selecionado",
     "reset": "Redefinir",
     "reset.defaults": "Redefinir para o padrão",
+    "reset.defaults.all.desc": "Todas as configurações serão redefinidas para seus valores padrão. Configurações personalizadas, como filtros e regras do usuário, serão removidas. As estatísticas não serão excluídas",
     "reset.defaults.all.warning": "O AdGuard Mini será reiniciado. Alguns recursos precisarão de uma nova configuração",
     "clear.statistics.title": "Limpar estatísticas",
     "clear.statistics.description": "Todas as estatísticas sobre anúncios bloqueados serão excluídas permanentemente",

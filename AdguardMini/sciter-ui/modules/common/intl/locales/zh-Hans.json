@@ -11,6 +11,7 @@
     "nothing.selected": "未选择任何内容",
     "reset": "重置",
     "reset.defaults": "重置回默认状态",
+    "reset.defaults.all.desc": "所有设置将重置为默认值。自定义设置（如过滤器和用户规则）将被删除。统计数字不会被删除。",
     "reset.defaults.all.warning": "AdGuard Mini 即将重启，部分功能需重新设置。",
     "clear.statistics.title": "清除统计数据",
     "clear.statistics.description": "所有已拦截广告的统计数据将被永久删除",
