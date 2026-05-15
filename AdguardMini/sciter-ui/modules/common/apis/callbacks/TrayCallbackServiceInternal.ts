@@ -15,6 +15,8 @@ export class TrayCallbackServiceInternal implements ITrayCallbackServiceInternal
             store.telemetry.setPage(TrayPage.TrayMenu);
             store.telemetry.trackPageView();
         } else {
+            // When hide tray window, clear all notifications
+            store.notification.clearAll();
             // On Tray close, if user is not on home page, set it to home, 
             // because when user will open tray again, he will see the same page as before,
             //  and it can be confusing if he was not on home page
