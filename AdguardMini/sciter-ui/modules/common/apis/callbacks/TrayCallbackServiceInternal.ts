@@ -46,6 +46,9 @@ export class TrayCallbackServiceInternal implements ITrayCallbackServiceInternal
 	/* Fires when swift resolve filters current state */
 	async OnFilterStatusResolved(param: FiltersStatus): Promise<EmptyValue> {
         store.settings.setFiltersStatus(param);
+        // Refresh global settings here to pull the latest lastFiltersUpdateTimestampMs
+        // right after Swift reports final filter update status.
+        await store.settings.getSettings();
         return new EmptyValue();
     }
 

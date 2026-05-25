@@ -14,12 +14,16 @@ import { provideContactSupportParam } from 'TrayLib/utils/translate';
 import { TrayEvent, TrayRoute } from 'TrayStore/modules';
 import { Button, Icon, Text, Loader } from 'UILib';
 
+import { resolveLastFiltersUpdateTimestamp } from 'Modules/tray/components/CheckUpdates/resolveLastFiltersUpdateTimestamp';
 import s from './CheckUpdates.module.pcss';
 
 import type { IconType } from 'UILib';
 
 /**
- * Used to define type of icon to be shown with needed css
+ * Selects an icon and style modifier for update status rows.
+ *
+ * @param shouldUpdate - `true` when an error/update-required state should be emphasized.
+ * @returns Icon type and CSS class name for the status marker.
  */
 function getIconProps(shouldUpdate: boolean): { icon: IconType; className: string } {
     return {
@@ -35,7 +39,10 @@ function getIconProps(shouldUpdate: boolean): { icon: IconType; className: strin
 }
 
 /**
- * Check Updates page in tray - RouteName.update;
+ * Renders the tray "Check updates" page and orchestrates version/filter update actions.
+ *
+ * The component starts checks on entry, conditionally shows app update controls for standalone builds,
+ * and displays the filters timestamp only for the "nothingToUpdate" state.
  */
 function CheckUpdatesComponent() {
     const { settings, router, notification, telemetry } = useTrayStore();
@@ -96,6 +103,11 @@ function CheckUpdatesComponent() {
         router.changePath(TrayRoute.filters);
         notification.clearAll();
     };
+
+    const lastFiltersUpdateTimestamp = resolveLastFiltersUpdateTimestamp(
+        filtersStatus,
+        globalSettings?.lastFiltersUpdateTimestampMs,
+    );
 
     const filtersHoverable = !filtersUpdating && (filtersStatus === 'updated' || filtersStatus === 'error') && filtersMap;
 
@@ -164,7 +176,9 @@ function CheckUpdatesComponent() {
                                         {filtersStatus === 'nothingToUpdate' && (
                                             <>
                                                 <Text type="t2">{translate('up.to.date')}</Text>
-                                                <Text type="t2">{format(Date.now(), DATE_FORMAT.day_month_hours_minutes)}</Text>
+                                                {lastFiltersUpdateTimestamp !== null && (
+                                                    <Text type="t2">{format(lastFiltersUpdateTimestamp, DATE_FORMAT.day_month_hours_minutes)}</Text>
+                                                )}
                                             </>
                                         )}
                                         {filtersStatus === 'updated' && (

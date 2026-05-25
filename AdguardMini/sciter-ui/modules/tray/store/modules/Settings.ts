@@ -149,6 +149,7 @@ export class SettingsStore {
             newValue.debugLogging = this.settings.debugLogging;
             newValue.allowTelemetry = this.settings.allowTelemetry;
             newValue.theme = this.settings.theme;
+            newValue.lastFiltersUpdateTimestampMs = this.settings.lastFiltersUpdateTimestampMs;
         }
         return newValue;
     }

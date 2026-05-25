@@ -1146,6 +1146,7 @@
 				169664D72E9FEB2B00E0B87E /* SafariExtension Builder */,
 				EC3462F52A29DD9200F59ABC /* Products */,
 				EC4131A42A6ED42400C93BDF /* Frameworks */,
+				F5F046BB2FC072F3000847A9 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};

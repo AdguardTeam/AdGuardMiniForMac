@@ -18,7 +18,8 @@ extension GlobalSettings {
         language: String = "",
         debugLogging: Bool = false,
         allowTelemetry: Bool = false,
-        theme: Theme
+        theme: Theme,
+        lastFiltersUpdateTimestampMs: Int64 = 0
     ) {
         self.init()
         self.enabled = enabled
@@ -28,5 +29,6 @@ extension GlobalSettings {
         self.debugLogging = debugLogging
         self.allowTelemetry = allowTelemetry
         self.theme = theme
+        self.lastFiltersUpdateTimestampMs = lastFiltersUpdateTimestampMs
     }
 }

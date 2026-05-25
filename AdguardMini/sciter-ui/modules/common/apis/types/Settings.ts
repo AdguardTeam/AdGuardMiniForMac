@@ -840,6 +840,7 @@ export class GlobalSettings extends pb_1.Message {
         debugLogging?: boolean;
         allowTelemetry?: boolean;
         theme?: Theme;
+        lastFiltersUpdateTimestampMs?: number;
     }) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
@@ -864,6 +865,9 @@ export class GlobalSettings extends pb_1.Message {
             }
             if ("theme" in data && data.theme != undefined) {
                 this.theme = data.theme;
+            }
+            if ("lastFiltersUpdateTimestampMs" in data && data.lastFiltersUpdateTimestampMs != undefined) {
+                this.lastFiltersUpdateTimestampMs = data.lastFiltersUpdateTimestampMs;
             }
         }
     }
@@ -909,6 +913,12 @@ export class GlobalSettings extends pb_1.Message {
     set theme(value: Theme) {
         pb_1.Message.setField(this, 9, value);
     }
+    get lastFiltersUpdateTimestampMs() {
+        return pb_1.Message.getFieldWithDefault(this, 10, 0) as number;
+    }
+    set lastFiltersUpdateTimestampMs(value: number) {
+        pb_1.Message.setField(this, 10, value);
+    }
     static fromObject(data: {
         enabled?: boolean;
         newVersionAvailable?: boolean;
@@ -917,6 +927,7 @@ export class GlobalSettings extends pb_1.Message {
         debugLogging?: boolean;
         allowTelemetry?: boolean;
         theme?: Theme;
+        lastFiltersUpdateTimestampMs?: number;
     }): GlobalSettings {
         const message = new GlobalSettings({});
         if (data.enabled != null) {
@@ -940,6 +951,9 @@ export class GlobalSettings extends pb_1.Message {
         if (data.theme != null) {
             message.theme = data.theme;
         }
+        if (data.lastFiltersUpdateTimestampMs != null) {
+            message.lastFiltersUpdateTimestampMs = data.lastFiltersUpdateTimestampMs;
+        }
         return message;
     }
     toObject() {
@@ -951,6 +965,7 @@ export class GlobalSettings extends pb_1.Message {
             debugLogging?: boolean;
             allowTelemetry?: boolean;
             theme?: Theme;
+            lastFiltersUpdateTimestampMs?: number;
         } = {};
         if (this.enabled != null) {
             data.enabled = this.enabled;
@@ -973,6 +988,9 @@ export class GlobalSettings extends pb_1.Message {
         if (this.theme != null) {
             data.theme = this.theme;
         }
+        if (this.lastFiltersUpdateTimestampMs != null) {
+            data.lastFiltersUpdateTimestampMs = this.lastFiltersUpdateTimestampMs;
+        }
         return data;
     }
     serialize(): Uint8Array;
@@ -993,6 +1011,8 @@ export class GlobalSettings extends pb_1.Message {
             writer.writeBool(8, this.allowTelemetry);
         if (this.theme != Theme.unknown)
             writer.writeEnum(9, this.theme);
+        if (this.lastFiltersUpdateTimestampMs != 0)
+            writer.writeInt64(10, this.lastFiltersUpdateTimestampMs);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -1022,6 +1042,9 @@ export class GlobalSettings extends pb_1.Message {
                     break;
                 case 9:
                     message.theme = reader.readEnum();
+                    break;
+                case 10:
+                    message.lastFiltersUpdateTimestampMs = reader.readInt64();
                     break;
                 default: reader.skipField();
             }

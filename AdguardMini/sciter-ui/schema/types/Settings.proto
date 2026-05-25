@@ -64,6 +64,7 @@ message GlobalSettings {
     bool debug_logging = 6;
     bool allow_telemetry = 8;
     Theme theme = 9;
+    int64 last_filters_update_timestamp_ms = 10;
 }
 
 message UpdateQuitReactionMessage {

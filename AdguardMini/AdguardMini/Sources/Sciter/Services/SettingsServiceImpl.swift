@@ -223,7 +223,10 @@ extension Sciter {
                     language: Locales.navigatorLang,
                     debugLogging: self.userSettingsService.settings.debugLogging,
                     allowTelemetry: self.userSettingsService.allowTelemetry,
-                    theme: self.userSettingsService.theme.toProto()
+                    theme: self.userSettingsService.theme.toProto(),
+                    lastFiltersUpdateTimestampMs: Int64(
+                        max(0, self.userSettingsService.lastFiltersUpdateTime.timeIntervalSince1970 * 1000)
+                    ),
                 )
                 promise(traySettings)
             }

@@ -462,6 +462,8 @@ public struct GlobalSettings: Sendable {
 
   public var theme: Theme = .unknown
 
+  public var lastFiltersUpdateTimestampMs: Int64 = 0
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -961,7 +963,7 @@ extension ImportStatus: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
 
 extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "GlobalSettings"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}enabled\0\u{2}\u{2}newVersionAvailable\0\u{1}releaseVariant\0\u{1}language\0\u{3}debug_logging\0\u{4}\u{2}allow_telemetry\0\u{1}theme\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}enabled\0\u{2}\u{2}newVersionAvailable\0\u{1}releaseVariant\0\u{1}language\0\u{3}debug_logging\0\u{4}\u{2}allow_telemetry\0\u{1}theme\0\u{3}last_filters_update_timestamp_ms\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -976,6 +978,7 @@ extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       case 6: try { try decoder.decodeSingularBoolField(value: &self.debugLogging) }()
       case 8: try { try decoder.decodeSingularBoolField(value: &self.allowTelemetry) }()
       case 9: try { try decoder.decodeSingularEnumField(value: &self.theme) }()
+      case 10: try { try decoder.decodeSingularInt64Field(value: &self.lastFiltersUpdateTimestampMs) }()
       default: break
       }
     }
@@ -1003,6 +1006,9 @@ extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if self.theme != .unknown {
       try visitor.visitSingularEnumField(value: self.theme, fieldNumber: 9)
     }
+    if self.lastFiltersUpdateTimestampMs != 0 {
+      try visitor.visitSingularInt64Field(value: self.lastFiltersUpdateTimestampMs, fieldNumber: 10)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -1014,6 +1020,7 @@ extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if lhs.debugLogging != rhs.debugLogging {return false}
     if lhs.allowTelemetry != rhs.allowTelemetry {return false}
     if lhs.theme != rhs.theme {return false}
+    if lhs.lastFiltersUpdateTimestampMs != rhs.lastFiltersUpdateTimestampMs {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
