@@ -17,7 +17,7 @@ let package = Package(
     dependencies: [
         .package(
             url: "ssh://git@bit.int.agrd.dev:7999/adguard-mac/sp-sciter-sdk.git",
-            branch: "mac/6.0.3.18-rev-3"
+            branch: "mac/6.0.3.18-rev-4"
         ),
         .package(url: "https://github.com/apple/swift-protobuf.git", exact: "1.31.0")
     ],
