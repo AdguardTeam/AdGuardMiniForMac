@@ -494,6 +494,9 @@ extension PopupView.ViewModel: ToolbarHandler {
         // Safari triggers the next validation naturally on focus, navigation, or blocking events.
         // Deliberately skip `setToolbarItemsNeedUpdate()` to avoid an infinite re-validate loop.
         // Empty `tabStats.url` (tabs with no blocks yet) would otherwise cause such a loop.
+        // Skip XPC entirely when the main app is not running — calls will fail and
+        // `$isMainAppRunning.sink` will trigger a full refresh once the app starts.
+        guard self.isMainAppRunning else { return }
         let cachedUrlString = self.currentUrl?.absoluteString ?? ""
         guard self.stateNeedsFullRefresh || tabStats.url.isEmpty || tabStats.url != cachedUrlString else { return }
 
@@ -506,6 +509,12 @@ extension PopupView.ViewModel: ToolbarHandler {
             return
         }
 
+        // Track whether XPC returned anything that differs from the cached state.
+        // Only request a toolbar re-render when the state actually changed to avoid an infinite validate → setToolbarItemsNeedUpdate → validate loop.
+        let stateChanged = self.isProtectionEnabled != state.isProtectionEnabled
+            || self.currentUrl != state.protectionForUrlState.currentUrl
+            || self.isProtectionEnabledForUrl != state.protectionForUrlState.isProtectionEnabledForCurrentUrl
+
         self.isProtectionEnabled = state.isProtectionEnabled
         self.currentUrl = state.protectionForUrlState.currentUrl
 
@@ -515,7 +524,8 @@ extension PopupView.ViewModel: ToolbarHandler {
 
         // Re-render now that XPC has returned with the accurate per-URL state.
         // Skipped for secure/system pages (empty tabStats.url) to avoid an infinite validation loop.
-        if !tabStats.url.isEmpty {
+        // Also skipped when the state hasn't changed — Step 1 already rendered the correct toolbar.
+        if stateChanged && !tabStats.url.isEmpty {
             self.safariApp.setToolbarItemsNeedUpdate()
         }
     }
