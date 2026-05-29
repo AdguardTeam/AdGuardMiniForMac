@@ -38,10 +38,12 @@ export function MiscSection(props: Props) {
         <>
             <Text className={s.Settings_sectionTitle} type="h5">{translate('settings.miscellaneous')}</Text>
             <SettingsItemSwitch
+                testId="settings-general-telemetry"
                 setValue={onToggleAllowTelemetry}
                 title={translate('telemetry.accept.send.data', {
                     link: (text: string) => (
                         <div
+                            id="settings-general-telemetry-modal-trigger"
                             className={s.Settings_telemetryModalLink}
                             onClick={(e) => {
                                 e.preventDefault();
@@ -56,11 +58,13 @@ export function MiscSection(props: Props) {
                 value={allowTelemetry}
             />
             <SettingsItemSwitch
+                testId="settings-general-toolbar-badge"
                 setValue={updateShowSafariToolbarBadge}
                 title={translate('settings.safari.toolbar.badge')}
                 value={showSafariToolbarBadge}
             />
             <SettingsItemSwitch
+                testId="settings-general-debug-logging"
                 additionalText={(
                     <Text className={theme.color.orange} type="t2">
                         {translate('settings.debug.warning')}
@@ -72,6 +76,7 @@ export function MiscSection(props: Props) {
                 value={debugLogging}
             />
             <SettingsItemLink
+                testId="settings-general-export-logs"
                 description={translate('settings.export.desc')}
                 title={translate('settings.export')}
                 onClick={onExportLogs}

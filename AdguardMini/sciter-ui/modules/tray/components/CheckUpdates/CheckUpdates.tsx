@@ -112,9 +112,10 @@ function CheckUpdatesComponent() {
     const filtersHoverable = !filtersUpdating && (filtersStatus === 'updated' || filtersStatus === 'error') && filtersMap;
 
     return (
-        <div className={s.CheckUpdates}>
+        <div id="tray-updates-page" className={s.CheckUpdates}>
             <div className={s.CheckUpdates_header}>
                 <Button
+                    testId="tray-updates-back-button"
                     icon="back"
                     iconClassName={theme.button.grayIcon}
                     type="icon"
@@ -145,7 +146,7 @@ function CheckUpdatesComponent() {
                             </div>
                         </div>
                         {newVersionAvailable && (
-                            <Button className={s.CheckUpdates_element_button} type="outlined" onClick={onUpdate}>
+                            <Button testId="tray-updates-update-button" className={s.CheckUpdates_element_button} type="outlined" onClick={onUpdate}>
                                 <Text className={s.CheckUpdates_element_button_text} type="t1">{translate('update')}</Text>
                             </Button>
                         )}
@@ -153,6 +154,7 @@ function CheckUpdatesComponent() {
                 )}
                 <div className={s.CheckUpdates_element}>
                     <div
+                        id="tray-updates-filters-results-row"
                         className={cx(s.CheckUpdates_element_title,
                             filtersHoverable && s.CheckUpdates_element_title__hover)}
                         onClick={() => {
@@ -204,7 +206,7 @@ function CheckUpdatesComponent() {
                         )}
                     </div>
                     {filtersStatus === 'error' && (
-                        <Button className={s.CheckUpdates_element_button} type="outlined" onClick={onFiltersFix}>
+                        <Button testId="tray-updates-retry-filters-button" className={s.CheckUpdates_element_button} type="outlined" onClick={onFiltersFix}>
                             <Text className={s.CheckUpdates_element_button_text} type="t1">{translate('tray.update.filters.update.try.again')}</Text>
                         </Button>
                     )}

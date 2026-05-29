@@ -40,13 +40,14 @@ function ThemeComponent() {
     }, []);
 
     return (
-        <Layout navigation={{ router, route: RouteName.settings, title: translate('menu.settings') }} type="settingsPage">
+        <Layout testId="settings-theme-page" navigation={{ router, route: RouteName.settings, title: translate('menu.settings') }} type="settingsPage">
             <SettingsTitle
                 title={translate('settings.theme')}
             />
             <div>
                 {themes.map((theme) => (
                     <Radio
+                        testId={`settings-theme-${theme.value}`}
                         key={theme.value}
                         checked={theme.value === currentTheme}
                         className={s.Theme_option}

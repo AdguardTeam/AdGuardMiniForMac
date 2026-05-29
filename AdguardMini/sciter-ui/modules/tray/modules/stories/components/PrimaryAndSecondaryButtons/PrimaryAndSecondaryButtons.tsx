@@ -15,11 +15,15 @@ export function PrimaryAndSecondaryButtons({
     primaryButtonAction,
     secondaryButtonTitle,
     secondaryButtonAction,
+    testIdPrimary,
+    testIdSecondary,
 }: {
     primaryButtonTitle: string;
     primaryButtonAction(): void;
     secondaryButtonTitle?: string;
     secondaryButtonAction?(): void;
+    testIdPrimary?: string;
+    testIdSecondary?: string;
 }) {
     return (
         <>
@@ -27,6 +31,7 @@ export function PrimaryAndSecondaryButtons({
                 className={cx(s.PrimaryAndSecondaryButtons_button, theme.button.storyButton)}
                 type="submit"
                 onClick={primaryButtonAction}
+                testId={testIdPrimary}
             >
                 <Text lineHeight="none" type="t1" semibold>{primaryButtonTitle}</Text>
             </Button>
@@ -35,6 +40,7 @@ export function PrimaryAndSecondaryButtons({
                     className={cx(s.PrimaryAndSecondaryButtons_buttonText, tx.button.textButton)}
                     type="text"
                     onClick={secondaryButtonAction}
+                    testId={testIdSecondary}
                 >
                     <Text lineHeight="none" type="t1">{secondaryButtonTitle}</Text>
                 </Button>

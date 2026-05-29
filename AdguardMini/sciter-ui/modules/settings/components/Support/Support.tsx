@@ -63,7 +63,7 @@ function SupportComponent() {
     } */];
 
     return (
-        <Layout type="settingsPage">
+        <Layout testId="settings-support-page" type="settingsPage">
             <SettingsTitle title={translate('menu.support')} maxTopPadding />
             {navigation.map((item) => (
                 <SettingsItemLink key={item.icon} {...item} />

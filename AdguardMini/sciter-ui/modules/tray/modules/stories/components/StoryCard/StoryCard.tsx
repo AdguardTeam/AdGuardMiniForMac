@@ -16,6 +16,7 @@ export type StoryCardProps = Omit<StoryInfo, 'storyConfig'> & {
     storyId: StoryId;
     setSelectedStoryId(storyId: StoryId): void;
     className?: string;
+    testId?: string;
 };
 
 /**
@@ -30,6 +31,7 @@ function StoryCardComponent({
     className,
     telemetryEvent,
     content,
+    testId,
 }: StoryCardProps) {
     const { telemetry } = useTrayStore();
 
@@ -41,7 +43,7 @@ function StoryCardComponent({
     }, [setSelectedStoryId, storyId, telemetry, telemetryEvent]);
 
     return (
-        <div className={cx(s.StoryCard, s[`StoryCard__${style}`], className)} onClick={onClick}>
+        <div id={testId} className={cx(s.StoryCard, s[`StoryCard__${style}`], className)} onClick={onClick}>
             <Icon className={cx(s.StoryCard_icon, s[`StoryCard_icon__${style}`])} icon={icon} big />
             {content}
             <Text type="t2">{text}</Text>

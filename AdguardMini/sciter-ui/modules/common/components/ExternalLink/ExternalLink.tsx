@@ -21,6 +21,7 @@ export type ExternalLinkProps = {
     noLineHeight?: boolean;
     color?: 'green' | 'red' | 'inheritColor';
     onClick?: JSXInternal.DOMAttributes<HTMLAnchorElement>['onClick'];
+    testId?: string;
 };
 
 /**
@@ -36,14 +37,17 @@ export function ExternalLink({
     noLineHeight,
     onClick,
     color = 'green',
+    testId,
 }: ExternalLinkProps) {
     return (
         <a
+            id={testId}
             className={cx(s.ExternalLink, s[`ExternalLink__${color}`], className, noUnderline && s.ExternalLink__noUnderline)}
             href={href}
             rel="noopener noreferrer"
             target="_blank"
             onClick={onClick}
+            data-testid={testId}
         >
             {icon && <Icon className={s[`ExternalLink__${color}`]} icon={icon} />}
             {!icon && <Text className={s.ExternalLink_text} lineHeight={noLineHeight ? 'none' : undefined} type={textType || 't1'}>{children}</Text>}

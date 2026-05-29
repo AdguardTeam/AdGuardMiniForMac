@@ -17,11 +17,13 @@ export type NavigationHeaderProps = {
     router: IRouter<string>;
     title: string;
     onClick?(): void;
+    testId?: string;
 } | {
     route?: RouteName;
     router?: IRouter<string>;
     title: string;
     onClick(): void;
+    testId?: string;
 };
 
 /**
@@ -34,6 +36,7 @@ function NavigationHeaderComponent({
     title,
     router,
     onClick,
+    testId,
 }: NavigationHeaderProps) {
     useEscape(() => {
         if (onClick) {
@@ -43,7 +46,7 @@ function NavigationHeaderComponent({
         }
     });
     return (
-        <div className={s.NavigationHeader} onClick={onClick ?? (() => router?.changePath(route!))}>
+        <div id={testId} className={s.NavigationHeader} onClick={onClick ?? (() => router?.changePath(route!))}>
             <Icon className={s.NavigationHeader_icon} icon="arrow_left" />
             <Text className={s.NavigationHeader_text} type="t2">{title}</Text>
         </div>

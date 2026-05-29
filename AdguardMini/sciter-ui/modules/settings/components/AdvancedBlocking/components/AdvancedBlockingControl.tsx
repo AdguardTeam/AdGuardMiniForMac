@@ -67,9 +67,10 @@ export function AdvancedBlockingControlComponent() {
             ) : undefined}
             />
             {!isBVariant && (
-                <AdvancedRulesSwitch />
+                <AdvancedRulesSwitch testId="settings-advanced-blocking-advanced-rules" />
             )}
             <AdguardExtraSwitch
+                testId="settings-advanced-blocking-adguard-extra"
                 additionalText={isBVariant ? undefined : payedFuncsTitle}
                 isTest={isBVariant}
                 muted={!isLicenseOrTrialActive}
@@ -79,6 +80,7 @@ export function AdvancedBlockingControlComponent() {
             />
             {isBVariant && (
                 <SettingsItemSwitch
+                    testId="settings-advanced-blocking-real-time-updates"
                     additionalText={(!autoFiltersUpdate && (
                         <Text className={theme.color.orange} type="t2">
                             {translate('settings.real.time.filter.updates.enable.update.filters', {

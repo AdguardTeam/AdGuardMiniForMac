@@ -33,6 +33,9 @@ function AdsComponent() {
 
     return (
         <Step
+            pageContainerTestId="onboarding-ads-page"
+            testIdPrimaryButton="onboarding-ads-tune-button"
+            testIdSecondaryButton="onboarding-ads-skip-button"
             description={translate('onboarding.ads.desc')}
             elLottieRef={elLottieRef}
             lottie="ads"

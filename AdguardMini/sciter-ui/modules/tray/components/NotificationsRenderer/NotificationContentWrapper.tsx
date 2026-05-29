@@ -16,6 +16,7 @@ type Props = {
     message: ComponentChild;
     notification: NotificationPropsHolder;
     onCloseNotification(): void;
+    testId?: string;
 };
 
 /**
@@ -29,6 +30,7 @@ export function NotificationContentWrapper({
     message,
     notification,
     onCloseNotification,
+    testId,
 }: Props) {
     let className = '';
 
@@ -53,6 +55,7 @@ export function NotificationContentWrapper({
                 {message}
             </div>
             <NotificationButtonSwitch
+                testId={testId}
                 notification={notification}
                 onCloseNotification={onCloseNotification}
             />

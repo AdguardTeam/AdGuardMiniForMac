@@ -13,7 +13,7 @@ import { SettingsControl } from './components/SettingsControl';
  */
 export function SettingsComponent() {
     return (
-        <Layout type="settingsPage">
+        <Layout testId="settings-general-page" type="settingsPage">
             <SettingsControl />
         </Layout>
     );

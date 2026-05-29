@@ -13,7 +13,7 @@ import { SafariProtectionControl } from './components/SafariProtectionControl';
  */
 function SafariProtectionComponent() {
     return (
-        <Layout type="settingsPage">
+        <Layout testId="settings-safari-protection-page" type="settingsPage">
             <SafariProtectionControl />
         </Layout>
     );

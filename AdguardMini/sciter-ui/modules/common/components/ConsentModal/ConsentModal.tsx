@@ -18,6 +18,9 @@ type ConsentModalProps = {
     title?: string;
     description?: string;
     cancelText?: string;
+    testIdModal?: string;
+    testIdEnableButton?: string;
+    testIdCancelButton?: string;
 };
 
 /**
@@ -31,9 +34,15 @@ export function ConsentModal({
     title,
     description,
     cancelText,
+    testIdModal,
+    testIdEnableButton,
+    testIdCancelButton,
 }: ConsentModalProps) {
     return (
         <Modal
+            testId={testIdModal}
+            testIdSubmit={testIdEnableButton}
+            testIdCancel={testIdCancelButton}
             cancel={!!onPartial}
             cancelAction={onPartial}
             cancelText={cancelText || translate('consent.modal.without.annoyance')}
@@ -66,6 +75,20 @@ export function ConsentModal({
                     </Text>
                 </div>
             </div>
+            <button
+                id={testIdEnableButton}
+                type="button"
+                className={s.ConsentModal_enableButton}
+            >
+                {translate('enable')}
+            </button>
+            <button
+                id={testIdCancelButton}
+                type="button"
+                className={s.ConsentModal_cancelButton}
+            >
+                {cancelText || translate('consent.modal.without.annoyance')}
+            </button>
         </Modal>
     );
 }

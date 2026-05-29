@@ -53,6 +53,9 @@ function AnnoyancesComponent() {
     return (
         <>
             <Step
+                pageContainerTestId="onboarding-annoyances-page"
+                testIdPrimaryButton="onboarding-annoyances-enable-button"
+                testIdSecondaryButton="onboarding-annoyances-dont-block-button"
                 description={translate('onboarding.annoyances.desc')}
                 elLottieRef={elLottieRef}
                 lottie="annoyances"
@@ -63,6 +66,9 @@ function AnnoyancesComponent() {
             />
             {showConsentModal && (
                 <ConsentModal
+                    testIdModal="onboarding-annoyances-consent-modal"
+                    testIdEnableButton="onboarding-annoyances-consent-modal-enable"
+                    testIdCancelButton="onboarding-annoyances-consent-modal-cancel"
                     filters={annoyanceFilters}
                     onClose={() => setShowConsentModal(false)}
                     onEnable={onConsentEnable}

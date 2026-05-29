@@ -48,6 +48,7 @@ function NotificationsRendererComponent() {
                             </NotificationIconWrapper>
 
                             <NotificationContentWrapper
+                                testId="tray-notification-cta-button"
                                 message={message}
                                 notification={n}
                                 onCloseNotification={() => onClose(uid)}
@@ -56,6 +57,7 @@ function NotificationsRendererComponent() {
                             {closeable && (
                                 <NotificationIconWrapper notification={n}>
                                     <Button
+                                        testId="tray-notification-close-button"
                                         icon="cross"
                                         iconClassName={s.NotificationsRenderer_notification_close}
                                         type="icon"

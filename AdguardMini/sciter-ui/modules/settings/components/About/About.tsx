@@ -111,7 +111,7 @@ export function AboutComponent() {
     // };
 
     return (
-        <Layout type="settingsPage">
+        <Layout testId="settings-about-page" type="settingsPage">
             <SettingsTitle title={translate('menu.about')} maxTopPadding />
             <div className={cx(s.About_description, theme.layout.content)}>
                 {releaseVariant === ReleaseVariants.standAlone && newVersionAvailable && (

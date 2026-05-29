@@ -11,20 +11,28 @@ type NavigationArrowsProps = {
     onPrevious(): void;
     onNext(): void;
     hideLeft?: boolean;
+    testIdLeftArrow?: string;
+    testIdRightArrow?: string;
 };
 
 /**
  * Navigation arrows component for stories
  */
-export function NavigationArrows({ onPrevious, onNext, hideLeft }: NavigationArrowsProps) {
+export function NavigationArrows({
+    onPrevious,
+    onNext,
+    hideLeft,
+    testIdLeftArrow,
+    testIdRightArrow,
+}: NavigationArrowsProps) {
     return (
         <>
             {!hideLeft && (
-                <div className={s.NavigationArrows_left} onClick={onPrevious}>
+                <div id={testIdLeftArrow} className={s.NavigationArrows_left} onClick={onPrevious}>
                     <Icon className={cx(theme.button.whiteIcon, s.NavigationArrows_left_icon)} icon="arrow_left" />
                 </div>
             )}
-            <div className={s.NavigationArrows_right} onClick={onNext}>
+            <div id={testIdRightArrow} className={s.NavigationArrows_right} onClick={onNext}>
                 <Icon className={cx(theme.button.whiteIcon, s.NavigationArrows_right_icon)} icon="arrow_left" />
             </div>
         </>

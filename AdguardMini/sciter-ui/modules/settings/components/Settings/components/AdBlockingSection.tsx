@@ -36,6 +36,7 @@ export const AdBlockingSection = observer(() => {
         const navParam = {
             nav: (text: string) => (
                 <Button
+                    testId="settings-general-safari-preferences-button"
                     className={s.Settings_button}
                     type="text"
                     onClick={(e) => {
@@ -63,6 +64,7 @@ export const AdBlockingSection = observer(() => {
         <>
             <Text className={s.Settings_sectionTitle} type="h5">{translate('settings.ad.blocking')}</Text>
             <SettingsItemLink
+                testId="settings-general-filters"
                 additionalText={(
                     <Text className={s.Settings_enabled} type="t2">
                         {translate('filters.enabled', {
@@ -75,6 +77,7 @@ export const AdBlockingSection = observer(() => {
                 title={translate('settings.filters')}
             />
             <SettingsItemLink
+                testId="settings-general-safari-protection"
                 additionalText={(
                     <>
                         <Text className={s.Settings_enabled} type="t2">{translate('filters.enabled', { enabled: enabledSafariExtensionsCount })}</Text>

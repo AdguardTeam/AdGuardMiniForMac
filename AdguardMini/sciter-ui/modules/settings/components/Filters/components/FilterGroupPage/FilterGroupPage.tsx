@@ -93,7 +93,7 @@ function FilterGroupPageComponent({
     }, []);
 
     return (
-        <Layout navigation={{ onClick: handleBack, title: backLink ? translate('menu.safari.protection') : translate('filters.filters') }} type="settingsPage">
+        <Layout testId="settings-filters-group-page" navigation={{ onClick: handleBack, title: backLink ? translate('menu.safari.protection') : translate('filters.filters') }} type="settingsPage">
             <SettingsTitle
                 description={isCustomGroup ? translate('filters.custom.filters.desc') : undefined}
                 elements={settingsTitleElements}

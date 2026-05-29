@@ -41,7 +41,7 @@ function QuitReactionComponent() {
     }, []);
 
     return (
-        <Layout navigation={{ router, route: RouteName.settings, title: translate('menu.settings') }} type="settingsPage">
+        <Layout testId="settings-quit-reaction-page" navigation={{ router, route: RouteName.settings, title: translate('menu.settings') }} type="settingsPage">
             <SettingsTitle
                 description={translate('settings.hardware.quit.reaction.desc')}
                 title={translate('settings.hardware.quit.reaction')}
@@ -49,6 +49,7 @@ function QuitReactionComponent() {
             <div>
                 {quitReactions.map((reaction) => (
                     <Radio
+                        testId={`settings-quit-reaction-${reaction.value}`}
                         key={reaction.value}
                         checked={reaction.value === quitReaction}
                         className={s.QuitReaction_option}

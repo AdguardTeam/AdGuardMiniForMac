@@ -19,6 +19,7 @@ type RadioProps = {
     id?: string;
     name?: string;
     onClick?(e: JSX.TargetedMouseEvent<HTMLElement>): void;
+    testId?: string;
 };
 
 /**
@@ -33,9 +34,11 @@ export function Radio({
     id,
     name,
     onClick,
+    testId,
 }: RadioProps) {
     return (
         <label
+            id={testId}
             className={cx(s.Radio, className)}
             htmlFor={id}
             onClick={onClick ? (e) => {

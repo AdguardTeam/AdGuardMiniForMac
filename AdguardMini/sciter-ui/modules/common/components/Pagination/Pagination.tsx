@@ -15,6 +15,7 @@ type PaginationProps = {
     pageCount: number;
     onChangePage(page: number): void;
     className?: string;
+    testId?: string;
 };
 
 const generatePagination = (
@@ -51,6 +52,7 @@ export function Pagination({
     currentPage,
     pageCount,
     onChangePage,
+    testId,
 }: PaginationProps) {
     const isFirstPage = currentPage === 1;
     const isLastPage = currentPage === pageCount;
@@ -60,7 +62,7 @@ export function Pagination({
     );
 
     return (
-        <ul className={cx(s.Pagination, className)}>
+        <ul id={testId} className={cx(s.Pagination, className)}>
             <PaginationItem
                 disabled={isFirstPage}
                 isArrow

@@ -48,6 +48,7 @@ function AdBlockingSectionComponent() {
         <div className={s.SafariProtection_block}>
             <Text className={cx(s.SafariProtection_block_title, theme.layout.content)} type="h5">{translate('safari.protection.part.ad.blocking')}</Text>
             <SettingsItemSwitch
+                testId="settings-safari-protection-block-ads"
                 description={translate('safari.protection.block.ads.desc')}
                 icon="ads"
                 setValue={onToggleBlockAds}
@@ -55,6 +56,7 @@ function AdBlockingSectionComponent() {
                 value={safariProtection.blockAds}
             />
             <SettingsItemSwitch
+                testId="settings-safari-protection-block-search-ads"
                 description={translate('safari.protection.block.search.ads.desc')}
                 icon="search"
                 setValue={onToggleBlockSearchAds}
@@ -62,6 +64,7 @@ function AdBlockingSectionComponent() {
                 value={safariProtection.blockSearchAds}
             />
             <SettingsItemSwitch
+                testId="settings-safari-protection-language-specific"
                 description={translate('safari.protection.block.language.desc')}
                 icon="lang"
                 routeName={RouteName.language_specific}

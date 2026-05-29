@@ -15,6 +15,7 @@ export type SwitchProps = {
     name?: string;
     ariaLabel?: string;
     icon?: boolean;
+    testId?: string;
 };
 
 /**
@@ -31,9 +32,11 @@ export function Switch({
     name,
     ariaLabel,
     icon,
+    testId,
 }: SwitchProps) {
     return (
         <label
+            id={testId}
             aria-label={ariaLabel}
             className={cx(s.switch, className)}
             htmlFor={id}

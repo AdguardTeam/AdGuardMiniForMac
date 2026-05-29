@@ -14,6 +14,7 @@ type PaginationItemProps = {
     disabled?: boolean;
     isEllipsis?: boolean;
     isArrow?: boolean;
+    testId?: string;
 
 };
 
@@ -27,10 +28,12 @@ export function PaginationItem({
     disabled,
     isEllipsis,
     isArrow,
+    testId,
 }: PaginationItemProps) {
     return (
         <li className={s.Pagination_item}>
             <button
+                id={testId}
                 className={cx(
                     s.Pagination_element,
                     isArrow && s.Pagination_arrow,

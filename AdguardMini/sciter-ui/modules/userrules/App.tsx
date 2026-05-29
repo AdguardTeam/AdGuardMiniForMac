@@ -151,7 +151,7 @@ function AppComponent() {
     const saveDisabled = !editorStore.isDirty || editorStore.loading || isSaving;
 
     return (
-        <div key={editorStore.language} className={s.App}>
+        <div key={editorStore.language} id="userrules-editor-page" className={s.App}>
             {showUnsavedChangesModal && (
                 <UnsavedChangesModal
                     onCloseModal={() => setShowUnsavedChangesModal(false)}
@@ -204,6 +204,7 @@ function AppComponent() {
             )}
             <div className={s.App_row}>
                 <button
+                    id="userrules-editor-save-button"
                     className={cx(s.App_row_btn, (editorStore.chunkLoading || isSaving) && s.App_row_btn__loading)}
                     disabled={saveDisabled}
                     type="button"

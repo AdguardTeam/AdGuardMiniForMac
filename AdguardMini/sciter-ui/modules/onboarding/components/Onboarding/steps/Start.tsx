@@ -46,29 +46,31 @@ function StartComponent({ trackPage }: StartProps) {
 
     const primaryButton = { action, label: translate('onboarding.start.btn'), disabled: !checked };
     return (
-        <div className={s.Start_container}>
+        <div id="onboarding-start-page" className={s.Start_container}>
             <div className={s.Start_content}>
                 <div className={s.Start_content_text}>
                     <Text className={s.Start_content_title} type="h4">{translate('onboarding.start.title')}</Text>
                     <Text className={s.Start_content_desc} type="t1">{translate('onboarding.start.desc')}</Text>
                     <div className={s.Start_content_checkbox}>
                         <Checkbox
+                            testId="onboarding-start-eula-checkbox"
                             checked={checked}
                             onChange={() => setChecked(!checked)}
                         />
                         <Text className={s.Start_content_checkbox_text} type="t2" onClick={() => setChecked(!checked)}>
                             {translate('onboarding.accept', {
                                 eula: (text: string) => (
-                                    <ExternalLink href={getTdsLink(TDS_PARAMS.eula)} textType="t2">{text}</ExternalLink>
+                                    <ExternalLink testId="onboarding-start-eula-link" href={getTdsLink(TDS_PARAMS.eula)} textType="t2">{text}</ExternalLink>
                                 ),
                                 privacy: (text: string) => (
-                                    <ExternalLink href={getTdsLink(TDS_PARAMS.privacy)} textType="t2">{text}</ExternalLink>
+                                    <ExternalLink testId="onboarding-start-privacy-link" href={getTdsLink(TDS_PARAMS.privacy)} textType="t2">{text}</ExternalLink>
                                 ),
                             })}
                         </Text>
                     </div>
                     <div className={s.Start_content_checkbox}>
                         <Checkbox
+                            testId="onboarding-start-telemetry-checkbox"
                             checked={telemetry}
                             onChange={() => setTelemetry(!telemetry)}
                         />
@@ -76,6 +78,7 @@ function StartComponent({ trackPage }: StartProps) {
                             {translate('telemetry.accept.send.data', {
                                 link: (text: string) => (
                                     <div
+                                        id="onboarding-start-telemetry-modal-trigger"
                                         className={s.Start_content_checkbox_link}
                                         onClick={(e) => {
                                             e.preventDefault();
@@ -95,7 +98,7 @@ function StartComponent({ trackPage }: StartProps) {
                 </div>
             </div>
             <div className={s.Start_buttons}>
-                <Button className={theme.button.greenSubmit} disabled={primaryButton.disabled} type="submit" onClick={primaryButton.action}>
+                <Button testId="onboarding-start-next-button" className={theme.button.greenSubmit} disabled={primaryButton.disabled} type="submit" onClick={primaryButton.action}>
                     <Text lineHeight="none" type="t1">{primaryButton.label}</Text>
                 </Button>
             </div>

@@ -59,6 +59,7 @@ function AnnoyanceSectionComponent({ setShowConsent }: AnnoyanceSectionProps) {
         <div className={s.SafariProtection_block}>
             <Text className={cx(s.SafariProtection_block_title, theme.layout.content)} type="h5">{translate('safari.protection.part.annoyance')}</Text>
             <SettingsItemSwitch
+                testId="settings-safari-protection-block-social"
                 description={translate('safari.protection.block.social.desc')}
                 icon="share"
                 setValue={onToggleBlockSocialButtons}
@@ -66,6 +67,7 @@ function AnnoyanceSectionComponent({ setShowConsent }: AnnoyanceSectionProps) {
                 value={safariProtection.blockSocialButtons}
             />
             <SettingsItemSwitch
+                testId="settings-safari-protection-block-cookies"
                 description={translate('safari.protection.block.cookie.desc')}
                 icon="cookies"
                 setValue={onUpdateFiltersWithConsent(
@@ -79,6 +81,7 @@ function AnnoyanceSectionComponent({ setShowConsent }: AnnoyanceSectionProps) {
                 value={safariProtection.blockCookieNotice}
             />
             <SettingsItemSwitch
+                testId="settings-safari-protection-block-popups"
                 description={translate('safari.protection.block.popups.desc')}
                 icon="annoyance"
                 setValue={onUpdateFiltersWithConsent(
@@ -92,6 +95,7 @@ function AnnoyanceSectionComponent({ setShowConsent }: AnnoyanceSectionProps) {
                 value={safariProtection.blockPopups}
             />
             <SettingsItemSwitch
+                testId="settings-safari-protection-block-widgets"
                 description={translate('safari.protection.block.widgets.desc')}
                 icon="browser"
                 setValue={onUpdateFiltersWithConsent(
@@ -105,6 +109,7 @@ function AnnoyanceSectionComponent({ setShowConsent }: AnnoyanceSectionProps) {
                 value={safariProtection.blockWidgets}
             />
             <SettingsItemSwitch
+                testId="settings-safari-protection-block-other-annoyances"
                 description={translate('safari.protection.block.annoyance.desc')}
                 icon="widget"
                 setValue={onUpdateFiltersWithConsent(

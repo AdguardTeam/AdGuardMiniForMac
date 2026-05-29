@@ -193,7 +193,7 @@ function UserRulesComponent() {
     };
 
     return (
-        <div className={cx(s.UserRules, showPagination && s.UserRules__padding)}>
+        <div id="settings-user-rules-page" className={cx(s.UserRules, showPagination && s.UserRules__padding)}>
             <div>
                 <SettingsTitle
                     description={isScrolling ? undefined : translate('user.rules.desc')}
@@ -224,6 +224,7 @@ function UserRulesComponent() {
                     {!isScrolling && (
                         <Button
                             className={s.UserRules_howTo}
+                            testId="settings-user-rules-how-to-button"
                             type="text"
                             onClick={() => {
                                 window.OpenLinkInBrowser(getTdsLink(TDS_PARAMS.filterrules, RouteName.user_rules));
@@ -238,6 +239,7 @@ function UserRulesComponent() {
                 </SettingsTitle>
                 {!isScrolling && (
                     <SettingsItemSwitch
+                        testId="settings-user-rules-main-toggle"
                         className={s.UserRules_mainControl}
                         icon="custom_rule"
                         setValue={(e) => {
@@ -248,6 +250,7 @@ function UserRulesComponent() {
                     />
                 )}
                 <Input
+                    testId="settings-user-rules-search-input"
                     className={cx(s.UserRules_search, isScrolling && s.UserRules_search__scroll)}
                     disabled={isRuleEditorWindowOpened}
                     id="search"
@@ -258,6 +261,7 @@ function UserRulesComponent() {
                 />
                 {!isRuleEditorWindowOpened && (
                     <div
+                        id="settings-user-rules-add-rule"
                         className={cx(s.UserRules_addRule, isScrolling && s.UserRules_addRule__scroll)}
                         role="button"
                         onClick={() => navigateToUserRule()}
@@ -293,6 +297,7 @@ function UserRulesComponent() {
                             <div className={s.UserRules_pagination_shadowBottom} />
                             <div className={s.UserRules_pagination__bg}>
                                 <Pagination
+                                    testId="settings-user-rules-pagination"
                                     className={s.UserRules_pagination_placement}
                                     currentPage={page}
                                     pageCount={Math.ceil(foundItems.length / PAGE_SIZE)}
@@ -310,6 +315,9 @@ function UserRulesComponent() {
                     submitAction={onDeleteAll}
                     submitClassName={theme.button.redSubmit}
                     submitText={translate('delete')}
+                    testId="settings-user-rules-delete-modal"
+                    testIdSubmit="settings-user-rules-delete-modal-submit"
+                    testIdCancel="settings-user-rules-delete-modal-cancel"
                     title={`${translate('delete.all')}?`}
                     cancel
                     submit

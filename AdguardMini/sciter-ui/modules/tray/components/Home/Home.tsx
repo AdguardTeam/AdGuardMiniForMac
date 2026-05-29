@@ -263,6 +263,7 @@ function HomeComponent() {
                 link: (text: string) => {
                     return (
                         <div
+                            id="tray-home-fix-extensions-link"
                             onClick={() => {
                                 telemetry.trackEvent(TrayEvent.FixItClick);
                                 openSafariPreferences();
@@ -277,7 +278,7 @@ function HomeComponent() {
 
         if (allExtensionsDisabled) {
             return translate('tray.home.title.protection.extensions.all.disabled', {
-                link: (text: string) => (<div onClick={openSafariPreferences}>{text}</div>),
+                link: (text: string) => (<div id="tray-home-all-extensions-disabled-link" onClick={openSafariPreferences}>{text}</div>),
             });
         }
     };
@@ -313,16 +314,18 @@ function HomeComponent() {
                     )}
                 </FlushCompletedStories>
             )}
-            <div className={s.Home}>
+            <div id="tray-home-page" className={s.Home}>
                 <div className={s.Home_header}>
                     <Logo className={s.Home_header_logo} isDarkTheme={isDarkTheme} />
                     <Button
+                        testId="tray-home-update-button"
                         className={cx(theme.button.greenIcon, s.Home_header_update)}
                         icon="update"
                         type="icon"
                         onClick={navigateToUpdates}
                     />
                     <Button
+                        testId="tray-home-settings-button"
                         className={theme.button.greenIcon}
                         icon="settings"
                         type="icon"
@@ -350,6 +353,7 @@ function HomeComponent() {
                     </>
                 )}
                 <Switch
+                    testId="tray-home-protection-toggle"
                     checked={enabled}
                     className={s.Home_switch}
                     icon
@@ -364,6 +368,7 @@ function HomeComponent() {
                             {stories.length > 2 && (
                                 <>
                                     <Button
+                                        testId="tray-home-stories-scroll-left"
                                         className={s.Home_storiesControls_button}
                                         data-switch-direction="left"
                                         icon="arrow_left"
@@ -373,6 +378,7 @@ function HomeComponent() {
                                         onClick={handleMoveStoriesCards}
                                     />
                                     <Button
+                                        testId="tray-home-stories-scroll-right"
                                         className={cx(
                                             s.Home_storiesControls_button,
                                             s.Home_storiesControls_button__right,
@@ -395,6 +401,7 @@ function HomeComponent() {
                             <div className={s.Home_stories_container}>
                                 {stories.map((props) => (
                                     <StoryCard
+                                        testId={`tray-home-story-card-${props.storyConfig.id}`}
                                         {...props}
                                         key={props.storyConfig.id}
                                         setSelectedStoryId={openStory}

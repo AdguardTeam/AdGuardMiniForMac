@@ -28,7 +28,7 @@ function LicenseComponent() {
     } = account;
 
     return (
-        <Layout type="settingsPage">
+        <Layout testId="settings-license-page" type="settingsPage">
             <LicenseTitle />
             <LicenseStatus />
 

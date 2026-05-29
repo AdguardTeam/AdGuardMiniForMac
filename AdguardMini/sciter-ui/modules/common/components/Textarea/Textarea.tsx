@@ -23,6 +23,7 @@ export type TextareaProps = {
     className?: string;
     autoFocus?: boolean;
     textAreaClassName?: string;
+    testId?: string;
 };
 
 /**
@@ -40,7 +41,9 @@ export function Textarea({
     className,
     autoFocus,
     textAreaClassName,
+    testId,
 }: TextareaProps) {
+    const resolvedId = testId ?? id;
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const [focus, setFocus] = useState(false);
 
@@ -97,8 +100,8 @@ export function Textarea({
                 <textarea
                     ref={inputRef}
                     autoFocus={autoFocus}
-                    id={id}
-                    name={id}
+                    id={resolvedId}
+                    name={resolvedId}
                     placeholder={placeholder}
                     className={cx(s.Textarea_textarea, theme.typo.t1, textAreaClassName)}
                     // FIXME: NOT WORKING SINCE 5.0.3.13

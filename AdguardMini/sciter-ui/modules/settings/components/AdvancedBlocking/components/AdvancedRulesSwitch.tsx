@@ -12,7 +12,7 @@ import { SettingsItemSwitch } from '../../SettingsItem';
 /**
  * Advanced rules switch component
  */
-export function AdvancedRulesSwitchComponent() {
+export function AdvancedRulesSwitchComponent({ testId }: { testId?: string }) {
     const { advancedBlocking, telemetry } = useSettingsStore();
     const {
         advancedRules,
@@ -23,6 +23,7 @@ export function AdvancedRulesSwitchComponent() {
     };
     return (
         <SettingsItemSwitch
+            testId={testId}
             description={translate('advanced.blocking.rules.desc')}
             icon="star"
             setValue={onAdvancedRulesChange}

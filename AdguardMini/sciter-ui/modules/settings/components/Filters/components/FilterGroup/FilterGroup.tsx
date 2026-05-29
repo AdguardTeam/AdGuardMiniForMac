@@ -66,6 +66,7 @@ function FilterGroupComponent({
 
     return (
         <SettingsItemLink
+            testId={`settings-filters-group-${groupId}`}
             className={s.FilterGroup}
             description={translate('filters.enabled', { enabled })}
             icon={groupIconMap[groupId]}

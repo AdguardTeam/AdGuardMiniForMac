@@ -13,6 +13,7 @@ type Props = {
     onChange(value: boolean): void;
     orangeIcon?: boolean;
     isTest?: boolean;
+    testId?: string;
 };
 
 /**
@@ -26,10 +27,12 @@ export function AdguardExtraSwitch(props: Props) {
         onChange,
         isTest = false,
         orangeIcon = false,
+        testId,
     } = props;
 
     return (
         <SettingsItemSwitch
+            testId={testId}
             additionalText={additionalText}
             description={translate('advanced.blocking.extra.desc')}
             icon="extra"

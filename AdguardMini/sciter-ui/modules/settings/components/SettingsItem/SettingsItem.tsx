@@ -33,6 +33,7 @@ export type SettingsItemProps = {
     noHover?: boolean;
     defaultHovered?: boolean;
     newLabel?: boolean;
+    testId?: string;
 };
 
 /**
@@ -54,6 +55,7 @@ function SettingsItemComponent({
     noHover,
     defaultHovered,
     newLabel,
+    testId,
     trackEventOnRouteChange,
 }: SettingsItemProps) {
     const { router, telemetry } = useSettingsStore();
@@ -68,6 +70,7 @@ function SettingsItemComponent({
 
     return (
         <div
+            id={testId}
             className={cx(
                 s.SettingsItem,
                 onContainerClick && s.SettingsItem__pointer,

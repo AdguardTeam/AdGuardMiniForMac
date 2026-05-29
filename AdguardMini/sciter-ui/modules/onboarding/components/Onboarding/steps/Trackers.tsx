@@ -37,6 +37,9 @@ function TrackersComponent() {
 
     return (
         <Step
+            pageContainerTestId="onboarding-trackers-page"
+            testIdPrimaryButton="onboarding-trackers-block-button"
+            testIdSecondaryButton="onboarding-trackers-dont-block-button"
             description={translate('onboarding.trackers.desc')}
             elLottieRef={elLottieRef}
             lottie="trackers"

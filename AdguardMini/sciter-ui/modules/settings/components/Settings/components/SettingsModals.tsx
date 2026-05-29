@@ -55,6 +55,9 @@ export function SettingsModals(props: Props) {
         <>
             {isResetModalOpen && (
                 <Modal
+                    testId="settings-general-reset-modal"
+                    testIdSubmit="settings-general-reset-modal-submit"
+                    testIdCancel="settings-general-reset-modal-cancel"
                     childrenClassName={s.Settings_resetWarning}
                     description={resetModalDescription}
                     submitAction={onResetSubmit}
@@ -81,6 +84,9 @@ export function SettingsModals(props: Props) {
             )}
             {isClearStatisticsModalOpen && (
                 <Modal
+                    testId="settings-general-clear-stats-modal"
+                    testIdSubmit="settings-general-clear-stats-modal-submit"
+                    testIdCancel="settings-general-clear-stats-modal-cancel"
                     childrenClassName={s.Settings_resetWarning}
                     description={translate('clear.statistics.description')}
                     submitAction={onClearStatistics}
@@ -94,6 +100,9 @@ export function SettingsModals(props: Props) {
             )}
             {showConsentModalFilterIds && (
                 <ConsentModal
+                    testIdModal="settings-general-consent-modal"
+                    testIdEnableButton="settings-general-consent-modal-enable"
+                    testIdCancelButton="settings-general-consent-modal-cancel"
                     filters={filters.filter((f) => showConsentModalFilterIds.includes(f.id))}
                     onClose={() => onConfirmConsent(ImportMode.withoutAnnoyance)}
                     onEnable={() => onConfirmConsent(ImportMode.full)}

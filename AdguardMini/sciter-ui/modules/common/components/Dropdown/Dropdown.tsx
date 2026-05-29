@@ -33,6 +33,7 @@ export type DropdownProps<T> = {
     renderLabel?(option: IOption<T>): ComponentChild;
     renderOptionLabel?(props: CustomOptionLabel<T>): ComponentChild;
     renderMultiLabelValue?(options: IOption<T>[]): ComponentChild;
+    testId?: string;
 };
 
 /**
@@ -46,6 +47,7 @@ export function Dropdown<T>({
     onChange,
     ariaLabel,
     disabled,
+    testId,
     renderLabel = (option: IOption<T>) => option.label,
     renderOptionLabel,
     renderMultiLabelValue = (options: IOption<T>[]) => options.map((option) => option.label).join(', '),
@@ -111,7 +113,7 @@ export function Dropdown<T>({
                     isOpen && s.Dropdown__active,
                     disabled && s.Dropdown__disabled,
                 )}
-                id={id}
+                id={testId ?? id}
                 tabIndex={0}
             >
                 <div

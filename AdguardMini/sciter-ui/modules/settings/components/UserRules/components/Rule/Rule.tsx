@@ -40,6 +40,7 @@ export function Rule({
                     checked={rule.enabled}
                     className={s.check}
                     muted={muted}
+                    testId={`settings-user-rules-rule-${rule.index}-checkbox`}
                     onChange={(e) => onRuleStateUpdate(rule.index, e)}
                 />
             ) : (
@@ -55,8 +56,8 @@ export function Rule({
             <div className={cx(s.text, theme.typo.t2)} title={rule.rule} onDblClick={() => onEdit(rule.index)}>
                 <RuleHighlighter rule={rule.rule} />
             </div>
-            <Button className={cx(theme.button.greenIcon, s.button)} icon="edit" type="icon" onClick={() => onEdit(rule.index)} />
-            <Button className={cx(theme.button.redIcon, s.button)} icon="trash" type="icon" onClick={() => onDelete(rule.index)} />
+            <Button testId={`settings-user-rules-rule-${rule.index}-edit`} className={cx(theme.button.greenIcon, s.button)} icon="edit" type="icon" onClick={() => onEdit(rule.index)} />
+            <Button testId={`settings-user-rules-rule-${rule.index}-delete`} className={cx(theme.button.redIcon, s.button)} icon="trash" type="icon" onClick={() => onDelete(rule.index)} />
         </div>
     );
 }

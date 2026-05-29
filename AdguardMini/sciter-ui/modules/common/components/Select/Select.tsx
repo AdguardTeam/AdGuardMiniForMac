@@ -21,6 +21,7 @@ interface SelectProps<T = string> {
     ariaLabel?: string;
     className?: string;
     label?: string;
+    testId?: string;
 }
 
 /**
@@ -35,7 +36,9 @@ export function Select<T,>({
     ariaLabel,
     className,
     label,
+    testId,
 }: SelectProps<T>) {
+    const resolvedId = testId ?? id;
     const ref = useRef<HTMLSelectElement>(null);
     useEffect(() => {
         const handleChange = (e: Event) => {
@@ -76,7 +79,7 @@ export function Select<T,>({
     return (
         <>
             {label && (
-                <label className="select_label" htmlFor={id}>
+                <label className="select_label" htmlFor={resolvedId}>
                     <Text type="t2">
                         {label}
                     </Text>
@@ -93,7 +96,7 @@ export function Select<T,>({
                     ref={ref}
                     aria-label={ariaLabel}
                     className="select_select"
-                    id={id}
+                    id={resolvedId}
                     value={String(currentValue)}
                     onClick={(e) => {
                         e.stopPropagation();

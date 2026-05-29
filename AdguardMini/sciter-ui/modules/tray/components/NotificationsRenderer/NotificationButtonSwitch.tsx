@@ -12,6 +12,7 @@ import type { NotificationPropsHolder } from 'TrayLib/utils/NotificationPropsHol
 type Props = {
     notification: NotificationPropsHolder;
     onCloseNotification(): void;
+    testId?: string;
 };
 
 const buttonPropsVariant = {
@@ -35,6 +36,7 @@ const buttonPropsVariant = {
 export function NotificationButtonSwitch({
     notification,
     onCloseNotification,
+    testId,
 }: Props) {
     const { notificationContext } = notification.props;
     let content;
@@ -45,6 +47,7 @@ export function NotificationButtonSwitch({
 
             content = (
                 <Button
+                    testId={testId}
                     onClick={onClick}
                     {...buttonPropsVariant[variant]}
                 >
@@ -60,6 +63,7 @@ export function NotificationButtonSwitch({
             if (undoAction) {
                 content = (
                     <Button
+                        testId={testId}
                         type="text"
                         onClick={() => {
                             undoAction();

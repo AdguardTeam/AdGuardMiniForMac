@@ -37,21 +37,25 @@ export function AppSection(props: Props) {
         <>
             <Text className={s.Settings_sectionTitle} type="h5">{translate('settings.app')}</Text>
             <SettingsItemSwitch
+                testId="settings-general-launch-on-startup"
                 setValue={onLaunchOnStartup}
                 title={translate('settings.launch.on.start')}
                 value={launchOnStartup}
             />
             <SettingsItemSwitch
+                testId="settings-general-show-in-menu-bar"
                 setValue={onShowInMenuBar}
                 title={translate('settings.show.in.menu')}
                 value={showInMenuBar}
             />
             <SettingsItemLink
+                testId="settings-general-theme"
                 description={themeText(themeSetting)}
                 internalLink={RouteName.theme}
                 title={translate('settings.theme')}
             />
             <SettingsItemLink
+                testId="settings-general-quit-reaction"
                 description={quitReactionText(quitReaction)}
                 internalLink={RouteName.quit_reaction}
                 title={translate('settings.hardware.quit.reaction')}

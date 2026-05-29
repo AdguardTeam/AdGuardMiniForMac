@@ -32,6 +32,10 @@ export type StepProps = {
     };
     primaryButton: StepButton;
     secondaryButton?: StepButton;
+    pageContainerTestId?: string;
+    testIdPrimaryButton?: string;
+    testIdSecondaryButton?: string;
+    testIdCheckbox?: string;
 };
 
 /**
@@ -47,9 +51,13 @@ export function Step({
     primaryButton,
     secondaryButton,
     checkbox,
+    pageContainerTestId,
+    testIdPrimaryButton,
+    testIdSecondaryButton,
+    testIdCheckbox,
 }: StepProps) {
     return (
-        <div className={s.Step_container}>
+        <div id={pageContainerTestId} className={s.Step_container}>
             <StepHeader />
             <div>
                 {image && <img className={imageSmall ? s.Step_imageSmall : s.Step_image} src={image} />}
@@ -61,6 +69,7 @@ export function Step({
                 <Text className={s.Step_content_desc} type="t1">{description}</Text>
                 {checkbox && (
                     <Checkbox
+                        testId={testIdCheckbox}
                         checked={checkbox.checked}
                         className={s.Step_content_checkbox}
                         onChange={checkbox.onChange}
@@ -72,11 +81,11 @@ export function Step({
                 )}
                 <div className={s.Step_content_buttons}>
                     {secondaryButton && (
-                        <Button type="outlined" onClick={secondaryButton.action}>
+                        <Button testId={testIdSecondaryButton} type="outlined" onClick={secondaryButton.action}>
                             <Text lineHeight="none" type="t1">{secondaryButton.label}</Text>
                         </Button>
                     )}
-                    <Button className={theme.button.greenSubmit} disabled={primaryButton.disabled} type="submit" onClick={primaryButton.action}>
+                    <Button testId={testIdPrimaryButton} className={theme.button.greenSubmit} disabled={primaryButton.disabled} type="submit" onClick={primaryButton.action}>
                         <Text lineHeight="none" type="t1">{primaryButton.label}</Text>
                     </Button>
                 </div>

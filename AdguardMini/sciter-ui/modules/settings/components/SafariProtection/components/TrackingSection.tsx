@@ -31,6 +31,7 @@ function TrackingSectionComponent() {
         <div className={s.SafariProtection_block}>
             <Text className={cx(s.SafariProtection_block_title, theme.layout.content)} type="h5">{translate('safari.protection.part.tracking')}</Text>
             <SettingsItemSwitch
+                testId="settings-safari-protection-block-trackers"
                 description={translate('safari.protection.block.trackers.desc')}
                 icon="tracking"
                 setValue={onToggleBlockTrackers}

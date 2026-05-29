@@ -17,6 +17,7 @@ function FinishComponent() {
 
     return (
         <YouAreAllSet
+            testIdDone="onboarding-finish-done-button"
             description={translate('onboarding.finish.desc')}
             handler={
                 { action: async () => steps.completeOnboarding(), label: translate('onboarding.finish.btn') }

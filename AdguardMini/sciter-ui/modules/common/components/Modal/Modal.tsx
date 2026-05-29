@@ -29,6 +29,11 @@ type BasicProps = {
     contentPadding?: boolean;
     modalForceHeight?: number;
     childrenClassName?: string;
+    testId?: string;
+    testIdSubmit?: string;
+    testIdCancel?: string;
+    testIdSecondary?: string;
+    testIdClose?: string;
 };
 
 export type ModalProps = BasicProps & ({
@@ -78,6 +83,11 @@ export function Modal({
     contentPadding = true,
     modalForceHeight,
     childrenClassName,
+    testId,
+    testIdSubmit,
+    testIdCancel,
+    testIdSecondary,
+    testIdClose,
 }: ModalProps) {
     const escapeAction = cancelAction ?? onClose;
     useEscape(escapeAction, escapeAction ? [escapeAction] : [], true);
@@ -86,7 +96,7 @@ export function Modal({
     useEnter(enterAction, enterAction ? [enterAction] : [], true);
 
     return (
-        <div className={cx(s.Modal, s[`Modal__${size}`])} style={{ zIndex: zIndex ? `var(--zi-${zIndex})` : undefined, height: modalForceHeight ? `${modalForceHeight}px` : undefined }}>
+        <div id={testId} className={cx(s.Modal, s[`Modal__${size}`])} style={{ zIndex: zIndex ? `var(--zi-${zIndex})` : undefined, height: modalForceHeight ? `${modalForceHeight}px` : undefined }}>
             <div
                 className={cx(
                     s.Modal_modalContent,
@@ -94,7 +104,7 @@ export function Modal({
                 )}
                 style={{ height: modalForceHeight ? `${modalForceHeight}px` : undefined }}
             >
-                {canClose && (<Button className={s.Modal_modalClose} icon="cross" iconClassName={theme.button.grayIcon} type="icon" onClick={onClose} />)}
+                {canClose && (<Button testId={testIdClose} className={s.Modal_modalClose} icon="cross" iconClassName={theme.button.grayIcon} type="icon" onClick={onClose} />)}
                 <div className={s.Modal_header}>
                     {headerSlot}
                     {title && <Text type="h4">{title}</Text>}
@@ -115,6 +125,7 @@ export function Modal({
                     <div className={s.Modal_buttons}>
                         {submit && (
                             <Button
+                                testId={testIdSubmit}
                                 className={cx(s.Modal_button, submitClassName)}
                                 disabled={submitDisabled}
                                 type="submit"
@@ -125,6 +136,7 @@ export function Modal({
                         )}
                         {secondary && (
                             <Button
+                                testId={testIdSecondary}
                                 className={s.Modal_button}
                                 type="outlined"
                                 onClick={secondaryAction}
@@ -134,6 +146,7 @@ export function Modal({
                         )}
                         {cancel && (
                             <Button
+                                testId={testIdCancel}
                                 className={s.Modal_button}
                                 type="outlined"
                                 onClick={cancelAction ?? onClose}

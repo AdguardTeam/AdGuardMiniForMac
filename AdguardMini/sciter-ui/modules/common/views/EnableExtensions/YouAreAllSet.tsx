@@ -10,13 +10,14 @@ import type { TemplateProps } from './Template';
 
 type YouAreAllSetProps = {
     handler: Omit<ActionButtonProps, 'buttonType'>;
-} & Pick<TemplateProps, 'headerSlot' | 'description'>;
+} & Pick<TemplateProps, 'headerSlot' | 'description'> & { testIdDone?: string };
 
 /**
  * You're all set view
  */
 export function YouAreAllSet({
     handler,
+    testIdDone,
     ...props
 }: YouAreAllSetProps) {
     return (
@@ -24,7 +25,7 @@ export function YouAreAllSet({
             imageBig
             {...props}
             buttons={[
-                { buttonType: 'submit', ...handler },
+                { testId: testIdDone, buttonType: 'submit', ...handler },
             ]}
             image={finish}
             title={translate('onboarding.finish.title')}

@@ -131,6 +131,7 @@ function AddCustomFilterModalComponent({
         <Modal
             contentPadding={false}
             description={description}
+            testId="settings-filters-add-custom-modal"
             title={error === 'addCustomFilterError' ? translate('filters.add.custom.failed') : translate('filters.add.custom')}
             onClose={onClose}
         >
@@ -153,6 +154,7 @@ function AddCustomFilterModalComponent({
                                 error={error === 'checkCustomFilterError'}
                                 errorMessage={error === 'checkCustomFilterError' ? translate('custom.filter.check.failed') : undefined}
                                 id="filters.url.or.path"
+                                testId="settings-filters-add-custom-modal-url"
                                 label={translate('filters.url.or.path')}
                                 placeholder={translate('filters.add.custom.placeholder')}
                                 value={url}
@@ -170,6 +172,7 @@ function AddCustomFilterModalComponent({
                         <Button
                             className={cx(s.AddCustomFilterModal_button, theme.button.greenSubmit)}
                             disabled={!url || loading}
+                            testId="settings-filters-add-custom-modal-next"
                             type="submit"
                             onClick={onSubmit}
                         >

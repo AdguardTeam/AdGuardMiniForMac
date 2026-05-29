@@ -30,9 +30,10 @@ function FiltersUpdateComponent() {
         success: filter.success,
     }));
     return (
-        <div className={s.FiltersUpdate}>
+        <div id="tray-filters-page" className={s.FiltersUpdate}>
             <div className={s.FiltersUpdate_header}>
                 <Button
+                    testId="tray-filters-back-button"
                     icon="back"
                     iconClassName={theme.button.grayIcon}
                     type="icon"

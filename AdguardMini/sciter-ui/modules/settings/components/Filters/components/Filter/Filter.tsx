@@ -83,6 +83,7 @@ function FilterComponent({
     return (
         <>
             <SettingsItemSwitch
+                testId={`settings-filters-filter-${filter.id}`}
                 additionalText={(
                     <>
                         <Text className={cx(s.Filter_desc, theme.typo.lhCustom)} type="t2">

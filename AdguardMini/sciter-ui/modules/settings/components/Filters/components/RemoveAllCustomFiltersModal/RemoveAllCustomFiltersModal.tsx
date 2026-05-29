@@ -22,11 +22,13 @@ export function RemoveAllCustomFiltersModal({
     return (
         <Modal
             description={translate('filters.remove.all.custom.filters.desc')}
+            testId="settings-filters-remove-all-modal"
             title={translate('filters.remove.all.custom.filters')}
             onClose={onClose}
         >
             <Button
                 className={cx(s.RemoveAllCustomFiltersModal_button, theme.button.redSubmit)}
+                testId="settings-filters-remove-all-modal-submit"
                 type="submit"
                 onClick={() => {
                     onSubmit();

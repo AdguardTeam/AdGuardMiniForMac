@@ -47,6 +47,7 @@ export function UpdatesSectionComponent() {
         <>
             <Text className={s.Settings_sectionTitle} type="h5">{translate('settings.updates')}</Text>
             <SettingsItemSwitch
+                testId="settings-general-auto-filters-update"
                 description={translate('settings.update.filters.auto.desc')}
                 setValue={onUpdateAutoFilters}
                 title={translate('settings.update.filters.auto')}
@@ -54,6 +55,7 @@ export function UpdatesSectionComponent() {
             />
             {!isTest && (
                 <SettingsItemSwitch
+                    testId="settings-general-real-time-updates"
                     additionalText={payedFuncsTitle || (!autoFiltersUpdate && (
                         <Text className={theme.color.orange} type="t2">
                             {translate('settings.real.time.filter.updates.enable.update.filters', {

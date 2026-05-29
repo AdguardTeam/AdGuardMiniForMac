@@ -13,7 +13,7 @@ import { AdvancedBlockingControl } from './components/AdvancedBlockingControl';
  */
 function AdvancedBlockingComponent() {
     return (
-        <Layout type="settingsPage">
+        <Layout testId="settings-advanced-blocking-page" type="settingsPage">
             <AdvancedBlockingControl />
         </Layout>
     );

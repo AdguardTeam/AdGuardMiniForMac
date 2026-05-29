@@ -115,13 +115,14 @@ function FiltersComponent() {
                 />
             )}
             {!groupView && (
-                <Layout navigation={{ router, route: params?.backLink ?? RouteName.settings, title: navigationTitle }} type="settingsPage">
+                <Layout testId="settings-filters-page" navigation={{ router, route: params?.backLink ?? RouteName.settings, title: navigationTitle }} type="settingsPage">
                     <SettingsTitle
                         title={translate('filters.filters')}
                     />
                     <div className={theme.layout.content}>
                         <Text className={s.Filters_desc} type="t1">{translate('filters.filters.desc')}</Text>
                         <ExternalLink
+                            testId="settings-filters-what-are-filters-link"
                             href={getTdsLink(TDS_PARAMS.what_filters, RouteName.filters)}
                             textType="t1"
                             noUnderline
@@ -129,6 +130,7 @@ function FiltersComponent() {
                             {translate('filters.what.are.filters')}
                         </ExternalLink>
                         <Input
+                            testId="settings-filters-search-input"
                             className={cx(s.Filters_search, searchQuery && s.Filters_search__margin)}
                             id="search"
                             placeholder={translate('search')}

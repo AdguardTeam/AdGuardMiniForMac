@@ -22,6 +22,7 @@ export function OpenedEditorPlug({ onGoToEditor }: OpenedEditorPlugProps) {
                 <Text className={s.desc} type="t2">{translate('user.rules.editor.plug.desc')}</Text>
                 <Button
                     className={cx(theme.button.greenSubmit, s.btn)}
+                    testId="settings-user-rules-open-editor-plug-button"
                     type="submit"
                     onClick={onGoToEditor}
                 >

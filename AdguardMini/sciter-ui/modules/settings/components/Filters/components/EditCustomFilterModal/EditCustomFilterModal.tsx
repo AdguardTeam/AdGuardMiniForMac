@@ -34,6 +34,9 @@ export function EditCustomFilterModal({
 
     const modalConfig: ModalProps = {
         title: translate('filters.edit.filter'),
+        testId: 'settings-filters-edit-custom-modal',
+        testIdSubmit: 'settings-filters-edit-custom-modal-submit',
+        testIdCancel: 'settings-filters-edit-custom-modal-cancel',
         onClose,
         submit: true,
         submitText: translate('save'),
@@ -51,6 +54,7 @@ export function EditCustomFilterModal({
                 <Input
                     key="input"
                     id="filters.edit.filter"
+                    testId="settings-filters-edit-custom-modal-name"
                     label={translate('filters.filter.name')}
                     placeholder={translate('filters.filter.name')}
                     value={localFilter.name}

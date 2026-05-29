@@ -40,6 +40,9 @@ function ImportModalComponent({ setShowImportModal, onImportRules }: ImportModal
             submitClassName={theme.button.greenSubmit}
             submitText={translate('user.rules.import.modal.ok')}
             title={translate('user.rules.import.modal.title')}
+            testId="settings-user-rules-import-modal"
+            testIdSubmit="settings-user-rules-import-modal-submit"
+            testIdCancel="settings-user-rules-import-modal-cancel"
             cancel
             submit
             onClose={onModalClose}
@@ -48,6 +51,7 @@ function ImportModalComponent({ setShowImportModal, onImportRules }: ImportModal
                 <Checkbox
                     checked={dontAskAgainImportModal}
                     className={s.ImportModal_checkbox}
+                    testId="settings-user-rules-import-modal-dont-ask-again"
                     onChange={() => userRules.setDontAskAgainImportModal(!dontAskAgainImportModal)}
                 >
                     <Text type="t1">

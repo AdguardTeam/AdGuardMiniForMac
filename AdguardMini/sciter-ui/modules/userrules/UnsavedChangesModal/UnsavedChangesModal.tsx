@@ -18,7 +18,7 @@ export function UnsavedChangesModal({ onCloseModal, onSaveChanges, onDiscardChan
     return (
         <>
             <div className={s.UnsavedChangesModal_background} />
-            <div className={s.UnsavedChangesModal_modal}>
+            <div id="userrules-editor-unsaved-modal" className={s.UnsavedChangesModal_modal}>
                 <CloseIcon onClick={onCloseModal} />
                 <p className={s.UnsavedChangesModal_modal_title}>
                     {translate('user.rules.editor.modal.unsaved.changes.title')}
@@ -28,6 +28,7 @@ export function UnsavedChangesModal({ onCloseModal, onSaveChanges, onDiscardChan
                 </p>
                 <div className={s.UnsavedChangesModal_modal_buttons}>
                     <button
+                        id="userrules-editor-unsaved-modal-save"
                         className={cx(
                             s.UnsavedChangesModal_modal_buttons_btn,
                             s.UnsavedChangesModal_modal_buttons_btn__primaryBtn,
@@ -38,6 +39,7 @@ export function UnsavedChangesModal({ onCloseModal, onSaveChanges, onDiscardChan
                         {translate('user.rules.editor.modal.unsaved.changes.save_and_close')}
                     </button>
                     <button
+                        id="userrules-editor-unsaved-modal-discard"
                         className={cx(
                             s.UnsavedChangesModal_modal_buttons_btn,
                             s.UnsavedChangesModal_modal_buttons_btn__secondaryBtn,

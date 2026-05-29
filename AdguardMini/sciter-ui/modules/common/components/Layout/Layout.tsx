@@ -16,6 +16,7 @@ export type LayoutProps = {
     children: ComponentChildren;
     className?: string;
     navigation?: NavigationHeaderProps;
+    testId?: string;
 };
 
 /**
@@ -26,9 +27,12 @@ export type LayoutProps = {
  *  2) 'settingsMenu' - layout for menu in settings
  *  3) 'settingsPage' - any page in settings container
  */
-export const Layout = forwardRef(({ type, navigation, children, className }: LayoutProps, ref: Ref<HTMLDivElement>) => {
+export const Layout = forwardRef((
+    { type, navigation, children, className, testId }: LayoutProps,
+    ref: Ref<HTMLDivElement>,
+) => {
     return (
-        <div ref={ref} className={cx(s[`Layout__${type}`], className)} id={type}>
+        <div ref={ref} className={cx(s[`Layout__${type}`], className)} id={testId ?? type}>
             {navigation && <NavigationHeader {...navigation} />}
             {children}
         </div>

@@ -19,14 +19,16 @@ function ExtensionsComponent() {
 
     return (
         <EnableAdGuardExtensions
+            pageContainerTestId="onboarding-extensions-page"
+            containerClassName="onboarding-extensions-page-container"
             buttons={
                 safariSettingsHaveBeenOpened
                     ? [
-                        { buttonType: 'outlined', action: async () => steps.openSafariSettings(), label: translate('onboarding.extensions.open.settings') },
-                        { buttonType: 'submit', action: () => steps.setCurrentStep(OnboardingSteps.ads), label: translate('onboarding.extensions.proceed') },
+                        { testId: 'enable-extensions-open-settings-button', buttonType: 'outlined', action: async () => steps.openSafariSettings(), label: translate('onboarding.extensions.open.settings') },
+                        { testId: 'enable-extensions-proceed-button', buttonType: 'submit', action: () => steps.setCurrentStep(OnboardingSteps.ads), label: translate('onboarding.extensions.proceed') },
                     ]
                     : [
-                        { buttonType: 'submit', action: async () => steps.openSafariSettings(), label: translate('onboarding.extensions.open.settings') },
+                        { testId: 'enable-extensions-enable-button', buttonType: 'submit', action: async () => steps.openSafariSettings(), label: translate('onboarding.extensions.open.settings') },
                     ]
             }
             privacyPolicyUrl={getTdsLink(TDS_PARAMS.privacy, RouteName.onboarding)}

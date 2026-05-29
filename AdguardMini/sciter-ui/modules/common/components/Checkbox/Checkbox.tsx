@@ -18,6 +18,7 @@ type CheckboxProps = {
     muted?: boolean;
     onChange(e: boolean): void;
     id?: string;
+    testId?: string;
 };
 
 /**
@@ -32,12 +33,14 @@ export function Checkbox({
     muted,
     onChange,
     id,
+    testId,
 }: CheckboxProps) {
     const ref = useRef<HTMLLabelElement>(null);
 
     return (
         <label
             ref={ref}
+            id={testId}
             className={cx(s.Checkbox, disabled && s.Checkbox__disabled, className)}
             htmlFor={id}
             onClick={() => onChange(!checked)}

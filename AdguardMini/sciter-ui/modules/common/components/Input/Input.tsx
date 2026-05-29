@@ -27,6 +27,7 @@ export type InputProps = {
     error?: boolean;
     errorMessage?: string;
     allowClear?: boolean;
+    testId?: string;
 };
 
 /**
@@ -47,7 +48,10 @@ export function Input({
     errorMessage,
     onClear,
     allowClear,
+    testId,
 }: InputProps) {
+    const resolvedId = testId ?? id;
+
     let handleClear = onClear;
     if (allowClear && !onClear) {
         handleClear = () => onChange('');
@@ -100,7 +104,7 @@ export function Input({
     return (
         <div className={className}>
             {label && (
-                <label className={s.Input_label} htmlFor={id}>
+                <label className={s.Input_label} htmlFor={resolvedId}>
                     <Text type="t2">
                         {label}
                     </Text>
@@ -132,7 +136,7 @@ export function Input({
                     //     onChange(element.value);
                     // }}
                     disabled={disabled}
-                    id={id}
+                    id={resolvedId}
                     placeholder={placeholder}
                     value={value}
                     onBlur={(e) => {

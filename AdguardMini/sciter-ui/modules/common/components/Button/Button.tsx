@@ -31,6 +31,7 @@ type ButtonProps = {
     ariaLabel?: string;
     small?: boolean;
     div?: boolean;
+    testId?: string;
 };
 
 /**
@@ -48,6 +49,7 @@ export function Button({
     ariaLabel,
     small,
     div,
+    testId,
     ...restProps
 }: ButtonProps) {
     // TODO: fix it
@@ -56,6 +58,7 @@ export function Button({
     if (div) {
         return (
             <div
+                id={testId}
                 aria-label={ariaLabel}
                 className={cx(
                     s.Button,
@@ -75,6 +78,7 @@ export function Button({
     }
     return (
         <button
+            id={testId}
             aria-label={ariaLabel}
             className={cx(
                 s.Button,

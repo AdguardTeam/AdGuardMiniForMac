@@ -95,7 +95,7 @@ function LanguageSpecificComponent() {
     };
 
     return (
-        <Layout navigation={{ router, route: RouteName.safari_protection, title: translate('menu.safari.protection') }} type="settingsPage">
+        <Layout testId="settings-language-specific-page" navigation={{ router, route: RouteName.safari_protection, title: translate('menu.safari.protection') }} type="settingsPage">
             <SettingsTitle
                 description={translate('language.specific.desc')}
                 elements={[{
@@ -142,6 +142,9 @@ function LanguageSpecificComponent() {
                     submitAction={onDisableAll}
                     submitClassName={theme.button.redSubmit}
                     submitText={translate('disable')}
+                    testId="settings-language-specific-disable-modal"
+                    testIdSubmit="settings-language-specific-disable-modal-submit"
+                    testIdCancel="settings-language-specific-disable-modal-cancel"
                     title={`${translate('disable.all')}?`}
                     cancel
                     submit
