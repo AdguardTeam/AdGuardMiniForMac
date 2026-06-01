@@ -6497,7 +6497,7 @@
 			repositoryURL = "ssh://git@bit.int.agrd.dev:7999/adguard-mac/adguard-mac-lib.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 12.3.1;
+				minimumVersion = 12.5.2;
 			};
 		};
 		EBA8B5862AB1C2BB00E7BFC6 /* XCRemoteSwiftPackageReference "sp-xpcgate" */ = {
