@@ -65,6 +65,7 @@ function AdBlockingSectionComponent() {
             />
             <SettingsItemSwitch
                 testId="settings-safari-protection-language-specific"
+                routeTestId="settings-safari-protection-language-specific-nav"
                 description={translate('safari.protection.block.language.desc')}
                 icon="lang"
                 routeName={RouteName.language_specific}

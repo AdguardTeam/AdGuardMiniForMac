@@ -19,6 +19,7 @@
     "build:userRules": "webpack --config ./AdguardMini/sciter-ui/scripts/webpack/webpack.inline.js",
     "build:dev": "node ./AdguardMini/sciter-ui/scripts/prebuildFrontendDeps.js && webpack --config ./AdguardMini/sciter-ui/scripts/webpack/webpack.config.dev.js",
     "build:prod": "node ./AdguardMini/sciter-ui/scripts/prebuildFrontendDeps.js && webpack --config ./AdguardMini/sciter-ui/scripts/webpack/webpack.config.prod.js",
+    "build:test": "node ./AdguardMini/sciter-ui/scripts/prebuildFrontendDeps.js && webpack --config ./AdguardMini/sciter-ui/scripts/webpack/webpack.config.test.js",
     "devserver": "rimraf build && webpack server --config ./AdguardMini/sciter-ui/scripts/webpack/webpack.config.devserver.js --env webBuild",
     "lint:fix": "yarn lint --fix --quiet",
     "prepare": "husky install",
@@ -48,6 +49,7 @@
   "devDependencies": {
     "@adg/proto-generator": "^1.8.0",
     "@adg/sciter-infra-utils": "^0.13.9",
+    "@adg/sciter-test-driver": "^1.0.2",
     "@stylistic/eslint-plugin": "^5.2.0",
     "@types/google-protobuf": "^3.15.5",
     "@types/jest": "^29.5.0",

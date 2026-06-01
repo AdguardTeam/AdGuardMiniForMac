@@ -17,6 +17,7 @@ export type MenuItemProps = {
     route: RouteName;
     activeRoutes?: RouteName[];
     title: string;
+    testId?: string;
 };
 
 /**
@@ -27,6 +28,7 @@ function MenuItemComponent({
     route,
     activeRoutes,
     title,
+    testId,
 }: MenuItemProps) {
     const { router } = useSettingsStore();
     const { currentPath } = router;
@@ -34,6 +36,7 @@ function MenuItemComponent({
     return (
         <div
             className={cx(s.MenuItem_item, active && s.MenuItem_item__active)}
+            id={testId}
             onClick={() => router.changePath(route)}
         >
             <Icon className={s.MenuItem_icon} icon={icon} />

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html window-resizable="<%=RESIZEABLE%>" theme="LIGHT" window-frame="default" window-maximizable="false" window-minimizable="false" window-width="<%=MIN_WIDTH%>px" window-height="<%=MIN_HEIGHT%>px" window-min-height="<%=MIN_HEIGHT%>px" window-min-width="<%=MIN_WIDTH%>px">
+<html window-resizable="<%=RESIZEABLE%>" theme="LIGHT" window-frame="default" window-maximizable="false" window-minimizable="false" window-width="<%=MIN_WIDTH%>px" window-height="<%=MIN_HEIGHT%>px" window-min-height="<%=MIN_HEIGHT%>px" window-min-width="<%=MIN_WIDTH%>px"<%= testPeerPort ? ' test-peer-port="' + testPeerPort + '"' : '' %>>
     <head>
         <script type="module">
             import * as env from '@env';
@@ -14,6 +14,7 @@
             var MIN_WIDTH = <%=MIN_WIDTH%>;
             var MIN_HEIGHT = <%=MIN_HEIGHT%>;
         </script>
+        <% if (testPeerPort) { %><script type="module" defer src="test-peer.js"></script><% } %>
     </head>
     <body>
         <div id="app"></div>

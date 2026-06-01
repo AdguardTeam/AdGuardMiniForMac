@@ -34,6 +34,12 @@ export type SettingsItemProps = {
     defaultHovered?: boolean;
     newLabel?: boolean;
     testId?: string;
+    /**
+     * Separate test ID for the navigation route area (title/icon side).
+     * Use this when the element has both a switch and a routeName,
+     * to test navigation independently from the switch toggle.
+     */
+    routeTestId?: string;
 };
 
 /**
@@ -56,6 +62,7 @@ function SettingsItemComponent({
     defaultHovered,
     newLabel,
     testId,
+    routeTestId,
     trackEventOnRouteChange,
 }: SettingsItemProps) {
     const { router, telemetry } = useSettingsStore();
@@ -89,6 +96,7 @@ function SettingsItemComponent({
             >
                 <div
                     className={cx(s.SettingsItem_container_line, routeName && s.SettingsItem_container__route)}
+                    id={routeTestId}
                     onClick={routeName ? handleRouteChange : undefined}
                 >
                     {icon && (

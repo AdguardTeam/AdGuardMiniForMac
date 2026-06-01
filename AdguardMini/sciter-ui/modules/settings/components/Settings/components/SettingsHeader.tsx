@@ -26,6 +26,7 @@ export function SettingsHeader(props: Props) {
 
     return (
         <SettingsTitle
+            buttonTestId="settings-general-context-menu"
             elements={[{
                 text: translate('settings.export.settings'),
                 action: onExport,
@@ -39,6 +40,7 @@ export function SettingsHeader(props: Props) {
                 text: translate('reset.defaults'),
                 action: onToggleResetModal,
                 className: theme.button.redText,
+                testId: 'settings-general-reset-trigger',
             }]}
             title={translate('menu.settings')}
             maxTopPadding

@@ -30,16 +30,20 @@ export type ContextMenuProps = {
         text: string;
         action(): void;
         className?: string;
+        testId?: string;
     }[];
     reportBug?: boolean;
     className?: string;
     showReportBugTooltip?: boolean;
+    buttonTestId?: string;
 };
 
 /**
  * Context dropdown menu
  */
-function ContextMenuComponent({ elements, reportBug, className, showReportBugTooltip }: ContextMenuProps) {
+function ContextMenuComponent({
+    elements, reportBug, className, showReportBugTooltip, buttonTestId,
+}: ContextMenuProps) {
     const { router, ui, telemetry } = useSettingsStore();
     const [open, setOpen] = useState(false);
 
@@ -105,7 +109,7 @@ function ContextMenuComponent({ elements, reportBug, className, showReportBugToo
                     <Button icon="flag" iconClassName={theme.button.grayIcon} type="icon" />
                 </div>
             ) : (
-                <Button icon="context" iconClassName={theme.button.grayIcon} type="icon" onClick={() => setOpen(!open)} />
+                <Button icon="context" iconClassName={theme.button.grayIcon} type="icon" onClick={() => setOpen(!open)} testId={buttonTestId} />
             )}
             {open && (
                 <div className={cx(s.ContextMenu_context, reportBug && s.ContextMenu_context__tooltip)}>
@@ -115,8 +119,8 @@ function ContextMenuComponent({ elements, reportBug, className, showReportBugToo
                                 {showReportBugTooltip ? translate('context.menu.report.problem.tooltip') : translate('context.menu.report.problem')}
                             </Text>
                         </div>
-                    ) : elements?.map(({ text, action, className: cs }) => (
-                        <div key={text} className={s.ContextMenu_action} role="button" onClick={handleAction(action)}>
+                    ) : elements?.map(({ text, action, className: cs, testId }) => (
+                        <div key={text} id={testId} className={s.ContextMenu_action} role="button" onClick={handleAction(action)}>
                             <Text className={cs} lineHeight="none" type="t1">{text}</Text>
                         </div>
                     ))}

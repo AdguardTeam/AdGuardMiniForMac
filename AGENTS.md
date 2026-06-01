@@ -107,6 +107,15 @@ adguard-mini/
 │   │   ├── tests/                        # Shared TypeScript node:test suites
 │   │   └── scripts/                      # Webpack configs, lint, build scripts
 │   └── sciter-js-sdk/                    # Sciter JS SDK (vendored)
+├── AdguardMiniUiTests/                   # UI test infrastructure
+│   ├── test-ids.md                       # Test ID documentation
+│   └── tests/                            # E2E test suite
+│       ├── helpers/                      # Shared test utilities
+│       ├── tray/                         # Tray module tests
+│       ├── settings/                     # Settings module tests
+│       ├── onboarding/                   # Onboarding module tests
+│       ├── scripts/                      # Test tooling scripts
+│       └── reports/                      # Generated HTML reports
 ├── fastlane/                             # Fastlane automation (Ruby)
 │   ├── Updating/                         # Dependency update automation
 │   ├── Building                          # Build lanes

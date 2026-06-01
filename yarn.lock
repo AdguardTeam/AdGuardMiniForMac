@@ -43,6 +43,11 @@
     util "^0.12.5"
     zip-lib "^0.7.3"
 
+"@adg/sciter-test-driver@^1.0.2":
+  version "1.0.2"
+  resolved "https://art.int.agrd.dev/artifactory/api/npm/adguard-js/@adg/sciter-test-driver/-/@adg/sciter-test-driver-1.0.2.tgz#5a77a2051935399ae35cb84061e1ad745ae140d4"
+  integrity sha1-WneiBRk1OZrjXLhAYeGtdFrhQNQ=
+
 "@adg/sciter-utils-kit@^0.7.0":
   version "0.7.0"
   resolved "https://art.int.agrd.dev/artifactory/api/npm/adguard-js/@adg/sciter-utils-kit/-/@adg/sciter-utils-kit-0.7.0.tgz#4dbf8b9906f39fb48b030a14d31f2ef67e55e05d"

@@ -398,6 +398,7 @@ function UserRuleComponent() {
                     <Button
                         className={cx(s.UserRule_buttons_button, theme.button.greenSubmit)}
                         disabled={!canSave}
+                        testId="settings-user-rule-create"
                         type="submit"
                         small
                         onClick={onSave}
@@ -406,6 +407,7 @@ function UserRuleComponent() {
                     </Button>
                     <Button
                         className={s.UserRule_buttons_button}
+                        testId="settings-user-rule-cancel"
                         type="outlined"
                         small
                         onClick={onCancel}

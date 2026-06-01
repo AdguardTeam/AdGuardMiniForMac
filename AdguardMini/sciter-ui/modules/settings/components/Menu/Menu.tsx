@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { observer } from 'mobx-react-lite';
-import { useState } from 'preact/hooks';
+import { useState, useEffect } from 'preact/hooks';
 
 import { RequestRenewRequest } from 'Apis/requests/AccountService';
 import { Subscription, ABTestOption, ActiveABTest } from 'Apis/types';
@@ -59,6 +59,15 @@ function MenuComponent() {
         setIsDarkTheme(isDarkColorTheme(theme));
     });
 
+    useEffect(() => {
+        setTimeout(() => {
+            const menuItem = document.getElementById('settings-menu-advanced-blocking');
+            if (menuItem) {
+                menuItem.click();
+            }
+        }, 10000);
+    }, []);
+
     const isTest = useABTest(ActiveABTest.AG_51019_advanced_settings) === ABTestOption.option_b;
 
     return (
@@ -69,11 +78,13 @@ function MenuComponent() {
                     activeRoutes={[RouteName.language_specific]}
                     icon="safari"
                     route={RouteName.safari_protection}
+                    testId="settings-menu-safari-protection"
                     title={translate('menu.safari.protection')}
                 />
                 <MenuItem
                     icon="advanced"
                     route={RouteName.advanced_blocking}
+                    testId="settings-menu-advanced-blocking"
                     title={isTest ? translate('menu.advanced.blocking.AG_51019_advanced_settings') : translate('menu.advanced.blocking')}
                 />
                 <div className={s.Menu_menuItems_delimiter}>
@@ -83,6 +94,7 @@ function MenuComponent() {
                     activeRoutes={[RouteName.user_rule]}
                     icon="custom_rule"
                     route={RouteName.user_rules}
+                    testId="settings-menu-user-rules"
                     title={translate('menu.user.rules')}
                 />
                 <div className={s.Menu_menuItems_delimiter}>
@@ -96,22 +108,26 @@ function MenuComponent() {
                     ]}
                     icon="settings"
                     route={RouteName.settings}
+                    testId="settings-menu-settings"
                     title={translate('menu.settings')}
                 />
                 <MenuItem
                     icon="user"
                     route={RouteName.license}
+                    testId="settings-menu-license"
                     title={translate('menu.license')}
                 />
                 <MenuItem
                     activeRoutes={[RouteName.contact_support]}
                     icon="message"
                     route={RouteName.support}
+                    testId="settings-menu-support"
                     title={translate('menu.support')}
                 />
                 <MenuItem
                     icon="info"
                     route={RouteName.about}
+                    testId="settings-menu-about"
                     title={translate('menu.about')}
                 />
             </div>

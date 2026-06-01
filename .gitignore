@@ -247,3 +247,7 @@ specs/
 .sdd/
 
 support-scripts
+
+### UI Tests ###
+
+AdguardMiniUiTests/tests/reports/

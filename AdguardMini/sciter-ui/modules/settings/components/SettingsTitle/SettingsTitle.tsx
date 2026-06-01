@@ -31,6 +31,7 @@ export function SettingsTitle({
     maxTopPadding,
     reportBug,
     showReportBugTooltip,
+    buttonTestId,
     newLabel,
 }: SettingsTitleProps) {
     const doubleContextMenu = elements && reportBug;
@@ -44,7 +45,7 @@ export function SettingsTitle({
                 {doubleContextMenu && (
                     <>
                         <ContextMenu className={s.SettingsTitle_contextMenu} reportBug={reportBug} />
-                        <ContextMenu elements={elements} />
+                        <ContextMenu elements={elements} buttonTestId={buttonTestId} />
                     </>
                 )}
                 {!doubleContextMenu && (elements || reportBug) && (
@@ -52,6 +53,7 @@ export function SettingsTitle({
                         elements={elements || []}
                         reportBug={reportBug}
                         showReportBugTooltip={showReportBugTooltip}
+                        buttonTestId={buttonTestId}
                     />
                 )}
             </div>

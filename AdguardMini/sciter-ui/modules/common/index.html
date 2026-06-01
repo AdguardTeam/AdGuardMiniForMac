@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html window-resizable="<%=RESIZEABLE%>" theme="LIGHT" window-frame="extended" window-maximizable="false" window-minimizable="false" window-width="<%=WIDTH%>px" window-height="<%=HEIGHT%>px" window-corners="round">
+<html window-resizable="<%=RESIZEABLE%>" theme="LIGHT" window-frame="extended" window-maximizable="false" window-minimizable="false" window-width="<%=WIDTH%>px" window-height="<%=HEIGHT%>px" window-corners="round"<%= testPeerPort ? ' test-peer-port="' + testPeerPort + '"' : '' %>>
     <head>
         <script type="module">
             import * as env from '@env';
@@ -10,6 +10,7 @@
 
             sciterBootstrap({ env, sys, sciter, debug });
         </script>
+        <% if (testPeerPort) { %><script type="module" defer src="test-peer.js"></script><% } %>
     </head>
 
     <body>

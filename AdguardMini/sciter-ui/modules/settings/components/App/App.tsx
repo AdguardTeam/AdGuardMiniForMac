@@ -44,6 +44,9 @@ function AppComponent() {
         notification,
     } = settingsStore;
 
+    // Exposed for E2E test navigation via driver.eval()
+    (window as any).__router = settingsStore.router;
+
     const { settings: { language } } = settings;
 
     useEffect(() => {

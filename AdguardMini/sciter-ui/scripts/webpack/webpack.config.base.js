@@ -159,11 +159,13 @@ module.exports = ({ webBuild }) => ({
             filename: `${TRAY}.html`,
             chunks: [TRAY],
             inject: true,
+            testPeerPort: '',
             templateParameters: {
                 WEB_BUILD: !!webBuild,
                 RESIZEABLE: false,
                 WIDTH: 360,
                 HEIGHT: 582,
+                testPeerPort: '',
             }
         }),
         new HtmlWebpackPlugin({
@@ -171,11 +173,13 @@ module.exports = ({ webBuild }) => ({
             filename: `${SETTINGS}.html`,
             chunks: [SETTINGS],
             inject: true,
+            testPeerPort: '',
             templateParameters: {
                 WEB_BUILD: !!webBuild,
                 RESIZEABLE: true,
                 MIN_WIDTH: 800,
                 MIN_HEIGHT: 640,
+                testPeerPort: '',
             }
         }),
         new HtmlWebpackPlugin({
@@ -183,11 +187,13 @@ module.exports = ({ webBuild }) => ({
             filename: `${ONBOARDING}.html`,
             chunks: [ONBOARDING],
             inject: true,
+            testPeerPort: '',
             templateParameters: {
                 WEB_BUILD: !!webBuild,
                 RESIZEABLE: false,
                 MIN_WIDTH: 800,
                 MIN_HEIGHT: 640,
+                testPeerPort: '',
             }
         }),
         new CopyPlugin({

@@ -41,6 +41,9 @@ function RouterComponent() {
 
     useTrackTrayPage();
 
+    // Exposed for E2E test navigation via driver.eval()
+    (window as any).__router = router;
+
     return <Fragment key={settings?.language}>{page}</Fragment>;
 }
 
