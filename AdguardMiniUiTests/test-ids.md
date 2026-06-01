@@ -50,7 +50,7 @@
 | `onboarding-annoyances-dont-block-button` | onboarding | `modules/onboarding/components/Onboarding/steps/Annoyances.tsx` | Don't block button |
 | `onboarding-annoyances-consent-modal` | onboarding | `modules/onboarding/components/Onboarding/steps/Annoyances.tsx` | Consent modal |
 | `onboarding-annoyances-consent-modal-enable` | onboarding | `modules/onboarding/components/Onboarding/steps/Annoyances.tsx` | Consent modal enable button |
-| `onboarding-finish-page` | onboarding | `modules/onboarding/components/Onboarding/steps/Finish.tsx` | Finish step page container |
+| `onboarding-annoyances-consent-modal-cancel` | onboarding | `modules/onboarding/components/Onboarding/steps/Annoyances.tsx` | Consent modal cancel button |
 | `onboarding-finish-done-button` | onboarding | `modules/onboarding/components/Onboarding/steps/Finish.tsx` | Done/close button |
 
 ### Settings — General
@@ -81,6 +81,7 @@
 | `settings-general-consent-modal` | settings | `modules/settings/components/Settings/components/SettingsModals.tsx` | Consent modal |
 | `settings-general-consent-modal-enable` | settings | `modules/settings/components/Settings/components/SettingsModals.tsx` | Consent modal enable button |
 | `settings-general-consent-modal-cancel` | settings | `modules/settings/components/Settings/components/SettingsModals.tsx` | Consent modal cancel button |
+| `settings-general-consent-modal-cancel` | settings | `modules/settings/components/Settings/components/SettingsModals.tsx` | Consent modal cancel button |
 
 ### Settings — Safari Protection
 
@@ -90,6 +91,7 @@
 | `settings-safari-protection-block-ads` | settings | `modules/settings/components/SafariProtection/components/AdBlockingSection.tsx` | Block ads toggle |
 | `settings-safari-protection-block-search-ads` | settings | `modules/settings/components/SafariProtection/components/AdBlockingSection.tsx` | Block search ads toggle |
 | `settings-safari-protection-language-specific` | settings | `modules/settings/components/SafariProtection/components/AdBlockingSection.tsx` | Language-specific filter toggle |
+| `settings-safari-protection-language-specific-nav` | settings | `modules/settings/components/SafariProtection/components/AdBlockingSection.tsx` | Language-specific filter navigation link |
 | `settings-safari-protection-block-trackers` | settings | `modules/settings/components/SafariProtection/components/TrackingSection.tsx` | Block trackers toggle |
 | `settings-safari-protection-block-social` | settings | `modules/settings/components/SafariProtection/components/AnnoyanceSection.tsx` | Block social widgets toggle |
 | `settings-safari-protection-block-cookies` | settings | `modules/settings/components/SafariProtection/components/AnnoyanceSection.tsx` | Block cookie notices toggle |
@@ -147,6 +149,8 @@
 | `settings-user-rules-rule-{index}-edit` | settings | `modules/settings/components/UserRules/components/Rule/Rule.tsx` | Rule edit button (dynamic by index) |
 | `settings-user-rules-rule-{index}-delete` | settings | `modules/settings/components/UserRules/components/Rule/Rule.tsx` | Rule delete button (dynamic by index) |
 | `settings-user-rules-open-editor-plug-button` | settings | `modules/settings/components/UserRules/components/OpenedEditorPlug/OpenedEditorPlug.tsx` | Open editor plug button |
+| `settings-user-rule-create` | settings | `modules/settings/components/UserRule/UserRule.tsx` | Create/save rule submit button |
+| `settings-user-rule-cancel` | settings | `modules/settings/components/UserRule/UserRule.tsx` | Cancel button |
 
 ### Settings — Other Pages
 
@@ -185,13 +189,13 @@
 ## Summary
 
 - **Tray**: 18 IDs (3 page containers, 15 interactive elements)
-- **Onboarding**: 21 IDs (6 page containers, 15 interactive elements)
-- **Settings — General**: 26 IDs (1 page container, 25 switches/links/modals)
-- **Settings — Safari Protection**: 10 IDs (1 page container, 9 toggles)
+- **Onboarding**: 20 IDs (5 page containers, 15 interactive elements)
+- **Settings — General**: 27 IDs (1 page container, 26 switches/links/modals)
+- **Settings — Safari Protection**: 11 IDs (1 page container, 10 toggles/links)
 - **Settings — Advanced Blocking**: 4 IDs (1 page container, 3 toggles)
 - **Settings — Filters**: 15 IDs (2 page containers, 13 elements/modals)
-- **Settings — User Rules**: 17 IDs (1 page container, 16 elements)
+- **Settings — User Rules**: 19 IDs (1 page container, 18 elements)
 - **Settings — Other Pages**: 11 IDs (5 page containers, 6 elements)
 - **Shared Views**: 3 IDs
 - **UserRules Editor**: 5 IDs (1 page container, 4 elements)
-- **Total**: ~130 unique test IDs
+- **Total**: 133 unique test IDs

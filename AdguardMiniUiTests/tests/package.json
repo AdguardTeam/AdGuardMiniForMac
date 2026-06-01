@@ -1,0 +1,16 @@
+{
+    "name": "adguard-mini-ui-tests",
+    "version": "1.0.0",
+    "private": true,
+    "description": "E2E UI tests for AdGuard Mini Sciter modules",
+    "type": "module",
+    "scripts": {
+        "test:e2e": "node --experimental-strip-types run.mjs",
+        "test:visual": "node run-visual.mjs",
+        "test:visual:update": "node run-visual.mjs --update"
+    },
+    "dependencies": {
+        "pixelmatch": "6.0.0",
+        "sharp": "0.33.5"
+    }
+}

@@ -1,0 +1,207 @@
+{
+  "tray": {
+    "flow": [
+      {
+        "pageId": "tray-home-page",
+        "elements": [
+          "tray-home-protection-toggle",
+          "tray-home-settings-button",
+          "tray-home-update-button",
+          "tray-home-fix-extensions-link",
+          "tray-home-all-extensions-disabled-link",
+          "tray-home-stories-scroll-left",
+          "tray-home-stories-scroll-right"
+        ]
+      },
+      {
+        "pageId": "tray-updates-page",
+        "navigate": {
+          "click": "tray-home-update-button"
+        },
+        "elements": [
+          "tray-updates-back-button",
+          "tray-updates-update-button",
+          "tray-updates-retry-filters-button",
+          "tray-updates-filters-results-row"
+        ]
+      }
+    ]
+  },
+  "onboarding": {
+    "flow": [
+      {
+        "pageId": "onboarding-start-page",
+        "elements": [
+          "onboarding-start-eula-checkbox",
+          "onboarding-start-eula-link",
+          "onboarding-start-privacy-link",
+          "onboarding-start-telemetry-checkbox",
+          "onboarding-start-telemetry-modal-trigger",
+          "onboarding-start-next-button"
+        ]
+      },
+      {
+        "pageId": "onboarding-extensions-page",
+        "elements": []
+      },
+      {
+        "pageId": "onboarding-ads-page",
+        "elements": [
+          "onboarding-ads-tune-button",
+          "onboarding-ads-skip-button"
+        ]
+      },
+      {
+        "pageId": "onboarding-trackers-page",
+        "elements": [
+          "onboarding-trackers-block-button",
+          "onboarding-trackers-dont-block-button"
+        ]
+      },
+      {
+        "pageId": "onboarding-annoyances-page",
+        "elements": [
+          "onboarding-annoyances-enable-button",
+          "onboarding-annoyances-dont-block-button",
+          "onboarding-annoyances-consent-modal",
+          "onboarding-annoyances-consent-modal-enable",
+          "onboarding-annoyances-consent-modal-cancel"
+        ]
+      },
+      {
+        "pageId": "onboarding-finish-page",
+        "elements": [
+          "onboarding-finish-done-button"
+        ]
+      }
+    ],
+    "standalone": true
+  },
+  "settings": {
+    "flow": [
+      {
+        "pageId": "settings-safari-protection-page",
+        "navigate": {
+          "click": "settings-menu-safari-protection"
+        },
+        "elements": [
+          "settings-safari-protection-block-ads",
+          "settings-safari-protection-block-search-ads",
+          "settings-safari-protection-language-specific",
+          "settings-safari-protection-language-specific-nav",
+          "settings-safari-protection-block-trackers",
+          "settings-safari-protection-block-social",
+          "settings-safari-protection-block-cookies",
+          "settings-safari-protection-block-popups",
+          "settings-safari-protection-block-widgets",
+          "settings-safari-protection-block-other-annoyances"
+        ]
+      },
+      {
+        "pageId": "settings-language-specific-page",
+        "navigate": {
+          "click": "settings-safari-protection-language-specific-nav"
+        },
+        "elements": []
+      },
+      {
+        "pageId": "settings-advanced-blocking-page",
+        "navigate": {
+          "click": "settings-menu-advanced-blocking"
+        },
+        "elements": [
+          "settings-advanced-blocking-advanced-rules",
+          "settings-advanced-blocking-adguard-extra"
+        ]
+      },
+      {
+        "pageId": "settings-user-rules-page",
+        "navigate": {
+          "click": "settings-menu-user-rules"
+        },
+        "elements": [
+          "settings-user-rules-main-toggle",
+          "settings-user-rules-search-input",
+          "settings-user-rules-add-rule",
+          "settings-user-rules-how-to-button"
+        ]
+      },
+      {
+        "pageId": "settings-general-page",
+        "navigate": {
+          "click": "settings-menu-settings"
+        },
+        "elements": [
+          "settings-general-launch-on-startup",
+          "settings-general-show-in-menu-bar",
+          "settings-general-theme",
+          "settings-general-quit-reaction",
+          "settings-general-filters",
+          "settings-general-safari-protection",
+          "settings-general-telemetry",
+          "settings-general-toolbar-badge",
+          "settings-general-debug-logging",
+          "settings-general-export-logs",
+          "settings-general-auto-filters-update",
+          "settings-general-real-time-updates"
+        ]
+      },
+      {
+        "pageId": "settings-filters-page",
+        "navigate": {
+          "click": "settings-general-filters"
+        },
+        "elements": [
+          "settings-filters-what-are-filters-link",
+          "settings-filters-search-input"
+        ]
+      },
+      {
+        "pageId": "settings-license-page",
+        "navigate": {
+          "click": "settings-menu-license"
+        },
+        "elements": []
+      },
+      {
+        "pageId": "settings-support-page",
+        "navigate": {
+          "click": "settings-menu-support"
+        },
+        "elements": []
+      },
+      {
+        "pageId": "settings-about-page",
+        "navigate": {
+          "click": "settings-menu-about"
+        },
+        "elements": []
+      }
+    ]
+  },
+  "shared": {
+    "flow": [
+      {
+        "pageId": "enable-extensions-page",
+        "elements": [
+          "enable-extensions-enable-button",
+          "enable-extensions-open-settings-button",
+          "enable-extensions-proceed-button"
+        ]
+      }
+    ]
+  },
+  "userrules": {
+    "flow": [
+      {
+        "pageId": "userrules-editor-page",
+        "elements": [
+          "userrules-editor-save-button",
+          "userrules-editor-unsaved-modal",
+          "userrules-editor-unsaved-modal-save",
+          "userrules-editor-unsaved-modal-discard"
+        ]
+      }
+    ]
+  }
+}
