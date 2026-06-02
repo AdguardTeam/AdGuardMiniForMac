@@ -146,6 +146,8 @@ export function Modal({
             </div>
             <div
                 className={cx(s.Modal_modalBackdrop)}
+                role="button"
+                tabIndex={-1}
                 onClick={canClose ? onClose : undefined}
             />
         </div>

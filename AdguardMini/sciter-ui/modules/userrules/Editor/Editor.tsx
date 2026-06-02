@@ -2,11 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import '@adguard/rules-editor/dist/codemirror.css';
-
-import type { EditorFromTextArea } from '@adguard/rules-editor';
-
 import { initEditor, RulesBuilder, getRulesFromEditor, configureEditorMode, setEditorValue } from '@adguard/rules-editor';
+import '@adguard/rules-editor/dist/codemirror.css';
 import wasm from '@adguard/rules-editor/dist/onigasm.wasm';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useRef, useState } from 'preact/hooks';
@@ -18,6 +15,8 @@ import { editorStore } from '../editorStore';
 
 import s from './Editor.module.pcss';
 import './Editor.pcss';
+
+import type { EditorFromTextArea } from '@adguard/rules-editor';
 
 type EditorProps = {
     className: string;
@@ -196,6 +195,7 @@ function EditorComponent({
                     {fallbackValue}
                 </textarea>
             ) : (
+
                 <textarea className={s.Editor__fallback} id="area" />
             )}
         </div>

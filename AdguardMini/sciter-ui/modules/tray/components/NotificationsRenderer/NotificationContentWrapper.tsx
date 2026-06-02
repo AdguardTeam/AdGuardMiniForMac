@@ -45,7 +45,7 @@ export function NotificationContentWrapper({
 
     useEffect(() => {
         notification.props.onMount?.();
-    }, [notification.props.onMount]);
+    }, [notification.props, notification.props.onMount]);
 
     return (
         <div className={cx(s.NotificationContentWrapper_content, className)}>

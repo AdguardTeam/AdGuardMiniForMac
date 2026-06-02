@@ -18,7 +18,15 @@ export type UserRulesContainer = Array<(UserRuleObject & { index: number })>;
  * App UserRules store
  */
 export class UserRules {
-    rootStore: SettingsStore;
+    /**
+     * Decorator that used for debounce calls to platform and ignores all intermediate updates
+     * Saves only last element
+     */
+    private readonly commitUserRules = withLast<UserRulesEnt, OptionalError>(async (data) => {
+        return window.API.Execute(new UpdateUserRulesRequest(data));
+    }, 'commitUserRules');
+
+    public rootStore: SettingsStore;
 
     /**
      * User rules
@@ -45,6 +53,24 @@ export class UserRules {
     }
 
     /**
+     * private setter
+     */
+    private setUserRules(data: UserRulesEnt) {
+        this.userRules = data;
+        this.rules = data.rules.map((r, index) => ({ ...r.toObject() as UserRuleObject, index }));
+    }
+
+    /**
+     * Private update helper
+     */
+    private updateHelper() {
+        return new UserRulesEnt({
+            enabled: this.userRules.enabled,
+            rules: this.userRules.rules,
+        });
+    }
+
+    /**
      * Setter for dontAskAgainImportModal
      */
     public setDontAskAgainImportModal(value: boolean) {
@@ -66,7 +92,9 @@ export class UserRules {
     public async addUserRule(rule: string) {
         try {
             const error = await window.API.Execute(new AddUserRuleRequest({ value: rule }));
-            if (error.hasError) { return error; }
+            if (error.hasError) {
+                return error;
+            }
             const rules = this.updateHelper();
             rules.rules.unshift(new UserRule({ rule, enabled: true }));
             this.setUserRules(rules);
@@ -86,7 +114,9 @@ export class UserRules {
             newRules.rules = rules;
             this.setUserRules(newRules);
             const error = await window.API.Execute(new UpdateUserRulesRequest(newRules));
-            if (error.hasError) { return [error, prevUserRules]; }
+            if (error.hasError) {
+                return [error, prevUserRules];
+            }
             return [null, prevUserRules];
         } catch (err) {
             log.error('updateRules failed', String(err));
@@ -139,31 +169,5 @@ export class UserRules {
         const newValue = this.updateHelper();
         newValue.rules = data.rules;
         this.setUserRules(newValue);
-    }
-
-    /**
-     * Decorator that used for debounce calls to platform and ignores all intermediate updates
-     * Saves only last element
-     */
-    private readonly commitUserRules = withLast<UserRulesEnt, OptionalError>(async (data) => {
-        return window.API.Execute(new UpdateUserRulesRequest(data));
-    }, 'commitUserRules');
-
-    /**
-     * private setter
-     */
-    private setUserRules(data: UserRulesEnt) {
-        this.userRules = data;
-        this.rules = data.rules.map((r, index) => ({ ...r.toObject() as UserRuleObject, index }));
-    }
-
-    /**
-     * Private update helper
-     */
-    private updateHelper() {
-        return new UserRulesEnt({
-            enabled: this.userRules.enabled,
-            rules: this.userRules.rules,
-        });
     }
 }

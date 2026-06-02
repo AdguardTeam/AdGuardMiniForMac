@@ -2,10 +2,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import 'Apis/ExtendLicense';
-
 import { ApiServiceExecutor } from '@adg/sciter-utils-kit';
 
+import 'Apis/ExtendLicense';
 import { xcall } from 'ApiWindow';
 
 // @TODO: MOVE THIS TO declaration.d.ts

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import type { ComponentType, ComponentProps } from 'preact';
+import type { ComponentType } from 'preact';
 
 /**
  * Provides a trialDays parameter for use with the translate lib's messages

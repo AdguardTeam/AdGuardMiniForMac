@@ -15,7 +15,17 @@ import type { SettingsStore } from 'SettingsStore';
  *  AdvancedBlocking store
  */
 export class AdvancedBlocking {
-    rootStore: SettingsStore;
+    /**
+     * Commit advanced blocking settings on platform-side
+     */
+    private readonly commitAdvancedBlocking = withLast<AdvancedBlockingEnt, EmptyValue>(
+        async (data: AdvancedBlockingEnt) => {
+            return window.API.Execute(new UpdateAdvancedBlockingRequest(data));
+        },
+        'commitAdvancedBlocking',
+    );
+
+    public rootStore: SettingsStore;
 
     /**
      * Advanced blocking settings
@@ -35,15 +45,13 @@ export class AdvancedBlocking {
     }
 
     /**
-     * Get AdvancedBlocking from swift
+     * private update helper
      */
-    public async getAdvancedBlocking() {
-        try {
-            const resp = await window.API.Execute(new GetAdvancedBlockingRequest());
-            this.setAdvancedBlocking(resp);
-        } catch (err) {
-            log.error('getAdvancedBlocking failed', String(err));
-        }
+    private updateHelper() {
+        return new AdvancedBlockingEnt({
+            advancedRules: this.advancedBlocking.advancedRules,
+            adguardExtra: this.advancedBlocking.adguardExtra,
+        });
     }
 
     /**
@@ -54,14 +62,16 @@ export class AdvancedBlocking {
     }
 
     /**
-     * Commit advanced blocking settings on platform-side
+     * Get AdvancedBlocking from swift
      */
-    private readonly commitAdvancedBlocking = withLast<AdvancedBlockingEnt, EmptyValue>(
-        async (data: AdvancedBlockingEnt) => {
-            return window.API.Execute(new UpdateAdvancedBlockingRequest(data));
-        },
-        'commitAdvancedBlocking',
-    );
+    public async getAdvancedBlocking() {
+        try {
+            const resp = await window.API.Execute(new GetAdvancedBlockingRequest());
+            this.setAdvancedBlocking(resp);
+        } catch (err) {
+            log.error('getAdvancedBlocking failed', String(err));
+        }
+    }
 
     /**
      * Update AdvancedRules setting
@@ -82,15 +92,5 @@ export class AdvancedBlocking {
         newValue.adguardExtra = value;
         this.setAdvancedBlocking(newValue);
         this.commitAdvancedBlocking(newValue);
-    }
-
-    /**
-     * private update helper
-     */
-    private updateHelper() {
-        return new AdvancedBlockingEnt({
-            advancedRules: this.advancedBlocking.advancedRules,
-            adguardExtra: this.advancedBlocking.adguardExtra,
-        });
     }
 }

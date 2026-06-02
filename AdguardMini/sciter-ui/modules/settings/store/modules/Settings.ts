@@ -75,6 +75,27 @@ export class Settings {
     public dissmissedHealthCheckCards = new Set<string>();
 
     /**
+     * Getter for safari extensions with loading status
+     */
+    public get safariExtensionsLoading() {
+        return this.safariExtensionsStore.safariExtensionsLoading;
+    }
+
+    /**
+     * Checks if the app release variant is the MAS
+     */
+    public get isMASReleaseVariant() {
+        return this.settings.releaseVariant === ReleaseVariants.MAS;
+    }
+
+    /**
+     * Checks if the app release variant is the standalone
+     */
+    public get isStandaloneReleaseVariant() {
+        return this.settings.releaseVariant === ReleaseVariants.standAlone;
+    }
+
+    /**
      * Ctor
      *
      * @param rootStore
@@ -82,6 +103,34 @@ export class Settings {
     public constructor(windowing: Windowing) {
         this.windowing = windowing;
         makeAutoObservable(this, {}, { autoBind: true });
+    }
+
+    /**
+     * Private setter for user action last directory
+     */
+    private setUserActionLastDirectory(value: string) {
+        this.userActionLastDirectory = value;
+    }
+
+    /**
+     * Setter for contentBlockersRulesLimit
+     */
+    private setContentBlockersRulesLimit(value: number) {
+        this.contentBlockersRulesLimit = value;
+    }
+
+    /**
+     * Private update helper
+     */
+    private updateHelper() {
+        return this.settings.clone();
+    }
+
+    /**
+     * Updates settings
+     */
+    private commitSettings(data: SettingsEnt) {
+        this.setSettings(new SettingsEnt(data));
     }
 
     /**
@@ -150,13 +199,6 @@ export class Settings {
     }
 
     /**
-     * Private setter for user action last directory
-     */
-    private setUserActionLastDirectory(value: string) {
-        this.userActionLastDirectory = value;
-    }
-
-    /**
      * Export settings to selected destination
      * @param path path to save file
      */
@@ -200,20 +242,6 @@ export class Settings {
         ]);
         this.setSafariExtensions(ext);
         this.setContentBlockersRulesLimit(limit.value);
-    }
-
-    /**
-     * Setter for contentBlockersRulesLimit
-     */
-    private setContentBlockersRulesLimit(value: number) {
-        this.contentBlockersRulesLimit = value;
-    }
-
-    /**
-     * Getter for safari extensions with loading status
-     */
-    public get safariExtensionsLoading() {
-        return this.safariExtensionsStore.safariExtensionsLoading;
     }
 
     /**
@@ -382,27 +410,6 @@ export class Settings {
     }
 
     /**
-     * Checks if the app release variant is the MAS
-     */
-    public get isMASReleaseVariant() {
-        return this.settings.releaseVariant === ReleaseVariants.MAS;
-    }
-
-    /**
-     * Checks if the app release variant is the standalone
-     */
-    public get isStandaloneReleaseVariant() {
-        return this.settings.releaseVariant === ReleaseVariants.standAlone;
-    }
-
-    /**
-     * Updates settings
-     */
-    private commitSettings(data: SettingsEnt) {
-        this.setSettings(new SettingsEnt(data));
-    }
-
-    /**
      * private setter
      */
     public setSettings(data: SettingsEnt) {
@@ -427,12 +434,5 @@ export class Settings {
      */
     public setIncomingHardwareAcceleration(data: boolean | undefined) {
         this.incomeHardwareAcceleration = data;
-    }
-
-    /**
-     * Private update helper
-     */
-    private updateHelper() {
-        return this.settings.clone();
     }
 }

@@ -9,13 +9,16 @@ import {
 
 import { UserRule as UserRuleType } from 'Apis/types';
 import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
-import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType, RouteName, SettingsEvent } from 'SettingsStore/modules';
+import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType, SettingsEvent } from 'SettingsStore/modules';
 
 import { validateDomain } from '../forms/helpers';
 import s from '../UserRule.module.pcss';
 
 import type { FormErrors } from '../UserRule';
+import type { NotificationsQueue } from 'SettingsStore/modules';
 
+// RuleBuilder is typed as any because the union of rule builder classes
+// from @adguard/rules-editor causes parse issues when used as a type alias.
 type RuleBuilder = any;
 
 interface SaveRuleParams {
@@ -29,7 +32,7 @@ interface SaveRuleParams {
         updateRules(rules: UserRuleType[]): void;
         addUserRule(rule: string): Promise<unknown>;
     };
-    notification: { notify(opts: Record<string, unknown>): void };
+    notification: NotificationsQueue;
     telemetry: { layersRelay: { trackEvent(event: string): void } };
     navigateBack(): void;
 }
@@ -69,27 +72,52 @@ export async function saveRule(params: SaveRuleParams): Promise<void> {
     // ---- Validation ----
 
     if (rule.rule instanceof CustomRule && !rule.rule.getRule()) {
-        setErrors({ rule: translate('user.rules.fill.field') }); return;
+        setErrors({ rule: translate('user.rules.fill.field') });
+        return;
     }
 
     if (rule.rule instanceof BlockRequestRule || rule.rule instanceof UnblockRequestRule) {
         const showDomains = rule.rule.getDomainModifiers() === DomainModifiers.onlyListed
             || rule.rule.getDomainModifiers() === DomainModifiers.allExceptListed;
         const errors: FormErrors = {};
-        if (!rule.rule.getDomain()) { errors.domain = translate('user.rules.fill.field'); } else if (!validateDomain(rule.rule.getDomain())) { errors.domain = translate('user.rules.domain.invalid'); }
-        if (showDomains && !rule.rule.getDomainModifiersDomains().join()) { errors.websites = translate('user.rules.fill.field'); } else if (showDomains && !rule.rule.getDomainModifiersDomains().every((d: string) => validateDomain(d))) { errors.websites = translate('user.rules.domain.invalid'); }
-        if (Object.keys(errors).length > 0) { setErrors(errors); return; }
+        if (!rule.rule.getDomain()) {
+            errors.domain = translate('user.rules.fill.field');
+        } else if (!validateDomain(rule.rule.getDomain())) {
+            errors.domain = translate('user.rules.domain.invalid');
+        }
+        if (showDomains && !rule.rule.getDomainModifiersDomains().join()) {
+            errors.websites = translate('user.rules.fill.field');
+        } else if (
+            showDomains
+            && !rule.rule.getDomainModifiersDomains().every((d: string) => validateDomain(d))
+        ) {
+            errors.websites = translate('user.rules.domain.invalid');
+        }
+        if (Object.keys(errors).length > 0) {
+            setErrors(errors);
+            return;
+        }
     }
 
     if (rule.rule instanceof NoFilteringRule) {
-        if (!rule.rule.getDomain()) { setErrors({ domain: translate('user.rules.fill.field') }); return; }
-        if (!validateDomain(rule.rule.getDomain())) { setErrors({ domain: translate('user.rules.domain.invalid') }); return; }
+        if (!rule.rule.getDomain()) {
+            setErrors({ domain: translate('user.rules.fill.field') });
+            return;
+        }
+        if (!validateDomain(rule.rule.getDomain())) {
+            setErrors({ domain: translate('user.rules.domain.invalid') });
+            return;
+        }
     }
 
     if (rule.rule instanceof Comment && !rule.rule.getText()) {
-        setErrors({ comment: translate('user.rules.fill.field') }); return;
+        setErrors({ comment: translate('user.rules.fill.field') });
+        return;
     }
 
+    // RuleBuilder is typed as `any` due to parse issues with union types
+    // from @adguard/rules-editor. Calls on it trigger no-unsafe-call.
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     const ruleStr = rule.rule.buildRule();
     if (rules.find((r) => r.rule === ruleStr)) {
         notification.notify({
@@ -114,9 +142,16 @@ export async function saveRule(params: SaveRuleParams): Promise<void> {
                 new UserRuleType({ rule: addComment.comment.buildRule(), enabled: true }),
                 ...rules.slice(index),
             ];
-            const result = await (userRules.updateRules(tempRules) as unknown) as [{ hasError?: boolean }, UserRuleType[]] | undefined;
+            const updateResult = userRules.updateRules(tempRules);
+            const result = (
+                updateResult as unknown
+            ) as [{ hasError?: boolean }, UserRuleType[]] | undefined;
             const [err, prevRules] = result ?? [{}, []];
-            if (err?.hasError) { notifyError(); } else { notifySuccess(ruleStr, () => userRules.updateRules(prevRules)); }
+            if (err?.hasError) {
+                notifyError();
+            } else {
+                notifySuccess(ruleStr, () => userRules.updateRules(prevRules));
+            }
         } else {
             userRules.updateRules(tempRules);
         }
@@ -128,10 +163,16 @@ export async function saveRule(params: SaveRuleParams): Promise<void> {
 
     const rulesCopy = [...rules];
     const err = await userRules.addUserRule(ruleStr);
-    if (err) { notifyError(); return; }
+    if (err) {
+        notifyError();
+        return;
+    }
     if (addComment.value && addComment.comment.getText()) {
         const errC = await userRules.addUserRule(addComment.comment.buildRule());
-        if (errC) { notifyError(); return; }
+        if (errC) {
+            notifyError();
+            return;
+        }
     }
     telemetry.layersRelay.trackEvent(SettingsEvent.CreateRuleClick);
     notifySuccess(ruleStr, () => userRules.updateRules(rulesCopy));

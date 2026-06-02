@@ -46,6 +46,10 @@ function RouteToPage(currentRoute: RouteName): SettingsPage | 'unknown' {
             return SettingsPage.SafariExtensions;
         case RouteName.contact_support:
             return SettingsPage.ContactSupport;
+        case RouteName.language_specific:
+        case RouteName.quit_reaction:
+        case RouteName.migration:
+        case RouteName.theme:
         default:
             return 'unknown';
     }

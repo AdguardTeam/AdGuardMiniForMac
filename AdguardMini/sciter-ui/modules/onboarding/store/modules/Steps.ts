@@ -30,58 +30,42 @@ export enum OnboardingSteps {
 export class Steps {
     private _currentStep = OnboardingSteps.start;
 
-    /**
-     * Use for navigating with back arrow
-     * When user skip tuning and come to finish screen, back arrow should return to start of tuning
-     */
-    public skipTuning = false;
-
     private index = new FiltersIndex();
 
     private recommendedFiltersIdsByGroups: Record<string, number[]> = {};
+
+    private _blockTrackers = false;
+
+    private _blockAnnoyance = false;
+
+    private _safariSettingsHaveBeenOpened = false;
+
+    public skipTuning = false;
 
     public annoyanceFilters: Filter[] = [];
 
     public annoyanceHasBeenAccepted = false;
 
-    /**
-     * Property for checking if user selected to block trackers
-     */
-    private _blockTrackers = false;
-
-    /**
-     * Property for checking if user selected to block Annoyance
-     */
-    private _blockAnnoyance = false;
-
-    /**
-     * Safari extensions store
-     */
     public safariExtensionsStore = new SafariExtensionsStore();
 
+    public systemLanguage = 'en';
+
     /**
-     * Whether all safari extensions are enabled (delegated to store)
+     * Whether all Safari extensions are enabled.
      */
     public get allExtensionsEnabled() {
         return this.safariExtensionsStore.allExtensionsEnabled;
     }
 
     /**
-     * System language
-     */
-    public systemLanguage = 'en';
-
-    /**
-     * Current onboarding step
+     * Returns the current onboarding step.
      */
     public get currentStep() {
         return this._currentStep;
     }
 
-    private _safariSettingsHaveBeenOpened = false;
-
     /**
-     * Indicates whether the Safari settings have been opened or not
+     * Whether Safari settings have been opened by the user.
      */
     public get safariSettingsHaveBeenOpened() {
         return this._safariSettingsHaveBeenOpened;
@@ -98,7 +82,7 @@ export class Steps {
     }
 
     /**
-     * Get filters index to enable specific filters on steps
+     * Fetches the filters index from Swift and loads filter metadata.
      */
     private async getFiltersIndex() {
         const index = await window.API.Execute(new GetFiltersIndexRequest());
@@ -107,38 +91,9 @@ export class Steps {
     }
 
     /**
-     * Get safari protection status
-     */
-    public async getSafariExtensions() {
-        const ext = await window.API.Execute(new GetSafariExtensionsRequest());
-        this.setSafariExtensions(ext);
-    }
-
-    /**
-     * Set safari protection status (delegated to safariExtensionsStore)
-     */
-    public setSafariExtensions(data: SafariExtensions) {
-        this.safariExtensionsStore.setSafariExtensions(data);
-    }
-
-    /**
-     * Get system language
-     */
-    public async getSystemLanguage() {
-        const ext = await window.API.Execute(new GetSystemLanguageRequest());
-        this.setSystemLanguage(ext.value);
-    }
-
-    /**
-     * Set safari protection status
-     */
-    public setSystemLanguage(data: string) {
-        updateLanguage(data);
-        this.systemLanguage = data;
-    }
-
-    /**
-     * Setter for filters index
+     * Parses the filters index and extracts recommended filters by group.
+     *
+     * @param index Filters index from the backend.
      */
     private setFiltersIndex(index: FiltersIndex) {
         this.index = index;
@@ -150,7 +105,7 @@ export class Steps {
     }
 
     /**
-     * Get filters index to enable specific filters on steps
+     * Fetches filter metadata from Swift.
      */
     private async getFilters() {
         const index = await window.API.Execute(new GetFiltersMetadataRequest());
@@ -158,7 +113,9 @@ export class Steps {
     }
 
     /**
-     * Setter Annoyance for filters for consent show
+     * Updates the annoyance filters list from the full filter collection.
+     *
+     * @param filters Full filters metadata.
      */
     private setAnnoyanceFilters(filters: Filters) {
         const annoyanceFiltersIds = [
@@ -172,36 +129,23 @@ export class Steps {
     }
 
     /**
-     * Setter for annoyanceHasBeenAccepted to not show twice
+     * Marks that the user has accepted the annoyance blocking consent.
      */
     private setAnnoyanceHasBeenAccepted() {
         this.annoyanceHasBeenAccepted = true;
     }
 
     /**
-     * Set current onboarding step
-     */
-    public setCurrentStep(step: OnboardingSteps) {
-        this._currentStep = step;
-    }
-
-    /**
-     * Opens the Safari settings
-     */
-    public async openSafariSettings() {
-        await window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
-        this.setSafariSettingsHasBeenOpened(true);
-    }
-
-    /**
-     * Updates the value of '_safariSettingsHaveBeenOpened' based on the provided boolean flag
+     * Updates the flag indicating whether Safari settings were opened.
      */
     private setSafariSettingsHasBeenOpened(flag: boolean) {
         this._safariSettingsHaveBeenOpened = flag;
     }
 
     /**
-     * Common function for filters update
+     * Enables the specified filter IDs via the Swift backend.
+     *
+     * @param ids Filter IDs to enable.
      */
     private async updateFilters(ids: number[]) {
         const filters = new FiltersUpdate({ ids, isEnabled: true });
@@ -209,7 +153,61 @@ export class Steps {
     }
 
     /**
-     * Sets the preference for blocking trackers
+     * Fetches the current Safari extension states from Swift.
+     */
+    public async getSafariExtensions() {
+        const ext = await window.API.Execute(new GetSafariExtensionsRequest());
+        this.setSafariExtensions(ext);
+    }
+
+    /**
+     * Updates the local Safari extensions state.
+     *
+     * @param data Safari extensions data from the backend.
+     */
+    public setSafariExtensions(data: SafariExtensions) {
+        this.safariExtensionsStore.setSafariExtensions(data);
+    }
+
+    /**
+     * Fetches the system language from Swift and applies it.
+     */
+    public async getSystemLanguage() {
+        const ext = await window.API.Execute(new GetSystemLanguageRequest());
+        this.setSystemLanguage(ext.value);
+    }
+
+    /**
+     * Updates the UI language and stores the system language code.
+     *
+     * @param data Language code string.
+     */
+    public setSystemLanguage(data: string) {
+        updateLanguage(data);
+        this.systemLanguage = data;
+    }
+
+    /**
+     * Sets the current onboarding step.
+     *
+     * @param step The step to navigate to.
+     */
+    public setCurrentStep(step: OnboardingSteps) {
+        this._currentStep = step;
+    }
+
+    /**
+     * Opens Safari extension preferences and marks them as visited.
+     */
+    public async openSafariSettings() {
+        await window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
+        this.setSafariSettingsHasBeenOpened(true);
+    }
+
+    /**
+     * Handles the user's tracker blocking choice and advances to annoyances step.
+     *
+     * @param state Whether trackers should be blocked.
      */
     public async shouldBlockTrackers(state: boolean) {
         this._blockTrackers = state;
@@ -217,15 +215,18 @@ export class Steps {
     }
 
     /**
-     * Use for navigating with back arrow
-     * When user skip tuning and come to finish screen, back arrow should return to start of tuning
+     * Sets whether the user chose to skip filter tuning.
+     *
+     * @param state Whether tuning is skipped.
      */
     public setSkipTuning(state: boolean) {
         this.skipTuning = state;
     }
 
     /**
-     * Sets the preference for blocking annoyances
+     * Handles the user's annoyance blocking choice and advances to finish.
+     *
+     * @param state Whether annoyances should be blocked.
      */
     public async shouldBlockAnnoyances(state: boolean) {
         this._blockAnnoyance = state;
@@ -236,14 +237,14 @@ export class Steps {
     }
 
     /**
-     * Skips the onboarding
+     * Skips the remaining onboarding steps and goes to finish.
      */
     public async skipOnboarding() {
         this.setCurrentStep(OnboardingSteps.finish);
     }
 
     /**
-     * Completes the onboarding
+     * Completes onboarding by enabling selected filters and recording consent.
      */
     public async completeOnboarding() {
         if (this._blockTrackers) {

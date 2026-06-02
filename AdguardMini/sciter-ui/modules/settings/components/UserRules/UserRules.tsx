@@ -59,8 +59,10 @@ function UserRulesComponent() {
     };
 
     useEffect(() => {
-        if (isRuleEditorWindowOpened) { setIsScrolling(false); }
-    }, [isRuleEditorWindowOpened]);
+        if (isRuleEditorWindowOpened) {
+            setIsScrolling(false);
+        }
+    }, [isRuleEditorWindowOpened, setIsScrolling]);
 
     const { foundItems, searchQuery, updateSearchQuery } = useSearch(rules, ['rule']);
 
@@ -74,16 +76,20 @@ function UserRulesComponent() {
 
     // Scroll position restoration
     useEffect(() => {
-        if (!ui.userRulesScrollTop || isRuleEditorWindowOpened || rulesToRender.length === 0) { return; }
+        if (!ui.userRulesScrollTop || isRuleEditorWindowOpened || rulesToRender.length === 0) {
+            return;
+        }
         const content = contentRef.current;
-        if (!content) { return; }
+        if (!content) {
+            return;
+        }
         requestAnimationFrame(() => {
             const maxScrollTop = Math.max(0, content.scrollHeight - content.clientHeight);
             content.scrollTop = Math.min(Math.max(ui.userRulesScrollTop, 0), maxScrollTop);
             ui.resetUserRulesScrollTop();
             setIsScrolling(true);
         });
-    }, [ui, ui.userRulesScrollTop, isRuleEditorWindowOpened, rulesToRender.length]);
+    }, [ui, ui.userRulesScrollTop, isRuleEditorWindowOpened, rulesToRender.length, setIsScrolling]);
 
     const handleDeleteAll = () => {
         onDeleteAll();
@@ -153,7 +159,6 @@ function UserRulesComponent() {
                 {!isRuleEditorWindowOpened && (
                     <div
                         className={cx(s.UserRules_addRule, isScrolling && s.UserRules_addRule__scroll)}
-                        role="button"
                         onClick={() => navigateToUserRule()}
                     >
                         <Icon className={s.UserRules_addRule_icon} icon="plus" />

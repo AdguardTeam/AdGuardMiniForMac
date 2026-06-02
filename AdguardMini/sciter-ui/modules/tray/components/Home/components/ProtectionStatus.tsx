@@ -29,7 +29,9 @@ export function ProtectionStatus({ isLoading }: ProtectionStatusProps) {
     const { settings, telemetry } = useTrayStore();
     const { settings: traySettings, safariExtensionsStore } = settings;
 
-    if (!traySettings) { return null; }
+    if (!traySettings) {
+        return null;
+    }
 
     const { enabled } = traySettings;
 

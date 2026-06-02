@@ -38,5 +38,5 @@ export function useMoreFrequentUpdatesNotify() {
                 },
             }, true);
         }
-    }, [license, isLicenseOrTrialActive, notification, settings.requestOpenPaywallScreen, telemetry]);
+    }, [settings, license, isLicenseOrTrialActive, notification, settings.requestOpenPaywallScreen, telemetry]);
 }

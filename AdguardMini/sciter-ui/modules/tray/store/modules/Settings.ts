@@ -25,6 +25,11 @@ const FILTERS_UPDATE_INTERVAL = 5 * 60 * 1000;
  * Store that manages tray home screen
  */
 export class SettingsStore {
+    /**
+     * Debouncer for update checking
+     */
+    private lastTimeUpdate: number | undefined;
+
     public settings: GlobalSettings | null = null;
 
     /**
@@ -41,11 +46,6 @@ export class SettingsStore {
      * User License
      */
     public license = new LicenseOrError({ error: true });
-
-    /**
-     * Debouncer for update checking
-     */
-    private lastTimeUpdate: number | undefined;
 
     /**
      * Bool describes if login item is enabled, undefined for pending

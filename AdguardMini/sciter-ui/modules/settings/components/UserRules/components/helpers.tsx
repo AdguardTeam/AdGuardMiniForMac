@@ -35,6 +35,7 @@ export function getIconByType(type: ReturnType<typeof RulesBuilder.getRuleType>,
             iconClassName = s.comment;
             break;
         case 'custom':
+        case null:
         default:
             icon = 'custom_filter';
             iconClassName = s.custom;
@@ -65,6 +66,7 @@ export function getDescriptionByType(type: ReturnType<typeof RulesBuilder.getRul
             text = translate('user.rule.comment');
             break;
         case 'custom':
+        case null:
         default:
             text = translate('user.rule.custom');
             break;

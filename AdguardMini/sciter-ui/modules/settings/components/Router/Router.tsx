@@ -77,10 +77,9 @@ function RouterComponent() {
         case RouteName.theme:
             component = <Theme />;
             break;
-    }
-
-    if (router.currentPath === RouteName.migration) {
-        return <Migration />;
+        case RouteName.migration:
+            component = <Migration />;
+            break;
     }
 
     return (

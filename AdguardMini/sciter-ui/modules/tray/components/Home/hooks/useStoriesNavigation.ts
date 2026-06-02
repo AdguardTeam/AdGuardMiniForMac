@@ -29,14 +29,18 @@ export function useStoriesNavigation(stories: StoryInfo[]) {
         : -1;
 
     const getAdjacentStoryId = useCallback((direction: -1 | 1) => {
-        if (currentStoryIndex < 0) { return null; }
+        if (currentStoryIndex < 0) {
+            return null;
+        }
         for (
             let nextIndex = currentStoryIndex + direction;
             nextIndex >= 0 && nextIndex < orderedStoryIds.length;
             nextIndex += direction
         ) {
             const candidateStoryId = orderedStoryIds[nextIndex];
-            if (storiesById.has(candidateStoryId)) { return candidateStoryId; }
+            if (storiesById.has(candidateStoryId)) {
+                return candidateStoryId;
+            }
         }
         return null;
     }, [currentStoryIndex, orderedStoryIds, storiesById]);
@@ -61,7 +65,10 @@ export function useStoriesNavigation(stories: StoryInfo[]) {
 
     const moveToPreviousStory = useCallback(() => {
         const previousStoryId = getAdjacentStoryId(-1);
-        if (previousStoryId === null) { return; }
+        if (previousStoryId === null) {
+            return;
+        }
+        setStoryEntryMode('last');
         setStoryEntryMode('last');
         setSelectedStoryId(previousStoryId);
     }, [getAdjacentStoryId]);

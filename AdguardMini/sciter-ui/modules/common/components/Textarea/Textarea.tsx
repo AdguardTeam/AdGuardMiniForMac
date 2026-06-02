@@ -97,10 +97,10 @@ export function Textarea({
                 <textarea
                     ref={inputRef}
                     autoFocus={autoFocus}
+                    className={cx(s.Textarea_textarea, theme.typo.t1, textAreaClassName)}
                     id={id}
                     name={id}
                     placeholder={placeholder}
-                    className={cx(s.Textarea_textarea, theme.typo.t1, textAreaClassName)}
                     // FIXME: NOT WORKING SINCE 5.0.3.13
                     // onChange={(e) => onChange(e.currentTarget.value)}
                     onBlur={(e) => onBlur?.(e.currentTarget.value)}

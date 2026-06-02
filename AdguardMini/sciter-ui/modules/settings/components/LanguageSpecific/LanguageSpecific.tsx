@@ -63,7 +63,8 @@ function LanguageSpecificComponent() {
     const sortedLangsRef = useRef(langs.sort((a, b) => {
         if (a.is_enabled && !b.is_enabled) {
             return -1;
-        } if (!a.is_enabled && b.is_enabled) {
+        }
+        if (!a.is_enabled && b.is_enabled) {
             return 1;
         }
         return a.title.localeCompare(b.title);

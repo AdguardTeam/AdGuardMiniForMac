@@ -22,6 +22,10 @@ function StepHeaderComponent() {
     const renderBackButton = () => {
         let prevStep: OnboardingSteps | undefined;
         switch (currentStep) {
+            case OnboardingSteps.start:
+                break;
+            case OnboardingSteps.extensions:
+                break;
             case OnboardingSteps.ads:
                 prevStep = allExtensionsEnabled ? undefined : OnboardingSteps.extensions;
                 break;

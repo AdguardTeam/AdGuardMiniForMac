@@ -45,6 +45,98 @@ export class Filters {
 
     public customFiltersSubscribeURL: string = '';
 
+    // ---- SafariProtection health-check computed properties (merged from SafariProtection) ----
+
+    /**
+     * Get all enabled filters Ids
+     */
+    public get enabledFiltersArray() {
+        return Array.from(this.enabledFilters);
+    }
+
+    /**
+     * Value for block ads
+     */
+    public get blockAds() {
+        const definedGroups = this.filtersIndex.definedGroups || {};
+        return !!this.recommendedFiltersByGroups[definedGroups.adBlocking]?.every(
+            (id) => this.enabledFilters.has(id),
+        );
+    }
+
+    /**
+     * Value for search ads
+     */
+    public get blockSearchAds() {
+        return !this.enabledFilters.has(this.filtersIndex.unblockSearchAdsFilterId);
+    }
+
+    /**
+     * Value for language specific
+     */
+    public get languageSpecificEnabled() {
+        const definedGroups = this.filtersIndex.definedGroups || {};
+        return !!this.recommendedFiltersByGroups[definedGroups.languageSpecific]?.find(
+            (id) => this.enabledFilters.has(id),
+        );
+    }
+
+    /**
+     * Value for block trackers
+     */
+    public get blockTrackers() {
+        const definedGroups = this.filtersIndex.definedGroups || {};
+        return !!this.recommendedFiltersByGroups[definedGroups.privacy]?.every(
+            (id) => this.enabledFilters.has(id),
+        );
+    }
+
+    /**
+     * Value for block social buttons
+     */
+    public get blockSocialButtons() {
+        const definedGroups = this.filtersIndex.definedGroups || {};
+        return !!this.recommendedFiltersByGroups[definedGroups.socialWidgets]?.every(
+            (id) => this.enabledFilters.has(id),
+        );
+    }
+
+    /**
+     * Value for block cookie notice
+     */
+    public get blockCookieNotice() {
+        return this.enabledFilters.has(this.filtersIndex.cookieNoticeFilterId);
+    }
+
+    /**
+     * Value for block pop ups
+     */
+    public get blockPopups() {
+        return this.enabledFilters.has(this.filtersIndex.popUpsFilterId);
+    }
+
+    /**
+     * Value for block widgets
+     */
+    public get blockWidgets() {
+        return this.enabledFilters.has(this.filtersIndex.widgetsFilterId);
+    }
+
+    /**
+     * Value for block other annoyance
+     */
+    public get blockOtherAnnoyance() {
+        return this.enabledFilters.has(this.filtersIndex.otherAnnoyanceFilterId);
+    }
+
+    /**
+     * Enabled custom filters count
+     */
+    public get enabledCustomFiltersCount() {
+        const enabledCustomFilters = this.filters.customFilters.filter(({ enabled }) => enabled);
+        return enabledCustomFilters.length;
+    }
+
     /**
      * Ctor
      *
@@ -223,7 +315,9 @@ export class Filters {
             const error = await window.API.Execute(new UpdateCustomFilterRequest({
                 filterId, title, isTrusted,
             }));
-            if (error.hasError) { return error; }
+            if (error.hasError) {
+                return error;
+            }
             const filter = this.filtersMap.get(filterId);
             if (filter) {
                 filter.title = title;
@@ -339,98 +433,6 @@ export class Filters {
      */
     public setCustomFiltersSubscribeURL(url: string) {
         this.customFiltersSubscribeURL = url;
-    }
-
-    // ---- SafariProtection health-check computed properties (merged from SafariProtection) ----
-
-    /**
-     * Get all enabled filters Ids
-     */
-    public get enabledFiltersArray() {
-        return Array.from(this.enabledFilters);
-    }
-
-    /**
-     * Value for block ads
-     */
-    public get blockAds() {
-        const definedGroups = this.filtersIndex.definedGroups || {};
-        return !!this.recommendedFiltersByGroups[definedGroups.adBlocking]?.every(
-            (id) => this.enabledFilters.has(id),
-        );
-    }
-
-    /**
-     * Value for search ads
-     */
-    public get blockSearchAds() {
-        return !this.enabledFilters.has(this.filtersIndex.unblockSearchAdsFilterId);
-    }
-
-    /**
-     * Value for language specific
-     */
-    public get languageSpecificEnabled() {
-        const definedGroups = this.filtersIndex.definedGroups || {};
-        return !!this.recommendedFiltersByGroups[definedGroups.languageSpecific]?.find(
-            (id) => this.enabledFilters.has(id),
-        );
-    }
-
-    /**
-     * Value for block trackers
-     */
-    public get blockTrackers() {
-        const definedGroups = this.filtersIndex.definedGroups || {};
-        return !!this.recommendedFiltersByGroups[definedGroups.privacy]?.every(
-            (id) => this.enabledFilters.has(id),
-        );
-    }
-
-    /**
-     * Value for block social buttons
-     */
-    public get blockSocialButtons() {
-        const definedGroups = this.filtersIndex.definedGroups || {};
-        return !!this.recommendedFiltersByGroups[definedGroups.socialWidgets]?.every(
-            (id) => this.enabledFilters.has(id),
-        );
-    }
-
-    /**
-     * Value for block cookie notice
-     */
-    public get blockCookieNotice() {
-        return this.enabledFilters.has(this.filtersIndex.cookieNoticeFilterId);
-    }
-
-    /**
-     * Value for block pop ups
-     */
-    public get blockPopups() {
-        return this.enabledFilters.has(this.filtersIndex.popUpsFilterId);
-    }
-
-    /**
-     * Value for block widgets
-     */
-    public get blockWidgets() {
-        return this.enabledFilters.has(this.filtersIndex.widgetsFilterId);
-    }
-
-    /**
-     * Value for block other annoyance
-     */
-    public get blockOtherAnnoyance() {
-        return this.enabledFilters.has(this.filtersIndex.otherAnnoyanceFilterId);
-    }
-
-    /**
-     * Enabled custom filters count
-     */
-    public get enabledCustomFiltersCount() {
-        const enabledCustomFilters = this.filters.customFilters.filter(({ enabled }) => enabled);
-        return enabledCustomFilters.length;
     }
 
     // ---- SafariProtection actions (merged from SafariProtection) ----

@@ -25,10 +25,10 @@ export function useShowEnableExtensionsNotification() {
         settings.safariExtensionsStore.safariExtensionsCount,
     );
 
-    const openSafariPref = () => {
+    const openSafariPref = useCallback(() => {
         window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
         telemetry.trackEvent(SettingsEvent.FixItClick);
-    };
+    }, [telemetry]);
 
     const closeNotification = useCallback(() => {
         if (notificationUid.current) {
@@ -51,7 +51,7 @@ export function useShowEnableExtensionsNotification() {
             variant: NotificationsQueueVariant.textOnly,
             timeout: false,
         });
-    }, [notification, allExtensionsDisabled, telemetry]);
+    }, [notification, allExtensionsDisabled, openSafariPref]);
 
     /**
      * We should force an update on the snack each time allExtensionsDisabled changes,

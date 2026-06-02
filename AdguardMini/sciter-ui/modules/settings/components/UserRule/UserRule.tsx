@@ -10,7 +10,7 @@ import { observer } from 'mobx-react-lite';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 
 import { useSettingsStore } from 'SettingsLib/hooks';
-import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType, RouteName, SettingsEvent } from 'SettingsStore/modules';
+import { RouteName } from 'SettingsStore/modules';
 import theme from 'Theme';
 import { Layout, Text, RuleHighlighter, Textarea, Checkbox, Button, Select, Modal } from 'UILib';
 
@@ -29,7 +29,6 @@ import type {
     CustomRule,
     NoFilteringRule,
     Comment } from '@adguard/rules-editor';
-import type { UserRule as UserRuleType } from 'Apis/types';
 import type { IOption } from 'UILib';
 
 type Params = { index?: number };
@@ -118,13 +117,16 @@ function UserRuleComponent() {
     };
 
     const onSave = async () => {
-        if (safeRef.current) { return; }
+        if (safeRef.current) {
+            return;
+        }
         safeRef.current = true;
+
         await saveRule({
             rule, setErrors, rules, hasRawRule, rawRule, addComment,
-            userRules: userRules as unknown as { updateRules(r: UserRuleType[]): void; addUserRule(r: string): Promise<unknown> },
-            notification: notification as unknown as { notify(o: Record<string, unknown>): void },
-            telemetry: telemetry as unknown as { layersRelay: { trackEvent(e: string): void } },
+            userRules: userRules,
+            notification: notification,
+            telemetry: telemetry,
             navigateBack: () => router.changePath(RouteName.user_rules),
         });
         safeRef.current = false;

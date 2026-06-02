@@ -359,6 +359,8 @@ export function convertRule(currentRule: RuleTypeOptions, currentType: RuleType,
                     newBuilder = tRule;
                     break;
                 }
+                case 'block':
+                    break;
             }
             break;
         }
@@ -398,6 +400,8 @@ export function convertRule(currentRule: RuleTypeOptions, currentType: RuleType,
                     newBuilder = tRule;
                     break;
                 }
+                case 'unblock':
+                    break;
             }
             break;
         }
@@ -432,6 +436,8 @@ export function convertRule(currentRule: RuleTypeOptions, currentType: RuleType,
                     newBuilder = tRule;
                     break;
                 }
+                case 'noFiltering':
+                    break;
             }
             break;
         }

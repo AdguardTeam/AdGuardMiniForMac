@@ -43,5 +43,5 @@ export function useTheme(onThemeChanged: OnColorThemeChanged, params: UseThemePa
 
         const value = getEffectiveTheme(theme);
         onThemeChanged(getColorTheme(value));
-    }, [theme]);
+    }, [theme, effectiveThemeChangedEvent, fetchTheme, onThemeChanged]);
 }

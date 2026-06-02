@@ -25,13 +25,6 @@ export class SafariExtensionsStore {
     public safariExtensions = new SafariExtensions();
 
     /**
-     * Ctor
-     */
-    constructor() {
-        makeAutoObservable(this);
-    }
-
-    /**
      * Get list of all Safari extensions by dynamically iterating over protobuf getters.
      * Uses property descriptors to avoid manual enumeration.
      * Computed getter for MobX caching.
@@ -109,6 +102,13 @@ export class SafariExtensionsStore {
      */
     public get allExtensionsEffectivelyEnabled(): boolean {
         return this.effectiveExtensionsList.every((ext) => ext.isConsideredEnabled);
+    }
+
+    /**
+     * Ctor
+     */
+    constructor() {
+        makeAutoObservable(this, undefined, { autoBind: true });
     }
 
     /**

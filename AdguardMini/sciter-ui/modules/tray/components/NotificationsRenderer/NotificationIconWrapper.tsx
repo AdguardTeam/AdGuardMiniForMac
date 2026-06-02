@@ -34,6 +34,8 @@ export function NotificationIconWrapper({
             case NotificationsQueueVariant.textOnly:
                 className = s.NotificationIconWrapper_icon__top;
                 break;
+            default:
+                break;
         }
     }
 

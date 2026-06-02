@@ -2,16 +2,14 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import type { ComponentChildren } from 'preact';
-
 import { KEYBOARD_CODES } from '@adg/sciter-utils-kit';
 import { useRef, useEffect } from 'preact/hooks';
 
 import { Text, Icon } from 'UILib';
 
-// In case of need for change of styles, use USciter and debug there
-// All wrapped elements are Sciter native and there names can not be change
 import './Select.pcss';
+
+import type { ComponentChildren } from 'preact';
 
 interface SelectProps<T = string> {
     id: string;

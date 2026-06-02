@@ -52,18 +52,22 @@ function HomeComponent() {
 
     useEffect(() => {
         setIsLoading(settings.getSafariExtensionsLoading());
-    }, [settings.safariExtensionsStore.safariExtensions]);
+    }, [settings, settings.safariExtensionsStore.safariExtensions]);
 
     // Poll extensions while loading
     useEffect(() => {
-        if (!isLoading) { return; }
+        if (!isLoading) {
+            return;
+        }
         let rafId: number;
         let lastCallTime = Date.now();
         /**
          *
          */
         function loop() {
-            if (!isLoading) { return; }
+            if (!isLoading) {
+                return;
+            }
             if (Date.now() - lastCallTime >= 1000) {
                 settings.getSafariExtensions();
                 lastCallTime = Date.now();
@@ -80,18 +84,29 @@ function HomeComponent() {
 
     const handleMoveStoriesCards = useCallback((e?: MouseEvent) => {
         const direction = (e?.target as HTMLButtonElement)?.getAttribute('data-switch-direction');
-        if (!ref.current || !direction) { return; }
+        if (!ref.current || !direction) {
+            return;
+        }
+        const scrollDelta = direction === 'left'
+            ? -STORY_SWITCH_INTERACTABLE_AREA_WIDTH
+            : STORY_SWITCH_INTERACTABLE_AREA_WIDTH;
         const position = clamp(
-            ref.current.scrollLeft + (direction === 'left' ? -STORY_SWITCH_INTERACTABLE_AREA_WIDTH : STORY_SWITCH_INTERACTABLE_AREA_WIDTH),
+            ref.current.scrollLeft + scrollDelta,
             0, ref.current.scrollWidth - STORIES_CONTAINER_WIDTH,
         );
-        setScrollIsAvailable({ left: position > 0, right: position < ref.current.scrollWidth - STORIES_CONTAINER_WIDTH });
+        const newLeft = position > 0;
+        const newRight = position < ref.current.scrollWidth - STORIES_CONTAINER_WIDTH;
+        setScrollIsAvailable({ left: newLeft, right: newRight });
         ref.current.scrollTo({ left: position, behavior: 'smooth' });
     }, []);
 
     const handleStoriesCardsScroll = useCallback((e: UIEvent) => {
         const target = e.target as HTMLDivElement;
-        setScrollIsAvailable({ left: target.scrollLeft > 0, right: target.scrollLeft < target.scrollWidth - STORIES_CONTAINER_WIDTH });
+        const maxScroll = target.scrollWidth - STORIES_CONTAINER_WIDTH;
+        setScrollIsAvailable({
+            left: target.scrollLeft > 0,
+            right: target.scrollLeft < maxScroll,
+        });
     }, []);
 
     const openSettingsWindow = useCallback(() => {
@@ -106,14 +121,18 @@ function HomeComponent() {
 
     useEffect(() => {
         return trayWindowVisibilityChanged.addEventListener((visible) => {
-            if (!visible) { closeStories(); }
+            if (!visible) {
+                closeStories();
+            }
         });
-    }, [closeStories]);
+    }, [closeStories, trayWindowVisibilityChanged]);
 
     // Theme handling with RAF workaround for sciter render bug
     const rafRef = useRef<number | null>(null);
     useTheme((th) => {
-        if (rafRef.current != null) { cancelAnimationFrame(rafRef.current); }
+        if (rafRef.current != null) {
+            cancelAnimationFrame(rafRef.current);
+        }
         rafRef.current = requestAnimationFrame(() => {
             document.documentElement.setAttribute('theme', th);
         });
@@ -151,8 +170,18 @@ function HomeComponent() {
             <div className={s.Home}>
                 <div className={s.Home_header}>
                     <Logo className={s.Home_header_logo} isDarkTheme={isDarkTheme} />
-                    <Button className={cx(theme.button.greenIcon, s.Home_header_update)} icon="update" type="icon" onClick={navigateToUpdates} />
-                    <Button className={theme.button.greenIcon} icon="settings" type="icon" onClick={openSettingsWindow} />
+                    <Button
+                        className={cx(theme.button.greenIcon, s.Home_header_update)}
+                        icon="update"
+                        type="icon"
+                        onClick={navigateToUpdates}
+                    />
+                    <Button
+                        className={theme.button.greenIcon}
+                        icon="settings"
+                        type="icon"
+                        onClick={openSettingsWindow}
+                    />
                 </div>
                 <ProtectionStatus isLoading={isLoading} />
                 {stories.length > 0 && (
@@ -167,15 +196,26 @@ function HomeComponent() {
                                         className={s.Home_storiesControls_button}
                                         data-switch-direction="left"
                                         icon="arrow_left"
-                                        iconClassName={!scrollIsAvailable.left ? s.Home_storiesControls_button__disabled : theme.button.grayIcon}
+                                        iconClassName={
+                                            !scrollIsAvailable.left
+                                                ? s.Home_storiesControls_button__disabled
+                                                : theme.button.grayIcon
+                                        }
                                         type="icon"
                                         onClick={handleMoveStoriesCards}
                                     />
                                     <Button
-                                        className={cx(s.Home_storiesControls_button, s.Home_storiesControls_button__right)}
+                                        className={cx(
+                                            s.Home_storiesControls_button,
+                                            s.Home_storiesControls_button__right,
+                                        )}
                                         data-switch-direction="right"
                                         icon="arrow_left"
-                                        iconClassName={!scrollIsAvailable.right ? s.Home_storiesControls_button__disabled : theme.button.grayIcon}
+                                        iconClassName={
+                                            !scrollIsAvailable.right
+                                                ? s.Home_storiesControls_button__disabled
+                                                : theme.button.grayIcon
+                                        }
                                         type="icon"
                                         onClick={handleMoveStoriesCards}
                                     />
@@ -185,7 +225,12 @@ function HomeComponent() {
                         <div ref={ref} className={s.Home_stories} onScroll={handleStoriesCardsScroll}>
                             <div className={s.Home_stories_container}>
                                 {stories.map((props) => (
-                                    <StoryCard {...props} key={props.storyConfig.id} setSelectedStoryId={openStory} storyId={props.storyConfig.id} />
+                                    <StoryCard
+                                        {...props}
+                                        key={props.storyConfig.id}
+                                        setSelectedStoryId={openStory}
+                                        storyId={props.storyConfig.id}
+                                    />
                                 ))}
                             </div>
                         </div>
