@@ -4,7 +4,7 @@
 
 import { RequestOpenAppStoreReviewRequest } from 'Apis/requests/AccountService';
 import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
-import { RequestOpenSettingsPageRequest } from 'Apis/requests/SettingsService';
+import { RequestOpenSettingsPageRequest } from 'Apis/requests/TrayService';
 import { getTdsLink, TDS_PARAMS } from 'Modules/common/utils/links';
 import { RouteName } from 'SettingsStore/modules/SettingsRouter';
 

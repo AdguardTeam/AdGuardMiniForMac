@@ -7,7 +7,6 @@ import "PrimitivesWrappers.proto";
 // Describes the structure of filters
 message Filters {
     repeated Filter filters = 1;
-    repeated string preferredLocales = 2;
     repeated Filter customFilters = 3;
     bool languageSpecific = 4;
 }

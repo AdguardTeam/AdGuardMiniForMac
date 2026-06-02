@@ -1,10 +1,23 @@
 syntax = "proto3";
 
 import "PrimitivesWrappers.proto";
+import "Common.proto";
+import "Tray.proto";
 import "EffectiveTheme.proto";
+import "Filters.proto";
+import "License.proto";
+import "Statistics.proto";
 
 /* Service that handles tray settings */
 service TrayService {
+    /* Get tray settings */
+    rpc GetTraySettings(EmptyValue) returns (GlobalSettings);
+    /* Update tray settings */
+    rpc UpdateTraySettings(GlobalSettings) returns (EmptyValue);
+    /* Get blocking statistics */
+    rpc GetStatistics(StatisticsRequest) returns (StatisticsResponse);
+    /* Request open settings page */
+    rpc RequestOpenSettingsPage(StringValue) returns (EmptyValue);
     /* Get effective theme */
     rpc GetEffectiveTheme(EmptyValue) returns (EffectiveThemeValue);
 }

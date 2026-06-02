@@ -4,9 +4,10 @@
 
 import { makeAutoObservable } from 'mobx';
 
+import { GetSafariExtensionsRequest, UpdateConsentRequest } from 'Apis/requests/CommonService';
 import { GetFiltersIndexRequest, GetFiltersMetadataRequest, UpdateFiltersRequest } from 'Apis/requests/FiltersService';
-import { GetSafariExtensionsRequest, GetSystemLanguageRequest, OpenSafariExtensionPreferencesRequest, UpdateConsentRequest } from 'Apis/requests/SettingsService';
 import { OnboardingDidCompleteRequest } from 'Apis/requests/OnboardingService';
+import { GetSystemLanguageRequest, OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SettingsService';
 import { FiltersIndex, OptionalStringValue, FiltersUpdate, UserConsent } from 'Apis/types';
 import { SafariExtensionsStore } from 'Common/stores/SafariExtensionsStore';
 import { updateLanguage } from 'Intl';

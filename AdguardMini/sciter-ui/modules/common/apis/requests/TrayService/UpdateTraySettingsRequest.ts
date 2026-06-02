@@ -4,7 +4,7 @@ import { PlatformRequest } from '@adg/sciter-utils-kit';
 import { EmptyValue as ReturnValue, GlobalSettings as RequestMessage } from '../../types'
 
 /**
- * Update Settings settings
+ * Update tray settings
  */
 export class UpdateTraySettingsRequest extends PlatformRequest<ReturnValue, RequestMessage> {
     /**
@@ -22,7 +22,7 @@ export class UpdateTraySettingsRequest extends PlatformRequest<ReturnValue, Requ
      * Fully qualified method name to be called on the backend
      * @returns The fully qualified method name
      */
-    public get FQN() { return 'SettingsService.UpdateTraySettings'; }
+    public get FQN() { return 'TrayService.UpdateTraySettings'; }
 
     /**
      * Processes the response bytes received from the backend

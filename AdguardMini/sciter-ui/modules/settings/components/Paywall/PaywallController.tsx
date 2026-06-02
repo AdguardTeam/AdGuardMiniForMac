@@ -24,8 +24,8 @@ function PaywallControllerComponent() {
 
     useEffect(() => {
         if (isMASReleaseVariant) {
-            account.getSubscriptionsInfo().then(({ error }) => {
-                if (error && paywallShouldBeShown && !isLicenseOrTrialActive) {
+            account.getSubscriptionsInfo().then((result) => {
+                if (result?.error && paywallShouldBeShown && !isLicenseOrTrialActive) {
                     notification.notify({
                         message: getNotificationSomethingWentWrongText(),
                         notificationContext: NotificationContext.info,

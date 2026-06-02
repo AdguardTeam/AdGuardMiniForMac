@@ -86,7 +86,6 @@ function createRule(
 // Compact suffixes extracted from CLDR (via Intl.NumberFormat).
 // Spaces are regular ASCII 0x20 for rendering consistency in Sciter.
 
-/* eslint-disable @typescript-eslint/naming-convention */
 export const NUMBER_LOCALE_RULES: Record<string, NumberLocaleRule> = {
     ar: createRule('ar', 'western', {
         // RLM (\u200F) is included in suffixes for correct bidi rendering
@@ -413,7 +412,6 @@ export const NUMBER_LOCALE_RULES: Record<string, NumberLocaleRule> = {
         aliases: ['zh_tw', 'zh-tw', 'zh_hant', 'zh-hant', 'zh_hant_tw', 'zh-hant-tw'],
     }),
 };
-/* eslint-enable @typescript-eslint/naming-convention */
 
 /**
  * Canonical locale IDs for all project-supported locales

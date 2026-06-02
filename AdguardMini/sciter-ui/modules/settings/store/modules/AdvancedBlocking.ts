@@ -5,9 +5,10 @@
 import { makeAutoObservable } from 'mobx';
 
 import { GetAdvancedBlockingRequest, UpdateAdvancedBlockingRequest } from 'Apis/requests/AdvancedBlockingService';
-import { AdvancedBlocking as AdvancedBlockingEnt, EmptyValue } from 'Apis/types';
+import { AdvancedBlocking as AdvancedBlockingEnt } from 'Apis/types';
 import { withLast } from 'Common/utils/queue';
 
+import type { EmptyValue } from 'Apis/types';
 import type { SettingsStore } from 'SettingsStore';
 
 /**
@@ -37,8 +38,12 @@ export class AdvancedBlocking {
      * Get AdvancedBlocking from swift
      */
     public async getAdvancedBlocking() {
-        const resp = await window.API.Execute(new GetAdvancedBlockingRequest());
-        this.setAdvancedBlocking(resp);
+        try {
+            const resp = await window.API.Execute(new GetAdvancedBlockingRequest());
+            this.setAdvancedBlocking(resp);
+        } catch (err) {
+            log.error('getAdvancedBlocking failed', String(err));
+        }
     }
 
     /**

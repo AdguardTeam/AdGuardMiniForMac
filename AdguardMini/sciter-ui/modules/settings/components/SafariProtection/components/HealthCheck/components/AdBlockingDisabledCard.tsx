@@ -17,7 +17,7 @@ import { HealthCheckDismissId } from './HealthCheckDismissId';
 function AdBlockingDisabledCardComponent() {
     const {
         settings,
-        safariProtection,
+        filters,
     } = useSettingsStore();
     const {
         dissmissedHealthCheckCards,
@@ -25,7 +25,7 @@ function AdBlockingDisabledCardComponent() {
     const notifyError = useNotificationSomethingWentWrongText();
 
     const enableAdBlocking = async () => {
-        const error = await safariProtection.updateBlockAds(true);
+        const error = await filters.updateBlockAds(true);
         if (error) {
             notifyError();
         }

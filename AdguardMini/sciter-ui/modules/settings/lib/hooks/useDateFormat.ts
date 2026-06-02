@@ -2,15 +2,15 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { DATE_FORMAT, getDateString } from 'Common/lib/date';
+export { DATE_FORMAT } from 'Common/hooks/useDateFormat';
+
+import { useDateFormat as useCommonDateFormat } from 'Common/hooks/useDateFormat';
 
 import { useSettingsStore } from './useSettingsStore';
 
 const useDateFormat = () => {
     const { settings: { settings } } = useSettingsStore();
-    const locale = settings?.language || 'enUS';
-
-    return (date: string | number, format: DATE_FORMAT) => getDateString(date, format, locale);
+    return useCommonDateFormat(settings?.language);
 };
 
-export { DATE_FORMAT, useDateFormat };
+export { useDateFormat };

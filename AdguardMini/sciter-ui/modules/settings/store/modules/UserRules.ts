@@ -64,13 +64,15 @@ export class UserRules {
      * @param rule new rule
      */
     public async addUserRule(rule: string) {
-        const error = await window.API.Execute(new AddUserRuleRequest({ value: rule }));
-        if (error.hasError) {
-            return error;
+        try {
+            const error = await window.API.Execute(new AddUserRuleRequest({ value: rule }));
+            if (error.hasError) { return error; }
+            const rules = this.updateHelper();
+            rules.rules.unshift(new UserRule({ rule, enabled: true }));
+            this.setUserRules(rules);
+        } catch (err) {
+            log.error('addUserRule failed', String(err));
         }
-        const rules = this.updateHelper();
-        rules.rules.unshift(new UserRule({ rule, enabled: true }));
-        this.setUserRules(rules);
     }
 
     /**
@@ -78,15 +80,18 @@ export class UserRules {
      * @param rules: new user rules
      */
     public async updateRules(rules: UserRule[]): Promise<[OptionalError | null, UserRule[]]> {
-        const newRules = this.updateHelper();
-        const prevUserRules = newRules.rules.map((r) => new UserRule({ rule: r.rule, enabled: r.enabled }));
-        newRules.rules = rules;
-        this.setUserRules(newRules);
-        const error = await window.API.Execute(new UpdateUserRulesRequest(newRules));
-        if (error.hasError) {
-            return [error, prevUserRules];
+        try {
+            const newRules = this.updateHelper();
+            const prevUserRules = newRules.rules.map((r) => new UserRule({ rule: r.rule, enabled: r.enabled }));
+            newRules.rules = rules;
+            this.setUserRules(newRules);
+            const error = await window.API.Execute(new UpdateUserRulesRequest(newRules));
+            if (error.hasError) { return [error, prevUserRules]; }
+            return [null, prevUserRules];
+        } catch (err) {
+            log.error('updateRules failed', String(err));
+            return [null, []];
         }
-        return [null, prevUserRules];
     }
 
     /**

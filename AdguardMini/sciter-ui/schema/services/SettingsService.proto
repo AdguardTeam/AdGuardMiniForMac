@@ -3,7 +3,6 @@ syntax = "proto3";
 import "PrimitivesWrappers.proto";
 import "Settings.proto";
 import "EffectiveTheme.proto";
-import "Statistics.proto";
 
 /* Service that handles settings */
 service SettingsService {
@@ -33,12 +32,6 @@ service SettingsService {
     rpc ImportSettingsConfirm(ImportSettingsConfirmation) returns (EmptyValue);
     /* Reset Settings to default settings */
     rpc ResetSettings(EmptyValue) returns (Settings);
-    /* Get Settings settings */
-    rpc GetTraySettings(EmptyValue) returns (GlobalSettings);
-    /* Update Settings settings */
-    rpc UpdateTraySettings(GlobalSettings) returns (EmptyValue);
-    /* Get Safari extension status */
-    rpc GetSafariExtensions(EmptyValue) returns (SafariExtensions);
     /* Get limit on the number of rules for content blockers */
     rpc GetContentBlockersRulesLimit(EmptyValue) returns (Int32Value);
     /* Open safati preferences */
@@ -47,16 +40,10 @@ service SettingsService {
     rpc OpenLoginItemsSettings(EmptyValue) returns (EmptyValue);
     /* Export Logs archive */
     rpc ExportLogs(Path) returns (OptionalError);
-    /* Fires event for swift for checking application version, result will be dispatch by TrayCallbackService.OnApplicationVersionStatusResolved */
-    rpc CheckApplicationVersion(EmptyValue) returns (EmptyValue);
     /* Request to update application */
     rpc RequestApplicationUpdate(EmptyValue) returns (EmptyValue);
-    /* Update consent agreement */
-    rpc UpdateConsent(UserConsent) returns (EmptyValue);
     /* Send message to Support */
     rpc SendFeedbackMessage(SupportMessage) returns (OptionalError);
-    /* Request open settings page */
-    rpc RequestOpenSettingsPage(StringValue) returns (EmptyValue);
     /* Get user action last directory */
     rpc GetUserActionLastDirectory(EmptyValue) returns (StringValue);
     /* Update user action last directory */
@@ -69,8 +56,6 @@ service SettingsService {
     rpc UpdateAllowTelemetry(BoolValue) returns (EmptyValue);
     /* Update theme setting */
     rpc UpdateTheme(UpdateThemeMessage) returns (EmptyValue);
-    /* Get blocking statistics */
-    rpc GetStatistics(StatisticsRequest) returns (StatisticsResponse);
     /* Reset all statistics */
     rpc ResetStatistics(EmptyValue) returns (EmptyValue);
     /* Update user rules editor window geometry */

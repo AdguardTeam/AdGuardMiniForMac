@@ -119,10 +119,16 @@ function formatGroupedNumber(value: number, rule: NumberLocaleRule): string {
 
 // --- Compact formatting (at or above compact threshold) ---
 
+/**
+ *
+ */
 function roundToSingleDecimal(value: number): number {
     return Math.round(value * 10) / 10;
 }
 
+/**
+ *
+ */
 function floorToSingleDecimal(value: number): number {
     return Math.floor(value * 10) / 10;
 }

@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { SafariExtensionsStore } from '../../modules/common/stores/SafariExtensionsStore';
-import { SafariExtensions, SafariExtension, SafariExtensionStatus } from '../../modules/common/apis/types/Settings';
+import { SafariExtensions, SafariExtension, SafariExtensionStatus } from '../../modules/common/apis/types/Common';
 
 /**
  * Creates a SafariExtensions object with the given statuses for each extension.

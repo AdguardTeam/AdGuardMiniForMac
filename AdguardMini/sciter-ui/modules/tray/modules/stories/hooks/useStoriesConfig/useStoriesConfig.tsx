@@ -4,9 +4,10 @@
 
 import noop from 'lodash/noop';
 
-import { OpenLoginItemsSettingsRequest, OpenSafariExtensionPreferencesRequest, RequestOpenSettingsPageRequest } from 'Apis/requests/SettingsService';
-import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
 import { RequestSubscribeRequest } from 'Apis/requests/AccountService';
+import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
+import { OpenLoginItemsSettingsRequest, OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SettingsService';
+import { RequestOpenSettingsPageRequest } from 'Apis/requests/TrayService';
 import { OptionalStringValue, Subscription } from 'Apis/types';
 import { formatLocalizedNumber } from 'Common/lib/number';
 import { provideTrialDaysParam } from 'Common/utils/translate';
@@ -20,9 +21,9 @@ import { ExternalLink, Text } from 'UILib';
 
 import { telemetryStoryFrameButtonsWrapper } from '../../components';
 
-import type { IStoryFrame, StoryFrameImage, StoryInfo } from '../../model';
-
 import s from './StoriesConfig.module.pcss';
+
+import type { IStoryFrame, StoryFrameImage, StoryInfo } from '../../model';
 
 const openSafariPref = () => {
     window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
@@ -118,7 +119,7 @@ export function useStoriesConfig(): StoryInfo[] {
             <Text type="t1">{translate('tray.story.statistics.desc.empty1')}</Text>
             <ul className={s.StoriesConfig_statistics_list}>
                 {translate('tray.story.statistics.desc.empty2', {
-                    li: (text: string) => <li><Text type="t1">{text}</Text></li>
+                    li: (text: string) => <li><Text type="t1">{text}</Text></li>,
                 })}
             </ul>
         </div>
@@ -148,8 +149,8 @@ export function useStoriesConfig(): StoryInfo[] {
                     ...getStatisticsDescriptionContent(adsBlocked, translate('tray.story.statistics.desc')),
                     imageText: (
                         <div>
-                            <Text type='h0'>{formatLocalizedNumber(adsBlocked, language)}</Text>
-                            <Text type='h4'>{translate.plural('tray.story.statistics', adsBlocked)}</Text>
+                            <Text type="h0">{formatLocalizedNumber(adsBlocked, language)}</Text>
+                            <Text type="h4">{translate.plural('tray.story.statistics', adsBlocked)}</Text>
                         </div>
                     ),
                     actionButton: adsBlocked === 0 ? {
@@ -177,8 +178,8 @@ export function useStoriesConfig(): StoryInfo[] {
                     ...getStatisticsDescriptionContent(privacyBlocked, translate('tray.story.statistics.privacy.desc')),
                     imageText: (
                         <div>
-                            <Text type='h0'>{formatLocalizedNumber(privacyBlocked, language)}</Text>
-                            <Text type='h4'>{translate.plural('tray.story.statistics.privacy', privacyBlocked)}</Text>
+                            <Text type="h0">{formatLocalizedNumber(privacyBlocked, language)}</Text>
+                            <Text type="h4">{translate.plural('tray.story.statistics.privacy', privacyBlocked)}</Text>
                         </div>
                     ),
                     actionButton: privacyBlocked === 0 ? {
@@ -374,7 +375,7 @@ export function useStoriesConfig(): StoryInfo[] {
         extraButtonAction = () => {
             window.API.Execute(new OpenSettingsWindowRequest());
             window.API.Execute(new RequestOpenSettingsPageRequest
-                ({
+            ({
                 value: RouteNameSettings.license,
             }));
         };
@@ -386,7 +387,7 @@ export function useStoriesConfig(): StoryInfo[] {
         extraButtonAction = () => {
             window.API.Execute(new OpenSettingsWindowRequest());
             window.API.Execute(new RequestOpenSettingsPageRequest
-                ({
+            ({
                 value: RouteNameSettings.advanced_blocking,
             }));
         };

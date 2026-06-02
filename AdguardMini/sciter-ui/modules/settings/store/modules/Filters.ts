@@ -173,15 +173,21 @@ export class Filters {
      * Switcher for safari protection page
      */
     public async switchFiltersState(ids: number[], isEnabled: boolean) {
-        const prevState = Array.from(this.enabledFilters);
-        this.updateLocalEnabledFilters(ids, isEnabled);
+        try {
+            const prevState = Array.from(this.enabledFilters);
+            this.updateLocalEnabledFilters(ids, isEnabled);
 
-        const data = new FiltersUpdate({ ids, isEnabled });
-        const hasError = await window.API.Execute(new UpdateFiltersRequest(data));
+            const data = new FiltersUpdate({ ids, isEnabled });
+            const hasError = await window.API.Execute(new UpdateFiltersRequest(data));
 
-        if (hasError.hasError) {
-            this.setEnabledFilters(prevState);
-            return hasError;
+            if (hasError.hasError) {
+                runInAction(() => {
+                    this.setEnabledFilters(prevState);
+                });
+                return hasError;
+            }
+        } catch (err) {
+            log.error('switchFiltersState failed', String(err));
         }
     }
 
@@ -213,24 +219,21 @@ export class Filters {
      * @param isTrusted
      */
     public async updateCustomFilter(filterId: number, title: string, isTrusted: boolean) {
-        const error = await window.API.Execute(new UpdateCustomFilterRequest({
-            filterId,
-            title,
-            isTrusted,
-        }));
-
-        if (error.hasError) {
-            return error;
+        try {
+            const error = await window.API.Execute(new UpdateCustomFilterRequest({
+                filterId, title, isTrusted,
+            }));
+            if (error.hasError) { return error; }
+            const filter = this.filtersMap.get(filterId);
+            if (filter) {
+                filter.title = title;
+                filter.trusted = isTrusted;
+                this.localUpdateFilter(filter);
+            }
+            this.fetchFilters();
+        } catch (err) {
+            log.error('updateCustomFilter failed', String(err));
         }
-
-        const filter = this.filtersMap.get(filterId);
-        if (filter) {
-            filter.title = title;
-            filter.trusted = isTrusted;
-            this.localUpdateFilter(filter);
-        }
-
-        this.fetchFilters();
     }
 
     /**
@@ -293,13 +296,17 @@ export class Filters {
      * Add custom filter
      */
     public async addCustomFilter(url: string, title: string, isTrusted: boolean) {
-        const error = await window.API.Execute(new ConfirmAddCustomFilterRequest({
-            url, title, trusted: isTrusted,
-        }));
-        if (error.hasError) {
-            return error;
+        try {
+            const error = await window.API.Execute(new ConfirmAddCustomFilterRequest({
+                url, title, trusted: isTrusted,
+            }));
+            if (error.hasError) {
+                return error;
+            }
+            this.fetchFilters();
+        } catch (err) {
+            log.error('addCustomFilter failed', String(err));
         }
-        this.fetchFilters();
     }
 
     /**
@@ -332,5 +339,189 @@ export class Filters {
      */
     public setCustomFiltersSubscribeURL(url: string) {
         this.customFiltersSubscribeURL = url;
+    }
+
+    // ---- SafariProtection health-check computed properties (merged from SafariProtection) ----
+
+    /**
+     * Get all enabled filters Ids
+     */
+    public get enabledFiltersArray() {
+        return Array.from(this.enabledFilters);
+    }
+
+    /**
+     * Value for block ads
+     */
+    public get blockAds() {
+        const definedGroups = this.filtersIndex.definedGroups || {};
+        return !!this.recommendedFiltersByGroups[definedGroups.adBlocking]?.every(
+            (id) => this.enabledFilters.has(id),
+        );
+    }
+
+    /**
+     * Value for search ads
+     */
+    public get blockSearchAds() {
+        return !this.enabledFilters.has(this.filtersIndex.unblockSearchAdsFilterId);
+    }
+
+    /**
+     * Value for language specific
+     */
+    public get languageSpecificEnabled() {
+        const definedGroups = this.filtersIndex.definedGroups || {};
+        return !!this.recommendedFiltersByGroups[definedGroups.languageSpecific]?.find(
+            (id) => this.enabledFilters.has(id),
+        );
+    }
+
+    /**
+     * Value for block trackers
+     */
+    public get blockTrackers() {
+        const definedGroups = this.filtersIndex.definedGroups || {};
+        return !!this.recommendedFiltersByGroups[definedGroups.privacy]?.every(
+            (id) => this.enabledFilters.has(id),
+        );
+    }
+
+    /**
+     * Value for block social buttons
+     */
+    public get blockSocialButtons() {
+        const definedGroups = this.filtersIndex.definedGroups || {};
+        return !!this.recommendedFiltersByGroups[definedGroups.socialWidgets]?.every(
+            (id) => this.enabledFilters.has(id),
+        );
+    }
+
+    /**
+     * Value for block cookie notice
+     */
+    public get blockCookieNotice() {
+        return this.enabledFilters.has(this.filtersIndex.cookieNoticeFilterId);
+    }
+
+    /**
+     * Value for block pop ups
+     */
+    public get blockPopups() {
+        return this.enabledFilters.has(this.filtersIndex.popUpsFilterId);
+    }
+
+    /**
+     * Value for block widgets
+     */
+    public get blockWidgets() {
+        return this.enabledFilters.has(this.filtersIndex.widgetsFilterId);
+    }
+
+    /**
+     * Value for block other annoyance
+     */
+    public get blockOtherAnnoyance() {
+        return this.enabledFilters.has(this.filtersIndex.otherAnnoyanceFilterId);
+    }
+
+    /**
+     * Enabled custom filters count
+     */
+    public get enabledCustomFiltersCount() {
+        const enabledCustomFilters = this.filters.customFilters.filter(({ enabled }) => enabled);
+        return enabledCustomFilters.length;
+    }
+
+    // ---- SafariProtection actions (merged from SafariProtection) ----
+
+    /**
+     * Update blockAds in safari protection
+     */
+    public async updateBlockAds(value: boolean) {
+        const definedGroups = this.filtersIndex.definedGroups || {};
+        return this.switchFiltersState(
+            this.recommendedFiltersByGroups[definedGroups.adBlocking],
+            value,
+        );
+    }
+
+    /**
+     * Update blockSearchAds in safari protection
+     */
+    public async updateBlockSearchAds(value: boolean) {
+        return this.switchFiltersState(
+            [this.filtersIndex.unblockSearchAdsFilterId],
+            !value,
+        );
+    }
+
+    /**
+     * Update blockTrackers in safari protection
+     */
+    public async updateBlockTrackers(value: boolean) {
+        const definedGroups = this.filtersIndex.definedGroups || {};
+        return this.switchFiltersState(
+            this.recommendedFiltersByGroups[definedGroups.privacy],
+            value,
+        );
+    }
+
+    /**
+     * Update blockSocialButtons in safari protection
+     */
+    public async updateBlockSocialButtons(value: boolean) {
+        const definedGroups = this.filtersIndex.definedGroups || {};
+        return this.switchFiltersState(
+            this.recommendedFiltersByGroups[definedGroups.socialWidgets],
+            value,
+        );
+    }
+
+    /**
+     * Update blockCookieNotice in safari protection
+     */
+    public async updateBlockCookieNotice(value: boolean) {
+        return this.switchFiltersState(
+            [this.filtersIndex.cookieNoticeFilterId],
+            value,
+        );
+    }
+
+    /**
+     * Update blockPopups in safari protection
+     */
+    public async updateBlockPopups(value: boolean) {
+        return this.switchFiltersState(
+            [this.filtersIndex.popUpsFilterId],
+            value,
+        );
+    }
+
+    /**
+     * Update blockWidgets in safari protection
+     */
+    public async updateBlockWidgets(value: boolean) {
+        return this.switchFiltersState(
+            [this.filtersIndex.widgetsFilterId],
+            value,
+        );
+    }
+
+    /**
+     * Update blockOther in safari protection
+     */
+    public async updateBlockOther(value: boolean) {
+        return this.switchFiltersState(
+            [this.filtersIndex.otherAnnoyanceFilterId],
+            value,
+        );
+    }
+
+    /**
+     * Resets safari protection
+     */
+    public resetSafariProtection() {
+        // TODO: AG-XXXX
     }
 }

@@ -16,12 +16,12 @@ import s from '../SafariProtection.module.pcss';
  * Tracking section for Safari protection
  */
 function TrackingSectionComponent() {
-    const { safariProtection, telemetry } = useSettingsStore();
+    const { filters, telemetry } = useSettingsStore();
     const notifyError = useNotificationSomethingWentWrongText();
 
     const onToggleBlockTrackers = async (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.BlockTrackerClick);
-        const error = await safariProtection.updateBlockTrackers(value);
+        const error = await filters.updateBlockTrackers(value);
         if (error) {
             notifyError();
         }
@@ -35,7 +35,7 @@ function TrackingSectionComponent() {
                 icon="tracking"
                 setValue={onToggleBlockTrackers}
                 title={translate('safari.protection.block.trackers')}
-                value={safariProtection.blockTrackers}
+                value={filters.blockTrackers}
             />
         </div>
     );

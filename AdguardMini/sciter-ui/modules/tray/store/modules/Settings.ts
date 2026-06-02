@@ -5,11 +5,12 @@
 import { LogLevel } from '@adg/sciter-utils-kit';
 import { makeAutoObservable } from 'mobx';
 
-import { CheckApplicationVersionRequest, GetSafariExtensionsRequest, GetStatisticsRequest, GetTraySettingsRequest, RequestOpenSettingsPageRequest, UpdateTraySettingsRequest } from 'Apis/requests/SettingsService';
-import { GetAdvancedBlockingRequest } from 'Apis/requests/AdvancedBlockingService';
 import { GetLicenseRequest, GetTrialAvailableDaysRequest } from 'Apis/requests/AccountService';
+import { GetAdvancedBlockingRequest } from 'Apis/requests/AdvancedBlockingService';
+import { CheckApplicationVersionRequest, GetSafariExtensionsRequest } from 'Apis/requests/CommonService';
 import { GetFiltersMetadataRequest, RequestFiltersUpdateRequest } from 'Apis/requests/FiltersService';
 import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
+import { GetTraySettingsRequest, GetStatisticsRequest, UpdateTraySettingsRequest, RequestOpenSettingsPageRequest } from 'Apis/requests/TrayService';
 import { GlobalSettings, LicenseOrError, LicenseStatus, ReleaseVariants, StatisticsPeriod, StatisticsResponse } from 'Apis/types';
 import { SafariExtensionsStore } from 'Common/stores/SafariExtensionsStore';
 import { updateLanguage } from 'Intl';
@@ -98,21 +99,21 @@ export class SettingsStore {
      * Checks if the license is active
      */
     public get isLicenseActive() {
-        return this.license.has_license && this.license.license.status === LicenseStatus.active;
+        return this.license.hasLicense && this.license.license.status === LicenseStatus.active;
     }
 
     /**
      * Checks if the trial is active
      */
     public get isTrialActive() {
-        return this.license.has_license && this.license.license.status === LicenseStatus.trial;
+        return this.license.hasLicense && this.license.license.status === LicenseStatus.trial;
     }
 
     /**
      * Checks if the license is bind
      */
     public get isLicenseBind() {
-        return this.license.has_license && this.license.license.applicationKeyOwner;
+        return this.license.hasLicense && this.license.license.applicationKeyOwner;
     }
 
     /**

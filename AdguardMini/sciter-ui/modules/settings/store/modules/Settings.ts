@@ -5,7 +5,8 @@
 import { LogLevel } from '@adg/sciter-utils-kit';
 import { makeAutoObservable } from 'mobx';
 
-import { ExportLogsRequest, ExportSettingsRequest, ForceRestartOnHardwareAccelerationImportRequest, GetContentBlockersRulesLimitRequest, GetHealthCheckDismissedCardsRequest, GetSafariExtensionsRequest, GetSettingsRequest, GetUserActionLastDirectoryRequest, ImportSettingsConfirmRequest, ImportSettingsRequest, OpenLoginItemsSettingsRequest, ResetSettingsRequest, ResetStatisticsRequest, UpdateAllowTelemetryRequest, UpdateAutoFiltersUpdateRequest, UpdateConsentRequest, UpdateDebugLoggingRequest, UpdateHardwareAccelerationRequest, UpdateHealthCheckDismissedCardsRequest, UpdateLaunchOnStartupRequest, UpdateQuitReactionRequest, UpdateRealTimeFiltersUpdateRequest, UpdateShowInMenuBarRequest, UpdateThemeRequest, UpdateUserActionLastDirectoryRequest, UpdateShowSafariToolbarBadgeRequest } from 'Apis/requests/SettingsService';
+import { GetSafariExtensionsRequest, UpdateConsentRequest } from 'Apis/requests/CommonService';
+import { ExportLogsRequest, ExportSettingsRequest, ForceRestartOnHardwareAccelerationImportRequest, GetContentBlockersRulesLimitRequest, GetHealthCheckDismissedCardsRequest, GetSettingsRequest, GetUserActionLastDirectoryRequest, ImportSettingsConfirmRequest, ImportSettingsRequest, OpenLoginItemsSettingsRequest, ResetSettingsRequest, ResetStatisticsRequest, UpdateAllowTelemetryRequest, UpdateAutoFiltersUpdateRequest, UpdateDebugLoggingRequest, UpdateHardwareAccelerationRequest, UpdateHealthCheckDismissedCardsRequest, UpdateLaunchOnStartupRequest, UpdateQuitReactionRequest, UpdateRealTimeFiltersUpdateRequest, UpdateShowInMenuBarRequest, UpdateThemeRequest, UpdateUserActionLastDirectoryRequest, UpdateShowSafariToolbarBadgeRequest } from 'Apis/requests/SettingsService';
 import {
     Settings as SettingsEnt,
     ReleaseVariants,
@@ -13,17 +14,19 @@ import {
 import { SafariExtensionsStore } from 'Common/stores/SafariExtensionsStore';
 import { updateLanguage } from 'Intl';
 
+import { SciterWindowId, type Windowing } from './Windowing';
+
 import type { ImportMode, QuitReaction, SafariExtensionUpdate, Theme,
     SafariExtensions } from 'Apis/types';
-import type { SettingsStore } from 'SettingsStore';
-
-import { SciterWindowId } from './Windowing';
 
 /**
  * App Settings store
  */
 export class Settings {
-    rootStore: SettingsStore;
+    /**
+     * Reference to the windowing store for geometry persistence
+     */
+    private readonly windowing: Windowing;
 
     /**
      * app settings
@@ -76,11 +79,9 @@ export class Settings {
      *
      * @param rootStore
      */
-    public constructor(rootStore: SettingsStore) {
-        this.rootStore = rootStore;
-        makeAutoObservable(this, {
-            rootStore: false,
-        }, { autoBind: true });
+    public constructor(windowing: Windowing) {
+        this.windowing = windowing;
+        makeAutoObservable(this, {}, { autoBind: true });
     }
 
     /**
@@ -101,8 +102,12 @@ export class Settings {
      * Get app settings
      */
     public async getSettings() {
-        const resp = await window.API.Execute(new GetSettingsRequest());
-        this.setSettings(resp);
+        try {
+            const resp = await window.API.Execute(new GetSettingsRequest());
+            this.setSettings(resp);
+        } catch (err) {
+            log.error('getSettings failed', String(err));
+        }
     }
 
     /**
@@ -113,6 +118,9 @@ export class Settings {
         this.setHealthCheckCardDismissed(resp.value);
     }
 
+    /**
+     *
+     */
     public setHealthCheckCardDismissed(cardIds: string[]) {
         this.dissmissedHealthCheckCards = new Set(cardIds);
     }
@@ -404,7 +412,7 @@ export class Settings {
 
         if (data.has_user_rules_editor_geometry) {
             const geo = data.userRulesEditorGeometry;
-            this.rootStore.windowing.setSavedGeometry(SciterWindowId.USER_RULE_EDITOR, {
+            this.windowing.setSavedGeometry(SciterWindowId.USER_RULE_EDITOR, {
                 x: geo.x,
                 y: geo.y,
                 width: geo.width,

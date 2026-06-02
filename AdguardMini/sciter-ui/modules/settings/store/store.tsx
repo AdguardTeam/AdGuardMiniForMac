@@ -13,7 +13,6 @@ import {
     AdvancedBlocking,
     AppInfo,
     Filters,
-    SafariProtection,
     Settings,
     UserRules,
     Windowing,
@@ -41,8 +40,6 @@ export class SettingsStore {
     public appInfo: AppInfo;
 
     public filters: Filters;
-
-    public safariProtection: SafariProtection;
 
     public settings: Settings;
 
@@ -77,12 +74,11 @@ export class SettingsStore {
         this.abTests = new ABTests();
         this.advancedBlocking = new AdvancedBlocking(this);
         this.appInfo = new AppInfo(this);
+        this.windowing = new Windowing();
         this.filters = new Filters(this);
-        this.safariProtection = new SafariProtection(this);
-        this.settings = new Settings(this);
+        this.settings = new Settings(this.windowing);
         this.userRules = new UserRules(this);
         this.ui = new UI(this);
-        this.windowing = new Windowing();
         this.notification = new NotificationsQueue();
         this.telemetry = settingsTelemetryFactory();
         this.router = settingsRouterFactory();

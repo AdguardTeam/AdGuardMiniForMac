@@ -95,7 +95,7 @@ export class Account {
      * Checks if the license object is exist
      */
     public get hasLicense() {
-        return this.license.has_license;
+        return this.license.hasLicense;
     }
 
     /**
@@ -265,10 +265,14 @@ export class Account {
      * Receive user current license
      */
     public async getLicense() {
-        this.getSubscriptionsInfo();
-        this.getTrialAvailability();
-        const resp = await window.API.Execute(new GetLicenseRequest());
-        this.setLicense(resp as unknown as LicenseOrErrorExtended);
+        try {
+            this.getSubscriptionsInfo();
+            this.getTrialAvailability();
+            const resp = await window.API.Execute(new GetLicenseRequest());
+            this.setLicense(resp as unknown as LicenseOrErrorExtended);
+        } catch (err) {
+            log.error('getLicense failed', String(err));
+        }
     }
 
     /**
@@ -313,8 +317,12 @@ export class Account {
      * Gets trial availability status
      */
     public async getTrialAvailability() {
-        const { value } = await window.API.Execute(new GetTrialAvailableDaysRequest());
-        this.setIsTrialAvailable(value);
+        try {
+            const { value } = await window.API.Execute(new GetTrialAvailableDaysRequest());
+            this.setIsTrialAvailable(value);
+        } catch (err) {
+            log.error('getTrialAvailability failed', String(err));
+        }
     }
 
     /**
@@ -392,10 +400,14 @@ export class Account {
      * Receive app store subscriptions info
      */
     public async getSubscriptionsInfo() {
-        const result = await window.API.Execute(new GetSubscriptionsInfoRequest());
-
-        this.setSubscriptionsInfo(result);
-        return result;
+        try {
+            const result = await window.API.Execute(new GetSubscriptionsInfoRequest());
+            this.setSubscriptionsInfo(result);
+            return result;
+        } catch (err) {
+            log.error('getSubscriptionsInfo failed', String(err));
+            return undefined;
+        }
     }
 
     /**

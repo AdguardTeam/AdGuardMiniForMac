@@ -4,20 +4,12 @@
 
 import { useEnter, focusOnBody } from '@adg/sciter-utils-kit';
 import {
-    BlockRequestRule,
-    UnblockRequestRule,
-    CustomRule,
-    NoFilteringRule,
-    Comment,
-    DomainModifiers,
     RulesBuilder,
 } from '@adguard/rules-editor';
 import { observer } from 'mobx-react-lite';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 
-import { UserRule as UserRuleType } from 'Apis/types';
 import { useSettingsStore } from 'SettingsLib/hooks';
-import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
 import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType, RouteName, SettingsEvent } from 'SettingsStore/modules';
 import theme from 'Theme';
 import { Layout, Text, RuleHighlighter, Textarea, Checkbox, Button, Select, Modal } from 'UILib';
@@ -25,12 +17,19 @@ import { Layout, Text, RuleHighlighter, Textarea, Checkbox, Button, Select, Moda
 import { ContextMenu } from '../ContextMenu';
 
 import { BlockRequestForm, UnblockRequestForm, CommentForm, CustomRuleForm, DisableFilteringForm } from './forms';
-import { convertRule, getLabelByRuleType, getTypeOptions, validateDomain } from './forms/helpers';
+import { convertRule, getLabelByRuleType, getTypeOptions } from './forms/helpers';
+import { saveRule } from './helpers/saveRule';
 import s from './UserRule.module.pcss';
 
 import type { RuleTypeOptions } from './forms/helpers';
 import type {
-    RuleType } from '@adguard/rules-editor';
+    RuleType,
+    BlockRequestRule,
+    UnblockRequestRule,
+    CustomRule,
+    NoFilteringRule,
+    Comment } from '@adguard/rules-editor';
+import type { UserRule as UserRuleType } from 'Apis/types';
 import type { IOption } from 'UILib';
 
 type Params = { index?: number };
@@ -92,30 +91,6 @@ function UserRuleComponent() {
         setRuleRaw(data);
     };
 
-    const notifyError = () => {
-        notification.notify({
-            message: getNotificationSomethingWentWrongText(),
-            notificationContext: NotificationContext.info,
-            type: NotificationsQueueType.warning,
-            iconType: NotificationsQueueIconType.error,
-            closeable: true,
-        });
-    };
-
-    const notifySuccess = (r: string, undo: () => void) => {
-        notification.notify({
-            message: translate('notification.user.rules.save', {
-                rule: r,
-                b: (text: string) => (<div className={s.UserRule_notificationSuccess}><b>{text}</b></div>),
-            }),
-            notificationContext: NotificationContext.info,
-            type: NotificationsQueueType.success,
-            iconType: NotificationsQueueIconType.done,
-            undoAction: undo,
-            closeable: true,
-        });
-    };
-
     const onRuleTypeChange = (e: RuleType) => {
         const currentType = type.value;
         const { rule: currentRule } = rule;
@@ -143,129 +118,16 @@ function UserRuleComponent() {
     };
 
     const onSave = async () => {
-        if (safeRef.current) {
-            return;
-        }
-
+        if (safeRef.current) { return; }
         safeRef.current = true;
-
-        if (rule.rule instanceof CustomRule && !rule.rule.getRule()) {
-            setErrors({ ...errors, rule: translate('user.rules.fill.field') });
-            safeRef.current = false;
-            return;
-        }
-
-        if (rule.rule instanceof BlockRequestRule || rule.rule instanceof UnblockRequestRule) {
-            const showDomainsField = rule.rule.getDomainModifiers() === DomainModifiers.onlyListed
-                || rule.rule.getDomainModifiers() === DomainModifiers.allExceptListed;
-            let hasError = false;
-
-            if (!rule.rule.getDomain()) {
-                setErrors({ ...errors, domain: translate('user.rules.fill.field') });
-                hasError = true;
-            }
-            if (rule.rule.getDomain() && !validateDomain(rule.rule.getDomain())) {
-                setErrors({ ...errors, domain: translate('user.rules.domain.invalid') });
-                hasError = true;
-            }
-
-            if (showDomainsField && !rule.rule.getDomainModifiersDomains().join()) {
-                setErrors({ ...errors, websites: translate('user.rules.fill.field') });
-                hasError = true;
-            }
-            if (showDomainsField && rule.rule.getDomainModifiersDomains().join()) {
-                const isValid = rule.rule.getDomainModifiersDomains().every((d) => validateDomain(d));
-                if (!isValid) {
-                    setErrors({ ...errors, websites: translate('user.rules.domain.invalid') });
-                    hasError = true;
-                }
-            }
-            if (hasError) {
-                safeRef.current = false;
-                return;
-            }
-        }
-
-        if (rule.rule instanceof NoFilteringRule) {
-            if (!rule.rule.getDomain()) {
-                setErrors({ ...errors, domain: translate('user.rules.fill.field') });
-                safeRef.current = false;
-                return;
-            }
-            if (rule.rule.getDomain() && !validateDomain(rule.rule.getDomain())) {
-                setErrors({ ...errors, domain: translate('user.rules.domain.invalid') });
-                safeRef.current = false;
-                return;
-            }
-        }
-
-        if (rule.rule instanceof Comment) {
-            if (!rule.rule.getText()) {
-                setErrors({ ...errors, comment: translate('user.rules.fill.field') });
-                safeRef.current = false;
-                return;
-            }
-        }
-
-        if (rules.find((r) => (r.rule === rule.rule.buildRule()))) {
-            notification.notify({
-                message: translate('user.rules.rule.exists'),
-                notificationContext: NotificationContext.info,
-                type: NotificationsQueueType.warning,
-                iconType: NotificationsQueueIconType.error,
-                closeable: true,
-            });
-            safeRef.current = false;
-            return;
-        }
-
-        if (hasRawRule) {
-            let tempRules = [...rules];
-            const index = tempRules.findIndex((r) => r.rule === rawRule);
-            tempRules[index].rule = rule.rule.buildRule();
-            if (addComment.value && addComment.comment.getText()) {
-                tempRules = [
-                    ...rules.slice(0, index),
-                    new UserRuleType({ rule: addComment.comment.buildRule(), enabled: true }),
-                    ...rules.slice(index),
-                ];
-                const [err, prevRules] = await userRules.updateRules(tempRules);
-                if (err?.hasError) {
-                    notifyError();
-                } else {
-                    notifySuccess(rule.rule.buildRule(), () => {
-                        userRules.updateRules(prevRules);
-                    });
-                }
-            } else {
-                userRules.updateRules(tempRules);
-            }
-            safeRef.current = false;
-            router.changePath(RouteName.user_rules);
-            return;
-        }
-
-        const rulesCopy = [...rules];
-        const err = await userRules.addUserRule(rule.rule.buildRule());
-        if (err) {
-            notifyError();
-            safeRef.current = false;
-            return;
-        }
-        if (addComment.value && addComment.comment.getText()) {
-            const errComment = await userRules.addUserRule(addComment.comment.buildRule());
-            if (errComment) {
-                notifyError();
-                safeRef.current = false;
-                return;
-            }
-        }
-        telemetry.layersRelay.trackEvent(SettingsEvent.CreateRuleClick);
-        notifySuccess(rule.rule.buildRule(), () => {
-            userRules.updateRules(rulesCopy);
+        await saveRule({
+            rule, setErrors, rules, hasRawRule, rawRule, addComment,
+            userRules: userRules as unknown as { updateRules(r: UserRuleType[]): void; addUserRule(r: string): Promise<unknown> },
+            notification: notification as unknown as { notify(o: Record<string, unknown>): void },
+            telemetry: telemetry as unknown as { layersRelay: { trackEvent(e: string): void } },
+            navigateBack: () => router.changePath(RouteName.user_rules),
         });
         safeRef.current = false;
-        router.changePath(RouteName.user_rules);
     };
 
     useEnter(onSave);

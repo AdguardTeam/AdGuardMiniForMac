@@ -18,12 +18,12 @@ import s from '../SafariProtection.module.pcss';
  * Ad blocking section for Safari protection
  */
 function AdBlockingSectionComponent() {
-    const { safariProtection, filters, telemetry } = useSettingsStore();
+    const { filters, telemetry } = useSettingsStore();
     const notifyError = useNotificationSomethingWentWrongText();
 
     const onToggleBlockAds = async (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.BlockAdsProtectionClick);
-        const error = await safariProtection.updateBlockAds(value);
+        const error = await filters.updateBlockAds(value);
         if (error) {
             notifyError();
         }
@@ -31,7 +31,7 @@ function AdBlockingSectionComponent() {
 
     const onToggleBlockSearchAds = async (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.BlockSearchAds);
-        const error = await safariProtection.updateBlockSearchAds(value);
+        const error = await filters.updateBlockSearchAds(value);
         if (error) {
             notifyError();
         }
@@ -52,14 +52,14 @@ function AdBlockingSectionComponent() {
                 icon="ads"
                 setValue={onToggleBlockAds}
                 title={translate('safari.protection.block.ads')}
-                value={safariProtection.blockAds}
+                value={filters.blockAds}
             />
             <SettingsItemSwitch
                 description={translate('safari.protection.block.search.ads.desc')}
                 icon="search"
                 setValue={onToggleBlockSearchAds}
                 title={translate('safari.protection.block.search.ads')}
-                value={safariProtection.blockSearchAds}
+                value={filters.blockSearchAds}
             />
             <SettingsItemSwitch
                 description={translate('safari.protection.block.language.desc')}

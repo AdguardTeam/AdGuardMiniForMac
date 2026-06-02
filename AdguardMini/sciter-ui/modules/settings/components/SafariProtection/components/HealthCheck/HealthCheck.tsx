@@ -37,7 +37,7 @@ type HealthCheckProps = {
 function HealthCheckComponent({ setShowConsent }: HealthCheckProps) {
     const [showAllIssues, setShowAllIssues] = useState(false);
 
-    const { settings, safariProtection } = useSettingsStore();
+    const { settings, filters } = useSettingsStore();
 
     const {
         dissmissedHealthCheckCards,
@@ -52,7 +52,7 @@ function HealthCheckComponent({ setShowConsent }: HealthCheckProps) {
         blockPopups,
         blockWidgets,
         blockOtherAnnoyance,
-    } = safariProtection;
+    } = filters;
 
     const { hasExtensionsDisabled, hasExtensionsBroken, hasRulesLimitExceeded } = useSafariExtensionsStatus();
 

@@ -26,7 +26,7 @@ synchronization.
       lodash
 - **Storage**: UserDefaults, file-based storage (JSON/plist), Safari Content
   Blocker rules (JSON)
-- **Testing**: XCTest (Swift), Jest (TypeScript)
+- **Testing**: XCTest (Swift), node:test (TypeScript)
 - **Target Platform**: macOS 12+ (deployment), macOS 13+ (development machine),
   Safari extensions
 - **Project Type**: single (Xcode project with multiple targets)
@@ -430,3 +430,116 @@ You MUST follow the following rules for EVERY task that you perform:
 
    **Rationale**: Eliminates magic numbers, makes intent clear, and simplifies
    future changes.
+
+### V. Store Architecture (TypeScript)
+
+1. **Constructor DI**: Sub-stores MUST receive dependencies via constructor.
+   They MUST NOT access sibling sub-stores through the root store.
+
+   ```typescript
+   // Good
+   class Filters {
+       constructor(private settings: Settings, private account: Account) {}
+
+   // Bad
+   class Filters {
+       constructor(private rootStore: SettingsStore) {} // then rootStore.settings.*
+   ```
+
+   **Rationale**: Prevents hidden coupling between sub-stores and makes
+   dependencies explicit for testing.
+
+2. **SafariProtection merged into Filters**: Health-check computed properties
+   (`blockAds`, `blockTrackers`, `blockCookieNotice`, etc.) and their
+   corresponding `update*` action methods live directly on `Filters`. There is
+   no separate `SafariProtection` sub-store.
+
+   **Rationale**: Eliminates a thin façade that was a primary source of
+   cross-store coupling through `rootStore.filters.*`.
+
+3. **Callback services**: Callbacks registered on `window.API_CALLBACK` MUST
+   call store action methods only. They MUST NOT directly assign observable
+   properties or orchestrate multiple stores in a single callback handler.
+   Multi-store coordination triggered by Swift events is acceptable in
+   callbacks at module initialization time (e.g., `OnImportStateChange`).
+
+   **Rationale**: Keeps callback logic predictable and testable; avoids
+   bypassing store validations and computed property invalidation.
+
+### VI. Component Sizing (TypeScript)
+
+1. **150-line soft limit**: Components SHOULD NOT exceed 150 lines of source
+   code (excluding imports, type definitions, and CSS module imports).
+   Sub-components, hooks, and utility functions MUST be extracted into
+   separate files when the limit is exceeded.
+
+   **Rationale**: Improves readability, testability, and makes code review
+   more effective.
+
+2. **Card-based composition**: Card collections MUST use one component file
+   per card in a local `components/` folder. Card-specific text, actions,
+   and visual configuration live inside that card component.
+
+   **Rationale**: Keeps orchestration components small and makes card
+   behavior easier to maintain, test, and reuse.
+
+3. **Repeated JSX blocks**: Identical JSX blocks differing only in data
+   MUST be replaced with a data-driven component rendered via `.map()`.
+
+### VII. Error Handling (TypeScript)
+
+1. **Store try/catch**: Every async store action that calls
+   `window.API.Execute()` MUST wrap the API call in try/catch. Errors MUST
+   be logged with `log.error()` and state MUST be restored to a consistent
+   state on failure.
+
+   ```typescript
+   public async switchFiltersState(ids: number[], isEnabled: boolean) {
+       try {
+           const prevState = Array.from(this.enabledFilters);
+           this.updateLocalEnabledFilters(ids, isEnabled);
+           const hasError = await window.API.Execute(new UpdateFiltersRequest(data));
+           if (hasError.hasError) {
+               runInAction(() => { this.setEnabledFilters(prevState); });
+               return hasError;
+           }
+       } catch (err) {
+           log.error('switchFiltersState failed', String(err));
+       }
+   }
+   ```
+
+   **Rationale**: Prevents silent crashes from unhandled promise rejections
+   in the Swift↔TS bridge.
+
+2. **Component error UI**: Components that call store actions MUST check
+   return values or catch errors and show appropriate notifications via
+   the `NotificationsQueue`.
+
+3. **`runInAction` consistency**: All async store methods that mutate
+   observable state after `await` MUST wrap mutations in
+   `runInAction(() => { ... })`.
+
+### VIII. Testing (TypeScript)
+
+1. **Node test runner**: Tests use the Node.js native test runner (`node:test`).
+   Run with `bin/yarn test:node`.
+
+2. **Test location**: Test files live in `AdguardMini/sciter-ui/tests/`,
+   mirroring the module structure:
+   ```
+   tests/
+   ├── settings/    # Settings module store and component tests
+   ├── tray/        # Tray module tests
+   ├── common/      # Shared utility and hook tests
+   ├── stories/     # Story navigation tests
+   ├── number/      # Number formatting tests
+   └── safariExtensionsStore/  # Safari extension store tests
+   ```
+
+3. **Compilation**: Tests compile via `tsc -p tsconfig.node-tests.json`.
+   The `tsconfig.node-tests.json` config defines path aliases and include
+   patterns for test files and their dependencies.
+
+4. **Pre-commit**: `.lintstagedrc.js` MUST include test file globs mapped
+   to `bin/yarn test:node`.

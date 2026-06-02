@@ -5,7 +5,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { GlobalSettings } from '../../../modules/common/apis/types/Settings';
+import { GlobalSettings } from '../../../modules/common/apis/types/Tray';
 import { resolveLastFiltersUpdateTimestamp } from '../../../modules/tray/components/CheckUpdates/resolveLastFiltersUpdateTimestamp';
 
 test('returns timestamp only for nothing-to-update status', () => {

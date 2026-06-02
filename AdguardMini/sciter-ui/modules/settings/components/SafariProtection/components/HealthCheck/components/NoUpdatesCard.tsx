@@ -4,7 +4,7 @@
 
 import { observer } from 'mobx-react-lite';
 
-import { RequestOpenSettingsPageRequest } from 'Apis/requests/SettingsService';
+import { RequestOpenSettingsPageRequest } from 'Apis/requests/TrayService';
 import { Text } from 'Modules/common/components';
 import { useSettingsStore } from 'SettingsLib/hooks';
 

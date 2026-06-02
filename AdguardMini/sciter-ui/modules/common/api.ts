@@ -5,6 +5,7 @@
 import 'Apis/ExtendLicense';
 
 import { ApiServiceExecutor } from '@adg/sciter-utils-kit';
+
 import { xcall } from 'ApiWindow';
 
 // @TODO: MOVE THIS TO declaration.d.ts

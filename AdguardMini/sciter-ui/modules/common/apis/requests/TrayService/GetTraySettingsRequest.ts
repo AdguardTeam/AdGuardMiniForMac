@@ -1,13 +1,12 @@
 /* This code was generated automatically by proto-parser tool version 1 */
 
 import { PlatformRequest } from '@adg/sciter-utils-kit';
-import { EmptyValue as ReturnValue, EmptyValue as RequestMessage, EmptyValue as EmptyMessageImpl } from '../../types'
+import { GlobalSettings as ReturnValue, EmptyValue as RequestMessage, EmptyValue as EmptyMessageImpl } from '../../types'
 
 /**
- * Fires event for swift for checking application version, result will be dispatch
- * by TrayCallbackService.OnApplicationVersionStatusResolved
+ * Get tray settings
  */
-export class CheckApplicationVersionRequest extends PlatformRequest<ReturnValue, RequestMessage> {
+export class GetTraySettingsRequest extends PlatformRequest<ReturnValue, RequestMessage> {
     /**
      * Constructs a new request instance
      */
@@ -20,7 +19,7 @@ export class CheckApplicationVersionRequest extends PlatformRequest<ReturnValue,
      * Fully qualified method name to be called on the backend
      * @returns The fully qualified method name
      */
-    public get FQN() { return 'SettingsService.CheckApplicationVersion'; }
+    public get FQN() { return 'TrayService.GetTraySettings'; }
 
     /**
      * Processes the response bytes received from the backend

@@ -229,12 +229,12 @@ function SettingsControlComponent() {
             <MiscSection
                 allowTelemetry={allowTelemetry}
                 debugLogging={debugLogging}
+                showSafariToolbarBadge={showSafariToolbarBadge}
+                updateShowSafariToolbarBadge={(value) => settings.updateShowSafariToolbarBadge(value)}
                 onExportLogs={onExportLogs}
                 onOpenTelemetryModal={() => setShowTelemetryModal(true)}
                 onToggleAllowTelemetry={(value) => settings.updateAllowTelemetry(value)}
                 onToggleDebugLogging={(value) => settings.updateDebugLogging(value)}
-                showSafariToolbarBadge={showSafariToolbarBadge}
-                updateShowSafariToolbarBadge={(value) => settings.updateShowSafariToolbarBadge(value)}
             />
             <div className={theme.layout.bottomPadding} />
             <SettingsModals

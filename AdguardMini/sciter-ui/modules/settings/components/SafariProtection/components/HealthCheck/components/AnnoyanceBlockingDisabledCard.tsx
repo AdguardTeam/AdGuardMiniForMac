@@ -27,7 +27,6 @@ function AnnoyanceBlockingDisabledCardComponent({ setShowConsent }: AnnoyanceBlo
     const {
         settings,
         filters,
-        safariProtection,
     } = useSettingsStore();
     const {
         dissmissedHealthCheckCards,
@@ -38,7 +37,7 @@ function AnnoyanceBlockingDisabledCardComponent({ setShowConsent }: AnnoyanceBlo
     const notifyError = useNotificationSomethingWentWrongText();
 
     const enableAllAnnoyanceBlocking = async () => {
-        const socialError = await safariProtection.updateBlockSocialButtons(true);
+        const socialError = await filters.updateBlockSocialButtons(true);
         if (socialError) {
             notifyError();
             return;

@@ -8,13 +8,13 @@ import { useEffect } from 'preact/hooks';
 import { RequestApplicationUpdateRequest } from 'Apis/requests/SettingsService';
 import { ReleaseVariants } from 'Apis/types';
 import { ADGUARD_MINI_TITLE } from 'Common/utils/consts';
+import { resolveLastFiltersUpdateTimestamp } from 'Modules/tray/components/CheckUpdates/resolveLastFiltersUpdateTimestamp';
 import theme from 'Theme';
 import { useTrayStore, useMoreFrequentUpdatesNotify, useDateFormat, DATE_FORMAT } from 'TrayLib/hooks';
 import { provideContactSupportParam } from 'TrayLib/utils/translate';
 import { TrayEvent, TrayRoute } from 'TrayStore/modules';
 import { Button, Icon, Text, Loader } from 'UILib';
 
-import { resolveLastFiltersUpdateTimestamp } from 'Modules/tray/components/CheckUpdates/resolveLastFiltersUpdateTimestamp';
 import s from './CheckUpdates.module.pcss';
 
 import type { IconType } from 'UILib';

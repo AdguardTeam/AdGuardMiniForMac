@@ -12,7 +12,7 @@ message LicenseOrError {
     }
 }
 
-// Describes user license
+// Describes user license (full, used by settings module)
 message License {
     int64 valid_until = 1;
     int64 renewal_date = 2;
@@ -21,12 +21,19 @@ message License {
     int32 total_devices = 5;
     LicenseStatus status = 6;
     LicenseType type = 7;
-    SubscriptionStatus subscription_status = 8;
     string application_key_owner = 9;
     bool license_lifetime = 10;
     bool license_trial = 11;
     bool app_store_subscription = 12;
     bool can_reset = 13;
+}
+
+// Lightweight license info for tray module
+message TrayLicense {
+    bool has_license = 1;
+    LicenseStatus status = 2;
+    string application_key_owner = 3;
+    bool app_store_subscription = 4;
 }
 
 enum LicenseStatus {
@@ -51,14 +58,6 @@ enum LicenseType {
     LicenseType_premium = 5;
     LicenseType_beta = 6;
     LicenseType_bonus = 7;
-}
-
-enum SubscriptionStatus {
-    SubscriptionStatus_unknown = 0;
-    SubscriptionStatus_active = 1;
-    SubscriptionStatus_past_due = 2;
-    SubscriptionStatus_paused = 3;
-    SubscriptionStatus_deleted = 4;
 }
 
 enum WebActivateResult {

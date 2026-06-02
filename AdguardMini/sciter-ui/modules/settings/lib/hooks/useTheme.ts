@@ -2,34 +2,21 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { useLayoutEffect } from 'preact/hooks';
-
-import { Theme, type EffectiveTheme } from 'Apis/types';
+import { useTheme as useCommonTheme } from 'Common/hooks/useTheme';
 import { useSettingsStore } from 'SettingsLib/hooks';
-import { getColorTheme, getEffectiveTheme } from 'Utils/colorThemes';
 
 import type { OnColorThemeChanged } from 'Utils/colorThemes';
 
 /**
- * Hook for theme changes
+ * Settings-specific theme hook adapter.
  */
 export function useTheme(onThemeChanged: OnColorThemeChanged) {
-    const settingsStore = useSettingsStore();
-    const { settingsWindowEffectiveThemeChanged, settings: { settings: { theme } } } = settingsStore;
+    const store = useSettingsStore();
+    const { settings: { settings: { theme } } } = store;
 
-    useLayoutEffect(() => {
-        if (theme === Theme.system) {
-            (async () => {
-                const value = await settingsStore.getEffectiveTheme();
-                onThemeChanged(getColorTheme(value));
-            })();
-
-            return settingsWindowEffectiveThemeChanged.addEventListener((value: EffectiveTheme) => {
-                onThemeChanged(getColorTheme(value));
-            });
-        }
-
-        const value = getEffectiveTheme(theme);
-        onThemeChanged(getColorTheme(value));
-    }, [theme]);
+    useCommonTheme(onThemeChanged, {
+        theme,
+        getEffectiveTheme: async () => store.getEffectiveTheme(),
+        effectiveThemeChangedEvent: store.settingsWindowEffectiveThemeChanged,
+    });
 }

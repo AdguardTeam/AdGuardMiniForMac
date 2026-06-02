@@ -1,12 +1,12 @@
 /* This code was generated automatically by proto-parser tool version 1 */
 
 import { PlatformRequest } from '@adg/sciter-utils-kit';
-import { GlobalSettings as ReturnValue, EmptyValue as RequestMessage, EmptyValue as EmptyMessageImpl } from '../../types'
+import { SafariExtensions as ReturnValue, EmptyValue as RequestMessage, EmptyValue as EmptyMessageImpl } from '../../types'
 
 /**
- * Get Settings settings
+ * Get Safari extension status
  */
-export class GetTraySettingsRequest extends PlatformRequest<ReturnValue, RequestMessage> {
+export class GetSafariExtensionsRequest extends PlatformRequest<ReturnValue, RequestMessage> {
     /**
      * Constructs a new request instance
      */
@@ -19,7 +19,7 @@ export class GetTraySettingsRequest extends PlatformRequest<ReturnValue, Request
      * Fully qualified method name to be called on the backend
      * @returns The fully qualified method name
      */
-    public get FQN() { return 'SettingsService.GetTraySettings'; }
+    public get FQN() { return 'CommonService.GetSafariExtensions'; }
 
     /**
      * Processes the response bytes received from the backend

@@ -8,7 +8,6 @@ export * from './ABTests';
 export * from './AppInfo';
 export * from './Filters';
 export * from './SettingsRouter';
-export * from './SafariProtection';
 export * from './Settings';
 export * from './UserRules';
 export * from './Windowing';

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+import "PrimitivesWrappers.proto";
+import "Common.proto";
+
+/* Service that handles shared functionality across modules */
+service CommonService {
+    /* Get Safari extension status */
+    rpc GetSafariExtensions(EmptyValue) returns (SafariExtensions);
+    /* Fires event for checking application version */
+    rpc CheckApplicationVersion(EmptyValue) returns (EmptyValue);
+    /* Update consent agreement */
+    rpc UpdateConsent(UserConsent) returns (EmptyValue);
+}

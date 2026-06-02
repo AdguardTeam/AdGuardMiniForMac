@@ -13,7 +13,8 @@
         "sourceMap": false,
         "skipLibCheck": true,
         "paths": {
-            "Apis/*": ["AdguardMini/sciter-ui/modules/common/apis/*"]
+            "Apis/*": ["AdguardMini/sciter-ui/modules/common/apis/*"],
+            "Common/*": ["AdguardMini/sciter-ui/modules/common/*"]
         }
     },
     "include": [

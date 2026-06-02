@@ -22,13 +22,13 @@ type AnnoyanceSectionProps = {
  * Annoyance section for Safari protection
  */
 function AnnoyanceSectionComponent({ setShowConsent }: AnnoyanceSectionProps) {
-    const { safariProtection, filters, telemetry, settings: { settings: { consentFiltersIds } } } = useSettingsStore();
+    const { filters, telemetry, settings: { settings: { consentFiltersIds } } } = useSettingsStore();
     const notifyError = useNotificationSomethingWentWrongText();
     const { filtersIndex } = filters;
 
     const onToggleBlockSocialButtons = async (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.SocialButtonsClick);
-        const error = await safariProtection.updateBlockSocialButtons(value);
+        const error = await filters.updateBlockSocialButtons(value);
         if (error) {
             notifyError();
         }
@@ -63,7 +63,7 @@ function AnnoyanceSectionComponent({ setShowConsent }: AnnoyanceSectionProps) {
                 icon="share"
                 setValue={onToggleBlockSocialButtons}
                 title={translate('safari.protection.block.social')}
-                value={safariProtection.blockSocialButtons}
+                value={filters.blockSocialButtons}
             />
             <SettingsItemSwitch
                 description={translate('safari.protection.block.cookie.desc')}
@@ -72,11 +72,11 @@ function AnnoyanceSectionComponent({ setShowConsent }: AnnoyanceSectionProps) {
                     [filtersIndex.cookieNoticeFilterId],
                     async (e) => {
                         telemetry.trackEvent(SettingsEvent.CookieClick);
-                        return safariProtection.updateBlockCookieNotice(e);
+                        return filters.updateBlockCookieNotice(e);
                     },
                 )}
                 title={translate('safari.protection.block.cookie')}
-                value={safariProtection.blockCookieNotice}
+                value={filters.blockCookieNotice}
             />
             <SettingsItemSwitch
                 description={translate('safari.protection.block.popups.desc')}
@@ -85,11 +85,11 @@ function AnnoyanceSectionComponent({ setShowConsent }: AnnoyanceSectionProps) {
                     [filtersIndex.popUpsFilterId],
                     async (e) => {
                         telemetry.trackEvent(SettingsEvent.PopUpsClick);
-                        return safariProtection.updateBlockPopups(e);
+                        return filters.updateBlockPopups(e);
                     },
                 )}
                 title={translate('safari.protection.block.popups')}
-                value={safariProtection.blockPopups}
+                value={filters.blockPopups}
             />
             <SettingsItemSwitch
                 description={translate('safari.protection.block.widgets.desc')}
@@ -98,11 +98,11 @@ function AnnoyanceSectionComponent({ setShowConsent }: AnnoyanceSectionProps) {
                     [filtersIndex.widgetsFilterId],
                     async (e) => {
                         telemetry.trackEvent(SettingsEvent.WidgetsClick);
-                        return safariProtection.updateBlockWidgets(e);
+                        return filters.updateBlockWidgets(e);
                     },
                 )}
                 title={translate('safari.protection.block.widgets')}
-                value={safariProtection.blockWidgets}
+                value={filters.blockWidgets}
             />
             <SettingsItemSwitch
                 description={translate('safari.protection.block.annoyance.desc')}
@@ -111,11 +111,11 @@ function AnnoyanceSectionComponent({ setShowConsent }: AnnoyanceSectionProps) {
                     [filtersIndex.otherAnnoyanceFilterId],
                     async (e) => {
                         telemetry.trackEvent(SettingsEvent.AnnoyancesClick);
-                        return safariProtection.updateBlockOther(e);
+                        return filters.updateBlockOther(e);
                     },
                 )}
                 title={translate('safari.protection.block.annoyance')}
-                value={safariProtection.blockOtherAnnoyance}
+                value={filters.blockOtherAnnoyance}
             />
         </div>
     );

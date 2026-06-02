@@ -1,12 +1,12 @@
 /* This code was generated automatically by proto-parser tool version 1 */
 
 import { PlatformRequest } from '@adg/sciter-utils-kit';
-import { EmptyValue as ReturnValue, StringValue as RequestMessage } from '../../types'
+import { EmptyValue as ReturnValue, UserConsent as RequestMessage } from '../../types'
 
 /**
- * Request open settings page
+ * Update consent agreement
  */
-export class RequestOpenSettingsPageRequest extends PlatformRequest<ReturnValue, RequestMessage> {
+export class UpdateConsentRequest extends PlatformRequest<ReturnValue, RequestMessage> {
     /**
      * Constructs a new request instance
      * @param requestMessage The request message or its constructor parameters
@@ -22,7 +22,7 @@ export class RequestOpenSettingsPageRequest extends PlatformRequest<ReturnValue,
      * Fully qualified method name to be called on the backend
      * @returns The fully qualified method name
      */
-    public get FQN() { return 'SettingsService.RequestOpenSettingsPage'; }
+    public get FQN() { return 'CommonService.UpdateConsent'; }
 
     /**
      * Processes the response bytes received from the backend

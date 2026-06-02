@@ -1,12 +1,12 @@
 /* This code was generated automatically by proto-parser tool version 1 */
 
 import { PlatformRequest } from '@adg/sciter-utils-kit';
-import { SafariExtensions as ReturnValue, EmptyValue as RequestMessage, EmptyValue as EmptyMessageImpl } from '../../types'
+import { EmptyValue as ReturnValue, EmptyValue as RequestMessage, EmptyValue as EmptyMessageImpl } from '../../types'
 
 /**
- * Get Safari extension status
+ * Fires event for checking application version
  */
-export class GetSafariExtensionsRequest extends PlatformRequest<ReturnValue, RequestMessage> {
+export class CheckApplicationVersionRequest extends PlatformRequest<ReturnValue, RequestMessage> {
     /**
      * Constructs a new request instance
      */
@@ -19,7 +19,7 @@ export class GetSafariExtensionsRequest extends PlatformRequest<ReturnValue, Req
      * Fully qualified method name to be called on the backend
      * @returns The fully qualified method name
      */
-    public get FQN() { return 'SettingsService.GetSafariExtensions'; }
+    public get FQN() { return 'CommonService.CheckApplicationVersion'; }
 
     /**
      * Processes the response bytes received from the backend

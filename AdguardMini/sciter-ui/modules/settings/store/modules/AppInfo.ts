@@ -5,7 +5,8 @@
 import { makeAutoObservable } from 'mobx';
 
 import { GetAboutRequest } from 'Apis/requests/AppInfoService';
-import { CheckApplicationVersionRequest, RequestApplicationUpdateRequest } from 'Apis/requests/SettingsService';
+import { CheckApplicationVersionRequest } from 'Apis/requests/CommonService';
+import { RequestApplicationUpdateRequest } from 'Apis/requests/SettingsService';
 import { AppInfo as AppInfoEnt } from 'Apis/types';
 
 import type { SettingsStore } from 'SettingsStore';
