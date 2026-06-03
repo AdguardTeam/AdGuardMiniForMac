@@ -4,9 +4,14 @@
 
 import { makeAutoObservable } from 'mobx';
 
-import { NotificationPropsHolder } from 'SettingsLib/utils/NotificationPropsHolder';
+import { NotificationPropsHolder } from '../utils/NotificationPropsHolder';
 
 import type { ComponentChild } from 'preact';
+
+declare global {
+    /** Sciter runtime UUID generation function, set by sciterBootstrap.ts */
+    function GenerateUuid(): string;
+}
 
 /**
  * Autoclosing timer for notifications
@@ -14,36 +19,28 @@ import type { ComponentChild } from 'preact';
 const DEFAULT_NOTIFY_LIFETIME = 10000;
 
 export enum NotificationsQueueVariant {
-    buttonAccent = 'buttonAccent',
     textOnly = 'textOnly',
 }
 
 export enum NotificationsQueueType {
     success = 'success',
     warning = 'warning',
-    danger = 'danger',
 }
 
 export enum NotificationsQueueIconType {
     done = 'done',
-    delete = 'trash',
     error = 'error',
-    info = 'knowledgebase',
-    fire = 'fire',
-    unlock = 'unlock',
-    clock = 'clock',
-    dns = 'dns-protection',
-    customRule = 'custom-rule',
     loading = 'loading',
+    info = 'knowledgebase',
 }
 
 /**
  * Notification context - determines notification shape
  */
 export enum NotificationContext {
-    // Notification with call-to-action button
+    /** Notification with call-to-action button */
     ctaButton = 'ctaButton',
-    // Basic info notification
+    /** Basic info notification */
     info = 'info',
 }
 
@@ -56,7 +53,11 @@ export interface NotificationPropertiesBase {
     iconType: NotificationsQueueIconType;
     timeout?: number | false;
     closeable?: boolean;
-    onCrossClick?(): void;
+    /**
+     * Called when the notification close button is clicked
+     * (either manually or via auto-close timeout).
+     */
+    onClose?(): void;
     onMount?(): void;
 }
 
@@ -115,7 +116,7 @@ export class NotificationsQueue {
      * @param closeOthers - close all others notifications before showing
      */
     public notify(props: NotificationPropertiesSelector, closeOthers?: boolean) {
-        const uuid = window.GenerateUuid();
+        const uuid = GenerateUuid();
 
         if (closeOthers) {
             this.queue.clear();
@@ -144,11 +145,17 @@ export class NotificationsQueue {
     }
 
     /**
-     * Closes notify by uuid
+     * Closes notify by uuid and calls its onClose callback.
      *
      * @param uuid
      */
     public closeNotify(uuid: string) {
+        const notification = this.queue.get(uuid);
+        if (notification) {
+            const { onClose } = notification.props;
+            onClose?.();
+        }
+
         this.queue.delete(uuid);
     }
 

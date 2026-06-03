@@ -5,8 +5,6 @@
 import { cx } from 'classix';
 import { observer } from 'mobx-react-lite';
 
-import { useSettingsStore } from 'SettingsLib/hooks';
-import { RouteName } from 'SettingsStore/modules';
 import { Button } from 'UILib';
 
 import { NotificationContentWrapper } from './NotificationContentWrapper';
@@ -14,25 +12,29 @@ import { NotificationIcon } from './NotificationIcon';
 import { NotificationIconWrapper } from './NotificationIconWrapper';
 import s from './NotificationsRenderer.module.pcss';
 
+import type { NotificationsQueue } from 'Common/stores/NotificationsQueue';
+
+type Props = {
+    /** Notification queue store instance */
+    notification: NotificationsQueue;
+    /** Additional CSS class for the container (for module-specific positioning) */
+    className?: string;
+};
+
 /**
  * Notification queue renderer
  */
-function NotificationsRendererComponent() {
-    const {
-        notification,
-        router,
-    } = useSettingsStore();
-
+function NotificationsRendererComponent({ notification, className }: Props) {
     const onClose = (id: string) => {
         notification.closeNotify(id);
     };
 
-    if (notification.queueLength === 0 || router.currentPath === RouteName.migration) {
+    if (notification.queueLength === 0) {
         return null;
     }
 
     return (
-        <div className={s.NotificationsRenderer_notificationsContainer}>
+        <div className={cx(s.NotificationsRenderer_notificationsContainer, className)}>
             {notification.mapQueue((n, uid) => {
                 const { message, closeable = true } = n.props;
 

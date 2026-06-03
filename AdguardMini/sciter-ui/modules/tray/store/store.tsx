@@ -5,6 +5,7 @@
 import { createContext } from 'preact';
 
 import { GetEffectiveThemeRequest } from 'Apis/requests/TrayService';
+import { NotificationsQueue } from 'Common/stores/NotificationsQueue';
 import { Action } from 'Modules/common/utils/EventAction';
 
 import {
@@ -13,7 +14,6 @@ import {
     type TrayTelemetry,
     trayTelemetryFactory,
 } from './modules';
-import { NotificationsQueue } from './modules/NotificationsQueue';
 import { SettingsStore } from './modules/Settings';
 
 import type { EffectiveTheme } from 'Apis/types';

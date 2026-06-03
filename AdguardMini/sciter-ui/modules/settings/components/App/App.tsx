@@ -5,20 +5,20 @@
 import { observer } from 'mobx-react-lite';
 import { createPortal, useEffect } from 'preact/compat';
 
-import { useSettingsStore, useTheme } from 'SettingsLib/hooks';
-import { RouteName } from 'SettingsStore/modules';
+import { NotificationsRenderer } from 'Common/components/NotificationsRenderer';
 import {
     NotificationContext,
     NotificationsQueueIconType,
     NotificationsQueueType,
     NotificationsQueueVariant,
-} from 'SettingsStore/modules/NotificationsQueue';
+} from 'Common/stores/NotificationsQueue';
+import { useSettingsStore, useTheme } from 'SettingsLib/hooks';
+import { RouteName } from 'SettingsStore/modules';
 
 import { ActivationFlowStatusController } from '../ActivationFlow';
 import { EnableExtensionsController } from '../EnableExtensionsController';
 import { ErrorBoundary } from '../ErrorBoundary';
 import { MigrationFiltersConsentController } from '../MigrationFiltersConsentController';
-import { NotificationsRenderer } from '../NotificationsRenderer';
 import { PaywallController } from '../Paywall';
 import { Router } from '../Router';
 import { Tooltip } from '../Tooltip';
@@ -90,7 +90,13 @@ function AppComponent() {
                 <ActivationFlowStatusController />
                 <EnableExtensionsController />
                 <Router />
-                {createPortal(<NotificationsRenderer />, notifyContainer)}
+                {currentPath !== RouteName.migration && createPortal(
+                    <NotificationsRenderer
+                        className="settingsNotificationsContainer"
+                        notification={notification}
+                    />,
+                    notifyContainer,
+                )}
                 {createPortal(<Tooltip />, tooltipContainer)}
             </ErrorBoundary>
         </>

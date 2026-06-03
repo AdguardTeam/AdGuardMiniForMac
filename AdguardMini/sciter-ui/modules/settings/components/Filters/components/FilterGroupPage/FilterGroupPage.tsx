@@ -146,7 +146,7 @@ function FilterGroupPageComponent({
                             undoAction: () => {
                                 undoDelete();
                             },
-                            onNotificationClose: async () => {
+                            onClose: async () => {
                                 const error = await confirmDelete();
                                 if (error) {
                                     notification.notify({

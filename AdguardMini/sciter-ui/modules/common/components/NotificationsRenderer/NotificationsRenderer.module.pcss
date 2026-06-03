@@ -1,4 +1,4 @@
-/* 
+/*
     SPDX-FileCopyrightText: AdGuard Software Limited
     SPDX-License-Identifier: GPL-3.0-or-later
 */
@@ -7,9 +7,6 @@
     &_notificationsContainer {
         position: absolute;
         z-index: var(--zi-tooltip);
-        left: 264px;
-        right: 24px;
-        bottom: 16px;
     }
 
     &_notificationWrap {
@@ -29,18 +26,13 @@
         width: *;
 
         &_close {
-            color: var(--stroke-icons-gray-icons-default)
+            color: var(--stroke-icons-gray-icons-default);
         }
     }
 }
 
 .NotificationIconWrapper {
     &_icon {
-        &__center {
-            margin-top: *;
-            margin-bottom: *;
-        }
-
         &__top {
             margin-top: 0;
             margin-bottom: *;
@@ -53,12 +45,6 @@
         width: *;
         margin-left: 16px;
         margin-right: 24px;
-
-        &__horizontal {
-            flow: horizontal;
-            border-spacing: 24px;
-            vertical-align: middle;
-        }
 
         &__vertical {
             flow: vertical;
@@ -94,16 +80,12 @@
 }
 
 .NotificationIcon {
-    &__green { 
+    &__green {
         color: var(--fills-buttons-main-button-default);
     }
-    
-    &__orange { 
+
+    &__orange {
         color: var(--fills-buttons-danger-button-default);
-    }
-    
-    &__red { 
-        color: var(--text-links-error-link-default);
     }
 
     &__loader {
