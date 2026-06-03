@@ -192,33 +192,24 @@ function HomeComponent() {
                             </Text>
                             {stories.length > 2 && (
                                 <>
-                                    <Button
-                                        className={s.Home_storiesControls_button}
-                                        data-switch-direction="left"
-                                        icon="arrow_left"
-                                        iconClassName={
-                                            !scrollIsAvailable.left
-                                                ? s.Home_storiesControls_button__disabled
-                                                : theme.button.grayIcon
-                                        }
-                                        type="icon"
-                                        onClick={handleMoveStoriesCards}
-                                    />
-                                    <Button
-                                        className={cx(
-                                            s.Home_storiesControls_button,
-                                            s.Home_storiesControls_button__right,
-                                        )}
-                                        data-switch-direction="right"
-                                        icon="arrow_left"
-                                        iconClassName={
-                                            !scrollIsAvailable.right
-                                                ? s.Home_storiesControls_button__disabled
-                                                : theme.button.grayIcon
-                                        }
-                                        type="icon"
-                                        onClick={handleMoveStoriesCards}
-                                    />
+                                    {(['left', 'right'] as const).map((direction) => (
+                                        <Button
+                                            key={direction}
+                                            className={cx(
+                                                s.Home_storiesControls_button,
+                                                direction === 'right' && s.Home_storiesControls_button__right,
+                                            )}
+                                            data-switch-direction={direction}
+                                            icon="arrow_left"
+                                            iconClassName={
+                                                !scrollIsAvailable[direction]
+                                                    ? s.Home_storiesControls_button__disabled
+                                                    : theme.button.grayIcon
+                                            }
+                                            type="icon"
+                                            onClick={handleMoveStoriesCards}
+                                        />
+                                    ))}
                                 </>
                             )}
                         </div>

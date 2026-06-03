@@ -2,6 +2,13 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+// NOTE: Constructor DI waiver — sub-stores receive the root store
+// (e.g., `new Steps(this)`) rather than individual dependency injection.
+// This is an intentional architectural tradeoff documented in AGENTS.md §V.1.
+// The alternative (passing only specific sub-store references per constructor)
+// was evaluated but rejected to avoid cascading parameter changes when the
+// dependency graph evolves.
+
 import { createContext } from 'preact';
 
 import { GetEffectiveThemeRequest } from 'Apis/requests/OnboardingService';

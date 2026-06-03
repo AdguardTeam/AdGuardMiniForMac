@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 
 import { GetSafariExtensionsRequest, UpdateConsentRequest } from 'Apis/requests/CommonService';
 import { GetFiltersIndexRequest, GetFiltersMetadataRequest, UpdateFiltersRequest } from 'Apis/requests/FiltersService';
@@ -86,7 +86,9 @@ export class Steps {
      */
     private async getFiltersIndex() {
         const index = await window.API.Execute(new GetFiltersIndexRequest());
-        this.setFiltersIndex(index);
+        runInAction(() => {
+            this.setFiltersIndex(index);
+        });
         this.getFilters();
     }
 
@@ -109,7 +111,9 @@ export class Steps {
      */
     private async getFilters() {
         const index = await window.API.Execute(new GetFiltersMetadataRequest());
-        this.setAnnoyanceFilters(index);
+        runInAction(() => {
+            this.setAnnoyanceFilters(index);
+        });
     }
 
     /**
@@ -157,7 +161,9 @@ export class Steps {
      */
     public async getSafariExtensions() {
         const ext = await window.API.Execute(new GetSafariExtensionsRequest());
-        this.setSafariExtensions(ext);
+        runInAction(() => {
+            this.setSafariExtensions(ext);
+        });
     }
 
     /**
@@ -174,7 +180,9 @@ export class Steps {
      */
     public async getSystemLanguage() {
         const ext = await window.API.Execute(new GetSystemLanguageRequest());
-        this.setSystemLanguage(ext.value);
+        runInAction(() => {
+            this.setSystemLanguage(ext.value);
+        });
     }
 
     /**
@@ -201,7 +209,9 @@ export class Steps {
      */
     public async openSafariSettings() {
         await window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
-        this.setSafariSettingsHasBeenOpened(true);
+        runInAction(() => {
+            this.setSafariSettingsHasBeenOpened(true);
+        });
     }
 
     /**

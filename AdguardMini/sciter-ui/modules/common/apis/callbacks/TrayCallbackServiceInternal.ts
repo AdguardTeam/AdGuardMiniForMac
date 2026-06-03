@@ -3,33 +3,11 @@ import { store } from 'TrayStore';
 import { ITrayCallbackServiceInternal } from './TrayCallbackService';
 import { BoolValue, EmptyValue, FiltersStatus, SafariExtensionUpdate, LicenseOrError, EffectiveThemeValue, StringValue } from '../types'
 import { TrayRoute } from 'TrayStore/modules/TrayRouter';
-import { TrayPage } from 'Modules/tray/store/modules';
 
 /* Service handles settings lists  */
 export class TrayCallbackServiceInternal implements ITrayCallbackServiceInternal {
     async OnTrayWindowVisibilityChange(param: BoolValue): Promise<EmptyValue> {
-        if (param.value) {
-            store.settings.getSettings();
-            store.settings.getStatistics();
-            store.settings.getSafariExtensions();
-            store.telemetry.setPage(TrayPage.TrayMenu);
-            store.telemetry.trackPageView();
-        } else {
-            // When hide tray window, clear all notifications
-            store.notification.clearAll();
-            // On Tray close, if user is not on home page, set it to home, 
-            // because when user will open tray again, he will see the same page as before,
-            //  and it can be confusing if he was not on home page
-            if (store.router.currentPath !== TrayRoute.home) {
-                // Set page to unknown, for correct telemetry track
-                store.telemetry.setPage('unknown');
-                store.router.changePath(TrayRoute.home);
-            }
-        }
-
-        store.settings.getAdvancedBlocking();
-        store.trayWindowVisibilityChanged.invoke(param.value);
-
+        await store.onWindowVisibilityChanged(param.value);
         return new EmptyValue();
     }
     async OnLoginItemStateChange(param: BoolValue): Promise<EmptyValue> {

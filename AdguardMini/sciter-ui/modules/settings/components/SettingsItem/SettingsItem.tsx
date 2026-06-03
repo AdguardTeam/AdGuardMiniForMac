@@ -5,11 +5,10 @@
 import { observer } from 'mobx-react-lite';
 
 import { useSettingsStore } from 'SettingsLib/hooks';
-import { Icon, Switch, Text } from 'UILib';
+import { Icon, Text } from 'UILib';
 
 import s from './SettingsItem.module.pcss';
 
-import type { RouteParamsMap } from 'Modules/common/stores/interfaces/IRouter';
 import type { ComponentChildren } from 'preact';
 import type { RouteName, SettingsEvent } from 'SettingsStore/modules';
 import type { IconType } from 'UILib';
@@ -145,96 +144,4 @@ function SettingsItemComponent({
     );
 }
 
-// TODO: Move to another file
 export const SettingsItem = observer(SettingsItemComponent);
-
-export type SettingsItemSwitchProps = SettingsItemProps & {
-    id?: string;
-    value: boolean;
-    setValue(e: boolean): void;
-    muted?: boolean;
-    disabled?: boolean;
-};
-
-/**
- * SettingsItemSwitch - predefined basic component with switch
- */
-export function SettingsItemSwitch({
-    id,
-    value,
-    setValue,
-    muted,
-    disabled,
-    iconColor,
-    ...rest
-}: SettingsItemSwitchProps) {
-    const isEnabled = value && !muted;
-
-    return (
-        <SettingsItem
-            {...rest}
-            iconColor={iconColor ?? (isEnabled ? 'green' : 'gray')}
-            onContainerClick={() => {
-                if (disabled) {
-                    return;
-                }
-                setValue(!value);
-            }}
-        >
-            <Switch checked={value} disabled={disabled} id={id} muted={muted} onChange={setValue} />
-        </SettingsItem>
-    );
-}
-
-export type SettingsItemLinkProps<T extends Record<string, any> = object> = Omit<SettingsItemProps, 'children' | 'onContainerClick' | 'routeName' | 'trackEventOnRouteChange'> & {
-    externalLink?: string;
-    internalLink?: RouteName;
-    internalLinkParams?: RouteParamsMap<T>;
-    onClick?(): void;
-    disabled?: boolean;
-    linkIcon?: IconType;
-    trackTelemetryEvent?: SettingsEvent;
-};
-
-/**
- * SettingsItemLink - predefined basic component with all container as a link;
- */
-function SettingsItemLinkComponent<T extends Record<string, any>>({
-    externalLink,
-    internalLink,
-    internalLinkParams,
-    onClick,
-    disabled,
-    linkIcon,
-    trackTelemetryEvent,
-    ...rest
-}: SettingsItemLinkProps<T>) {
-    const { router, telemetry } = useSettingsStore();
-    const handleClick = () => {
-        if (onClick) {
-            onClick();
-            return;
-        }
-        if (disabled) {
-            return;
-        }
-
-        if (trackTelemetryEvent) {
-            telemetry.trackEvent(trackTelemetryEvent);
-        }
-
-        if (externalLink) {
-            window.OpenLinkInBrowser(externalLink);
-        } else if (internalLink) {
-            // if stays for checking that route name exist
-            router.changePath(internalLink, internalLinkParams);
-        }
-    };
-    return (
-        <SettingsItem {...rest} onContainerClick={handleClick}>
-            <Icon className={s.SettingsItemLink_arrow} icon={linkIcon ?? 'arrow_left'} />
-        </SettingsItem>
-    );
-}
-
-export const SettingsItemLink = observer(SettingsItemLinkComponent);
