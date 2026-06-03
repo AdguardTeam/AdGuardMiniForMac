@@ -2,17 +2,15 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { clamp } from '@adg/sciter-utils-kit';
 import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
+import { useCallback, useEffect, useState } from 'preact/hooks';
 import { Fragment } from 'preact/jsx-runtime';
 
 import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
 import theme from 'Theme';
-import { useTheme, useTrayStore } from 'TrayLib/hooks';
+import { useTrayStore } from 'TrayLib/hooks';
 import { TrayEvent, TrayRoute } from 'TrayStore/modules';
 import { Loader, Logo, Button, Text } from 'UILib';
-import { isDarkColorTheme } from 'Utils/colorThemes';
 
 import { StoryNavigation } from '../../modules/stories/classes';
 import { StoriesLayer, StoryCard } from '../../modules/stories/components';
@@ -22,10 +20,10 @@ import { resolveStoryEntryFrame } from '../../modules/stories/utils/navigationBo
 
 import { ProtectionStatus } from './components/ProtectionStatus';
 import s from './Home.module.pcss';
+import { useExtensionPolling } from './hooks/useExtensionPolling';
 import { useStoriesNavigation } from './hooks/useStoriesNavigation';
-
-const STORIES_CONTAINER_WIDTH = 344;
-const STORY_SWITCH_INTERACTABLE_AREA_WIDTH = 156;
+import { useStoryCarouselScroll } from './hooks/useStoryCarouselScroll';
+import { useThemeWithRAF } from './hooks/useThemeWithRAF';
 
 /**
  * Home screen of tray
@@ -48,66 +46,18 @@ function HomeComponent() {
     } = useStoriesNavigation(stories);
 
     const [isLoading, setIsLoading] = useState(false);
-    const [isDarkTheme, setIsDarkTheme] = useState(false);
 
     useEffect(() => {
         setIsLoading(settings.getSafariExtensionsLoading());
     }, [settings, settings.safariExtensionsStore.safariExtensions]);
 
     // Poll extensions while loading
-    useEffect(() => {
-        if (!isLoading) {
-            return;
-        }
-        let rafId: number;
-        let lastCallTime = Date.now();
-        /**
-         *
-         */
-        function loop() {
-            if (!isLoading) {
-                return;
-            }
-            if (Date.now() - lastCallTime >= 1000) {
-                settings.getSafariExtensions();
-                lastCallTime = Date.now();
-            }
-            rafId = requestAnimationFrame(loop);
-        }
-        rafId = requestAnimationFrame(loop);
-        return () => cancelAnimationFrame(rafId);
-    }, [isLoading, settings]);
+    useExtensionPolling(isLoading, () => settings.getSafariExtensions());
 
     // Scroll management for stories carousel
-    const ref = useRef<HTMLDivElement>(null);
-    const [scrollIsAvailable, setScrollIsAvailable] = useState({ left: false, right: stories.length > 2 });
-
-    const handleMoveStoriesCards = useCallback((e?: MouseEvent) => {
-        const direction = (e?.target as HTMLButtonElement)?.getAttribute('data-switch-direction');
-        if (!ref.current || !direction) {
-            return;
-        }
-        const scrollDelta = direction === 'left'
-            ? -STORY_SWITCH_INTERACTABLE_AREA_WIDTH
-            : STORY_SWITCH_INTERACTABLE_AREA_WIDTH;
-        const position = clamp(
-            ref.current.scrollLeft + scrollDelta,
-            0, ref.current.scrollWidth - STORIES_CONTAINER_WIDTH,
-        );
-        const newLeft = position > 0;
-        const newRight = position < ref.current.scrollWidth - STORIES_CONTAINER_WIDTH;
-        setScrollIsAvailable({ left: newLeft, right: newRight });
-        ref.current.scrollTo({ left: position, behavior: 'smooth' });
-    }, []);
-
-    const handleStoriesCardsScroll = useCallback((e: UIEvent) => {
-        const target = e.target as HTMLDivElement;
-        const maxScroll = target.scrollWidth - STORIES_CONTAINER_WIDTH;
-        setScrollIsAvailable({
-            left: target.scrollLeft > 0,
-            right: target.scrollLeft < maxScroll,
-        });
-    }, []);
+    const {
+        ref, scrollIsAvailable, handleMoveStoriesCards, handleStoriesCardsScroll,
+    } = useStoryCarouselScroll(stories.length);
 
     const openSettingsWindow = useCallback(() => {
         window.API.Execute(new OpenSettingsWindowRequest());
@@ -128,16 +78,7 @@ function HomeComponent() {
     }, [closeStories, trayWindowVisibilityChanged]);
 
     // Theme handling with RAF workaround for sciter render bug
-    const rafRef = useRef<number | null>(null);
-    useTheme((th) => {
-        if (rafRef.current != null) {
-            cancelAnimationFrame(rafRef.current);
-        }
-        rafRef.current = requestAnimationFrame(() => {
-            document.documentElement.setAttribute('theme', th);
-        });
-        setIsDarkTheme(isDarkColorTheme(th));
-    });
+    const isDarkTheme = useThemeWithRAF();
 
     if (!traySettings) {
         return <Loader className={s.Home_loader} large />;

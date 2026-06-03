@@ -24,6 +24,35 @@ import s from './UserRules.module.pcss';
 const PAGE_SIZE = 100;
 
 /**
+ * Restores scroll position after navigating back from the rule editor.
+ */
+const useScrollRestoration = (
+    contentRef: { current: HTMLDivElement | null },
+    savedScrollTop: number | undefined,
+    resetScrollTop: () => void,
+    isRuleEditorOpened: boolean,
+    rulesLength: number,
+    setIsScrolling: (v: boolean) => void,
+) => {
+    useEffect(() => {
+        if (!savedScrollTop || isRuleEditorOpened || rulesLength === 0) {
+            return;
+        }
+        const content = contentRef.current;
+        if (!content) {
+            return;
+        }
+        requestAnimationFrame(() => {
+            const maxScrollTop = Math.max(0, content.scrollHeight - content.clientHeight);
+            content.scrollTop = Math.min(Math.max(savedScrollTop, 0), maxScrollTop);
+            resetScrollTop();
+            setIsScrolling(true);
+        });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [savedScrollTop, isRuleEditorOpened, rulesLength]);
+};
+
+/**
  * User rules page in settings module
  */
 function UserRulesComponent() {
@@ -75,21 +104,14 @@ function UserRulesComponent() {
     const showPagination = Math.ceil(foundItems.length / PAGE_SIZE) > 1;
 
     // Scroll position restoration
-    useEffect(() => {
-        if (!ui.userRulesScrollTop || isRuleEditorWindowOpened || rulesToRender.length === 0) {
-            return;
-        }
-        const content = contentRef.current;
-        if (!content) {
-            return;
-        }
-        requestAnimationFrame(() => {
-            const maxScrollTop = Math.max(0, content.scrollHeight - content.clientHeight);
-            content.scrollTop = Math.min(Math.max(ui.userRulesScrollTop, 0), maxScrollTop);
-            ui.resetUserRulesScrollTop();
-            setIsScrolling(true);
-        });
-    }, [ui, ui.userRulesScrollTop, isRuleEditorWindowOpened, rulesToRender.length, setIsScrolling]);
+    useScrollRestoration(
+        contentRef,
+        ui.userRulesScrollTop,
+        () => ui.resetUserRulesScrollTop(),
+        isRuleEditorWindowOpened,
+        rulesToRender.length,
+        setIsScrolling,
+    );
 
     const handleDeleteAll = () => {
         onDeleteAll();

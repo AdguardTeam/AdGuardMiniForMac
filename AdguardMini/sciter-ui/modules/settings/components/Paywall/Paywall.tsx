@@ -5,14 +5,14 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'preact/hooks';
 
-import { getTdsLink, TDS_PARAMS } from 'Common/utils/links';
-import { RouteName, SettingsLayer } from 'Modules/settings/store/modules';
+import { SettingsLayer } from 'Modules/settings/store/modules';
 import { useSettingsStore } from 'SettingsLib/hooks';
-import { Button, ExternalLink, Icon, Text } from 'UILib';
+import { Button, Icon, Text } from 'UILib';
 
 import { AlreadyPurchasedFlowModal } from '../ActivationFlow';
 
 import { AppStoreVersionActions } from './AppStoreVersionActions';
+import { PaywallFooterLegalLinks } from './components/PaywallFooterLegalLinks';
 import { TermsAndConditionsModal } from './Modals';
 import s from './Paywall.module.pcss';
 import { StandaloneVersionActions } from './StandaloneVersionActions';
@@ -59,36 +59,25 @@ function PaywallComponent() {
     const [showAlreadyPurchasedFlowModal, setShowAlreadyPurchasedFlowModal] = useState(false);
     const [showTermsAndConditionsModal, setShowTermsAndConditionsModal] = useState(false);
 
-    const getBackgroundImageClassName = () => {
-        if (isMASReleaseVariant) {
-            return s.Paywall_bg__defaultImage;
-        }
+    // Unified license state avoids duplicate ternary chains
+    const licenseState: 'default' | 'trialExpired' | 'licenseExpired' = isMASReleaseVariant
+        ? 'default'
+        : isTrialExpired
+            ? 'trialExpired'
+            : isLicenseExpired
+                ? 'licenseExpired'
+                : 'default';
 
-        if (isTrialExpired) {
-            return s.Paywall_bg__trialExpiredImage;
-        }
-
-        if (isLicenseExpired) {
-            return s.Paywall_bg__licenseExpiredImage;
-        }
-
-        return s.Paywall_bg__defaultImage;
+    const BG_MAP: Record<typeof licenseState, string> = {
+        default: s.Paywall_bg__defaultImage,
+        trialExpired: s.Paywall_bg__trialExpiredImage,
+        licenseExpired: s.Paywall_bg__licenseExpiredImage,
     };
 
-    const getPaywallTitle = () => {
-        if (isMASReleaseVariant) {
-            return translate('settings.paywall.title');
-        }
-
-        if (isTrialExpired) {
-            return translate('settings.paywall.trial.expired.title');
-        }
-
-        if (isLicenseExpired) {
-            return translate('settings.paywall.license.expired.title');
-        }
-
-        return translate('settings.paywall.title');
+    const TITLE_MAP: Record<typeof licenseState, string> = {
+        default: translate('settings.paywall.title'),
+        trialExpired: translate('settings.paywall.trial.expired.title'),
+        licenseExpired: translate('settings.paywall.license.expired.title'),
     };
 
     const isRightSide = (isTrialExpired || isLicenseExpired) && !isMASReleaseVariant;
@@ -101,7 +90,7 @@ function PaywallComponent() {
 
     return (
         <div className={s.Paywall}>
-            <div className={cx(s.Paywall_bg, getBackgroundImageClassName())}>
+            <div className={cx(s.Paywall_bg, BG_MAP[licenseState])}>
                 <Icon
                     className={s.Paywall_cross}
                     icon="cross"
@@ -140,7 +129,7 @@ function PaywallComponent() {
                         lineHeight="none"
                         type="h4"
                     >
-                        {getPaywallTitle()}
+                        {TITLE_MAP[licenseState]}
                     </Text>
                     <Text
                         className={s.Paywall_desc}
@@ -188,30 +177,7 @@ function PaywallComponent() {
                             </Text>
                         </Button>
                         {isMASReleaseVariant && appStoreSubscriptions && (
-                            <>
-                                <div className={s.Paywall_footer_link}>
-                                    <ExternalLink
-                                        className={cx(s.Paywall_footer_btn, tx.button.textButton)}
-                                        href={getTdsLink(TDS_PARAMS.eula, RouteName.license)}
-                                        textType="t2"
-                                        noLineHeight
-                                        noUnderline
-                                    >
-                                        {translate('paywall.terms.of.use')}
-                                    </ExternalLink>
-                                </div>
-                                <div className={s.Paywall_footer_link}>
-                                    <ExternalLink
-                                        className={cx(s.Paywall_footer_btn, tx.button.textButton)}
-                                        href={getTdsLink(TDS_PARAMS.privacy, RouteName.license)}
-                                        textType="t2"
-                                        noLineHeight
-                                        noUnderline
-                                    >
-                                        {translate('paywall.privacy.policy')}
-                                    </ExternalLink>
-                                </div>
-                            </>
+                            <PaywallFooterLegalLinks />
                         )}
                     </div>
                 </div>

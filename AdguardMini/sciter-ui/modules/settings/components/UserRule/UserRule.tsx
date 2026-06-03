@@ -4,7 +4,7 @@
 
 import { useEnter, focusOnBody } from '@adg/sciter-utils-kit';
 import {
-    RulesBuilder,
+    RulesBuilder, BlockContentTypeModifiers, UnblockContentTypeModifier,
 } from '@adguard/rules-editor';
 import { observer } from 'mobx-react-lite';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
@@ -16,7 +16,7 @@ import { Layout, Text, RuleHighlighter, Textarea, Checkbox, Button, Select, Moda
 
 import { ContextMenu } from '../ContextMenu';
 
-import { BlockRequestForm, UnblockRequestForm, CommentForm, CustomRuleForm, DisableFilteringForm } from './forms';
+import { RequestRuleForm, CommentForm, CustomRuleForm, DisableFilteringForm } from './forms';
 import { convertRule, getLabelByRuleType, getTypeOptions } from './forms/helpers';
 import { saveRule } from './helpers/saveRule';
 import s from './UserRule.module.pcss';
@@ -28,12 +28,11 @@ import type {
     UnblockRequestRule,
     CustomRule,
     NoFilteringRule,
-    Comment } from '@adguard/rules-editor';
+    Comment,
+} from '@adguard/rules-editor';
 import type { IOption } from 'UILib';
 
 type Params = { index?: number };
-
-type RuleTypeParam<T> = { rule: T };
 
 type ErrorFields = 'domain' | 'websites' | 'additionalComment' | 'comment' | 'rule';
 
@@ -152,6 +151,51 @@ function UserRuleComponent() {
         hasRawRule && (rule.rule.buildRule() !== rawRule || (addComment.value && Boolean(addComment.comment.getText())))
     ) || !hasRawRule;
 
+    const FORM_MAP: Record<RuleType, any> = {
+        block: (props: any) => (
+            <RequestRuleForm<BlockRequestRule>
+                contentLabelKey={translate('user.rule.block.content.label')}
+                contentModifierEnum={BlockContentTypeModifiers as unknown as Record<string, BlockContentTypeModifiers>}
+                domainLabelKey={translate('user.rule.block.domain.label')}
+                shouldFocus={!!(props.rule.rule as BlockRequestRule).getDomain()}
+                hasAllOption
+                {...props}
+            />
+        ),
+        unblock: (props: any) => (
+            <RequestRuleForm<UnblockRequestRule>
+                contentLabelKey={translate('user.rule.unblock.content.label')}
+                contentModifierEnum={
+                    UnblockContentTypeModifier as unknown as Record<string, UnblockContentTypeModifier>
+                }
+                domainLabelKey={translate('user.rule.unblock.domain.label')}
+                hasAllOption={false}
+                shouldFocus={!!(props.rule.rule as UnblockRequestRule).getDomain()}
+                {...props}
+            />
+        ),
+        noFiltering: (props: any) => (
+            <DisableFilteringForm
+                shouldFocus={!!(props.rule.rule as NoFilteringRule).getDomain()}
+                {...props}
+            />
+        ),
+        custom: (props: any) => (
+            <CustomRuleForm
+                shouldFocus={!!(props.rule.rule as CustomRule).getRule()}
+                {...props}
+            />
+        ),
+        comment: (props: any) => (
+            <CommentForm
+                shouldFocus={!!(props.rule.rule as Comment).getText()}
+                {...props}
+            />
+        ),
+    };
+
+    const FormComponent = FORM_MAP[type.value];
+
     return (
         <Layout navigation={{ router, onClick: onCancel, title: translate('menu.user.rules') }} type="settingsPage">
             <div ref={divRef} className={cx(s.UserRule_title, theme.layout.content)}>
@@ -168,54 +212,12 @@ function UserRuleComponent() {
                     onChange={onRuleTypeChange}
                 />
             </div>
-            {(type.value === 'block') && (
-                // TODO: AG-40506
-                <BlockRequestForm
+            {FormComponent && (
+                <FormComponent
                     errors={errors}
-                    rule={rule as RuleTypeParam<BlockRequestRule>}
+                    rule={rule}
                     setErrors={setErrors}
                     setRule={setRule}
-                    shouldFocus={!!(rule as RuleTypeParam<BlockRequestRule>).rule.getDomain()}
-                />
-            )}
-            {(type.value === 'unblock') && (
-                // TODO: AG-40506
-                <UnblockRequestForm
-                    errors={errors}
-                    rule={rule as RuleTypeParam<UnblockRequestRule>}
-                    setErrors={setErrors}
-                    setRule={setRule}
-                    shouldFocus={!!(rule as RuleTypeParam<UnblockRequestRule>).rule.getDomain()}
-                />
-            )}
-            {(type.value === 'noFiltering') && (
-                // TODO: AG-40506
-                <DisableFilteringForm
-                    errors={errors}
-                    rule={rule as RuleTypeParam<NoFilteringRule>}
-                    setErrors={setErrors}
-                    setRule={setRule}
-                    shouldFocus={!!(rule as RuleTypeParam<NoFilteringRule>).rule.getDomain()}
-                />
-            )}
-            {(type.value === 'custom') && (
-                // TODO: AG-40506
-                <CustomRuleForm
-                    errors={errors}
-                    rule={rule as RuleTypeParam<CustomRule>}
-                    setErrors={setErrors}
-                    setRule={setRule}
-                    shouldFocus={!!(rule as RuleTypeParam<CustomRule>).rule.getRule()}
-                />
-            )}
-            {(type.value === 'comment') && (
-                // TODO: AG-40506
-                <CommentForm
-                    errors={errors}
-                    rule={rule as RuleTypeParam<Comment>}
-                    setErrors={setErrors}
-                    setRule={setRule}
-                    shouldFocus={!!(rule as RuleTypeParam<Comment>).rule.getText()}
                 />
             )}
             {/* User can add a comment to any new rule type except comment, when creating a new rule */}

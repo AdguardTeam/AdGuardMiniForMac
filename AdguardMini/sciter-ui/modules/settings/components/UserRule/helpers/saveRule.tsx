@@ -8,8 +8,9 @@ import {
 } from '@adguard/rules-editor';
 
 import { UserRule as UserRuleType } from 'Apis/types';
+import { notifyError, notifySuccessWithUndo } from 'Common/utils/notifications';
 import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
-import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType, SettingsEvent } from 'SettingsStore/modules';
+import { SettingsEvent } from 'SettingsStore/modules';
 
 import { validateDomain } from '../forms/helpers';
 import s from '../UserRule.module.pcss';
@@ -45,28 +46,19 @@ export async function saveRule(params: SaveRuleParams): Promise<void> {
     const { rule, setErrors, rules, hasRawRule, rawRule, addComment,
         userRules, notification, telemetry, navigateBack } = params;
 
-    const notifyError = () => {
-        notification.notify({
-            message: getNotificationSomethingWentWrongText(),
-            notificationContext: NotificationContext.info,
-            type: NotificationsQueueType.warning,
-            iconType: NotificationsQueueIconType.error,
-            closeable: true,
-        });
+    const fireNotifyError = () => {
+        notifyError(notification, getNotificationSomethingWentWrongText());
     };
 
-    const notifySuccess = (ruleStr: string, undo: () => void) => {
-        notification.notify({
-            message: translate('notification.user.rules.save', {
+    const fireNotifySuccess = (ruleStr: string, undo: () => void) => {
+        notifySuccessWithUndo(
+            notification,
+            translate('notification.user.rules.save', {
                 rule: ruleStr,
                 b: (text: string) => (<div className={s.UserRule_notificationSuccess}><b>{text}</b></div>),
             }),
-            notificationContext: NotificationContext.info,
-            type: NotificationsQueueType.success,
-            iconType: NotificationsQueueIconType.done,
-            undoAction: undo,
-            closeable: true,
-        });
+            undo,
+        );
     };
 
     // ---- Validation ----
@@ -120,13 +112,7 @@ export async function saveRule(params: SaveRuleParams): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     const ruleStr = rule.rule.buildRule();
     if (rules.find((r) => r.rule === ruleStr)) {
-        notification.notify({
-            message: translate('user.rules.rule.exists'),
-            notificationContext: NotificationContext.info,
-            type: NotificationsQueueType.warning,
-            iconType: NotificationsQueueIconType.error,
-            closeable: true,
-        });
+        notifyError(notification, translate('user.rules.rule.exists'));
         return;
     }
 
@@ -148,9 +134,9 @@ export async function saveRule(params: SaveRuleParams): Promise<void> {
             ) as [{ hasError?: boolean }, UserRuleType[]] | undefined;
             const [err, prevRules] = result ?? [{}, []];
             if (err?.hasError) {
-                notifyError();
+                fireNotifyError();
             } else {
-                notifySuccess(ruleStr, () => userRules.updateRules(prevRules));
+                fireNotifySuccess(ruleStr, () => userRules.updateRules(prevRules));
             }
         } else {
             userRules.updateRules(tempRules);
@@ -164,17 +150,17 @@ export async function saveRule(params: SaveRuleParams): Promise<void> {
     const rulesCopy = [...rules];
     const err = await userRules.addUserRule(ruleStr);
     if (err) {
-        notifyError();
+        fireNotifyError();
         return;
     }
     if (addComment.value && addComment.comment.getText()) {
         const errC = await userRules.addUserRule(addComment.comment.buildRule());
         if (errC) {
-            notifyError();
+            fireNotifyError();
             return;
         }
     }
     telemetry.layersRelay.trackEvent(SettingsEvent.CreateRuleClick);
-    notifySuccess(ruleStr, () => userRules.updateRules(rulesCopy));
+    fireNotifySuccess(ruleStr, () => userRules.updateRules(rulesCopy));
     navigateBack();
 }

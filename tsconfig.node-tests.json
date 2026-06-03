@@ -21,6 +21,7 @@
         "AdguardMini/sciter-ui/tests/**/*.ts",
         "AdguardMini/sciter-ui/modules/common/apis/types/**/*.ts",
         "AdguardMini/sciter-ui/modules/common/stores/SafariExtensionsStore.ts",
-        "AdguardMini/sciter-ui/modules/common/stores/NotificationsQueue.ts"
+        "AdguardMini/sciter-ui/modules/common/stores/NotificationsQueue.ts",
+        "AdguardMini/sciter-ui/modules/settings/components/Filters/helpers.ts"
     ]
 }

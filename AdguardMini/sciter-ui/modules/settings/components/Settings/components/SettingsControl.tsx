@@ -6,10 +6,11 @@ import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'preact/hooks';
 
 import { ShowInFinderRequest } from 'Apis/requests/InternalService';
+import { notifySuccess, notifySuccessCTA, notifyError } from 'Common/utils/notifications';
 import { selectFile } from 'Common/utils/selectFile';
 import { useSettingsStore } from 'SettingsLib/hooks';
 import { getNotificationSettingsImportFailedText, getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
-import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType, NotificationsQueueVariant, SettingsEvent } from 'SettingsStore/modules';
+import { SettingsEvent } from 'SettingsStore/modules';
 import theme from 'Theme';
 import { getFormattedDateTime } from 'Utils/date';
 
@@ -111,13 +112,7 @@ function SettingsControlComponent() {
             });
         } catch (error) {
             log.error(String(error), 'onImportRules');
-            notification.notify({
-                message: getNotificationSettingsImportFailedText(),
-                notificationContext: NotificationContext.info,
-                type: NotificationsQueueType.warning,
-                iconType: NotificationsQueueIconType.error,
-                closeable: true,
-            });
+            notifyError(notification, getNotificationSettingsImportFailedText());
         }
     };
 
@@ -127,37 +122,23 @@ function SettingsControlComponent() {
             settings.updateUserActionLastDirectory(path);
             const error = await settings.exportSettings(path);
             if (error.hasError) {
-                notification.notify({
-                    message: translate('notification.something.went.wrong'),
-                    notificationContext: NotificationContext.info,
-                    type: NotificationsQueueType.warning,
-                    iconType: NotificationsQueueIconType.error,
-                    closeable: true,
-                });
+                notifyError(notification, translate('notification.something.went.wrong'));
             } else {
-                notification.notify({
-                    message: translate('notification.settings.export'),
-                    notificationContext: NotificationContext.ctaButton,
-                    type: NotificationsQueueType.success,
-                    iconType: NotificationsQueueIconType.done,
-                    closeable: true,
-                    onClick: () => { showInFinder(path); },
-                    btnLabel: translate('notification.open.in.finder'),
-                    variant: NotificationsQueueVariant.textOnly,
-                });
+                notifySuccessCTA(
+                    notification,
+                    translate('notification.settings.export'),
+                    { onClick: () => { showInFinder(path); }, btnLabel: translate('notification.open.in.finder') },
+                );
             }
         });
     };
 
     const onReset = () => {
         settings.resetSettings();
-        notification.notify({
-            message: translate('notification.settings.reset'),
-            notificationContext: NotificationContext.info,
-            type: NotificationsQueueType.success,
-            iconType: NotificationsQueueIconType.done,
-            closeable: true,
-        });
+        notifySuccess(
+            notification,
+            translate('notification.settings.reset'),
+        );
         setShowResetModal(false);
         telemetry.trackEvent(SettingsEvent.ResetToDefaultClick);
     };
@@ -166,24 +147,13 @@ function SettingsControlComponent() {
         selectFile(true, '(*.zip)|*.zip', translate('export'), `${window.DocumentsPath}/adguard_mini_${getFormattedDateTime()}`, async (path: string) => {
             const error = await settings.exportLogs(path);
             if (error) {
-                notification.notify({
-                    message: getNotificationSomethingWentWrongText(),
-                    notificationContext: NotificationContext.info,
-                    type: NotificationsQueueType.warning,
-                    iconType: NotificationsQueueIconType.error,
-                    closeable: true,
-                });
+                notifyError(notification, getNotificationSomethingWentWrongText());
             } else {
-                notification.notify({
-                    message: translate('notification.settings.logs'),
-                    notificationContext: NotificationContext.ctaButton,
-                    type: NotificationsQueueType.success,
-                    iconType: NotificationsQueueIconType.done,
-                    closeable: true,
-                    onClick: () => { showInFinder(path); },
-                    btnLabel: translate('notification.open.in.finder'),
-                    variant: NotificationsQueueVariant.textOnly,
-                });
+                notifySuccessCTA(
+                    notification,
+                    translate('notification.settings.logs'),
+                    { onClick: () => { showInFinder(path); }, btnLabel: translate('notification.open.in.finder') },
+                );
             }
         });
     };
