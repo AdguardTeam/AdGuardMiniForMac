@@ -36,7 +36,7 @@ function ComponentFromRoute<Route extends string>(route: Route) {
  * Component for handling Routes. Depending on RouterStore display current page
  */
 function RouterComponent() {
-    const { router, settings: { settings } } = useTrayStore();
+    const { router, traySettings: { settings } } = useTrayStore();
     const page = ComponentFromRoute(router.currentPath);
 
     useTrackTrayPage();

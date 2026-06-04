@@ -36,7 +36,7 @@ export function useOpenUserRulesWindow() {
     const settingsStore = useSettingsStore();
     const {
         userRules,
-        settings: { settings },
+        appSettings: { settings },
         router,
         telemetry,
     } = settingsStore;

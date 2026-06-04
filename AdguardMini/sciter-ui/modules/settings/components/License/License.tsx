@@ -38,7 +38,7 @@ function LicenseComponent() {
                 // Apple trial license is packed with full subscription.
                 || (isTrialActive && !account.isAppStoreSubscription))
             && <PerksOfTheFullVersion withBottomMargin />}
-            {(!license.license?.applicationKeyOwner && !isLicenseExpired) && <UnauthorizedUserNotification />}
+            {(!license?.applicationKeyOwner && !isLicenseExpired) && <UnauthorizedUserNotification />}
             <div className={theme.layout.bottomPadding} />
         </Layout>
     );

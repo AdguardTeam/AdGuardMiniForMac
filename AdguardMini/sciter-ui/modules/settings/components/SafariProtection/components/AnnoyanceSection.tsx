@@ -12,8 +12,6 @@ import { Text } from 'UILib';
 import { SettingsItemSwitch } from '../../SettingsItem';
 import s from '../SafariProtection.module.pcss';
 
-import type { OptionalError } from 'Apis/types';
-
 type AnnoyanceSectionProps = {
     setShowConsent(filterIds: number[]): void;
 };
@@ -22,13 +20,17 @@ type AnnoyanceSectionProps = {
  * Annoyance section for Safari protection
  */
 function AnnoyanceSectionComponent({ setShowConsent }: AnnoyanceSectionProps) {
-    const { filters, telemetry, settings: { settings: { consentFiltersIds } } } = useSettingsStore();
+    const {
+        safariProtection,
+        filtersMeta,
+        telemetry,
+        appSettings: { settings: { consentFiltersIds } },
+    } = useSettingsStore();
     const notifyError = useNotificationSomethingWentWrongText();
-    const { filtersIndex } = filters;
 
     const onToggleBlockSocialButtons = async (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.SocialButtonsClick);
-        const error = await filters.updateBlockSocialButtons(value);
+        const error = await safariProtection.updateBlockSocialButtons(value);
         if (error) {
             notifyError();
         }
@@ -36,7 +38,7 @@ function AnnoyanceSectionComponent({ setShowConsent }: AnnoyanceSectionProps) {
 
     const onUpdateFiltersWithConsent = (
         filterIds: number[],
-        update: (e: boolean) => Promise<OptionalError | undefined>,
+        update: (e: boolean) => Promise<boolean>,
     ) => async (e: boolean) => {
         if (!e) {
             const error = await update(e);
@@ -63,59 +65,59 @@ function AnnoyanceSectionComponent({ setShowConsent }: AnnoyanceSectionProps) {
                 icon="share"
                 setValue={onToggleBlockSocialButtons}
                 title={translate('safari.protection.block.social')}
-                value={filters.blockSocialButtons}
+                value={safariProtection.blockSocialButtons}
             />
             <SettingsItemSwitch
                 description={translate('safari.protection.block.cookie.desc')}
                 icon="cookies"
                 setValue={onUpdateFiltersWithConsent(
-                    [filtersIndex.cookieNoticeFilterId],
+                    [filtersMeta.filtersIndex.cookieNoticeFilterId],
                     async (e) => {
                         telemetry.trackEvent(SettingsEvent.CookieClick);
-                        return filters.updateBlockCookieNotice(e);
+                        return safariProtection.updateBlockCookieNotice(e);
                     },
                 )}
                 title={translate('safari.protection.block.cookie')}
-                value={filters.blockCookieNotice}
+                value={safariProtection.blockCookieNotice}
             />
             <SettingsItemSwitch
                 description={translate('safari.protection.block.popups.desc')}
                 icon="annoyance"
                 setValue={onUpdateFiltersWithConsent(
-                    [filtersIndex.popUpsFilterId],
+                    [filtersMeta.filtersIndex.popUpsFilterId],
                     async (e) => {
                         telemetry.trackEvent(SettingsEvent.PopUpsClick);
-                        return filters.updateBlockPopups(e);
+                        return safariProtection.updateBlockPopups(e);
                     },
                 )}
                 title={translate('safari.protection.block.popups')}
-                value={filters.blockPopups}
+                value={safariProtection.blockPopups}
             />
             <SettingsItemSwitch
                 description={translate('safari.protection.block.widgets.desc')}
                 icon="browser"
                 setValue={onUpdateFiltersWithConsent(
-                    [filtersIndex.widgetsFilterId],
+                    [filtersMeta.filtersIndex.widgetsFilterId],
                     async (e) => {
                         telemetry.trackEvent(SettingsEvent.WidgetsClick);
-                        return filters.updateBlockWidgets(e);
+                        return safariProtection.updateBlockWidgets(e);
                     },
                 )}
                 title={translate('safari.protection.block.widgets')}
-                value={filters.blockWidgets}
+                value={safariProtection.blockWidgets}
             />
             <SettingsItemSwitch
                 description={translate('safari.protection.block.annoyance.desc')}
                 icon="widget"
                 setValue={onUpdateFiltersWithConsent(
-                    [filtersIndex.otherAnnoyanceFilterId],
+                    [filtersMeta.filtersIndex.otherAnnoyanceFilterId],
                     async (e) => {
                         telemetry.trackEvent(SettingsEvent.AnnoyancesClick);
-                        return filters.updateBlockOther(e);
+                        return safariProtection.updateBlockOther(e);
                     },
                 )}
                 title={translate('safari.protection.block.annoyance')}
-                value={filters.blockOtherAnnoyance}
+                value={safariProtection.blockOtherAnnoyance}
             />
         </div>
     );

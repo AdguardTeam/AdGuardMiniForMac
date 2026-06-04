@@ -17,11 +17,11 @@ import { HealthCheckDismissId } from './HealthCheckDismissId';
  */
 function NoUpdatesCardComponent() {
     const {
-        settings,
+        appSettings,
     } = useSettingsStore();
     const {
         dissmissedHealthCheckCards,
-    } = settings;
+    } = appSettings;
 
     return (
         <HealthCheckCard
@@ -38,7 +38,7 @@ function NoUpdatesCardComponent() {
                 </Text>
             )}
             title={translate('safari.protection.health.updates')}
-            onClose={() => settings.updateHealthCheckDismissedCards([
+            onClose={() => appSettings.updateHealthCheckDismissedCards([
                 ...dissmissedHealthCheckCards,
                 HealthCheckDismissId.NoUpdates,
             ])}

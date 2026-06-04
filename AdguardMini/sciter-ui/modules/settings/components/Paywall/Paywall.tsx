@@ -23,7 +23,7 @@ import type { IconType } from 'UILib';
  * Paywall component
  */
 function PaywallComponent() {
-    const { account, settings, telemetry } = useSettingsStore();
+    const { account, appSettings: { isMasReleaseVariant }, telemetry } = useSettingsStore();
 
     const {
         appStoreSubscriptions,
@@ -54,13 +54,11 @@ function PaywallComponent() {
         },
     ];
 
-    const { isMASReleaseVariant } = settings;
-
     const [showAlreadyPurchasedFlowModal, setShowAlreadyPurchasedFlowModal] = useState(false);
     const [showTermsAndConditionsModal, setShowTermsAndConditionsModal] = useState(false);
 
     // Unified license state avoids duplicate ternary chains
-    const licenseState: 'default' | 'trialExpired' | 'licenseExpired' = isMASReleaseVariant
+    const licenseState: 'default' | 'trialExpired' | 'licenseExpired' = isMasReleaseVariant
         ? 'default'
         : isTrialExpired
             ? 'trialExpired'
@@ -80,7 +78,7 @@ function PaywallComponent() {
         licenseExpired: translate('settings.paywall.license.expired.title'),
     };
 
-    const isRightSide = (isTrialExpired || isLicenseExpired) && !isMASReleaseVariant;
+    const isRightSide = (isTrialExpired || isLicenseExpired) && !isMasReleaseVariant;
 
     const offer = appStoreSubscriptions?.result?.promoInfo;
     const showOffer = offer && (
@@ -136,7 +134,7 @@ function PaywallComponent() {
                         lineHeight="none"
                         type="t1"
                     >
-                        {(isTrialExpired || isLicenseExpired) && !isMASReleaseVariant
+                        {(isTrialExpired || isLicenseExpired) && !isMasReleaseVariant
                             ? translate('settings.paywall.expired.desc')
                             : translate('settings.paywall.desc')}
                     </Text>
@@ -161,7 +159,7 @@ function PaywallComponent() {
                     </div>
 
                     <div className={s.Paywall_actions}>
-                        {isMASReleaseVariant
+                        {isMasReleaseVariant
                             ? <AppStoreVersionActions />
                             : <StandaloneVersionActions />}
                     </div>
@@ -176,7 +174,7 @@ function PaywallComponent() {
                                 {translate('settings.activation.flow.already.purchased')}
                             </Text>
                         </Button>
-                        {isMASReleaseVariant && appStoreSubscriptions && (
+                        {isMasReleaseVariant && appStoreSubscriptions && (
                             <PaywallFooterLegalLinks />
                         )}
                     </div>

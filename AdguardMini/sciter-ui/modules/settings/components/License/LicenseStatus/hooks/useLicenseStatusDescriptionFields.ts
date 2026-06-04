@@ -18,9 +18,7 @@ type UseLicenseStatusDescriptionFieldsReturnType = {
  * Custom hook that determines which fields to show for the LicenseStatusDescription component
  */
 export const useLicenseStatusDescriptionFields = (): UseLicenseStatusDescriptionFieldsReturnType | undefined => {
-    const {
-        account,
-    } = useSettingsStore();
+    const { account } = useSettingsStore();
 
     const {
         isAppStoreSubscription,
@@ -34,7 +32,7 @@ export const useLicenseStatusDescriptionFields = (): UseLicenseStatusDescription
         license,
     } = account;
 
-    if (!account.hasLicense || !license.license) {
+    if (!account.hasLicense || !license) {
         return undefined;
     }
 
@@ -44,9 +42,9 @@ export const useLicenseStatusDescriptionFields = (): UseLicenseStatusDescription
         totalDevices,
         licenseLifetime,
         currentDevices,
-    } = license.license;
+    } = license;
 
-    if (isAppStoreSubscription && !license.license?.applicationKeyOwner) {
+    if (isAppStoreSubscription && !license?.applicationKeyOwner) {
         return {
             showExpired: isLicenseExpired,
         };

@@ -25,10 +25,10 @@ const THEMES = [
  * Page for choose Theme
  */
 function ThemeComponent() {
-    const { router, settings: { settings: { theme: currentTheme } }, settings } = useSettingsStore();
+    const { router, appSettings: { settings: { theme: currentTheme } }, appSettings } = useSettingsStore();
 
     const onThemeChanged = (e: ThemeEnum) => () => {
-        settings.updateTheme(e);
+        appSettings.updateTheme(e);
     };
 
     const themes = THEMES.reduce<IOption<ThemeEnum>[]>((prev, v) => {

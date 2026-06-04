@@ -43,29 +43,31 @@ const STORIES_TDS_LINK_FROM = 'storyConstructor';
  * Implements logic for sorting and filtering stories
  */
 export function useStoriesConfig(): StoryInfo[] {
-    const { settings } = useTrayStore();
+    const { traySettings, trayLicense, safariExtensions, trayStatistics } = useTrayStore();
 
     const requiredStories: StoryInfo[] = [];
     const stories: StoryInfo[] = [];
 
     const {
-        settings: traySettings,
+        settings,
         loginItemEnabled,
+        advancedBlocking,
+        storyCompleted,
+    } = traySettings;
+
+    const { statistics } = trayStatistics;
+
+    const {
         isLicenseOrTrialActive,
         isLicenseBind,
         isLicenseActive,
         trialAvailableDays,
-        storyCompleted,
-        advancedBlocking,
-        safariExtensionsStore,
-        license,
-        statistics,
-    } = settings;
+    } = trayLicense;
 
-    const { allowTelemetry, language: currentLanguage } = traySettings || {};
+    const { allowTelemetry, language: currentLanguage } = settings || {};
     const language = currentLanguage || 'en';
 
-    if (!safariExtensionsStore.allExtensionsEnabled) {
+    if (!safariExtensions.allExtensionsEnabled) {
         requiredStories.push({
             style: 'warning',
             icon: 'info',
@@ -205,7 +207,7 @@ export function useStoriesConfig(): StoryInfo[] {
                     image: 'advanced',
                     actionButton: {
                         title: trialAvailableDays > 0 ? translate.plural('tray.story.advanced.features.action.trial', trialAvailableDays, provideTrialDaysParam(trialAvailableDays)) : translate('tray.story.advanced.features.action'),
-                        action: settings.requestOpenPaywallScreen,
+                        action: traySettings.requestOpenPaywallScreen,
                     },
                     frameId: 'advanced1',
                 }],
@@ -250,7 +252,7 @@ export function useStoriesConfig(): StoryInfo[] {
                 id: 'telemetry',
                 totalFrames: 3,
                 onBeforeClose: () => {
-                    settings.getSettings();
+                    traySettings.getSettings();
                 },
                 frames: [{
                     frameId: 'telemetry1',
@@ -403,8 +405,8 @@ export function useStoriesConfig(): StoryInfo[] {
             window.API.Execute(new RequestOpenSettingsPageRequest({
                 value: RouteNameSettings.license,
             }));
-            if (license.license?.appStoreSubscription || (settings.isMASReleaseVariant)) {
-                settings.requestOpenPaywallScreen();
+            if (trayLicense.licenseStore.isAppStoreSubscription || (traySettings.isMASReleaseVariant)) {
+                traySettings.requestOpenPaywallScreen();
             } else {
                 window.API.Execute(new RequestSubscribeRequest(
                     { subscriptionType: Subscription.standalone },

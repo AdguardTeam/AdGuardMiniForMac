@@ -4,35 +4,38 @@
 
 import { useEnter, focusOnBody } from '@adg/sciter-utils-kit';
 import {
-    RulesBuilder, BlockContentTypeModifiers, UnblockContentTypeModifier,
-} from '@adguard/rules-editor';
-import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
-
-import { useSettingsStore } from 'SettingsLib/hooks';
-import { RouteName } from 'SettingsStore/modules';
-import theme from 'Theme';
-import { Layout, Text, RuleHighlighter, Textarea, Checkbox, Button, Select, Modal } from 'UILib';
-
-import { ContextMenu } from '../ContextMenu';
-
-import { RequestRuleForm, CommentForm, CustomRuleForm, DisableFilteringForm } from './forms';
-import { convertRule, getLabelByRuleType, getTypeOptions } from './forms/helpers';
-import { saveRule } from './helpers/saveRule';
-import s from './UserRule.module.pcss';
-
-import type { RuleTypeOptions } from './forms/helpers';
-import type {
-    RuleType,
     BlockRequestRule,
     UnblockRequestRule,
     CustomRule,
     NoFilteringRule,
     Comment,
+    DomainModifiers,
+    RulesBuilder,
 } from '@adguard/rules-editor';
+import { observer } from 'mobx-react-lite';
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
+
+import { UserRule as UserRuleType } from 'Apis/types';
+import { useSettingsStore } from 'SettingsLib/hooks';
+import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
+import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType, RouteName, SettingsEvent } from 'SettingsStore/modules';
+import theme from 'Theme';
+import { Layout, Text, RuleHighlighter, Textarea, Checkbox, Button, Select, Modal } from 'UILib';
+
+import { ContextMenu } from '../ContextMenu';
+
+import { BlockRequestForm, UnblockRequestForm, CommentForm, CustomRuleForm, DisableFilteringForm } from './forms';
+import { convertRule, getLabelByRuleType, getTypeOptions, validateDomain } from './forms/helpers';
+import s from './UserRule.module.pcss';
+
+import type { RuleTypeOptions } from './forms/helpers';
+import type {
+    RuleType } from '@adguard/rules-editor';
 import type { IOption } from 'UILib';
 
 type Params = { index?: number };
+
+type RuleTypeParam<T> = { rule: T };
 
 type ErrorFields = 'domain' | 'websites' | 'additionalComment' | 'comment' | 'rule';
 
@@ -89,6 +92,30 @@ function UserRuleComponent() {
         setRuleRaw(data);
     };
 
+    const notifyError = () => {
+        notification.notify({
+            message: getNotificationSomethingWentWrongText(),
+            notificationContext: NotificationContext.info,
+            type: NotificationsQueueType.warning,
+            iconType: NotificationsQueueIconType.error,
+            closeable: true,
+        });
+    };
+
+    const notifySuccess = (r: string, undo: () => void) => {
+        notification.notify({
+            message: translate('notification.user.rules.save', {
+                rule: r,
+                b: (text: string) => (<div className={s.UserRule_notificationSuccess}><b>{text}</b></div>),
+            }),
+            notificationContext: NotificationContext.info,
+            type: NotificationsQueueType.success,
+            iconType: NotificationsQueueIconType.done,
+            undoAction: undo,
+            closeable: true,
+        });
+    };
+
     const onRuleTypeChange = (e: RuleType) => {
         const currentType = type.value;
         const { rule: currentRule } = rule;
@@ -119,16 +146,126 @@ function UserRuleComponent() {
         if (safeRef.current) {
             return;
         }
+
         safeRef.current = true;
 
-        await saveRule({
-            rule, setErrors, rules, hasRawRule, rawRule, addComment,
-            userRules: userRules,
-            notification: notification,
-            telemetry: telemetry,
-            navigateBack: () => router.changePath(RouteName.user_rules),
+        if (rule.rule instanceof CustomRule && !rule.rule.getRule()) {
+            setErrors({ ...errors, rule: translate('user.rules.fill.field') });
+            safeRef.current = false;
+            return;
+        }
+
+        if (rule.rule instanceof BlockRequestRule || rule.rule instanceof UnblockRequestRule) {
+            const showDomainsField = rule.rule.getDomainModifiers() === DomainModifiers.onlyListed
+                || rule.rule.getDomainModifiers() === DomainModifiers.allExceptListed;
+            let hasError = false;
+
+            if (!rule.rule.getDomain()) {
+                setErrors({ ...errors, domain: translate('user.rules.fill.field') });
+                hasError = true;
+            }
+            if (rule.rule.getDomain() && !validateDomain(rule.rule.getDomain())) {
+                setErrors({ ...errors, domain: translate('user.rules.domain.invalid') });
+                hasError = true;
+            }
+
+            if (showDomainsField && !rule.rule.getDomainModifiersDomains().join()) {
+                setErrors({ ...errors, websites: translate('user.rules.fill.field') });
+                hasError = true;
+            }
+            if (showDomainsField && rule.rule.getDomainModifiersDomains().join()) {
+                const isValid = rule.rule.getDomainModifiersDomains().every((d) => validateDomain(d));
+                if (!isValid) {
+                    setErrors({ ...errors, websites: translate('user.rules.domain.invalid') });
+                    hasError = true;
+                }
+            }
+            if (hasError) {
+                safeRef.current = false;
+                return;
+            }
+        }
+
+        if (rule.rule instanceof NoFilteringRule) {
+            if (!rule.rule.getDomain()) {
+                setErrors({ ...errors, domain: translate('user.rules.fill.field') });
+                safeRef.current = false;
+                return;
+            }
+            if (rule.rule.getDomain() && !validateDomain(rule.rule.getDomain())) {
+                setErrors({ ...errors, domain: translate('user.rules.domain.invalid') });
+                safeRef.current = false;
+                return;
+            }
+        }
+
+        if (rule.rule instanceof Comment) {
+            if (!rule.rule.getText()) {
+                setErrors({ ...errors, comment: translate('user.rules.fill.field') });
+                safeRef.current = false;
+                return;
+            }
+        }
+
+        if (rules.find((r) => (r.rule === rule.rule.buildRule()))) {
+            notification.notify({
+                message: translate('user.rules.rule.exists'),
+                notificationContext: NotificationContext.info,
+                type: NotificationsQueueType.warning,
+                iconType: NotificationsQueueIconType.error,
+                closeable: true,
+            });
+            safeRef.current = false;
+            return;
+        }
+
+        if (hasRawRule) {
+            let tempRules = [...rules];
+            const index = tempRules.findIndex((r) => r.rule === rawRule);
+            tempRules[index].rule = rule.rule.buildRule();
+            if (addComment.value && addComment.comment.getText()) {
+                tempRules = [
+                    ...rules.slice(0, index),
+                    new UserRuleType({ rule: addComment.comment.buildRule(), enabled: true }),
+                    ...rules.slice(index),
+                ];
+                const [err, prevRules] = await userRules.updateRules(tempRules);
+                if (err?.hasError) {
+                    notifyError();
+                } else {
+                    notifySuccess(rule.rule.buildRule(), () => {
+                        userRules.updateRules(prevRules);
+                    });
+                }
+            } else {
+                userRules.updateRules(tempRules);
+            }
+            safeRef.current = false;
+            router.changePath(RouteName.user_rules);
+            return;
+        }
+
+        const rulesCopy = [...rules];
+        const err = await userRules.addUserRule(rule.rule.buildRule());
+        if (err) {
+            notifyError();
+            safeRef.current = false;
+            return;
+        }
+        if (addComment.value && addComment.comment.getText()) {
+            const errComment = await userRules.addUserRule(addComment.comment.buildRule());
+            if (errComment) {
+                notifyError();
+                safeRef.current = false;
+                return;
+            }
+        }
+        telemetry.layersRelay.trackEvent(SettingsEvent.CreateRuleClick);
+        notifySuccess(rule.rule.buildRule(), () => {
+            userRules.updateRules(rulesCopy);
         });
         safeRef.current = false;
+        router.changePath(RouteName.user_rules);
     };
 
     useEnter(onSave);
@@ -151,51 +288,6 @@ function UserRuleComponent() {
         hasRawRule && (rule.rule.buildRule() !== rawRule || (addComment.value && Boolean(addComment.comment.getText())))
     ) || !hasRawRule;
 
-    const FORM_MAP: Record<RuleType, any> = {
-        block: (props: any) => (
-            <RequestRuleForm<BlockRequestRule>
-                contentLabelKey={translate('user.rule.block.content.label')}
-                contentModifierEnum={BlockContentTypeModifiers as unknown as Record<string, BlockContentTypeModifiers>}
-                domainLabelKey={translate('user.rule.block.domain.label')}
-                shouldFocus={!!(props.rule.rule as BlockRequestRule).getDomain()}
-                hasAllOption
-                {...props}
-            />
-        ),
-        unblock: (props: any) => (
-            <RequestRuleForm<UnblockRequestRule>
-                contentLabelKey={translate('user.rule.unblock.content.label')}
-                contentModifierEnum={
-                    UnblockContentTypeModifier as unknown as Record<string, UnblockContentTypeModifier>
-                }
-                domainLabelKey={translate('user.rule.unblock.domain.label')}
-                hasAllOption={false}
-                shouldFocus={!!(props.rule.rule as UnblockRequestRule).getDomain()}
-                {...props}
-            />
-        ),
-        noFiltering: (props: any) => (
-            <DisableFilteringForm
-                shouldFocus={!!(props.rule.rule as NoFilteringRule).getDomain()}
-                {...props}
-            />
-        ),
-        custom: (props: any) => (
-            <CustomRuleForm
-                shouldFocus={!!(props.rule.rule as CustomRule).getRule()}
-                {...props}
-            />
-        ),
-        comment: (props: any) => (
-            <CommentForm
-                shouldFocus={!!(props.rule.rule as Comment).getText()}
-                {...props}
-            />
-        ),
-    };
-
-    const FormComponent = FORM_MAP[type.value];
-
     return (
         <Layout navigation={{ router, onClick: onCancel, title: translate('menu.user.rules') }} type="settingsPage">
             <div ref={divRef} className={cx(s.UserRule_title, theme.layout.content)}>
@@ -212,12 +304,54 @@ function UserRuleComponent() {
                     onChange={onRuleTypeChange}
                 />
             </div>
-            {FormComponent && (
-                <FormComponent
+            {(type.value === 'block') && (
+                // TODO: AG-40506
+                <BlockRequestForm
                     errors={errors}
-                    rule={rule}
+                    rule={rule as RuleTypeParam<BlockRequestRule>}
                     setErrors={setErrors}
                     setRule={setRule}
+                    shouldFocus={!!(rule as RuleTypeParam<BlockRequestRule>).rule.getDomain()}
+                />
+            )}
+            {(type.value === 'unblock') && (
+                // TODO: AG-40506
+                <UnblockRequestForm
+                    errors={errors}
+                    rule={rule as RuleTypeParam<UnblockRequestRule>}
+                    setErrors={setErrors}
+                    setRule={setRule}
+                    shouldFocus={!!(rule as RuleTypeParam<UnblockRequestRule>).rule.getDomain()}
+                />
+            )}
+            {(type.value === 'noFiltering') && (
+                // TODO: AG-40506
+                <DisableFilteringForm
+                    errors={errors}
+                    rule={rule as RuleTypeParam<NoFilteringRule>}
+                    setErrors={setErrors}
+                    setRule={setRule}
+                    shouldFocus={!!(rule as RuleTypeParam<NoFilteringRule>).rule.getDomain()}
+                />
+            )}
+            {(type.value === 'custom') && (
+                // TODO: AG-40506
+                <CustomRuleForm
+                    errors={errors}
+                    rule={rule as RuleTypeParam<CustomRule>}
+                    setErrors={setErrors}
+                    setRule={setRule}
+                    shouldFocus={!!(rule as RuleTypeParam<CustomRule>).rule.getRule()}
+                />
+            )}
+            {(type.value === 'comment') && (
+                // TODO: AG-40506
+                <CommentForm
+                    errors={errors}
+                    rule={rule as RuleTypeParam<Comment>}
+                    setErrors={setErrors}
+                    setRule={setRule}
+                    shouldFocus={!!(rule as RuleTypeParam<Comment>).rule.getText()}
                 />
             )}
             {/* User can add a comment to any new rule type except comment, when creating a new rule */}

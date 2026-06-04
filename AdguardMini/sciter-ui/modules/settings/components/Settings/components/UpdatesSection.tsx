@@ -18,8 +18,8 @@ import s from '../Settings.module.pcss';
  */
 export function UpdatesSectionComponent() {
     const {
-        settings,
-        settings: { settings: {
+        appSettings: settings,
+        appSettings: { settings: {
             autoFiltersUpdate,
             realTimeFiltersUpdate,
         } },

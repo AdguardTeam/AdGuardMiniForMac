@@ -14,15 +14,15 @@ import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType
  * Shows a notification if the user has disabled one or more extensions
  */
 export function useShowEnableExtensionsNotification() {
-    const { router: { currentPath }, notification, settings, telemetry } = useSettingsStore();
+    const { router: { currentPath }, notification, safariExtensions, telemetry } = useSettingsStore();
     const notificationUid = useRef<string>();
 
     const {
         allEnabled: allExtensionsEnabled,
         allDisabled: allExtensionsDisabled,
     } = getCountableEntityStatuses(
-        settings.safariExtensionsStore.enabledSafariExtensionsCount,
-        settings.safariExtensionsStore.safariExtensionsCount,
+        safariExtensions.enabledSafariExtensionsCount,
+        safariExtensions.safariExtensionsCount,
     );
 
     const openSafariPref = useCallback(() => {

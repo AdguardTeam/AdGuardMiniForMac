@@ -26,22 +26,23 @@ interface ProtectionStatusProps {
  * Protection status section: shows enabled/disabled text and the main toggle switch.
  */
 export function ProtectionStatus({ isLoading }: ProtectionStatusProps) {
-    const { settings, telemetry } = useTrayStore();
-    const { settings: traySettings, safariExtensionsStore } = settings;
+    const { traySettings, safariExtensions, telemetry } = useTrayStore();
 
-    if (!traySettings) {
+    const { settings } = traySettings;
+
+    if (!settings) {
         return null;
     }
 
-    const { enabled } = traySettings;
+    const { enabled } = settings;
 
     const {
         allDisabled: allExtensionsDisabled,
         someDisabled: someExtensionsDisabled,
         allEnabled: allExtensionsEnabled,
     } = getCountableEntityStatuses(
-        safariExtensionsStore.enabledSafariExtensionsCount,
-        safariExtensionsStore.safariExtensionsCount,
+        safariExtensions.enabledSafariExtensionsCount,
+        safariExtensions.safariExtensionsCount,
     );
 
     const getDisabledExtensionsStatus = () => {
@@ -66,7 +67,7 @@ export function ProtectionStatus({ isLoading }: ProtectionStatusProps) {
     };
 
     const handleToggleSwitch = (checked: boolean) => {
-        settings.updateSettings(checked);
+        traySettings.updateSettings(checked);
         telemetry.trackEvent(TrayEvent.MainProtectionClick);
     };
 
@@ -93,7 +94,7 @@ export function ProtectionStatus({ isLoading }: ProtectionStatusProps) {
                 </>
             )}
             <Switch
-                checked={enabled}
+                checked={!!enabled}
                 className={s.Home_switch}
                 icon
                 onChange={handleToggleSwitch}

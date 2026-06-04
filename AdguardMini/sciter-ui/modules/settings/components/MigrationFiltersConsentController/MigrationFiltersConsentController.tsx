@@ -16,10 +16,10 @@ import type { Filter } from 'Apis/types';
  */
 function MigrationFiltersConsentControllerComponent() {
     const {
-        filters: { enabledFilters, filtersIdsWithConsent, filtersMap },
-        settings: { settings: { consentFiltersIds } },
-        settings,
-        filters,
+        filtersMeta: { enabledFilters, filtersIdsWithConsent, filtersMap },
+        appSettings: { settings: { consentFiltersIds } },
+        appSettings,
+        filtersMeta: filters,
         notification,
         router,
     } = useSettingsStore();
@@ -36,7 +36,7 @@ function MigrationFiltersConsentControllerComponent() {
 
     const onEnable = async () => {
         const newConsent = [...consentFiltersIds, ...enabledFiltersToConsent];
-        settings.updateUserConsent(newConsent);
+        appSettings.updateUserConsent(newConsent);
     };
 
     const onClose = async () => {

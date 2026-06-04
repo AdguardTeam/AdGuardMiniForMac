@@ -6,7 +6,7 @@ import { EmptyValue, LicenseOrError } from '../types'
 /* Service handles account updates  */
 export class AccountCallbackServiceInternal  implements IAccountCallbackServiceInternal {
     async OnLicenseUpdate(param: LicenseOrError): Promise<EmptyValue> {
-        await store.onLicenseUpdate(param);
+        await store.callbackHandlers.onLicenseUpdate(param);
         return new EmptyValue();
     }
 }

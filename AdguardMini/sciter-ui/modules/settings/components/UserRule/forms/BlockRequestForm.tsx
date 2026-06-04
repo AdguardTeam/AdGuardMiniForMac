@@ -9,63 +9,30 @@ import theme from 'Theme';
 
 import s from '../UserRule.module.pcss';
 
-import {
-    getLabelByContentModifier,
-    buildContentOptions,
-    getDomainOptions,
-    validateDomain,
-} from './helpers';
+import { getLabelByBlockContentModifier, getContentBlockOptions, getDomainOptions, validateDomain } from './helpers';
 
 import type { FormErrors } from '../UserRule';
-import type {
-    BlockRequestRule,
-    UnblockRequestRule,
-    BlockContentTypeModifiers,
-    UnblockContentTypeModifier,
-} from '@adguard/rules-editor';
+import type { BlockContentTypeModifiers, BlockRequestRule } from '@adguard/rules-editor';
 import type { IOption } from 'Common/components';
 
-type RequestRuleType = BlockRequestRule | UnblockRequestRule;
-
-interface RequestRuleFormProps<T extends RequestRuleType> {
-    /** Rule form builder */
-    rule: { rule: T };
-    /** Setter for rule */
-    setRule(rule: { rule: T }): void;
-    /** Form errors */
+type BlockRequestFormProps = {
+    // BlockRequestRule form builder
+    rule: { rule: BlockRequestRule };
+    // Setter for rule
+    setRule(rule: { rule: BlockRequestRule }): void;
+    // Form errors
     errors: FormErrors;
-    /** Form errors setter */
+    // Form errors setter
     setErrors(err: FormErrors): void;
-    /** If form should autofocus */
+    // If form should autofocus (bug with input value not appear until focus)
     shouldFocus: boolean;
-    /** Translation key for domain label */
-    domainLabelKey: string;
-    /** Translation key for content label */
-    contentLabelKey: string;
-    /** Whether to include "All" in content modifier options */
-    hasAllOption: boolean;
-    /** Content modifier enum for building options */
-    contentModifierEnum: Record<string, BlockContentTypeModifiers | UnblockContentTypeModifier>;
-}
+};
 
 /**
- * Generic form for block/unblock request rules.
- * Replaces the previously duplicated BlockRequestForm and UnblockRequestForm.
- *
- * @param props Form configuration including rule type-specific labels and options.
+ * Form for Block request rule
  */
-export function RequestRuleForm<T extends RequestRuleType>({
-    rule,
-    setRule,
-    errors,
-    setErrors,
-    shouldFocus,
-    domainLabelKey,
-    contentLabelKey,
-    hasAllOption,
-    contentModifierEnum,
-}: RequestRuleFormProps<T>) {
-    const currentRule = rule.rule;
+export function BlockRequestForm({ rule, setRule, errors, setErrors, shouldFocus }: BlockRequestFormProps) {
+    const currentRule = rule.rule as BlockRequestRule;
 
     const onDomainChange = (e: string) => {
         currentRule.setDomain(e);
@@ -75,27 +42,15 @@ export function RequestRuleForm<T extends RequestRuleType>({
         }
     };
 
-    const contentOptions = buildContentOptions(
-        contentModifierEnum as Record<string, string | number>,
-        hasAllOption,
-    );
+    const currentContentOptions: IOption<BlockContentTypeModifiers>[] = currentRule.getContentType()
+        .map((c) => ({ value: c, label: getLabelByBlockContentModifier(c) }));
 
-    const currentContentOptions: IOption<string | number>[] = (
-        currentRule.getContentType() as unknown as (string | number)[]
-    )
-        .map((c) => ({
-            value: c,
-            label: getLabelByContentModifier(
-                c as unknown as BlockContentTypeModifiers,
-            ),
-        }));
-
-    const onContentChange = (option: IOption<string | number>) => {
-        const currentTypes = currentRule.getContentType() as unknown as (string | number)[];
+    const onContentChange = (option: IOption<BlockContentTypeModifiers>) => {
+        const currentTypes = currentRule.getContentType();
         if (currentTypes.includes(option.value)) {
-            currentRule.setContentType(currentTypes.filter((c) => c !== option.value) as any);
+            currentRule.setContentType(currentTypes.filter((c) => c !== option.value));
         } else {
-            currentRule.setContentType([...currentTypes, option.value] as any);
+            currentRule.setContentType([...currentTypes, option.value]);
         }
         setRule({ rule: currentRule });
     };
@@ -148,7 +103,7 @@ export function RequestRuleForm<T extends RequestRuleType>({
                 error={!!errors.domain}
                 errorMessage={errors.domain}
                 id="search"
-                label={domainLabelKey}
+                label={translate('user.rule.block.domain.label')}
                 placeholder="example.com"
                 value={currentRule.getDomain()}
                 allowClear
@@ -159,8 +114,8 @@ export function RequestRuleForm<T extends RequestRuleType>({
                 <Dropdown
                     currentValue={currentContentOptions}
                     id="type"
-                    itemList={contentOptions}
-                    label={contentLabelKey}
+                    itemList={getContentBlockOptions()}
+                    label={translate('user.rule.block.content.label')}
                     onChange={onContentChange}
                 />
             </div>

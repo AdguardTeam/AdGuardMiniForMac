@@ -14,11 +14,16 @@
         "skipLibCheck": true,
         "paths": {
             "Apis/*": ["AdguardMini/sciter-ui/modules/common/apis/*"],
-            "Common/*": ["AdguardMini/sciter-ui/modules/common/*"]
+            "Common/*": ["AdguardMini/sciter-ui/modules/common/*"],
+            "Intl": ["AdguardMini/sciter-ui/modules/common/intl/index"],
+            "Utils/*": ["AdguardMini/sciter-ui/modules/common/utils/*"],
+            "Modules/*": ["AdguardMini/sciter-ui/modules/*"]
         }
     },
     "include": [
         "AdguardMini/sciter-ui/tests/**/*.ts",
+        "AdguardMini/sciter-ui/tests/**/*.d.ts",
+        "AdguardMini/sciter-ui/@types/**/*.d.ts",
         "AdguardMini/sciter-ui/modules/common/apis/types/**/*.ts",
         "AdguardMini/sciter-ui/modules/common/stores/SafariExtensionsStore.ts",
         "AdguardMini/sciter-ui/modules/common/stores/NotificationsQueue.ts",

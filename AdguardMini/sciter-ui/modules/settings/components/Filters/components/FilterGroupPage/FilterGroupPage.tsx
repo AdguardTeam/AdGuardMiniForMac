@@ -36,14 +36,14 @@ function FilterGroupPageComponent({
 }: FilterGroupPageProps) {
     const {
         router,
-        filters,
-        filters: {
+        filtersMeta: {
             filters: { customFilters },
             filtersMap,
             filtersIndex: { groups, customGroupId },
             filtersByGroups,
             enabledFilters,
         },
+        customFilters: customFiltersStore,
         notification,
     } = useSettingsStore();
     const [addFilterModal, setAddFilterModal] = useState(false);
@@ -62,10 +62,10 @@ function FilterGroupPageComponent({
     };
 
     useEffect(() => {
-        if (filters.customFiltersSubscribeURL) {
+        if (customFiltersStore.customFiltersSubscribeURL) {
             setAddFilterModal(true);
         }
-    }, [filters.customFiltersSubscribeURL]);
+    }, [customFiltersStore.customFiltersSubscribeURL]);
 
     const settingsTitleElements = useMemo(() => {
         const elements = [];
@@ -136,7 +136,7 @@ function FilterGroupPageComponent({
                 <RemoveAllCustomFiltersModal
                     onClose={() => setRemoveAllCustomFiltersModal(false)}
                     onSubmit={() => {
-                        const { confirmDelete, undoDelete } = filters.prepareCustomFiltersForDeletion();
+                        const { confirmDelete, undoDelete } = customFiltersStore.prepareCustomFiltersForDeletion();
 
                         notification.notify({
                             message: translate('notification.all.custom.filters.removed'),

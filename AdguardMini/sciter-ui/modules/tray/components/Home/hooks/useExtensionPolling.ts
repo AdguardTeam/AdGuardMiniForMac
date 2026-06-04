@@ -22,6 +22,11 @@ export function useExtensionPolling(
         let rafId: number;
         let lastCallTime = Date.now();
 
+        /**
+         * Loop updater for Safari extensions status. Uses requestAnimationFrame for efficient polling.
+          * Calls getSafariExtensions at most once per second while isLoading is true.
+          * Automatically stops when isLoading becomes false.
+         */
         function loop() {
             if (!isLoading) {
                 return;

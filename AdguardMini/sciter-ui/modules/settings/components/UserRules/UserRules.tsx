@@ -61,8 +61,8 @@ function UserRulesComponent() {
         ui,
         notification,
         router,
-        settings,
-        settings: { userActionLastDirectory },
+        appSettings,
+        appSettings: { userActionLastDirectory },
         telemetry,
     } = useSettingsStore();
 
@@ -73,7 +73,7 @@ function UserRulesComponent() {
 
     const { openUserRulesWindow, isRuleEditorWindowOpened } = useOpenUserRulesWindow();
     const { onImportRules, onExportRules, onDeleteAll } = useImportExport({
-        userRules, notification, settings, userActionLastDirectory,
+        userRules, notification, settings: appSettings, userActionLastDirectory,
     });
 
     const contentRef = useRef<HTMLDivElement>(null);

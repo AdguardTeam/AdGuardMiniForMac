@@ -54,9 +54,9 @@ interface SafariExtensionRowProps {
  * Renders a single Safari extension status row with rules count, filter names, and error messages.
  */
 export function SafariExtensionRow({ extension, filtersIds, title, description }: SafariExtensionRowProps) {
-    const { filters, router, settings } = useSettingsStore();
-    const { contentBlockersRulesLimit } = settings;
-    const { filtersMap } = filters;
+    const { filtersMeta, router, appSettings } = useSettingsStore();
+    const { contentBlockersRulesLimit } = appSettings;
+    const { filtersMap } = filtersMeta;
 
     const openSafariPref = (id: string) => {
         window.API.Execute(new OpenSafariExtensionPreferencesRequest({ value: id }));

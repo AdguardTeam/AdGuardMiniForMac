@@ -10,12 +10,12 @@ import { selectFile } from 'Common/utils/selectFile';
 import { getNotificationSomethingWentWrongText, provideContactSupportParam } from 'SettingsLib/utils/translate';
 import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType, NotificationsQueueVariant } from 'SettingsStore/modules';
 
-import type { UserRules, NotificationsQueue, Settings } from 'SettingsStore/modules';
+import type { UserRules, NotificationsQueue, AppSettings } from 'SettingsStore/modules';
 
 interface UseImportExportParams {
     userRules: UserRules;
     notification: NotificationsQueue;
-    settings: Settings;
+    settings: AppSettings;
     userActionLastDirectory: string | undefined;
 }
 

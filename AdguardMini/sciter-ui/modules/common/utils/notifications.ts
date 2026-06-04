@@ -30,7 +30,7 @@ export const notifySuccess = (
 export const notifySuccessCTA = (
     notification: NotificationsQueue,
     message: ComponentChild,
-    cta: { onClick: () => void; btnLabel: string },
+    cta: { onClick(): void; btnLabel: string },
 ) => {
     notification.notify({
         message,

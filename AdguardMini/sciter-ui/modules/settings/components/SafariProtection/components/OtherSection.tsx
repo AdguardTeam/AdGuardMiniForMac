@@ -18,12 +18,12 @@ import type { FiltersPageParams } from 'SettingsLib/const/routeParams';
  * Other section for Safari protection
  */
 function OtherSectionComponent() {
-    const { filters } = useSettingsStore();
+    const { filtersMeta, safariProtection } = useSettingsStore();
     const otherEnabledFiltersIds = useOtherEnabledFilters();
 
-    const { filtersIndex } = filters;
+    const { filtersIndex } = filtersMeta;
     const otherEnabledFiltersCount = otherEnabledFiltersIds.length;
-    const enabledCustomFiltersCount = filters.enabledCustomFiltersCount;
+    const enabledCustomFiltersCount = safariProtection.enabledCustomFiltersCount;
     const customGroupId = filtersIndex.customGroupId;
 
     return (

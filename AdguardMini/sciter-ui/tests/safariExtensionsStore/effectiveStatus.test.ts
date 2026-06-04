@@ -5,6 +5,22 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
+// Mock Sciter/webpack globals for Node.js test environment.
+(globalThis as Record<string, unknown>).window ??= {
+    API: {
+        Execute: async () => new Proxy({}, {
+            get: (_, prop) => (prop === 'language' ? 'en' : undefined),
+        }),
+    },
+};
+(globalThis as Record<string, unknown>).preactHooks ??= require('preact/hooks');
+(globalThis as Record<string, unknown>).log ??= {
+    dbg: () => {},
+    info: () => {},
+    error: () => {},
+    setLogLevel: () => {},
+};
+
 import { SafariExtensionsStore } from '../../modules/common/stores/SafariExtensionsStore';
 import { SafariExtensions, SafariExtension, SafariExtensionStatus } from '../../modules/common/apis/types/Common';
 

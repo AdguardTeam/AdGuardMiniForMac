@@ -54,50 +54,60 @@ export function getLabelByRuleType(type: RuleType): string {
 };
 
 /**
- * Content modifier key map shared by block and unblock content modifiers.
- * Keys are the string values of the enum members.
+ * Returns the human-readable label for a given block content modifier.
+ *
+ * @param type The block content modifier.
+ * @returns The label for the block content modifier.
  */
-const CONTENT_MODIFIER_KEY_MAP: Record<string, string> = {
-    webpages: translate('user.rule.content.webpages'),
-    images: translate('user.rule.content.images'),
-    css: translate('user.rule.content.css'),
-    scripts: translate('user.rule.content.scripts'),
-    fonts: translate('user.rule.content.fonts'),
-    media: translate('user.rule.content.media'),
-    xmlhttprequest: translate('user.rule.content.xmlhttprequest'),
-    other: translate('user.rule.content.other'),
+export function getLabelByBlockContentModifier(type: BlockContentTypeModifiers): string {
+    switch (type) {
+        case BlockContentTypeModifiers.all:
+            return translate('user.rule.content.all');
+        case BlockContentTypeModifiers.webpages:
+            return translate('user.rule.content.webpages');
+        case BlockContentTypeModifiers.images:
+            return translate('user.rule.content.images');
+        case BlockContentTypeModifiers.css:
+            return translate('user.rule.content.css');
+        case BlockContentTypeModifiers.scripts:
+            return translate('user.rule.content.scripts');
+        case BlockContentTypeModifiers.fonts:
+            return translate('user.rule.content.fonts');
+        case BlockContentTypeModifiers.media:
+            return translate('user.rule.content.media');
+        case BlockContentTypeModifiers.xmlhttprequest:
+            return translate('user.rule.content.xmlhttprequest');
+        case BlockContentTypeModifiers.other:
+            return translate('user.rule.content.other');
+    }
 };
 
 /**
- * Returns the human-readable label for a content modifier.
- * Works for both BlockContentTypeModifiers and UnblockContentTypeModifier.
+ * Returns the human-readable label for a given unblock content modifier.
  *
- * @param type The content modifier enum value.
- * @returns The translated label for the modifier.
- */
-export function getLabelByContentModifier(
-    type: BlockContentTypeModifiers | UnblockContentTypeModifier,
-): string {
-    if (type === BlockContentTypeModifiers.all) {
-        return translate('user.rule.content.all');
-    }
-    return CONTENT_MODIFIER_KEY_MAP[type as string]
-        || translate('user.rule.content.other');
-}
-
-/**
- * @deprecated Use {@link getLabelByContentModifier} instead.
- */
-export function getLabelByBlockContentModifier(type: BlockContentTypeModifiers): string {
-    return getLabelByContentModifier(type);
-}
-
-/**
- * @deprecated Use {@link getLabelByContentModifier} instead.
+ * @param type The unblock content modifier.
+ * @returns The label for the unblock content modifier.
  */
 export function getLabelByUnblockContentModifier(type: UnblockContentTypeModifier): string {
-    return getLabelByContentModifier(type);
-}
+    switch (type) {
+        case UnblockContentTypeModifier.webpages:
+            return translate('user.rule.content.webpages');
+        case UnblockContentTypeModifier.images:
+            return translate('user.rule.content.images');
+        case UnblockContentTypeModifier.css:
+            return translate('user.rule.content.css');
+        case UnblockContentTypeModifier.scripts:
+            return translate('user.rule.content.scripts');
+        case UnblockContentTypeModifier.fonts:
+            return translate('user.rule.content.fonts');
+        case UnblockContentTypeModifier.media:
+            return translate('user.rule.content.media');
+        case UnblockContentTypeModifier.xmlhttprequest:
+            return translate('user.rule.content.xmlhttprequest');
+        case UnblockContentTypeModifier.other:
+            return translate('user.rule.content.other');
+    }
+};
 
 /**
  * Returns the human-readable label for a given domain modifier.
@@ -155,63 +165,81 @@ export function getTypeOptions(): IOption<RuleType>[] {
 }
 
 /**
- * Generic builder for content modifier option arrays.
- *
- * @param modifiersEnum The enum object with modifier values.
- * @param includeAll Whether to include the "All" option (block only).
- * @returns Array of options for the dropdown.
- */
-export function buildContentOptions<T extends string | number>(
-    modifiersEnum: Record<string, T>,
-    includeAll: boolean,
-): IOption<T>[] {
-    const options: IOption<T>[] = [];
-    for (const key of Object.keys(modifiersEnum)) {
-        const value = modifiersEnum[key];
-        // Skip numeric reverse mappings from TypeScript enums
-        if (typeof value === 'number' && isNaN(Number(key))) {
-            continue;
-        }
-        // For block: skip "all" in main loop, prepend it later
-        if (includeAll && value === (BlockContentTypeModifiers.all as unknown as T)) {
-            continue;
-        }
-        options.push({
-            value,
-            label: getLabelByContentModifier(
-                value as unknown as BlockContentTypeModifiers,
-            ),
-        });
-    }
-    if (includeAll) {
-        options.unshift({
-            value: BlockContentTypeModifiers.all as unknown as T,
-            label: getLabelByContentModifier(BlockContentTypeModifiers.all),
-        });
-    }
-    // Deduplicate by value (numeric enums produce duplicate entries)
-    const seen = new Set<T>();
-    return options.filter((opt) => {
-        if (seen.has(opt.value)) {
-            return false;
-        }
-        seen.add(opt.value);
-        return true;
-    });
-}
-
-/**
- * @deprecated Use {@link buildContentOptions}(BlockContentTypeModifiers, true) instead.
+ * Array of options for the content block type select.
  */
 export function getContentBlockOptions(): IOption<BlockContentTypeModifiers>[] {
-    return buildContentOptions(BlockContentTypeModifiers, true);
+    return [
+        {
+            value: BlockContentTypeModifiers.all,
+            label: getLabelByBlockContentModifier(BlockContentTypeModifiers.all) },
+        {
+            value: BlockContentTypeModifiers.webpages,
+            label: getLabelByBlockContentModifier(BlockContentTypeModifiers.webpages) },
+        {
+            value: BlockContentTypeModifiers.images,
+            label: getLabelByBlockContentModifier(BlockContentTypeModifiers.images) },
+        {
+            value: BlockContentTypeModifiers.css,
+            label: getLabelByBlockContentModifier(BlockContentTypeModifiers.css) },
+        {
+            value: BlockContentTypeModifiers.scripts,
+            label: getLabelByBlockContentModifier(BlockContentTypeModifiers.scripts) },
+        {
+            value: BlockContentTypeModifiers.fonts,
+            label: getLabelByBlockContentModifier(BlockContentTypeModifiers.fonts) },
+        {
+            value: BlockContentTypeModifiers.media,
+            label: getLabelByBlockContentModifier(BlockContentTypeModifiers.media),
+        },
+        {
+            value: BlockContentTypeModifiers.xmlhttprequest,
+            label: getLabelByBlockContentModifier(BlockContentTypeModifiers.xmlhttprequest),
+        },
+        {
+            value: BlockContentTypeModifiers.other,
+            label: getLabelByBlockContentModifier(BlockContentTypeModifiers.other),
+        },
+    ];
 }
 
 /**
- * @deprecated Use {@link buildContentOptions}(UnblockContentTypeModifier, false) instead.
+ * Array of options for the content unblock type select.
  */
 export function getContentUnblockOptions(): IOption<UnblockContentTypeModifier>[] {
-    return buildContentOptions(UnblockContentTypeModifier, false);
+    return [
+        {
+            value: UnblockContentTypeModifier.webpages,
+            label: getLabelByUnblockContentModifier(UnblockContentTypeModifier.webpages),
+        },
+        {
+            value: UnblockContentTypeModifier.images,
+            label: getLabelByUnblockContentModifier(UnblockContentTypeModifier.images),
+        },
+        {
+            value: UnblockContentTypeModifier.css,
+            label: getLabelByUnblockContentModifier(UnblockContentTypeModifier.css),
+        },
+        {
+            value: UnblockContentTypeModifier.scripts,
+            label: getLabelByUnblockContentModifier(UnblockContentTypeModifier.scripts),
+        },
+        {
+            value: UnblockContentTypeModifier.fonts,
+            label: getLabelByUnblockContentModifier(UnblockContentTypeModifier.fonts),
+        },
+        {
+            value: UnblockContentTypeModifier.media,
+            label: getLabelByUnblockContentModifier(UnblockContentTypeModifier.media),
+        },
+        {
+            value: UnblockContentTypeModifier.xmlhttprequest,
+            label: getLabelByUnblockContentModifier(UnblockContentTypeModifier.xmlhttprequest),
+        },
+        {
+            value: UnblockContentTypeModifier.other,
+            label: getLabelByUnblockContentModifier(UnblockContentTypeModifier.other),
+        },
+    ];
 }
 
 /**
@@ -331,8 +359,6 @@ export function convertRule(currentRule: RuleTypeOptions, currentType: RuleType,
                     newBuilder = tRule;
                     break;
                 }
-                case 'block':
-                    break;
             }
             break;
         }
@@ -372,8 +398,6 @@ export function convertRule(currentRule: RuleTypeOptions, currentType: RuleType,
                     newBuilder = tRule;
                     break;
                 }
-                case 'unblock':
-                    break;
             }
             break;
         }
@@ -408,8 +432,6 @@ export function convertRule(currentRule: RuleTypeOptions, currentType: RuleType,
                     newBuilder = tRule;
                     break;
                 }
-                case 'noFiltering':
-                    break;
             }
             break;
         }

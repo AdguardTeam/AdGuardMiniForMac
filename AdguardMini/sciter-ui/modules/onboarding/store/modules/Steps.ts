@@ -4,16 +4,14 @@
 
 import { makeAutoObservable, runInAction } from 'mobx';
 
-import { GetSafariExtensionsRequest, UpdateConsentRequest } from 'Apis/requests/CommonService';
+import { UpdateConsentRequest } from 'Apis/requests/CommonService';
 import { GetFiltersIndexRequest, GetFiltersMetadataRequest, UpdateFiltersRequest } from 'Apis/requests/FiltersService';
 import { OnboardingDidCompleteRequest } from 'Apis/requests/OnboardingService';
 import { GetSystemLanguageRequest, OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SettingsService';
 import { FiltersIndex, OptionalStringValue, FiltersUpdate, UserConsent } from 'Apis/types';
-import { SafariExtensionsStore } from 'Common/stores/SafariExtensionsStore';
 import { updateLanguage } from 'Intl';
 
-import type { OnboardingStore } from '../store';
-import type { Filters, Filter, SafariExtensions } from 'Apis/types';
+import type { Filters, Filter } from 'Apis/types';
 
 export enum OnboardingSteps {
     start = 'start',
@@ -46,16 +44,7 @@ export class Steps {
 
     public annoyanceHasBeenAccepted = false;
 
-    public safariExtensionsStore = new SafariExtensionsStore();
-
     public systemLanguage = 'en';
-
-    /**
-     * Whether all Safari extensions are enabled.
-     */
-    public get allExtensionsEnabled() {
-        return this.safariExtensionsStore.allExtensionsEnabled;
-    }
 
     /**
      * Returns the current onboarding step.
@@ -74,10 +63,9 @@ export class Steps {
     /**
      * Ctor
      */
-    public constructor(private readonly rootStore: OnboardingStore) {
+    public constructor() {
         makeAutoObservable(this, undefined, { autoBind: true });
         this.getFiltersIndex();
-        this.getSafariExtensions();
         this.getSystemLanguage();
     }
 
@@ -154,25 +142,6 @@ export class Steps {
     private async updateFilters(ids: number[]) {
         const filters = new FiltersUpdate({ ids, isEnabled: true });
         await window.API.Execute(new UpdateFiltersRequest(filters));
-    }
-
-    /**
-     * Fetches the current Safari extension states from Swift.
-     */
-    public async getSafariExtensions() {
-        const ext = await window.API.Execute(new GetSafariExtensionsRequest());
-        runInAction(() => {
-            this.setSafariExtensions(ext);
-        });
-    }
-
-    /**
-     * Updates the local Safari extensions state.
-     *
-     * @param data Safari extensions data from the backend.
-     */
-    public setSafariExtensions(data: SafariExtensions) {
-        this.safariExtensionsStore.setSafariExtensions(data);
     }
 
     /**

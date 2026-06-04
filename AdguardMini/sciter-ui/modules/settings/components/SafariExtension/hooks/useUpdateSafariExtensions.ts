@@ -10,18 +10,18 @@ import { useSettingsStore } from 'SettingsLib/hooks';
  * Updates the state of the safari extensions on window focus
  */
 export function useUpdateSafariExtensions() {
-    const { settings } = useSettingsStore();
+    const { safariExtensions } = useSettingsStore();
 
     useEffect(() => {
         window.SciterWindow.on('activate', ({ reason }) => {
             // Window got focus
             if (reason > 0) {
-                settings.getSafariExtensions();
+                safariExtensions.getSafariExtensions();
             }
         });
 
         return () => {
             window.SciterWindow.off('activate');
         };
-    }, [settings]);
+    }, [safariExtensions]);
 }

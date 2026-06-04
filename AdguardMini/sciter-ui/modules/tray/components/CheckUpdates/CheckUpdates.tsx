@@ -6,7 +6,6 @@ import { observer } from 'mobx-react-lite';
 import { useEffect } from 'preact/hooks';
 
 import { RequestApplicationUpdateRequest } from 'Apis/requests/SettingsService';
-import { ReleaseVariants } from 'Apis/types';
 import { ADGUARD_MINI_TITLE } from 'Common/utils/consts';
 import { resolveLastFiltersUpdateTimestamp } from 'Modules/tray/components/CheckUpdates/resolveLastFiltersUpdateTimestamp';
 import theme from 'Theme';
@@ -45,25 +44,28 @@ function getIconProps(shouldUpdate: boolean): { icon: IconType; className: strin
  * and displays the filters timestamp only for the "nothingToUpdate" state.
  */
 function CheckUpdatesComponent() {
-    const { settings, router, notification, telemetry } = useTrayStore();
+    const { traySettings, trayFilters, router, notification, telemetry } = useTrayStore();
     const {
         newVersionAvailable,
+        settings,
+    } = traySettings;
+
+    const {
         filtersUpdating,
         filtersUpdateResult,
         filtersMap,
-        settings: globalSettings,
-    } = settings;
+    } = trayFilters;
 
     // TODO: AG-45393 check all casts params are not inlined
     const params = router.castParams<{ noUpdate: boolean }>();
     useEffect(() => {
         if (!params?.noUpdate) {
-            settings.checkFiltersUpdate();
+            trayFilters.checkFiltersUpdate();
         }
-        if (!params?.noUpdate && globalSettings?.releaseVariant === ReleaseVariants.standAlone) {
-            settings.checkApplicationVersion();
+        if (!params?.noUpdate && !traySettings.isMASReleaseVariant) {
+            traySettings.checkApplicationVersion();
         }
-    }, [params?.noUpdate, globalSettings?.releaseVariant, settings]);
+    }, [params?.noUpdate, traySettings.isMASReleaseVariant, trayFilters, traySettings]);
 
     useMoreFrequentUpdatesNotify();
 
@@ -87,7 +89,7 @@ function CheckUpdatesComponent() {
     };
 
     const onFiltersFix = () => {
-        settings.tryAgainFiltersUpdate();
+        trayFilters.tryAgainFiltersUpdate();
     };
 
     let filtersStatus: 'updated' | 'error' | 'nothingToUpdate' | null = null;
@@ -106,7 +108,7 @@ function CheckUpdatesComponent() {
 
     const lastFiltersUpdateTimestamp = resolveLastFiltersUpdateTimestamp(
         filtersStatus,
-        globalSettings?.lastFiltersUpdateTimestampMs,
+        settings?.lastFiltersUpdateTimestampMs,
     );
 
     const filtersHoverable = !filtersUpdating && (filtersStatus === 'updated' || filtersStatus === 'error') && filtersMap;
@@ -127,7 +129,7 @@ function CheckUpdatesComponent() {
             <div>
                 <Text className={s.CheckUpdates_title} type="h4">{translate('tray.updates')}</Text>
                 <Text className={s.CheckUpdates_desc} type="t1">{titleDesc}</Text>
-                {globalSettings?.releaseVariant === ReleaseVariants.standAlone && (
+                {!traySettings.isMASReleaseVariant && (
                     <div className={s.CheckUpdates_element}>
                         <div className={s.CheckUpdates_element_title}>
                             {newVersionAvailable === undefined ? (

@@ -23,7 +23,7 @@ export function useLicenseStatusTitle() {
         return translate('license.license.free.version');
     }
 
-    if (isAppStoreSubscription && !license.license?.applicationKeyOwner) {
+    if (isAppStoreSubscription && !license?.applicationKeyOwner) {
         return translate('license.license.app.store');
     }
 
@@ -31,7 +31,7 @@ export function useLicenseStatusTitle() {
         return translate('license.license.free.trial');
     }
 
-    switch (license.license?.type) {
+    switch (license?.type) {
         case LicenseType.beta:
             return translate('license.license.beta');
         case LicenseType.bonus:

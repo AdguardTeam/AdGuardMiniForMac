@@ -6,7 +6,7 @@ import { UserRulesCallbackState, EmptyValue } from '../types'
 /* Service handles settings lists  */
 export class UserRulesCallbackServiceInternal  implements IUserRulesCallbackServiceInternal {
     async onUserFilterChange(param: UserRulesCallbackState): Promise<EmptyValue> {
-        store.userRules.setFromCallback(param);
+        store.callbackHandlers.onUserFilterChange(param);
         return new EmptyValue();
     }
 }

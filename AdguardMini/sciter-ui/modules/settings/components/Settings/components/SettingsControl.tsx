@@ -34,10 +34,11 @@ const LEGACY_SETTINGS_FILTER = `(*.${LEGACY_SETTINGS_EXT})|*.${LEGACY_SETTINGS_E
  */
 function SettingsControlComponent() {
     const {
-        settings,
-        filters: { filters: { filters: storeFilters } },
+        appSettings: settings,
+        filtersMeta: { filters: { filters: storeFilters } },
         telemetry,
         notification,
+        importExport,
     } = useSettingsStore();
 
     const {
@@ -83,7 +84,7 @@ function SettingsControlComponent() {
 
     const onConsent = (mode: ImportMode) => {
         setShowConsentModal(undefined);
-        settings.confirmImport(mode);
+        importExport.confirmImport(mode);
     };
 
     const onClearStatistics = () => {
@@ -108,7 +109,7 @@ function SettingsControlComponent() {
                 const pathParts = path.split('/');
                 pathParts.pop();
                 settings.updateUserActionLastDirectory(pathParts.join('/'));
-                settings.importSettings(path);
+                importExport.importSettings(path);
             });
         } catch (error) {
             log.error(String(error), 'onImportRules');
@@ -120,7 +121,7 @@ function SettingsControlComponent() {
         const defaultPath = userActionLastDirectory || window.DocumentsPath;
         selectFile(true, `${SETTINGS_ARCHIVE_FILTER}`, translate('export'), `${defaultPath}/adguard_mini_${getFormattedDateTime()}`, async (path: string) => {
             settings.updateUserActionLastDirectory(path);
-            const error = await settings.exportSettings(path);
+            const error = await importExport.exportSettings(path);
             if (error.hasError) {
                 notifyError(notification, translate('notification.something.went.wrong'));
             } else {

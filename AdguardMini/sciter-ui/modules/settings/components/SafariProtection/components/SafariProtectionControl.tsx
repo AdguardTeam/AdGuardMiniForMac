@@ -19,8 +19,8 @@ import { TrackingSection } from './TrackingSection';
  * Safari protection main control component
  */
 function SafariProtectionControlComponent() {
-    const { settings } = useSettingsStore();
-    const [showLoginItemModal, setShowLoginItemModal] = useState(!settings.loginItemEnabled);
+    const { appSettings } = useSettingsStore();
+    const [showLoginItemModal, setShowLoginItemModal] = useState(!appSettings.loginItemEnabled);
     const [showConsentFilterIds, setShowConsentFilterIds] = useState<number[]>();
 
     const closeConsentModal = () => {

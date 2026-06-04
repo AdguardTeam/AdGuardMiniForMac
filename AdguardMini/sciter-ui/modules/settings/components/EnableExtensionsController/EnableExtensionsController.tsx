@@ -18,13 +18,13 @@ import s from './EnableExtensionsController.module.pcss';
  * Component that is shown when the user has all extensions disabled
  */
 function EnableExtensionsControllerComponent() {
-    const { settings, ui } = useSettingsStore();
+    const { safariExtensions, ui } = useSettingsStore();
 
     const {
         allDisabled: allExtensionsDisabled,
     } = getCountableEntityStatuses(
-        settings.safariExtensionsStore.enabledSafariExtensionsCount,
-        settings.safariExtensionsStore.safariExtensionsCount,
+        safariExtensions.enabledSafariExtensionsCount,
+        safariExtensions.safariExtensionsCount,
     );
 
     if (!ui.showSafariExtensionsEnableScreen || !allExtensionsDisabled) {

@@ -25,18 +25,23 @@ import type { FiltersPageParams } from 'SettingsLib/const/routeParams';
  * Filters page of settings module
  */
 function FiltersComponent() {
-    const { notification, router, filters: filtersStore, filters: {
-        filters: { filters, customFilters },
-        filtersIndex: { groups, customGroupId },
-        filtersMap,
-    } } = useSettingsStore();
+    const {
+        notification,
+        router,
+        filtersMeta: {
+            filters: { filters, customFilters },
+            filtersIndex: { groups, customGroupId },
+            filtersMap,
+        },
+        customFilters: customFiltersStore,
+    } = useSettingsStore();
     const params = router.castParams<FiltersPageParams>();
     const [groupView, setGroupView] = useState<number | undefined>(params?.groupId);
 
     const [editCustomFilterId, setEditCustomFilterId] = useState<number | undefined>();
 
     const onFilterUpdate = async (filter_id: number, name: string, trusted: boolean) => {
-        const error = await filtersStore.updateCustomFilter(filter_id, name, trusted);
+        const error = await customFiltersStore.updateCustomFilter(filter_id, name, trusted);
         if (error) {
             notification.notify({
                 message: getNotificationSomethingWentWrongText(),

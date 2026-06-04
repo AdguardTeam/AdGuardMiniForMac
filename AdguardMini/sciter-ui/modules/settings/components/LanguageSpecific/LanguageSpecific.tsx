@@ -32,9 +32,9 @@ type IntermediateLangGroup = {
  * Language Specific ad blocking page of settings module (sub page of safari protection)
  */
 function LanguageSpecificComponent() {
-    const { notification, filters, router } = useSettingsStore();
+    const { notification, filtersMeta, router } = useSettingsStore();
 
-    const { recommendedFiltersByGroups, filtersIndex, filtersMap } = filters;
+    const { recommendedFiltersByGroups, filtersIndex, filtersMap } = filtersMeta;
     const recommendedLangsFiltersIds = recommendedFiltersByGroups[filtersIndex.definedGroups.languageSpecific];
 
     let langs: IntermediateLangGroup[] = recommendedLangsFiltersIds.reduce<IntermediateLangGroup[]>((acc, id) => {
@@ -46,13 +46,13 @@ function LanguageSpecificComponent() {
                 const existing = acc.find((langGroup) => langGroup.lang === lang);
                 if (existing) {
                     existing.ids.push(filter.id);
-                    existing.is_enabled = existing.is_enabled && filters.enabledFilters.has(filter.id);
+                    existing.is_enabled = existing.is_enabled && filtersMeta.enabledFilters.has(filter.id);
                 } else {
                     acc.push({
                         lang,
                         title: (langsMap as Record<string, string>)[lang] ?? lang,
                         ids: [filter.id],
-                        is_enabled: filters.enabledFilters.has(filter.id),
+                        is_enabled: filtersMeta.enabledFilters.has(filter.id),
                     });
                 }
             });
@@ -82,7 +82,7 @@ function LanguageSpecificComponent() {
     const [showDisableModal, setShowDisableModal] = useState(false);
 
     const onDisableAll = async () => {
-        const error = await filters.switchFiltersState(recommendedLangsFiltersIds, false);
+        const error = await filtersMeta.switchFiltersState(recommendedLangsFiltersIds, false);
         if (error) {
             notification.notify({
                 message: getNotificationSomethingWentWrongText(),
@@ -108,9 +108,9 @@ function LanguageSpecificComponent() {
             <SettingsItemSwitch
                 className={s.LanguageSpecific_mainControl}
                 icon="lang"
-                setValue={(e) => filters.updateLanguageSpecific(e)}
+                setValue={(e) => filtersMeta.updateLanguageSpecific(e)}
                 title={translate('language.specific.title')}
-                value={!!filters.languageSpecific}
+                value={!!filtersMeta.languageSpecific}
             />
             <Input
                 className={cx(s.LanguageSpecific_search)}
@@ -131,8 +131,8 @@ function LanguageSpecificComponent() {
             {foundItems.map(({ lang, ids, title, is_enabled }) => (
                 <SettingsItemSwitch
                     key={lang}
-                    muted={!filters.languageSpecific}
-                    setValue={async (e) => filters.switchFiltersState(ids, e)}
+                    muted={!filtersMeta.languageSpecific}
+                    setValue={async (e) => filtersMeta.switchFiltersState(ids, e)}
                     title={title}
                     value={is_enabled}
                 />

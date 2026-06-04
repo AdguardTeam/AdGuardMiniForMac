@@ -18,12 +18,12 @@ import s from '../SafariProtection.module.pcss';
  * Ad blocking section for Safari protection
  */
 function AdBlockingSectionComponent() {
-    const { filters, telemetry } = useSettingsStore();
+    const { safariProtection, filtersMeta, telemetry } = useSettingsStore();
     const notifyError = useNotificationSomethingWentWrongText();
 
     const onToggleBlockAds = async (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.BlockAdsProtectionClick);
-        const error = await filters.updateBlockAds(value);
+        const error = await safariProtection.updateBlockAds(value);
         if (error) {
             notifyError();
         }
@@ -31,7 +31,7 @@ function AdBlockingSectionComponent() {
 
     const onToggleBlockSearchAds = async (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.BlockSearchAds);
-        const error = await filters.updateBlockSearchAds(value);
+        const error = await safariProtection.updateBlockSearchAds(value);
         if (error) {
             notifyError();
         }
@@ -39,7 +39,7 @@ function AdBlockingSectionComponent() {
 
     const onToggleLanguageSpecific = (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.LanguageAdBlockingClick);
-        return filters.updateLanguageSpecific(value);
+        return filtersMeta.updateLanguageSpecific(value);
     };
 
     const isTest = useABTest(ActiveABTest.AG_51019_advanced_settings) === ABTestOption.option_b;
@@ -52,14 +52,14 @@ function AdBlockingSectionComponent() {
                 icon="ads"
                 setValue={onToggleBlockAds}
                 title={translate('safari.protection.block.ads')}
-                value={filters.blockAds}
+                value={safariProtection.blockAds}
             />
             <SettingsItemSwitch
                 description={translate('safari.protection.block.search.ads.desc')}
                 icon="search"
                 setValue={onToggleBlockSearchAds}
                 title={translate('safari.protection.block.search.ads')}
-                value={filters.blockSearchAds}
+                value={safariProtection.blockSearchAds}
             />
             <SettingsItemSwitch
                 description={translate('safari.protection.block.language.desc')}
@@ -68,7 +68,7 @@ function AdBlockingSectionComponent() {
                 setValue={onToggleLanguageSpecific}
                 title={translate('safari.protection.block.language')}
                 trackEventOnRouteChange={SettingsEvent.LanguageAdBlockingSettingsClick}
-                value={filters.languageSpecific}
+                value={filtersMeta.languageSpecific}
             />
             {isTest && <AdvancedRulesSwitch />}
         </div>

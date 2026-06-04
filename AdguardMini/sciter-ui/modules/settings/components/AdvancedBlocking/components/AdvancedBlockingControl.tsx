@@ -21,7 +21,7 @@ import { AdvancedRulesSwitch } from './AdvancedRulesSwitch';
  * Advanced blocking main component
  */
 export function AdvancedBlockingControlComponent() {
-    const { advancedBlocking, account, telemetry, settings } = useSettingsStore();
+    const { advancedBlocking, account, telemetry, appSettings } = useSettingsStore();
     const {
         adguardExtra,
     } = advancedBlocking.advancedBlocking;
@@ -45,18 +45,18 @@ export function AdvancedBlockingControlComponent() {
     };
 
     // B variant settings
-    const { settings: { autoFiltersUpdate, realTimeFiltersUpdate } } = settings;
+    const { settings: { autoFiltersUpdate, realTimeFiltersUpdate } } = appSettings;
     const onUpdateRealTimeFilters = (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.RealTimeAbTest);
         if (isFree) {
             account.showPaywall();
             return;
         }
-        settings.updateRealTimeFiltersUpdate(value);
+        appSettings.updateRealTimeFiltersUpdate(value);
     };
 
     const onUpdateAutoFilters = (value: boolean) => {
-        settings.updateAutoFiltersUpdate(value);
+        appSettings.updateAutoFiltersUpdate(value);
         telemetry.trackEvent(SettingsEvent.EnableUpdatesAbTest);
     };
 

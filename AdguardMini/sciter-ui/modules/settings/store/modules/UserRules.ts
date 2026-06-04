@@ -9,7 +9,6 @@ import { UserRule, UserRules as UserRulesEnt } from 'Apis/types';
 import { withLast } from 'Common/utils/queue';
 
 import type { OptionalError, UserRulesCallbackState } from 'Apis/types';
-import type { SettingsStore } from 'SettingsStore';
 
 type UserRuleObject = Required<ReturnType<UserRule['toObject']>>;
 export type UserRulesContainer = Array<(UserRuleObject & { index: number })>;
@@ -26,8 +25,6 @@ export class UserRules {
         return window.API.Execute(new UpdateUserRulesRequest(data));
     }, 'commitUserRules');
 
-    public rootStore: SettingsStore;
-
     /**
      * User rules
      */
@@ -42,14 +39,9 @@ export class UserRules {
 
     /**
      * Ctor
-     *
-     * @param rootStore
      */
-    public constructor(rootStore: SettingsStore) {
-        this.rootStore = rootStore;
-        makeAutoObservable(this, {
-            rootStore: false,
-        }, { autoBind: true });
+    public constructor() {
+        makeAutoObservable(this, undefined, { autoBind: true });
     }
 
     /**

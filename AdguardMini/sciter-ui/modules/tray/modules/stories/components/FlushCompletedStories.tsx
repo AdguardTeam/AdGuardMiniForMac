@@ -19,7 +19,7 @@ type FlushCompletedStoriesProps = {
  * Component that flushes completed stories on unmount
  */
 export function FlushCompletedStories({ children, currentStory }: FlushCompletedStoriesProps) {
-    const { settings } = useTrayStore();
+    const { traySettings } = useTrayStore();
 
     const completedStoriesRef = useRef<StoryId[]>([]);
 
@@ -37,10 +37,10 @@ export function FlushCompletedStories({ children, currentStory }: FlushCompleted
             const completedStories = [...new Set(completedStoriesRef.current)];
 
             completedStories.forEach((storyId) => {
-                settings.setCompletedStory(storyId);
+                traySettings.setCompletedStory(storyId);
             });
         };
-    }, [settings]);
+    }, [traySettings]);
 
     return children({ addCompletedStory: onStoryCompleted });
 }

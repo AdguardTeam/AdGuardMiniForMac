@@ -9,7 +9,7 @@ import { useDateFormat as useCommonDateFormat } from 'Common/hooks/useDateFormat
 import { useSettingsStore } from './useSettingsStore';
 
 const useDateFormat = () => {
-    const { settings: { settings } } = useSettingsStore();
+    const { appSettings: { settings } } = useSettingsStore();
     return useCommonDateFormat(settings?.language);
 };
 

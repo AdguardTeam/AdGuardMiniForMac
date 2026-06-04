@@ -113,7 +113,7 @@ const renderNotificationButton = (
  * Notification for unauthorized user on License screen
  */
 function UnauthorizedUserNotificationComponent() {
-    const { account, settings, telemetry } = useSettingsStore();
+    const { account, appSettings, telemetry } = useSettingsStore();
 
     const {
         isAppStoreSubscription,
@@ -121,12 +121,10 @@ function UnauthorizedUserNotificationComponent() {
         trialAvailableDays,
     } = account;
 
-    const { isStandaloneReleaseVariant } = settings;
-
     const notificationType = getNotificationType(
         isAppStoreSubscription,
         isLicenseExist,
-        isStandaloneReleaseVariant && Boolean(trialAvailableDays),
+        appSettings.isStandaloneReleaseVariant && Boolean(trialAvailableDays),
     );
 
     if (!notificationType) {

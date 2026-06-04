@@ -24,13 +24,11 @@ type StartProps = {
  * Step "Start"
  */
 function StartComponent({ trackPage }: StartProps) {
-    const { steps } = useOnboardingStore();
+    const { steps, safariExtensions } = useOnboardingStore();
 
     const [checked, setChecked] = useState(false);
     const [telemetry, setTelemetry] = useState(false);
     const [showModal, setShowModal] = useState(false);
-
-    const { safariExtensionsStore } = steps;
 
     const action = async () => {
         if (telemetry) {
@@ -38,7 +36,7 @@ function StartComponent({ trackPage }: StartProps) {
             trackPage();
         }
         steps.setCurrentStep(
-            safariExtensionsStore.allExtensionsEnabled
+            safariExtensions.allExtensionsEnabled
                 ? OnboardingSteps.ads
                 : OnboardingSteps.extensions,
         );

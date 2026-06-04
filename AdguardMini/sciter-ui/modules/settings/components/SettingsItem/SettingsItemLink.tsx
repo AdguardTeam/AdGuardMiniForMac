@@ -6,6 +6,7 @@ import { observer } from 'mobx-react-lite';
 
 import { useSettingsStore } from 'SettingsLib/hooks';
 import { Icon } from 'UILib';
+
 import { SettingsItem } from './SettingsItem';
 import s from './SettingsItem.module.pcss';
 

@@ -20,9 +20,8 @@ import type { SettingsEvent } from 'Modules/settings/store/modules';
  * @param trackTelemetryEvent - The telemetry event to track when the paywall is shown
  */
 export function usePayedFuncsTitle(trackTelemetryEvent?: SettingsEvent) {
-    const { account, settings, telemetry } = useSettingsStore();
+    const { account, telemetry, appSettings } = useSettingsStore();
     const { isLicenseOrTrialActive, trialAvailableDays } = account;
-    const { isMASReleaseVariant } = settings;
 
     const renderShowPaywallBtn = (text: string) => (
         <Button
@@ -48,7 +47,7 @@ export function usePayedFuncsTitle(trackTelemetryEvent?: SettingsEvent) {
             return translate('advanced.blocking.extra.try', params);
         }
 
-        if (isMASReleaseVariant) {
+        if (appSettings.isMasReleaseVariant) {
             return translate('advanced.blocking.extra.subscribe', params);
         }
 

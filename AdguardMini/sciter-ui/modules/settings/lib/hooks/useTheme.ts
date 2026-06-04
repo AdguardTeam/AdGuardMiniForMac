@@ -12,7 +12,7 @@ import type { OnColorThemeChanged } from 'Utils/colorThemes';
  */
 export function useTheme(onThemeChanged: OnColorThemeChanged) {
     const store = useSettingsStore();
-    const { settings: { settings: { theme } } } = store;
+    const { appSettings: { settings: { theme } } } = store;
 
     useCommonTheme(onThemeChanged, {
         theme,

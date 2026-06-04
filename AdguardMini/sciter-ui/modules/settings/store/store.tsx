@@ -2,30 +2,34 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-// NOTE: Constructor DI waiver — sub-stores receive the root store
-// (e.g., `new Account(this)`) rather than individual dependency injection.
-// This is an intentional architectural tradeoff documented in AGENTS.md §V.1.
-// The alternative (passing only specific sub-store references per constructor)
-// was evaluated but rejected to avoid cascading parameter changes when the
-// dependency graph evolves.
+//
+//  store.tsx
+//  AdguardMini
+//
 
 import { createContext } from 'preact';
 
 import { GetEffectiveThemeRequest } from 'Apis/requests/SettingsService';
+import {
+    AdvancedBlockingStore,
+    FiltersMetaStore,
+    LicenseStore,
+    NotificationsQueue,
+    SafariExtensionsStore,
+} from 'Common/stores';
 import { Action } from 'Common/utils/EventAction';
-import { LicenseOrErrorExtended } from 'Apis/ExtendLicense';
-
 
 import {
     Account,
     ABTests,
-    AdvancedBlocking,
     AppInfo,
-    Filters,
-    Settings,
+    AppSettings,
+    CallbackHandlers,
+    CustomFilters,
+    ImportExport,
+    SafariProtection,
     UserRules,
     Windowing,
-    NotificationsQueue,
     UI,
     type SettingsTelemetry,
     settingsTelemetryFactory,
@@ -34,25 +38,53 @@ import {
 } from './modules';
 
 import type { EffectiveTheme } from 'Apis/types';
-import type { LicenseOrError } from 'Apis/types';
 import type { ColorTheme } from 'Utils/colorThemes';
-import { RouteName } from './modules/SettingsRouter';
 
 /**
- * Settings app store
+ * Settings app store — thin DI registry.
+ * Creates and wires sub-stores with explicit constructor DI.
+ * No data fetching or cross-store orchestration in this class.
  */
 export class SettingsStore {
+    /**
+     * License store (shared, exposed for callback access)
+     */
+    private readonly licenseStore: LicenseStore;
+
+    /**
+     * Advanced blocking store (shared, exposed for callback access)
+     */
+    public readonly advancedBlocking: AdvancedBlockingStore;
+
+    /**
+     * Safari extensions store (shared, exposed for callback access)
+     */
+    public readonly safariExtensions: SafariExtensionsStore;
+
     public account: Account;
 
     public abTests: ABTests;
 
-    public advancedBlocking: AdvancedBlocking;
-
     public appInfo: AppInfo;
 
-    public filters: Filters;
+    /**
+     * Filter metadata store (shared)
+     */
+    public readonly filtersMeta: FiltersMetaStore;
 
-    public settings: Settings;
+    /**
+     * Health-check computed properties (replaces old Filters.blockAds etc.)
+     */
+    public safariProtection: SafariProtection;
+
+    /**
+     * Custom filter CRUD operations
+     */
+    public customFilters: CustomFilters;
+
+    public appSettings: AppSettings;
+
+    public importExport: ImportExport;
 
     public userRules: UserRules;
 
@@ -61,6 +93,11 @@ export class SettingsStore {
     public notification: NotificationsQueue;
 
     public ui: UI;
+
+    /**
+     * Callback orchestration handler
+     */
+    public callbackHandlers: CallbackHandlers;
 
     /**
      * Settings window router store
@@ -78,43 +115,56 @@ export class SettingsStore {
     public readonly settingsWindowEffectiveThemeChanged = new Action<EffectiveTheme>();
 
     /**
-     * Ctor
+     * Ctor — creates and wires all sub-stores.
+     * Each sub-store self-initializes (fetches its own data).
      */
     constructor() {
-        this.account = new Account(this);
+        // Zero-dependency stores
         this.abTests = new ABTests();
-        this.advancedBlocking = new AdvancedBlocking(this);
-        this.appInfo = new AppInfo(this);
         this.windowing = new Windowing();
-        this.filters = new Filters(this);
-        this.settings = new Settings(this.windowing);
-        this.userRules = new UserRules(this);
-        this.ui = new UI(this);
         this.notification = new NotificationsQueue();
+
+        // Common shared stores
+        this.licenseStore = new LicenseStore();
+        this.filtersMeta = new FiltersMetaStore();
+        this.advancedBlocking = new AdvancedBlockingStore();
+        this.safariExtensions = new SafariExtensionsStore();
+
+        // Settings domain sub-stores with explicit DI
+        this.safariProtection = new SafariProtection(this.filtersMeta);
+        this.customFilters = new CustomFilters(this.filtersMeta, this.safariProtection);
+        this.appSettings = new AppSettings(this.windowing);
+        this.importExport = new ImportExport(this.appSettings);
+        this.account = new Account(this.licenseStore);
+
+        // Zero-dependency stores (rootStore param already removed)
+        this.appInfo = new AppInfo();
+        this.userRules = new UserRules();
+        this.ui = new UI();
+
+        // Router & telemetry (factories)
         this.telemetry = settingsTelemetryFactory();
         this.router = settingsRouterFactory();
 
-        this.init();
-    }
-
-    /**
-     * initializing function
-     */
-    private init() {
-        this.account.getLicense();
-        this.account.getTrialAvailability();
-        this.abTests.loadActiveABTests();
-        this.advancedBlocking.getAdvancedBlocking();
-        this.appInfo.getAppInfo();
-        this.filters.getEnabledFilters();
-        this.filters.getFilters();
-        this.filters.getFiltersIndex();
-        this.filters.getFiltersGroupedByExtension();
-        this.settings.getSettings();
-        this.settings.getHealthCheckDismissedCards();
-        this.settings.getSafariExtensions();
-        this.settings.getUserActionLastDirectory();
-        this.userRules.getUserRules();
+        // Callback handlers for cross-store orchestration
+        this.callbackHandlers = new CallbackHandlers(
+            this.licenseStore,
+            this.filtersMeta,
+            this.advancedBlocking,
+            this.appSettings,
+            this.importExport,
+            this.customFilters,
+            this.safariProtection,
+            this.userRules,
+            this.appInfo,
+            this.ui,
+            this.notification,
+            this.router,
+            this.telemetry,
+            this.safariExtensions,
+            this.account,
+            this.settingsWindowEffectiveThemeChanged,
+        );
     }
 
     /**
@@ -126,33 +176,10 @@ export class SettingsStore {
     }
 
     /**
-    * Color theme setter
-    */
-    public setColorTheme(colorTheme: ColorTheme) {
+     * Color theme setter
+     */
+    public setColorTheme(colorTheme: ColorTheme): void {
         this.windowing.updateTheme(colorTheme);
-    }
-
-    /**
-     * Handle license update callback — refreshes related state.
-     * Called from AccountCallbackServiceInternal.OnLicenseUpdate.
-     */
-    public async onLicenseUpdate(param: LicenseOrError) {
-        await this.account.getTrialAvailability();
-        this.account.setLicense(param as unknown as LicenseOrErrorExtended);
-        this.settings.getSettings();
-        this.advancedBlocking.getAdvancedBlocking();
-    }
-
-    /**
-     * Handle custom filter subscription callback.
-     * Navigates to the custom filters page and sets the subscribe URL.
-     * Called from FiltersCallbackServiceInternal.OnCustomFiltersSubscribe.
-     */
-    public onCustomFiltersSubscribe(url: string) {
-        this.router.changePath(RouteName.filters, {
-            groupId: this.filters.filtersIndex.customGroupId,
-        });
-        this.filters.setCustomFiltersSubscribeURL(url);
     }
 }
 

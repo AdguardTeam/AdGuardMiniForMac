@@ -30,8 +30,7 @@ import { useThemeWithRAF } from './hooks/useThemeWithRAF';
  */
 function HomeComponent() {
     const trayStore = useTrayStore();
-    const { settings, router, trayWindowVisibilityChanged, telemetry } = trayStore;
-    const { settings: traySettings } = settings;
+    const { traySettings, router, trayWindowVisibilityChanged, telemetry, safariExtensions } = trayStore;
 
     const stories = useStoriesConfig();
     const {
@@ -48,11 +47,11 @@ function HomeComponent() {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        setIsLoading(settings.getSafariExtensionsLoading());
-    }, [settings, settings.safariExtensionsStore.safariExtensions]);
+        setIsLoading(safariExtensions.getSafariExtensionsLoading());
+    }, [safariExtensions, safariExtensions.safariExtensions]);
 
     // Poll extensions while loading
-    useExtensionPolling(isLoading, () => settings.getSafariExtensions());
+    useExtensionPolling(isLoading, async () => safariExtensions.getSafariExtensions());
 
     // Scroll management for stories carousel
     const {
@@ -100,7 +99,7 @@ function HomeComponent() {
                             addCompletedStory={addCompletedStory}
                             closeStories={closeStories}
                             hasPreviousStory={getAdjacentStoryId(-1) !== null}
-                            isMASReleaseVariant={settings.isMASReleaseVariant}
+                            isMASReleaseVariant={traySettings.isMASReleaseVariant}
                             moveToNextStory={moveToNextStory}
                             moveToPreviousStory={moveToPreviousStory}
                             story={currentStory!}

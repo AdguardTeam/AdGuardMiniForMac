@@ -13,7 +13,7 @@ import type { OnColorThemeChanged } from 'Utils/colorThemes';
  */
 export function useTheme(onThemeChanged: OnColorThemeChanged) {
     const store = useTrayStore();
-    const { settings: { settings: globalSettings } } = store;
+    const { traySettings: { settings: globalSettings } } = store;
     const { theme } = globalSettings ?? { theme: Theme.system };
 
     useCommonTheme(onThemeChanged, {

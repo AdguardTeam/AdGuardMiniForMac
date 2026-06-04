@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { Switch } from 'UILib';
+
 import { SettingsItem } from './SettingsItem';
 
 import type { SettingsItemProps } from './SettingsItem';

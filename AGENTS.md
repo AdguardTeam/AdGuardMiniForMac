@@ -534,7 +534,7 @@ You MUST follow the following rules for EVERY task that you perform:
    ├── common/      # Shared utility and hook tests
    ├── stories/     # Story navigation tests
    ├── number/      # Number formatting tests
-   └── safariExtensionsStore/  # Safari extension store tests
+   └── safariExtensions/  # Safari extension store tests
    ```
 
 3. **Compilation**: Tests compile via `tsc -p tsconfig.node-tests.json`.

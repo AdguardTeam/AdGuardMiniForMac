@@ -27,11 +27,11 @@ function CustomFilterComponent({
     filter,
     onUpdate,
 }: CustomFilterProps) {
-    const { filters, notification, filters: { enabledFilters } } = useSettingsStore();
+    const { filtersMeta, notification, filtersMeta: { enabledFilters }, customFilters } = useSettingsStore();
     const { title, homepage, version, trusted, timeUpdated, rulesCount, id } = filter;
 
     const onDelete = async () => {
-        const { undoDelete, confirmDelete } = filters.prepareCustomFiltersForDeletion([filter]);
+        const { undoDelete, confirmDelete } = customFilters.prepareCustomFiltersForDeletion([filter]);
 
         notification.notify({
             message: translate('notification.custom.filter.removed', { name: title }),
@@ -57,7 +57,7 @@ function CustomFilterComponent({
     };
 
     const onStateChange = async (state: boolean) => {
-        const error = await filters.switchFiltersState([id], state);
+        const error = await filtersMeta.switchFiltersState([id], state);
         if (error) {
             notification.notify({
                 message: getNotificationSomethingWentWrongText(),

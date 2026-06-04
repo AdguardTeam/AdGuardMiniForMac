@@ -9,20 +9,16 @@ import { CheckApplicationVersionRequest } from 'Apis/requests/CommonService';
 import { RequestApplicationUpdateRequest } from 'Apis/requests/SettingsService';
 import { AppInfo as AppInfoEnt } from 'Apis/types';
 
-import type { SettingsStore } from 'SettingsStore';
-
 const CHECK_UPDATES_INTERVAL = 60 * 1000;
 
 /**
- *  AppInfo store
+ * AppInfo store
  */
 export class AppInfo {
     /**
      * Debouncer for update checking
      */
-    private readonly lastTimeUpdate: number | undefined;
-
-    public rootStore: SettingsStore;
+    private lastTimeUpdate: number | undefined;
 
     /**
      * info about application
@@ -36,14 +32,9 @@ export class AppInfo {
 
     /**
      * Ctor
-     *
-     * @param rootStore
      */
-    public constructor(rootStore: SettingsStore) {
-        this.rootStore = rootStore;
-        makeAutoObservable(this, {
-            rootStore: false,
-        }, { autoBind: true });
+    public constructor() {
+        makeAutoObservable(this, undefined, { autoBind: true });
     }
 
     /**
@@ -81,6 +72,7 @@ export class AppInfo {
             return;
         }
         window.API.Execute(new CheckApplicationVersionRequest());
+        this.lastTimeUpdate = Date.now();
     }
 
     /**

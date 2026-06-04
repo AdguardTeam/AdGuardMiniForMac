@@ -33,7 +33,7 @@ function LicenseStatusActionComponent() {
                 account.requestWebSubscription(Subscription.standalone);
                 break;
             case LicenseStatusActionType.renewLicense:
-                account.requestRenewLicense(account.license?.license?.licenseKey?.getHiddenValue() || '');
+                account.requestRenewLicense(account.license?.licenseKey?.getHiddenValue() || '');
                 break;
         }
     };

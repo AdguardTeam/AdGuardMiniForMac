@@ -2,15 +2,20 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+//
+//  Account.ts
+//  AdguardMini
+//
+
 import isNull from 'lodash/isNull';
 import { makeAutoObservable } from 'mobx';
 
-import { EnterActivationCodeRequest, GetLicenseRequest, GetSubscriptionsInfoRequest, GetTrialAvailableDaysRequest, RefreshLicenseRequest, RequestActivateRequest, RequestBindRequest, RequestLogoutRequest, RequestOpenAppStoreRequest, RequestOpenSubscriptionsRequest, RequestRenewRequest, RequestRestorePurchasesRequest, RequestSubscribeRequest } from 'Apis/requests/AccountService';
-import { Subscription, LicenseStatus, AppStoreSubscription, WebActivateResult, LicenseOrError } from 'Apis/types';
+import { EnterActivationCodeRequest, GetSubscriptionsInfoRequest, RefreshLicenseRequest, RequestActivateRequest, RequestBindRequest, RequestLogoutRequest, RequestOpenAppStoreRequest, RequestOpenSubscriptionsRequest, RequestRenewRequest, RequestRestorePurchasesRequest, RequestSubscribeRequest } from 'Apis/requests/AccountService';
+import { AppStoreSubscription, Subscription, WebActivateResult } from 'Apis/types';
 
-import type { LicenseOrErrorExtended } from 'Apis/ExtendLicense';
+import type { LicenseExtended } from 'Apis/ExtendLicense';
 import type { AppStoreSubscriptionsMessage } from 'Apis/types';
-import type { SettingsStore } from 'SettingsStore';
+import type { LicenseStore } from 'Common/stores/LicenseStore';
 
 /**
  * Enum representing the result of the activation flow
@@ -53,7 +58,8 @@ type ActivationFlowStatus
     };
 
 /**
- * Account store
+ * Account store — manages activation flow, subscriptions, and paywall state.
+ * Delegates license CRUD and status computed properties to LicenseStore.
  */
 export class Account {
     /**
@@ -64,17 +70,8 @@ export class Account {
         value: false,
     };
 
-    public rootStore: SettingsStore;
-
-    /**
-     * User License
-     */
-    public license = new LicenseOrError({ error: true }) as unknown as LicenseOrErrorExtended;
-
-    /**
-     * License update time, used for checking if the license is updated from callback
-     */
-    public licenseUpdateTime = Date.now();
+    // This should be private but due to MobX typings we make it public or we have error in makeAutoObservable
+    public readonly licenseStore: LicenseStore;
 
     /**
      * AppStore subscriptions
@@ -87,120 +84,95 @@ export class Account {
     public paywallShouldBeShown = false;
 
     /**
-     * Trial availability status
-     * Show available days for trial, if 0 - trial is not available
+     * License update time, used for checking if the license is updated from callback
      */
-    public trialAvailableDays = 0;
-    /**
-     * Checks if the license object is exist
-     */
-    public get hasLicense() {
-        return this.license.hasLicense;
-    }
-
-    /**
-     * Checks if the license is exist
-     */
-    public get isLicenseExist() {
-        return this.hasLicense && Boolean(this.license.license?.licenseKey);
-    }
+    public licenseUpdateTime = Date.now();
 
     /**
      * Checks if subscriptions prices are loaded and available
      */
-    public get subscriptionPricesAvailable() {
+    public get subscriptionPricesAvailable(): boolean {
         return !isNull(this.appStoreSubscriptions);
     }
 
-    /**
-     * Checks if trial is expired
-     */
-    public get isTrialExpired() {
-        return this.hasLicense && !this.isLicenseExist
-            && this.license.license?.status === LicenseStatus.expired;
+    // -- Delegated license computed properties --
+
+    /** Delegated to LicenseStore */
+    public get hasLicense(): boolean {
+        return this.licenseStore.hasLicense;
     }
 
-    /**
-     * Checks if license is expired
-     */
-    public get isLicenseExpired() {
-        return this.hasLicense && this.isLicenseExist
-            && this.license.license?.status === LicenseStatus.expired;
+    /** Delegated to LicenseStore */
+    public get isLicenseExist(): boolean {
+        return this.licenseStore.isLicenseExist;
     }
 
-    /**
-     * Checks if the license status is active or trial
-     */
-    public get isLicenseOrTrialActive() {
-        return this.isLicenseActive || this.isTrialActive;
+    /** Delegated to LicenseStore */
+    public get isTrialExpired(): boolean {
+        return this.licenseStore.isTrialExpired;
     }
 
-    /**
-     * Checks if the license is active
-     */
-    public get isLicenseActive() {
-        return this.hasLicense && this.license.license?.status === LicenseStatus.active;
+    /** Delegated to LicenseStore */
+    public get isLicenseExpired(): boolean {
+        return this.licenseStore.isLicenseExpired;
     }
 
-    /**
-     * Checks if the trial is active
-     */
-    public get isTrialActive() {
-        return this.hasLicense
-            && this.license.license?.status === LicenseStatus.active
-            && this.license.license?.licenseTrial;
+    /** Delegated to LicenseStore */
+    public get isLicenseOrTrialActive(): boolean {
+        return this.licenseStore.isLicenseOrTrialActive;
     }
 
-    /**
-     * Checks if the license is trial
-     */
-    public get isTrial() {
-        return this.hasLicense
-            && this.license.license?.licenseTrial;
+    /** Delegated to LicenseStore */
+    public get isLicenseActive(): boolean {
+        return this.licenseStore.isLicenseActive;
     }
 
-    /**
-     * Checks if the license status is blocked
-     */
-    public get isLicenseBlocked() {
-        return this.hasLicense && this.license.license?.status === LicenseStatus.blocked;
+    /** Delegated to LicenseStore */
+    public get isTrialActive(): boolean {
+        return this.licenseStore.isTrialActive;
     }
 
-    /**
-     * Checks if the license status is blocked app id
-     */
-    public get isLicenseBlockedAppId() {
-        return this.hasLicense && this.license.license?.status === LicenseStatus.blocked_app_id;
+    /** Delegated to LicenseStore */
+    public get isTrial(): boolean {
+        return this.licenseStore.isTrial;
     }
 
-    /**
-     * Checks if the trial is exist
-     */
-    public get isTrialExist() {
-        return this.isLicenseExist
-            && [LicenseStatus.trial, LicenseStatus.active, LicenseStatus.expired].includes(
-                this.license.license!.status,
-            ) && this.license.license?.licenseTrial;
+    /** Delegated to LicenseStore */
+    public get isLicenseBlocked(): boolean {
+        return this.licenseStore.isLicenseBlocked;
     }
 
-    /**
-     * Checks if the application license status is free
-     */
-    public get isFreeware() {
-        return this.hasLicense && this.license.license?.status === LicenseStatus.free;
+    /** Delegated to LicenseStore */
+    public get isLicenseBlockedAppId(): boolean {
+        return this.licenseStore.isLicenseBlockedAppId;
     }
 
-    /**
-     * Checks if the App Store subscription exists
-     */
-    public get isAppStoreSubscription() {
-        return this.hasLicense && !!this.license.license?.appStoreSubscription;
+    /** Delegated to LicenseStore */
+    public get isTrialExist(): boolean {
+        return this.licenseStore.isTrialExist;
     }
+
+    /** Delegated to LicenseStore */
+    public get isFreeware(): boolean {
+        return this.licenseStore.isFreeware;
+    }
+
+    /** Delegated to LicenseStore */
+    public get isAppStoreSubscription(): boolean {
+        return this.licenseStore.isAppStoreSubscription;
+    }
+
+    /** Delegated to LicenseStore */
+    public get trialAvailableDays(): number {
+        return this.licenseStore.trialAvailableDays;
+    }
+
+    // -- Activation flow computed --
 
     /**
      * Indicates that the license status is being checked right now
      */
-    public get isCheckingLicenseStatus() {
+    public get isCheckingLicenseStatus(): boolean {
         const { type, value } = this.activationFlowStatus;
         return type === ActivationFlowStatusType.isCheckingLicenseStatus && value;
     }
@@ -208,7 +180,7 @@ export class Account {
     /**
      * Indicates that an error has occured within the activation flow
      */
-    public get hasActivationError() {
+    public get hasActivationError(): boolean {
         const { type, value } = this.activationFlowStatus;
         return type === ActivationFlowStatusType.hasActivationError && value;
     }
@@ -216,7 +188,7 @@ export class Account {
     /**
      * Returns the activation flow result, if there is one
      */
-    public get activationResult() {
+    public get activationResult(): ActivationFlowResult | undefined {
         const { type, value } = this.activationFlowStatus;
         if (type === ActivationFlowStatusType.hasActivationResult) {
             return value;
@@ -224,21 +196,28 @@ export class Account {
     }
 
     /**
+     * Return license info (delegates to LicenseStore)
+     */
+    public get license(): LicenseExtended | null {
+        return this.licenseStore.license.license ?? null;
+    }
+
+    /**
      * Ctor
      *
-     * @param rootStore
+     * @param licenseStore Shared license store
      */
-    public constructor(rootStore: SettingsStore) {
-        this.rootStore = rootStore;
+    public constructor(licenseStore: LicenseStore) {
+        this.licenseStore = licenseStore;
         makeAutoObservable(this, {
-            rootStore: false,
+            licenseStore: false,
         }, { autoBind: true });
     }
 
     /**
      * Request subscription to AdGuard mini
      */
-    private async requestSubscription(subscriptionType: Subscription) {
+    private async requestSubscription(subscriptionType: Subscription): Promise<void> {
         this.updateActivationFlowStatus({
             type: ActivationFlowStatusType.isCheckingLicenseStatus,
             value: true,
@@ -262,38 +241,23 @@ export class Account {
     }
 
     /**
-     * Receive user current license
+     * Receive user current license (delegates to LicenseStore)
      */
-    public async getLicense() {
+    public async getLicense(): Promise<void> {
         try {
             this.getSubscriptionsInfo();
-            this.getTrialAvailability();
-            const resp = await window.API.Execute(new GetLicenseRequest());
-            this.setLicense(resp as unknown as LicenseOrErrorExtended);
+            this.licenseStore.getTrialAvailability();
+            await this.licenseStore.getLicense();
+            this.licenseUpdateTime = Date.now();
         } catch (err) {
-            log.error('getLicense failed', String(err));
+            log.error('Account.getLicense failed', String(err));
         }
-    }
-
-    /**
-     * Local setter for license
-     */
-    public setLicense(license: LicenseOrErrorExtended) {
-        this.license = license;
-        this.licenseUpdateTime = Date.now();
-    }
-
-    /**
-     * Request to refresh the license
-     */
-    public async refreshLicense() {
-        return window.API.Execute(new RefreshLicenseRequest());
     }
 
     /**
      * Request AppStore subscription
      */
-    public async requestAppStoreSubscription(appStoreSubscription: AppStoreSubscription) {
+    public async requestAppStoreSubscription(appStoreSubscription: AppStoreSubscription): Promise<void> {
         const subscription = appStoreSubscription === AppStoreSubscription.annual
             ? Subscription.annual
             : Subscription.monthly;
@@ -305,23 +269,11 @@ export class Account {
      * Request web subscription.
      * Redirects to AdGuard license purchase/trial activation page
      */
-    public async requestWebSubscription(subscription?: Subscription.trial | Subscription.standalone) {
+    public async requestWebSubscription(subscription?: Subscription.trial | Subscription.standalone): Promise<void> {
         if (subscription) {
             this.requestSubscription(subscription);
         } else {
             this.requestSubscription(this.trialAvailableDays > 0 ? Subscription.trial : Subscription.standalone);
-        }
-    }
-
-    /**
-     * Gets trial availability status
-     */
-    public async getTrialAvailability() {
-        try {
-            const { value } = await window.API.Execute(new GetTrialAvailableDaysRequest());
-            this.setIsTrialAvailable(value);
-        } catch (err) {
-            log.error('getTrialAvailability failed', String(err));
         }
     }
 
@@ -346,7 +298,7 @@ export class Account {
     /**
      * Restore purchase to AdGuard mini
      */
-    public async restorePurchase() {
+    public async restorePurchase(): Promise<void> {
         this.updateActivationFlowStatus({
             type: ActivationFlowStatusType.isCheckingLicenseStatus,
             value: true,
@@ -360,9 +312,16 @@ export class Account {
     }
 
     /**
+     * Request to refresh the license
+     */
+    public async refreshLicense() {
+        return window.API.Execute(new RefreshLicenseRequest());
+    }
+
+    /**
      * Starts the activation flow and opens the activation page
      */
-    public async requestLoginOrActivate() {
+    public async requestLoginOrActivate(): Promise<void> {
         this.updateActivationFlowStatus({
             type: ActivationFlowStatusType.isCheckingLicenseStatus,
             value: true,
@@ -374,11 +333,18 @@ export class Account {
     }
 
     /**
+     * Request logout
+     */
+    public async requestLogout() {
+        return window.API.Execute(new RequestLogoutRequest());
+    }
+
+    /**
      * Request to open the bind page
      */
     public async requestBindLicense() {
-        await window.API.Execute(new RequestBindRequest(
-            { value: this.license.license?.licenseKey?.getHiddenValue() || '' },
+        return window.API.Execute(new RequestBindRequest(
+            { value: this.license?.licenseKey?.getHiddenValue() || '' },
         ));
     }
 
@@ -390,22 +356,15 @@ export class Account {
     }
 
     /**
-     * Request logout
-     */
-    public async requestLogout() {
-        return window.API.Execute(new RequestLogoutRequest());
-    }
-
-    /**
      * Receive app store subscriptions info
      */
-    public async getSubscriptionsInfo() {
+    public async getSubscriptionsInfo(): Promise<AppStoreSubscriptionsMessage | undefined> {
         try {
             const result = await window.API.Execute(new GetSubscriptionsInfoRequest());
             this.setSubscriptionsInfo(result);
             return result;
         } catch (err) {
-            log.error('getSubscriptionsInfo failed', String(err));
+            log.error('Account.getSubscriptionsInfo failed', String(err));
             return undefined;
         }
     }
@@ -449,13 +408,6 @@ export class Account {
             type: ActivationFlowStatusType.hasActivationResult,
             value,
         };
-    }
-
-    /**
-     * Sets the trial availability status
-     */
-    public setIsTrialAvailable(value: number) {
-        this.trialAvailableDays = value;
     }
 
     /**

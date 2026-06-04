@@ -40,11 +40,11 @@ function AppComponent() {
     const settingsStore = useSettingsStore();
     const {
         router: { currentPath },
-        settings,
+        appSettings,
         notification,
     } = settingsStore;
 
-    const { settings: { language } } = settings;
+    const { settings: { language } } = appSettings;
 
     useEffect(() => {
         // Used for hiding window instead of close it
@@ -65,7 +65,7 @@ function AppComponent() {
     });
 
     useEffect(() => {
-        if (!settings.loginItemEnabled && currentPath !== RouteName.safari_protection) {
+        if (!appSettings.loginItemEnabled && currentPath !== RouteName.safari_protection) {
             notification.notify({
                 notificationContext: NotificationContext.ctaButton,
                 message: translate('login.item.modal.desc'),
@@ -73,10 +73,10 @@ function AppComponent() {
                 iconType: NotificationsQueueIconType.error,
                 variant: NotificationsQueueVariant.textOnly,
                 btnLabel: translate('login.item.open.settings'),
-                onClick: settings.openLoginItemsSettings,
+                onClick: appSettings.openLoginItemsSettings,
             }, true);
         }
-    }, [currentPath, settings.loginItemEnabled, notification, settings.openLoginItemsSettings]);
+    }, [currentPath, appSettings.loginItemEnabled, notification, appSettings.openLoginItemsSettings]);
 
     useShowEnableExtensionsNotification();
     useCheckExpiredLicenseStatus();

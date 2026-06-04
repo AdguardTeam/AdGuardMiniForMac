@@ -21,9 +21,7 @@ function AlreadyPurchasedModalComponent({
     onClose,
     onGoToEnterActivationCodeStep,
 }: AlreadyPurchasedModalProps) {
-    const { account, settings, telemetry } = useSettingsStore();
-
-    const { isMASReleaseVariant } = settings;
+    const { account, appSettings, telemetry } = useSettingsStore();
 
     return (
         <Modal
@@ -43,7 +41,7 @@ function AlreadyPurchasedModalComponent({
                     telemetry.trackEvent(SettingsEvent.LogInClick);
                 }}
             />
-            {isMASReleaseVariant && (
+            {appSettings.isMasReleaseVariant && (
                 <SettingsItem
                     icon="purchase"
                     iconColor="green"

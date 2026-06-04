@@ -24,7 +24,7 @@ export function SafariProtectionModalsComponent({
     closeConsentModal,
     closeLoginItemModal,
 }: SafariProtectionModalsProps) {
-    const { filters, settings } = useSettingsStore();
+    const { filtersMeta, appSettings } = useSettingsStore();
     const notifyError = useNotificationSomethingWentWrongText();
 
     const enableConsent = async () => {
@@ -32,11 +32,11 @@ export function SafariProtectionModalsComponent({
             return;
         }
 
-        const { consentFiltersIds } = settings.settings;
+        const { consentFiltersIds } = appSettings.settings;
         const newConsent = [...consentFiltersIds, ...showConsentFilterIds];
-        settings.updateUserConsent(newConsent);
+        appSettings.updateUserConsent(newConsent);
 
-        const error = await filters.switchFiltersState(showConsentFilterIds, true);
+        const error = await filtersMeta.switchFiltersState(showConsentFilterIds, true);
         if (error) {
             notifyError();
         }
@@ -45,12 +45,10 @@ export function SafariProtectionModalsComponent({
     };
 
     const openLoginItemsSettings = () => {
-        settings.openLoginItemsSettings();
+        appSettings.openLoginItemsSettings();
     };
 
-    const {
-        filters: { filters: filtersArr },
-    } = filters;
+    const { filters: { filters: filtersArr } } = filtersMeta;
 
     return (
         <>

@@ -12,6 +12,7 @@
 import { createContext } from 'preact';
 
 import { GetEffectiveThemeRequest } from 'Apis/requests/OnboardingService';
+import { LicenseStore, SafariExtensionsStore } from 'Common/stores';
 import { Action } from 'Modules/common/utils/EventAction';
 
 import {
@@ -46,12 +47,28 @@ export class OnboardingStore {
     public readonly onboardingWindowEffectiveThemeChanged = new Action<EffectiveTheme>();
 
     /**
+     * Safari extensions store (shared, exposed for access)
+     */
+    public readonly safariExtensions: SafariExtensionsStore;
+
+    /**
+     * License store (shared, exposed for access)
+     */
+    public readonly licenseStore: LicenseStore;
+
+    /**
      * Ctor
      */
     constructor() {
-        this.steps = new Steps(this);
+        this.safariExtensions = new SafariExtensionsStore();
+        this.licenseStore = new LicenseStore();
+
+        this.steps = new Steps();
         this.router = onboardingRouterFactory();
         this.telemetry = onboardingTelemetryFactory();
+
+        this.safariExtensions.getSafariExtensions();
+        this.getEffectiveTheme();
     }
 
     /**

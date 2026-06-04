@@ -26,8 +26,7 @@ import s from './SafariExtension.module.pcss';
  * SafariExtension page in settings module
  */
 export function SafariExtensionComponent() {
-    const { settings, filters, router } = useSettingsStore();
-    const { safariExtensionsStore } = settings;
+    const { filtersMeta, router, safariExtensions } = useSettingsStore();
 
     const {
         general,
@@ -37,9 +36,9 @@ export function SafariExtensionComponent() {
         other,
         custom,
         adguardForSafari,
-    } = safariExtensionsStore.safariExtensions;
+    } = safariExtensions.safariExtensions;
 
-    const { filtersGroupedByExtension } = filters;
+    const { filtersGroupedByExtension } = filtersMeta;
 
     useUpdateSafariExtensions();
 
