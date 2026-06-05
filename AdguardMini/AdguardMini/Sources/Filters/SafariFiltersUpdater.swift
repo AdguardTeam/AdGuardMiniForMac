@@ -148,6 +148,7 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
                     LogInfo("\(LogTag.safari) convertRulesAndSave start (ID: \(updateId))")
                     let updatedBlockers = self.safariConverter.convertRulesAndSave(
                         filters: rawFilters,
+                        // Actually this paramter is ignored due do perfomance optimizations
                         advanced: self.userSettingsService.advancedBlockingState.advancedRules,
                         progress: progress
                     )

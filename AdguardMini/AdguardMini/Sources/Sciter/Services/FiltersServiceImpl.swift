@@ -214,23 +214,3 @@ extension Sciter {
         }
     }
 }
-
-// MARK: - SafariBlockerType filter groups mapping
-
-// TODO: AG-55030
-// Duplicates ContentBlockerType.from(groupId:) mapping in SafariConverter.swift.
-// Unify once FiltersDefinedGroup is moved to SharedSources.
-private extension SafariBlockerType {
-    /// Maps Safari blocker type to filter groups
-    var filtersGroups: [FiltersDefinedGroup] {
-        switch self {
-        case .general:                    [.adBlocking, .languageSpecific]
-        case .privacy:                    [.privacy]
-        case .security:                   [.security]
-        case .socialWidgetsAndAnnoyances: [.social, .annoyances]
-        case .other:                      [.other]
-        case .custom:                     [.custom]
-        case .advanced:                   []
-        }
-    }
-}
