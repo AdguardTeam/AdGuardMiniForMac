@@ -168,6 +168,8 @@ extension Sciter {
                                            _ promise: @escaping (FiltersGroupedByExtensions) -> Void) {
             Task {
                 var filters = await self.filtersSupervisor.getActiveRulesInfo()
+                // Safari extension do not use language specific filters when languageSpecific option is disabled by user
+                // So exclude language specific filters
                 if !self.filtersSupervisor.languageSpecific {
                     filters = filters.filter { filter in
                         filter.groupId != FiltersDefinedGroup.languageSpecific.id
