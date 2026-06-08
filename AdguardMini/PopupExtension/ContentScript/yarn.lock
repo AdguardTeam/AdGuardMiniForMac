@@ -32,10 +32,10 @@
   resolved "https://registry.yarnpkg.com/@adguard/extended-css/-/extended-css-2.1.1.tgz#53677a310cf39259f54dfce79b692b0a327a8bb7"
   integrity sha512-TsHZ20oUWhbtrzQ4w70B96oHkGBIUZg2FdMfkq4StGfLmXQb+kI7fQb6BtXP2D0bvraIHMq6/mtKExglDJ9vsg==
 
-"@adguard/safari-extension@^4.2.2":
-  version "4.2.2"
-  resolved "https://registry.yarnpkg.com/@adguard/safari-extension/-/safari-extension-4.2.2.tgz#5c55620e4b2909e88b04fe8a709aaaead63610eb"
-  integrity sha512-mqgZ29/LHT7Ovv/Pu9+xA2tPZ2pH+hE5O6fLaM4ZYyMDDx9vTaO/U7AltYYs25pOIChKAacmNkhmFd0JR2oRqg==
+"@adguard/safari-extension@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@adguard/safari-extension/-/safari-extension-4.3.0.tgz#bf9ce22fe6f0042be8b8a28ed0c7dc5bcefd057f"
+  integrity sha512-Zhif8fpD+qnT/YpAs1C8esXpMSkpx7Cs4mnSF1aO/v62sj343y2wWkEZZ+Iy972pHjkMwG9of7ARKJwBQwJvPg==
   dependencies:
     "@adguard/extended-css" "2.1.1"
     "@adguard/scriptlets" "2.3.1"

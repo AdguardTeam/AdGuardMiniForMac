@@ -196,13 +196,7 @@ extension Sciter {
             var filtersGroupedByGroup: [Int: [Int]] = [:]
 
             for filter in filters {
-                let filterId = filter.filterId
-                let groupId = filter.groupId
-                if filtersGroupedByGroup[groupId] != nil {
-                    filtersGroupedByGroup[groupId]?.append(filterId)
-                } else {
-                    filtersGroupedByGroup[groupId] = [filterId]
-                }
+                filtersGroupedByGroup[filter.groupId, default: []].append(filter.filterId)
             }
 
             for blocker in SafariBlockerType.allCases {
