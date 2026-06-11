@@ -112,6 +112,17 @@ final class TrayApp: SciterApp, TrayChangesDelegate, StatusBarItemControllerDele
             )
         }
 
+#if UI_TESTS
+        // In UI test builds, auto-show the tray window so that the
+        // Sciter test peer (test-peer.js) can respond to TCP connections.
+        // The tray window's event loop does not pump network I/O while
+        // hidden, which prevents E2E tests from connecting.
+        Task { @MainActor in
+            try? await Task.sleep(seconds: 2.0)
+            await self.showTrayWindow(forced: true)
+        }
+#endif
+
         self.trayIconUpdatesHandler.trayChangesDelegate = self
         LogInfo("Initialized")
     }

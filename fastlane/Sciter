@@ -11,9 +11,14 @@ lane :build_sciter_ui do |options|
   # Need for building Sciter UI
   ENV['APP_VERSION'] = @build_settings['AG_FULL_VERSION'] if ENV['APP_VERSION'].nil?
   is_dev_build = options[:config] == 'Debug'
+  is_ui_test_build = ENV['AG_UI_TEST_BUILD'] == '1' || File.exist?('/tmp/adguard-ui-test-build')
 
   build_type = 'prod'
-  build_type = 'dev' if is_dev_build
+  if is_ui_test_build
+    build_type = 'test'
+  elsif is_dev_build
+    build_type = 'dev'
+  end
 
   Dir.chdir('..') do
     sh(

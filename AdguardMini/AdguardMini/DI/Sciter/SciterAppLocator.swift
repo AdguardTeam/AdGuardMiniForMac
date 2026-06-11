@@ -117,10 +117,17 @@ final class SciterAppLocator {
 
     @discardableResult
     private func newTrayApp() -> TrayApp {
+#if UI_TESTS
+        // In UI test builds, keep the tray visible so that
+        // the test peer (test-peer.js) can service TCP connections.
+        let hideOnLosingFocus = false
+#else
+        let hideOnLosingFocus = true
+#endif
         let app = TrayApp(
             windowRect: Constants.trayWindowRect,
             archivePath: Constants.trayArchivePath,
-            hideOnLoosingFocus: true,
+            hideOnLoosingFocus: hideOnLosingFocus,
             enableFrameAutosave: false
         )
         self._trayApp = app
