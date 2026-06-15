@@ -48,7 +48,7 @@ AG_MAC_GROUP = $(CONFIG_MAC_GROUP)
 AG_PRODUCT_NAME = AdGuard Mini
 AG_APP_DISPLAYED_NAME = AdGuard Mini
 
-AG_COPYRIGHT = Copyright © 2009-2025 AdGuard Software Limited. All rights reserved.
+AG_COPYRIGHT = Copyright © 2009-2026 AdGuard Software Limited. All rights reserved.
 AGP_SPDX_LICENSE = GPL-3.0-or-later
 
 //============ Additional bundle IDs ============
