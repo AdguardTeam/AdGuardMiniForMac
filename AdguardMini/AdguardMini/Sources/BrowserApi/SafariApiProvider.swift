@@ -47,6 +47,7 @@ final class SafariApiProvider: NSObject {
     private var appStateChangedBlocks = [AppStateChangeInfo]()
 
     private let proxyStorage: XPCConnectionStorage
+    private let licenseStateProvider: LicenseStateProvider
     private let supportService: Support
     private let filtersSupervisor: FiltersSupervisor
     private let protectionService: ProtectionService
@@ -66,6 +67,7 @@ final class SafariApiProvider: NSObject {
 
     init(
         proxyStorage: XPCConnectionStorage,
+        licenseStateProvider: LicenseStateProvider,
         supportService: Support,
         filtersSupervisor: FiltersSupervisor,
         protectionService: ProtectionService,
@@ -79,6 +81,7 @@ final class SafariApiProvider: NSObject {
         appStoreRateUs: AppStoreRateUs?
     ) {
         self.proxyStorage = proxyStorage
+        self.licenseStateProvider = licenseStateProvider
         self.supportService = supportService
         self.filtersSupervisor = filtersSupervisor
         self.protectionService = protectionService
@@ -174,7 +177,7 @@ extension SafariApiProvider: XPCHandlerProtocol {
 // MARK: - SafariApiProvider: MainAppApi implementation
 
 extension SafariApiProvider: MainAppApi {
-    private func createAppState(after time: EBATimestamp? = nil) -> EBAAppState {
+    private func createAppState(after time: EBATimestamp? = nil) async -> EBAAppState {
         if let time {
             LogWarn("Create app state after \(time) is not supported yet")
         }
@@ -183,17 +186,27 @@ extension SafariApiProvider: MainAppApi {
         appState.isProtectionEnabled = self.protectionService.isProtectionEnabled
         appState.logLevel = Int32(Logger.shared.logLevel.rawValue)
         appState.theme = Int32(self.userSettingsService.theme.rawValue)
+        let statusInfo = await self.keychain.getAppStatusInfo()
+        appState.isFreeUser = !(statusInfo?.isPaid ?? false)
+        let trialAvailability = await self.licenseStateProvider.getTrialAvailability()
+        appState.isTrialAvailable = trialAvailability.isAvailable
+        appState.trialDays = trialAvailability.availableDays
+
         return appState
     }
 
     func appState(after time: EBATimestamp, reply: @escaping (EBAAppState?, Error?) -> Void) {
-        let appState = self.createAppState(after: time)
-        reply(appState, nil)
+        Task {
+            let appState = await self.createAppState(after: time)
+            reply(appState, nil)
+        }
     }
 
     func appState(_ reply: @escaping (EBAAppState?, Error?) -> Void) {
-        let appState = self.createAppState()
-        reply(appState, nil)
+        Task {
+            let appState = await self.createAppState()
+            reply(appState, nil)
+        }
     }
 
     func getCurrentFilteringState(withUrl url: String, reply: @escaping (EBACurrentFilteringState?, Error?) -> Void) {

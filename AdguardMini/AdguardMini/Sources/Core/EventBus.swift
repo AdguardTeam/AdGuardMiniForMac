@@ -44,6 +44,8 @@ enum Event: String {
     case effectiveThemeChanged = "EffectiveThemeChanged"
 
     case settingsWindowOpened = "SettingsWindowOpened"
+
+    case appStoreTransactionUpdated = "AppStoreTransactionUpdated"
 }
 
 private extension Notification.Name {

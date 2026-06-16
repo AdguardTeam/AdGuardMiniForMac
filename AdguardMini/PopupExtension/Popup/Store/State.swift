@@ -19,6 +19,9 @@ extension Store {
         var protectionEnabledForCurrentUrl: Bool
         var hasHealthCheckAttention: Bool
         var xpcAvailable: Bool
+        var isFreeUser: Bool
+        var isTrialAvailable: Bool
+        var trialDays: Int
 
         var tabStats: TabStats
         var tabContext: TabContext
@@ -37,6 +40,9 @@ extension Store {
             protectionEnabledForCurrentUrl: true,
             hasHealthCheckAttention: false,
             xpcAvailable: true,
+            isFreeUser: true,
+            isTrialAvailable: false,
+            trialDays: 0,
             tabStats: TabStats(),
             tabContext: .empty,
             pausedUrls: [],

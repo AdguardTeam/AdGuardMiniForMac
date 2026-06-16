@@ -132,12 +132,16 @@ private final class ServiceLocator {
     private lazy var licenseStateProvider: LicenseStateProvider = {
         LicenseStateProviderImpl(
             keychain: self.coreDIContainer.keychain,
-            appStoreInteractor: self.appStoreInteractor
+            appStoreInteractor: self.appStoreInteractor,
+            eventBus: self.eventBus
         )
     }()
     #else
     private lazy var licenseStateProvider: LicenseStateProvider = {
-        LicenseStateProviderImpl(keychain: self.coreDIContainer.keychain)
+        LicenseStateProviderImpl(
+            keychain: self.coreDIContainer.keychain,
+            backendService: self.backendService
+        )
     }()
     #endif
 
@@ -276,6 +280,7 @@ private final class ServiceLocator {
     private lazy var safariApiHandler: SafariApiHandler = {
         SafariApiProvider(
             proxyStorage: self.xpcConnectionStorage,
+            licenseStateProvider: self.licenseStateProvider,
             supportService: self.support,
             filtersSupervisor: self.filtersSupervisor,
             protectionService: self.protectionService,
@@ -417,7 +422,8 @@ private final class ServiceLocator {
 
     private lazy var appStoreInteractor: AppStoreInteractor = AppStoreInteractorImpl(
         appStore: self.appStore,
-        backendService: self.backendService
+        backendService: self.backendService,
+        eventBus: self.eventBus
     )
 
     #endif

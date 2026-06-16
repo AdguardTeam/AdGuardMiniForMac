@@ -44,6 +44,21 @@ class PopupViewController: SFSafariExtensionViewController, PopupViewControllerD
         self.view = NSHostingView(rootView: self.mainView)
     }
 
+    override func viewDidLayout() {
+        super.viewDidLayout()
+        // Keep the Safari popover tightly fitted to the SwiftUI content.
+        // `NSHostingView.intrinsicContentSize` updates whenever the
+        // SwiftUI view hierarchy changes (e.g. upsell shown/hidden).
+        let fittingSize = self.view.intrinsicContentSize
+        guard fittingSize.width > 0, fittingSize.height > 0 else { return }
+        let rounded = CGSize(
+            width: ceil(fittingSize.width),
+            height: ceil(fittingSize.height)
+        )
+        guard self.preferredContentSize != rounded else { return }
+        self.preferredContentSize = rounded
+    }
+
     override func viewWillAppear() {
         super.viewWillAppear()
         self.viewState.popupWillShow()

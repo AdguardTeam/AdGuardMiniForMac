@@ -23,6 +23,7 @@ extension Store {
         case restartMainApp
         case openSafariSettings
         case openSettings(page: String? = nil)
+        case openPurchase
         case reportSite(url: String)
         case openUrlInNewTab(URL)
         case openUrlWithSystemHandler(URL)

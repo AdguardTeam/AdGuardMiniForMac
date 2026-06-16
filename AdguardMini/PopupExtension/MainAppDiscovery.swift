@@ -23,6 +23,7 @@ protocol MainAppDiscovery {
     func runMainApplication()
     func restartMainApplication() async throws
     func openSettings(page: String?) async throws
+    func openPurchase() async throws
     func subscribeCustomFilter(_ url: String) async throws
 }
 
@@ -45,11 +46,16 @@ final class MainAppDiscoveryImpl: MainAppDiscovery {
 
     func restartMainApplication() async throws {
         let actionRestartUrl = InternalUrlSchemeActionUrl.restart.url
-        try await self.openUrl(actionRestartUrl)
+        try await self.openUrl(actionRestartUrl, configuration: .silent)
     }
 
     func openSettings(page: String?) async throws {
         let actionUrl = InternalUrlSchemeActionUrl.openSettings(page: page).url
+        try await self.openUrl(actionUrl)
+    }
+
+    func openPurchase() async throws {
+        let actionUrl = InternalUrlSchemeActionUrl.openPurchase.url
         try await self.openUrl(actionUrl)
     }
 
@@ -69,7 +75,10 @@ final class MainAppDiscoveryImpl: MainAppDiscovery {
         try await self.openUrl(urlToOpen)
     }
 
-    private func openUrl(_ actionUrl: URL) async throws {
+    private func openUrl(
+        _ actionUrl: URL,
+        configuration: NSWorkspace.OpenConfiguration = .foreground
+    ) async throws {
         guard let appUrl = NSWorkspace.shared.urlForApplication(toOpen: actionUrl) else {
             throw MainAppDiscoveryError.mainAppNotFounded
         }
@@ -77,7 +86,7 @@ final class MainAppDiscoveryImpl: MainAppDiscovery {
         try await NSWorkspace.shared.open(
             [actionUrl],
             withApplicationAt: appUrl,
-            configuration: .silent
+            configuration: configuration
         )
     }
 }

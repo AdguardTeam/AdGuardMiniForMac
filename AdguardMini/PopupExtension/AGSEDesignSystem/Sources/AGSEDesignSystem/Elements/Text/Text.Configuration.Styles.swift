@@ -19,7 +19,7 @@ extension Text.Configuration {
         isMultiline: Bool = false
     ) -> Self {
         .init(
-            font: Typography.Style.domain.font,
+            typographyStyle: .domain,
             color: Palette.Text.mainText,
             isMultiline: isMultiline,
             alignment: .leading,
@@ -34,7 +34,7 @@ extension Text.Configuration {
         isMultiline: Bool = false
     ) -> Self {
         .init(
-            font: Typography.Style.t2CondensedRegular.font,
+            typographyStyle: .t2CondensedRegular,
             color: color,
             isMultiline: isMultiline,
             alignment: .leading,
@@ -48,7 +48,7 @@ extension Text.Configuration {
         isMultiline: Bool = true
     ) -> Self {
         .init(
-            font: Typography.Style.h4.font,
+            typographyStyle: .h4,
             color: Palette.Text.mainText,
             isMultiline: isMultiline
         )
@@ -57,13 +57,14 @@ extension Text.Configuration {
     // MARK: Subtitle
 
     static func subtitle(
+        color: StatefulColor = Palette.Text.description,
         isMultiline: Bool = true,
         alignment: Alignment = .center,
         multilineTextAlignment: TextAlignment = .center
     ) -> Self {
         .init(
-            font: Typography.Style.t2CondensedRegular.font,
-            color: Palette.Text.description,
+            typographyStyle: .t2CondensedRegular,
+            color: color,
             isMultiline: isMultiline,
             alignment: alignment,
             multilineTextAlignment: multilineTextAlignment

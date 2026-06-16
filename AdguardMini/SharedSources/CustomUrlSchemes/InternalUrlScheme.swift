@@ -13,6 +13,7 @@ enum InternalUrlSchemeActionUrl {
     case restart
     case openSettings(page: String? = nil)
     case subscribeFilter
+    case openPurchase
 }
 
 extension InternalUrlSchemeActionUrl {
@@ -48,6 +49,8 @@ extension InternalUrlSchemeActionUrl {
             )
         case .subscribeFilter:
             Self.makeURL(endpoint: "subscribe_filter")
+        case .openPurchase:
+            Self.makeURL(endpoint: "open_purchase")
         }
     }
 

@@ -107,7 +107,10 @@ extension ExternalEventsAdapter: ExtensionSafariApiClientDelegate {
             isProtectionEnabled: appState.isProtectionEnabled,
             lastCheckTime: appState.lastCheckTime,
             logLevel: appState.logLevel,
-            theme: appState.theme
+            theme: appState.theme,
+            isFreeUser: appState.isFreeUser,
+            isTrialAvailable: appState.isTrialAvailable,
+            trialDays: appState.trialDays
         )
         Task {
             await self.store.dispatch(.appStateChanged(snapshot))

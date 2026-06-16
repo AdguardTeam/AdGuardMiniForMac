@@ -15,6 +15,7 @@ extension PopupCell.Configuration {
         var subtitleConfiguration: Text.Configuration?
         var leftIconColor: StatefulColor
         var rightIconColor: StatefulColor?
+        var backgroundColor: StatefulColor?
         var paddings: EdgeInsets
 
         init(
@@ -22,6 +23,7 @@ extension PopupCell.Configuration {
             subtitleConfiguration: Text.Configuration? = nil,
             leftIconColor: StatefulColor,
             rightIconColor: StatefulColor? = nil,
+            backgroundColor: StatefulColor? = nil,
             paddings: EdgeInsets = EdgeInsets(
                 top: Margin.small,
                 leading: Margin.regular,
@@ -33,6 +35,7 @@ extension PopupCell.Configuration {
             self.subtitleConfiguration = subtitleConfiguration
             self.leftIconColor = leftIconColor
             self.rightIconColor = rightIconColor
+            self.backgroundColor = backgroundColor
             self.paddings = paddings
         }
     }

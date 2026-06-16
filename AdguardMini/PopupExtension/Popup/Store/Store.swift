@@ -85,6 +85,27 @@ enum Store {
         let lastCheckTime: EBATimestamp
         let logLevel: Int32
         let theme: Int32
+        let isFreeUser: Bool
+        let isTrialAvailable: Bool
+        let trialDays: Int
+
+        init(
+            isProtectionEnabled: Bool,
+            lastCheckTime: EBATimestamp,
+            logLevel: Int32,
+            theme: Int32,
+            isFreeUser: Bool = true,
+            isTrialAvailable: Bool = false,
+            trialDays: Int = 0
+        ) {
+            self.isProtectionEnabled = isProtectionEnabled
+            self.lastCheckTime = lastCheckTime
+            self.logLevel = logLevel
+            self.theme = theme
+            self.isFreeUser = isFreeUser
+            self.isTrialAvailable = isTrialAvailable
+            self.trialDays = trialDays
+        }
     }
 
     // MARK: TabContext

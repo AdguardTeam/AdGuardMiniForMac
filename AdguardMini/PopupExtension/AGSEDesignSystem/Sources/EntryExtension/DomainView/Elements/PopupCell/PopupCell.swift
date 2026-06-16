@@ -36,23 +36,27 @@ struct PopupCell: View {
         let content = self.configuration.content
         let appearance = self.configuration.appearance
 
-        HStack(alignment: .top, spacing: Space.compact) {
-            content.leftIcon
-                .foregroundColor(
-                    self.configuration.isEnabled
-                    ? appearance.leftIconColor.enabledColor
-                    : appearance.leftIconColor.disabledColor
-                )
-                .accessibility(hidden: true)
-            Text(content.title)
-                .foregroundColor(
-                    self.configuration.isEnabled
-                    ? appearance.titleConfiguration.color.enabledColor
-                    : appearance.titleConfiguration.color.disabledColor
-                )
-                .textStyle(appearance.titleConfiguration)
-                .accessibility(hint: Text(content.subtitleLines.joined(separator: "\n")))
-                .accessibility(hidden: self.titleAccessibilityHidden)
+        HStack(alignment: .top, spacing: Space.regular) {
+            HStack(alignment: .center, spacing: Space.compact) {
+                content.leftIcon
+                    .foregroundColor(
+                        self.configuration.isEnabled
+                        ? appearance.leftIconColor.enabledColor
+                        : appearance.leftIconColor.disabledColor
+                    )
+                    .frame(maxHeight: .infinity, alignment: .top)
+                    .accessibility(hidden: true)
+                Text(content.title)
+                    .foregroundColor(
+                        self.configuration.isEnabled
+                        ? appearance.titleConfiguration.color.enabledColor
+                        : appearance.titleConfiguration.color.disabledColor
+                    )
+                    .textStyle(appearance.titleConfiguration)
+                    .accessibility(hint: Text(content.subtitleLines.joined(separator: "\n")))
+                    .accessibility(hidden: self.titleAccessibilityHidden)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
             Spacer()
             if let rightIcon = content.rightIcon, let rightIconColor = appearance.rightIconColor {
                 rightIcon
@@ -97,8 +101,21 @@ struct PopupCell: View {
                         alignment: .leading,
                         multilineTextAlignment: .leading
                     ),
-                    leftIconColor: Palette.Icon.productIcon
+                    leftIconColor: Palette.Icon.productIcon,
+                    paddings: EdgeInsets(side: Margin.regular)
                 )
+            )
+        )
+
+        PopupCell(
+            configuration: .primary(
+                content: .init(
+                    title: "Block element",
+                    leftIcon: SEImage.Popup.target
+                ),
+                leftIconColor: Palette.Icon.errorIcon,
+                isMultilineTitle: true,
+                isEnabled: true
             )
         )
 

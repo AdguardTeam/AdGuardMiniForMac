@@ -74,6 +74,7 @@ async OnSafariExtensionUpdate(param: SafariExtensionUpdate): Promise<EmptyValue>
         if (param.value === 'paywall') {
             store.account.showPaywall();
         } else {
+            store.account.closePaywall();
             store.router.changePath(param.value as RouteName);
         }
         return new EmptyValue();

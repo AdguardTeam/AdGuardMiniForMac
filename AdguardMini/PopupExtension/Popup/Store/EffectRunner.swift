@@ -26,6 +26,7 @@ private enum CancellationCategory: Hashable {
     case restart
     case safariSettings
     case settings
+    case purchase
     case report
     case healthCheck
     case preparePopup
@@ -42,6 +43,7 @@ private extension Store.Effect {
         case .restartMainApp:           .restart
         case .openSafariSettings:       .safariSettings
         case .openSettings:             .settings
+        case .openPurchase:             .purchase
         case .reportSite:               .report
         case .refreshHealthCheck:       .healthCheck
         case .preparePopup:             .preparePopup
@@ -180,6 +182,8 @@ final class EffectRunner: EffectRunning, @unchecked Sendable {
             return await self.executeOpenSafariSettings()
         case let .openSettings(page):
             return await self.executeOpenSettings(page: page)
+        case .openPurchase:
+            return await self.executeOpenPurchase()
         case let .reportSite(url):
             return await self.executeReportSite(url: url)
         case .refreshHealthCheck:
@@ -233,7 +237,10 @@ final class EffectRunner: EffectRunning, @unchecked Sendable {
                 isProtectionEnabled: appState.isProtectionEnabled,
                 lastCheckTime: appState.lastCheckTime,
                 logLevel: appState.logLevel,
-                theme: appState.theme
+                theme: appState.theme,
+                isFreeUser: appState.isFreeUser,
+                isTrialAvailable: appState.isTrialAvailable,
+                trialDays: appState.trialDays
             ))
         } catch {
             let isXpcUnavailable = (error as? ExtensionSafariApiClientErrorCode) == .linkTimeout
@@ -305,6 +312,15 @@ final class EffectRunner: EffectRunning, @unchecked Sendable {
         } catch {
             return .openSettingsCompleted(.openSettingsFailed)
         }
+    }
+
+    private func executeOpenPurchase() async -> Store.Action? {
+        do {
+            try await self.mainAppDiscovery.openPurchase()
+        } catch {
+            LogDebug("Failed to open purchase screen: \(error)")
+        }
+        return nil
     }
 
     private func executeReportSite(url: String) async -> Store.Action {

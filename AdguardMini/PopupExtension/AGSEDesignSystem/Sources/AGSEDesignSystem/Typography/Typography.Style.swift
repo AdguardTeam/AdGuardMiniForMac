@@ -35,6 +35,8 @@ extension Typography {
         }
 
         var font: Font { typography.font }
+
+        var fontSize: CGFloat { typography.fontSize }
     }
 }
 

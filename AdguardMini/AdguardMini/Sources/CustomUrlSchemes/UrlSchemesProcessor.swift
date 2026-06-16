@@ -78,6 +78,9 @@ final class UrlSchemesProcessorImpl: UrlSchemesProcessor {
                 .first { $0.name == InternalUrlSchemeActionUrl.OpenSettingsPageParam.page }?
                 .value
             self.handleShowSettings(page: page)
+        case InternalUrlSchemeActionUrl.openPurchase.path:
+            LogInfo("Open purchase received by deep link.")
+            self.handleShowSettings(page: "paywall")
         case InternalUrlSchemeActionUrl.subscribeFilter.path:
             LogInfo("Subscribe filter settings received by deep link.")
 

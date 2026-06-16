@@ -153,5 +153,20 @@ extension String.localized
         /** */
         /** Info view - Button title "Opening..." */
         static public let info_button_title_opening : String = { .localized.string ("info_button_title_opening", in: "Localizable") }()
+
+        /** `"Unlock full protection"` */
+        /** */
+        /** Domain view - Upsell CTA title "Unlock full protection" */
+        static public let item_upsell_title : String = { .localized.string ("item_upsell_title", in: "Localizable") }()
+
+        /** `"Try %d days for free"` */
+        /** */
+        /** Domain view - Upsell CTA description when trial is available */
+        static public let item_upsell_description_trial : String = { .localized.string ("item_upsell_description_trial", in: "Localizable") }()
+
+        /** `"Click to upgrade"` */
+        /** */
+        /** Domain view - Upsell CTA description when trial is not available */
+        static public let item_upsell_description_upgrade : String = { .localized.string ("item_upsell_description_upgrade", in: "Localizable") }()
     }
 }

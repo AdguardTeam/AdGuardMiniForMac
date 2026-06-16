@@ -99,8 +99,24 @@ struct PopupView: View {
                 reportAnIssueConfiguration: .init(
                     title: .localized.base.item_title_report_an_issue,
                     action: self.viewState.reportAnIssueClicked
-                )
+                ),
+                upsellConfiguration: self.upsellConfiguration
             )
+        )
+    }
+
+    private var upsellConfiguration: DomainView.UpsellConfiguration? {
+        guard self.viewState.isFreeUser else { return nil }
+
+        return .init(
+            title: .localized.base.item_upsell_title,
+            description: self.viewState.isTrialAvailable
+                ? String.localizedStringWithFormat(
+                    .localized.base.item_upsell_description_trial,
+                    self.viewState.trialDays
+                )
+                : .localized.base.item_upsell_description_upgrade,
+            action: self.viewState.upsellTapped
         )
     }
 

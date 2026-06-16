@@ -83,6 +83,8 @@ fileprivate extension PopupCell.Configuration.Appearance {
             titleConfiguration: self.titleConfiguration,
             subtitleConfiguration: self.subtitleConfiguration,
             leftIconColor: self.leftIconColor,
+            rightIconColor: self.rightIconColor,
+            backgroundColor: self.backgroundColor,
             paddings: newPaddings
         )
     }

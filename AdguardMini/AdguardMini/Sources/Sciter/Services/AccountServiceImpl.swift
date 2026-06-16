@@ -8,18 +8,20 @@
 //
 
 import Foundation
+
+import AppKit
+
+#if MAS
 import StoreKit
+import AppStore
+#endif
 
 import AML
-import AppStore
 import SciterSchema
 
 // MARK: - Constants
 
 private enum Constants {
-    // Fallback is false due to backend implementation
-    static let defaultTrialAvailability: Bool = false
-
     static let defaultScreenName = "account"
     static var appStoreLink: URL {
         URL(string: "macappstore://apps.apple.com/app/id1440147259")!
@@ -88,7 +90,7 @@ extension Sciter {
             Task {
                 do {
                     let products = try await self.appStoreInteractor.getAvailableSubscriptions()
-                    let trialInfo = products.contains { $0.isEligibleForIntroOffer }
+                    let trialAvailability = self.licenseStateProvider.getTrialAvailability(from: products)
                     var promoInfo: SciterSchema.PromoInfo?
                     do {
                         let info = try await self.backendService.promoInfo()
@@ -104,7 +106,7 @@ extension Sciter {
                     promise(
                         AppStoreSubscriptionsMessage(
                             result: AppStoreSubscriptions(
-                                isTrialAvailable: trialInfo,
+                                isTrialAvailable: trialAvailability.isAvailable,
                                 monthly: self.getSubscriptionInfo(.monthly, products: products),
                                 annual: self.getSubscriptionInfo(.annual, products: products),
                                 promoInfo: promoInfo
@@ -118,11 +120,11 @@ extension Sciter {
             }
             #else
             Task {
-                let trialInfo = await self.backendService.trialInfo
+                let trialAvailability = await self.licenseStateProvider.getTrialAvailability()
                 promise(
                     AppStoreSubscriptionsMessage(
                         result: AppStoreSubscriptions(
-                            isTrialAvailable: trialInfo?.isAvailable ?? Constants.defaultTrialAvailability,
+                            isTrialAvailable: trialAvailability.isAvailable,
                             monthly: .init(),
                             annual: .init()
                         )
@@ -134,28 +136,8 @@ extension Sciter {
 
         func getTrialAvailableDays(_ message: EmptyValue, _ promise: @escaping (Int32Value) -> Void) {
             Task {
-                #if MAS
-                var isTrialAvailable: Bool = false
-                var availableDays: Int32 = 0
-                do {
-                    let products = try await self.appStoreInteractor.getAvailableSubscriptions()
-                    for product in products {
-                        isTrialAvailable = product.isEligibleForIntroOffer
-                                           && product.introductoryOffer?.paymentMode == .freeTrial
-                        if isTrialAvailable {
-                            availableDays = Int32(product.introductoryOffer?.period.value ?? 0)
-                            break
-                        }
-                    }
-                } catch {
-                    LogError("Failed to get available subscriptions: \(error)")
-                }
-                #else
-                let trialInfo = await backendService.trialInfo
-                let isTrialAvailable = trialInfo?.isAvailable ?? Constants.defaultTrialAvailability
-                let availableDays: Int32 = isTrialAvailable ? Int32(trialInfo?.durationDays ?? 0) : 0
-                #endif
-                promise(Int32Value(availableDays))
+                let trialAvailability = await self.licenseStateProvider.getTrialAvailability()
+                promise(Int32Value(Int32(trialAvailability.availableDays)))
             }
         }
 
@@ -348,6 +330,7 @@ extension Sciter {
             }
         }
 
+        #if MAS
         private func processAppStoreError(_ error: Error) -> AppStoreSubscriptionsError {
             guard let appStoreError = error as? AppStoreError else {
                 return .otherError
@@ -358,6 +341,7 @@ extension Sciter {
             default:                  .otherError
             }
         }
+        #endif
 
         func requestOpenSubscriptions(_ message: EmptyValue, _ promise: @escaping (EmptyValue) -> Void) {
             NSWorkspace.shared.open(Constants.appStoreSubscriptionsLink)
@@ -376,6 +360,7 @@ extension Sciter {
     }
 }
 
+#if MAS
 private extension Sciter.AccountServiceImpl {
     func getSubscriptionInfo(
         _ productId: AppStore.Subscription,
@@ -387,8 +372,10 @@ private extension Sciter.AccountServiceImpl {
         return AppStoreSubscriptionInfo()
     }
 }
+#endif
 
 private extension SubscriptionMessage {
+    #if MAS
     func toAppStoreSubscription() -> AppStore.Subscription {
         let unexpectedHandler: (Int, String) -> AppStore.Subscription = { rawValue, message in
             LogError("\(message) subscription type: \(rawValue). Switch to annual")
@@ -405,6 +392,7 @@ private extension SubscriptionMessage {
         }
         // swiftlint:enable switch_case_on_newline
     }
+    #endif
 
     var info: String {
         switch self.subscriptionType {

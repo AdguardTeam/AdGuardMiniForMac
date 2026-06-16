@@ -90,5 +90,5 @@ extension PopupCell.Configuration {
         )
         .border(Color.accentColor)
     }
-    .frame(width: 320)
+    .frame(width: 320, height: 400, alignment: .top)
 }

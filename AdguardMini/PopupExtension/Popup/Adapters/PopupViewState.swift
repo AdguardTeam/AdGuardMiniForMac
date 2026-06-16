@@ -30,6 +30,9 @@ final class PopupViewState: ObservableObject {
     @Published var isProtectionEnabledForUrl: Bool = true
     @Published private(set) var adsBlocked: Int = 0
     @Published private(set) var trackersBlocked: Int = 0
+    @Published private(set) var isFreeUser: Bool = true
+    @Published private(set) var isTrialAvailable: Bool = false
+    @Published private(set) var trialDays: Int = 0
 
     var isBusy: Bool { popupState == .loading }
     var isPauseButtonAvailable: Bool { popupLayout == .domain }
@@ -84,6 +87,10 @@ final class PopupViewState: ObservableObject {
         self.dispatch(.pauseTapped)
     }
 
+    func upsellTapped() {
+        self.dispatch(.upsellTapped)
+    }
+
     func popupWillShow() {
         self.dispatch(.popupWillShow)
     }
@@ -134,6 +141,9 @@ final class PopupViewState: ObservableObject {
 
         self.adsBlocked = state.tabStats.adsBlocked
         self.trackersBlocked = state.tabStats.trackersBlocked
+        self.isFreeUser = state.isFreeUser
+        self.isTrialAvailable = state.isTrialAvailable
+        self.trialDays = state.trialDays
     }
 
     private func mapLayout(_ state: Store.State) -> PopupView.Layout {

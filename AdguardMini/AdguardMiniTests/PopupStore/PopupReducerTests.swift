@@ -37,6 +37,9 @@ final class PopupReducerTests: XCTestCase {
         protectionEnabledForCurrentUrl: Bool = true,
         hasHealthCheckAttention: Bool = false,
         xpcAvailable: Bool = true,
+        isFreeUser: Bool = true,
+        isTrialAvailable: Bool = false,
+        trialDays: Int = 0,
         tabStats: TabStats = TabStats(),
         tabContext: Store.TabContext = .empty,
         pausedUrls: Set<String> = [],
@@ -51,6 +54,9 @@ final class PopupReducerTests: XCTestCase {
             protectionEnabledForCurrentUrl: protectionEnabledForCurrentUrl,
             hasHealthCheckAttention: hasHealthCheckAttention,
             xpcAvailable: xpcAvailable,
+            isFreeUser: isFreeUser,
+            isTrialAvailable: isTrialAvailable,
+            trialDays: trialDays,
             tabStats: tabStats,
             tabContext: tabContext,
             pausedUrls: pausedUrls,
@@ -1074,6 +1080,50 @@ final class PopupReducerTests: XCTestCase {
         let (next, effects) = PopupReducer.reduce(state: initial, action: .infoButtonTapped)
         XCTAssertEqual(next, initial)
         XCTAssertTrue(effects.isEmpty)
+    }
+
+    func testUpsellTappedEmitsOpenPurchaseAndDismissPopover() {
+        let initial = self.state(isFreeUser: true)
+        let (next, effects) = PopupReducer.reduce(
+            state: initial,
+            action: .upsellTapped
+        )
+        XCTAssertEqual(next, initial, "State must not change on upsell tap")
+        XCTAssertEqual(effects, [.openPurchase, .dismissPopover])
+    }
+
+    func testUpsellTappedIsBlockedWhenInFlight() {
+        let initial = self.state(inFlight: .enabling)
+        let (next, effects) = PopupReducer.reduce(
+            state: initial,
+            action: .upsellTapped
+        )
+        XCTAssertEqual(next, initial)
+        XCTAssertTrue(effects.isEmpty)
+    }
+
+    func testAppStateChangedPropagatesLicenseFields() {
+        let initial = self.state(
+            isFreeUser: true,
+            isTrialAvailable: false,
+            lastAppStateTimestamp: .zero
+        )
+        let snapshot = Store.AppStateSnapshot(
+            isProtectionEnabled: true,
+            lastCheckTime: Constants.freshTimestamp,
+            logLevel: 0,
+            theme: 0,
+            isFreeUser: false,
+            isTrialAvailable: true,
+            trialDays: 7
+        )
+        let (next, _) = PopupReducer.reduce(
+            state: initial,
+            action: .appStateChanged(snapshot)
+        )
+        XCTAssertFalse(next.isFreeUser)
+        XCTAssertTrue(next.isTrialAvailable)
+        XCTAssertEqual(next.trialDays, 7)
     }
 
     // MARK: Telemetry screen — `.healthCheckAttention` branch of `mainOrHealthCheckAttention`

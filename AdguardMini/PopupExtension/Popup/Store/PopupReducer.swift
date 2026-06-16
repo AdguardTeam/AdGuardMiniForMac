@@ -64,6 +64,8 @@ enum PopupReducer {
             return Self.handleSettingsTapped(state: state)
         case .infoButtonTapped:
             return Self.handleInfoButtonTapped(state: state)
+        case .upsellTapped:
+            return Self.handleUpsellTapped(state: state)
 
         // MARK: Effect completions
         case let .appStateRefreshSkipped(isXpcUnavailable):
@@ -187,6 +189,9 @@ private extension PopupReducer {
         let protectionChanged = state.protectionEnabled != snapshot.isProtectionEnabled
         let hadError = state.lastError != nil
         next.protectionEnabled = snapshot.isProtectionEnabled
+        next.isFreeUser = snapshot.isFreeUser
+        next.isTrialAvailable = snapshot.isTrialAvailable
+        next.trialDays = snapshot.trialDays
         next.lastError = nil
         if protectionChanged || hadError {
             effects.append(.requestToolbarUpdate)
@@ -322,6 +327,11 @@ private extension PopupReducer {
                 .sendTelemetry(.action(.settingPopupClick, screen: mainOrHealthCheckAttention(state)))
             ])
         }
+    }
+
+    static func handleUpsellTapped(state: Store.State) -> (Store.State, [Store.Effect]) {
+        guard state.inFlight == nil else { return (state, []) }
+        return (state, [.openPurchase, .dismissPopover])
     }
 
     // MARK: - Effect completions

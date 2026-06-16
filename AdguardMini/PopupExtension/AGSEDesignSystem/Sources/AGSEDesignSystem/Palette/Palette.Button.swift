@@ -34,6 +34,17 @@ extension Palette {
             static let font = PrimaryButton.font
         }
 
+        enum Footer {
+            static let background = StatefulColor(
+                enabledColor: Palette.fillsBackgroundsFooterDefault,
+                disabledColor: Palette.fillsBackgroundsFooterDefault,
+                pressedColor: Palette.fillsBackgroundsFooterDefault,
+                hoveredColor: Palette.fillsBackgroundsFooterDefault
+            )
+
+            static let font = PrimaryButton.font
+        }
+
         static let font = StatefulColor(
             enabledColor: Palette.textButtonsPrimaryDefault,
             disabledColor: Palette.textButtonsPrimaryDisabled,

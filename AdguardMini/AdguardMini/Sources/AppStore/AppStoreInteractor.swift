@@ -28,10 +28,12 @@ protocol AppStoreInteractor {
 final class AppStoreInteractorImpl: AppStoreInteractor, StoreApiDelegate {
     private let appStore: StoreApiProtocol
     private let backendService: BackendService
+    private let eventBus: EventBus
 
-    init(appStore: StoreApiProtocol, backendService: BackendService) {
+    init(appStore: StoreApiProtocol, backendService: BackendService, eventBus: EventBus) {
         self.backendService = backendService
         self.appStore = appStore
+        self.eventBus = eventBus
 
         self.appStore.delegate = self
     }
@@ -73,6 +75,7 @@ final class AppStoreInteractorImpl: AppStoreInteractor, StoreApiDelegate {
     func transactionUpdated(_ signedTransaction: SignedTransaction, _ err: AppStoreError?) {
         let error = err.map { "\($0)" } ?? "success"
         LogInfo("Purchase \(signedTransaction.productID): \(error)")
+        self.eventBus.post(event: .appStoreTransactionUpdated, userInfo: nil)
         Task {
             do {
                 try await self.validateReceipt(jws: signedTransaction.jwsRepresentation)

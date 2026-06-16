@@ -18,6 +18,7 @@ extension DomainView {
         let attentionConfiguration: AttentionConfiguration
         let blockElementConfiguration: ButtonConfiguration
         let reportAnIssueConfiguration: ButtonConfiguration
+        let upsellConfiguration: UpsellConfiguration?
 //        let rateAdguardMiniConfiguration: ButtonConfiguration
         let state: State
 
@@ -30,6 +31,7 @@ extension DomainView {
             attentionConfiguration: AttentionConfiguration,
             blockElementConfiguration: ButtonConfiguration,
             reportAnIssueConfiguration: ButtonConfiguration,
+            upsellConfiguration: UpsellConfiguration? = nil,
 //            rateAdguardMiniConfiguration: ButtonConfiguration
         ) {
             self.domain = domain
@@ -39,6 +41,7 @@ extension DomainView {
             self.attentionConfiguration = attentionConfiguration
             self.blockElementConfiguration = blockElementConfiguration
             self.reportAnIssueConfiguration = reportAnIssueConfiguration
+            self.upsellConfiguration = upsellConfiguration
 //            self.rateAdguardMiniConfiguration = rateAdguardMiniConfiguration
             self.state = state
         }
@@ -64,6 +67,21 @@ extension DomainView {
 
         public init(title: String, action: @escaping () -> Void) {
             self.title = title
+            self.action = action
+        }
+    }
+
+    // MARK: - UpsellConfiguration
+
+    /// Configuration for the upsell CTA button shown to free users.
+    public struct UpsellConfiguration {
+        public let title: String
+        public let description: String
+        public var action: () -> Void
+
+        public init(title: String, description: String, action: @escaping () -> Void) {
+            self.title = title
+            self.description = description
             self.action = action
         }
     }

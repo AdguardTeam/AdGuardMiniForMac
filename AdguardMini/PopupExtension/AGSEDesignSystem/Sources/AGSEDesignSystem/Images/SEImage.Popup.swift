@@ -24,6 +24,7 @@ extension SEImage {
         static let pause = Image(Asset.pause)
         static let attention = Image(Asset.attention)
         static let arrowRight = Image(Asset.arrowRight)
+        static let quality = Image(Asset.quality)
     }
 }
 
@@ -40,6 +41,7 @@ extension SEImage {
         SEImage.Popup.pause
         SEImage.Popup.attention
         SEImage.Popup.arrowRight
+        SEImage.Popup.quality
     }
     .padding(16)
 }

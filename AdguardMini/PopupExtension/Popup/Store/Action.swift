@@ -44,6 +44,7 @@ extension Store {
         case rateTapped
         case settingsTapped
         case infoButtonTapped
+        case upsellTapped
 
         // MARK: Effect completions
 

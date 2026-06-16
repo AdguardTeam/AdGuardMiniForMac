@@ -40,27 +40,56 @@ public struct DomainView: View {
             Spacer.fixed(height: Margin.small)
             self.blockElement
             self.reportAnIssue
-//            self.rateAdguardMini
             if self.configuration.state.hasAttention {
                 self.attention
             }
             Spacer.fixed(height: Margin.small)
+            self.upsell
         }
     }
 
     @ViewBuilder
     private var attention: some View {
         PopupCellButton(
-            isEnabled: true,
-            title: self.configuration.attentionConfiguration.title,
-            leftIcon: SEImage.Popup.attention,
-            rightIcon: SEImage.Popup.arrowRight,
-            leftIconColor: Palette.Icon.attentionIcon,
-            rightIconColor: Palette.Icon.grayIcon,
-            titleColor: Palette.Text.attention,
-            isMultilineTitle: true,
+            configuration: .init(
+                content: .init(
+                    title: self.configuration.attentionConfiguration.title,
+                    leftIcon: SEImage.Popup.attention,
+                    rightIcon: SEImage.Popup.arrowRight
+                ),
+                appearance: .init(
+                    titleConfiguration: .popupCell(
+                        color: Palette.Text.attention,
+                        isMultiline: true
+                    ),
+                    subtitleConfiguration: .subtitle(
+                        alignment: .leading,
+                        multilineTextAlignment: .leading
+                    ),
+                    leftIconColor: Palette.Icon.attentionIcon,
+                    rightIconColor: Palette.Icon.grayIcon
+                ),
+                isEnabled: true
+            ),
             action: self.configuration.attentionConfiguration.action
         )
+    }
+
+    @ViewBuilder
+    private var upsell: some View {
+        if let config = self.configuration.upsellConfiguration {
+            PopupCellButton(
+                configuration: .upsell(
+                    content: .init(
+                        title: config.title,
+                        subtitleLines: [config.description],
+                        leftIcon: SEImage.Popup.quality,
+                        rightIcon: SEImage.Popup.arrowRight
+                    )
+                ),
+                action: config.action
+            )
+        }
     }
 
     @ViewBuilder
@@ -99,10 +128,14 @@ public struct DomainView: View {
     @ViewBuilder
     private var blockElement: some View {
         PopupCellButton(
-            isEnabled: !self.configuration.state.isDisabled,
-            title: self.configuration.blockElementConfiguration.title,
-            leftIcon: SEImage.Popup.target,
-            leftIconColor: Palette.Icon.errorIcon,
+            configuration: .primary(
+                content: .init(
+                    title: self.configuration.blockElementConfiguration.title,
+                    leftIcon: SEImage.Popup.target
+                ),
+                leftIconColor: Palette.Icon.errorIcon,
+                isEnabled: !self.configuration.state.isDisabled
+            ),
             action: self.configuration.blockElementConfiguration.action
         )
     }
@@ -110,10 +143,14 @@ public struct DomainView: View {
     @ViewBuilder
     private var reportAnIssue: some View {
         PopupCellButton(
-            isEnabled: !self.configuration.state.isDisabled,
-            title: self.configuration.reportAnIssueConfiguration.title,
-            leftIcon: SEImage.Popup.dislike,
-            leftIconColor: Palette.Icon.productTertiaryIcon,
+            configuration: .primary(
+                content: .init(
+                    title: self.configuration.reportAnIssueConfiguration.title,
+                    leftIcon: SEImage.Popup.dislike
+                ),
+                leftIconColor: Palette.Icon.productTertiaryIcon,
+                isEnabled: !self.configuration.state.isDisabled
+            ),
             action: self.configuration.reportAnIssueConfiguration.action
         )
     }
@@ -164,6 +201,8 @@ private enum PreviewBuilder {
         attentionButtonTitle: String = Self.attentionTitle,
         blockElementTitle: String = Self.blockElementTitle,
         reportAnIssueTitle: String = Self.reportAnIssueTitle,
+        upsellTitle: String? = nil,
+        upsellDescription: String? = nil
 //        rateAdguardMiniConfiguration: String = Self.rateAdguardMiniConfiguration
     ) -> some View {
         VStack(spacing: 0) {
@@ -198,7 +237,11 @@ private enum PreviewBuilder {
                         title: reportAnIssueTitle
                     ) {
                         print("\(reportAnIssueTitle) clicked")
-                    }
+                    },
+                    upsellConfiguration: Self.makeUpsellConfiguration(
+                        title: upsellTitle,
+                        description: upsellDescription
+                    )
 //                    rateAdguardMiniConfiguration: .init(
 //                        title: rateAdguardMiniConfiguration
 //                    ) {
@@ -211,6 +254,16 @@ private enum PreviewBuilder {
         .frame(width: 320)
     }
 
+    private static func makeUpsellConfiguration(
+        title: String?,
+        description: String?
+    ) -> DomainView.UpsellConfiguration? {
+        guard let title, let description else { return nil }
+        return .init(title: title, description: description) {
+            print("\(title) clicked")
+        }
+    }
+
     static let defaultDomain = "fonts.google.com"
     static let defaultHint = "Protection is off for this website as it may interfere with its operation"
     static let attentionTitle = "Still seeing ads? Learn how to fix this"
@@ -220,6 +273,8 @@ private enum PreviewBuilder {
     static let manyAdsBlocked = "1,234 ads blocked"
     static let oneTrackerBlocked = "1 tracker blocked"
     static let manyTrackersBlocked = "30,009 trackers blocked"
+    static let upsellTitle = "Unlock full protection"
+    static let upsellDescription = "Try 14 days for free"
 //    static let rateAdguardMiniConfiguration = "Rate AdGuard Mini"
 }
 
@@ -234,6 +289,11 @@ private enum PreviewBuilder {
                 PreviewBuilder.buildDomainView(hasAttention: true)
                 PreviewBuilder.buildDomainView(isDisabled: true, hasAttention: true)
             }
+            PreviewBuilder.buildDomainView(
+                hasAttention: true,
+                upsellTitle: PreviewBuilder.upsellTitle,
+                upsellDescription: PreviewBuilder.upsellDescription
+            )
         }
         .padding()
     }
