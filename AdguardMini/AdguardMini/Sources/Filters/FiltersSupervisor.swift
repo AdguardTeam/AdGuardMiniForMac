@@ -115,6 +115,12 @@ final class FiltersSupervisorImpl: RestartableServiceBase {
     private let userSettingsService: UserSettingsService
     private let eventBus: EventBus
 
+    /// Tracks whether any FLM update is currently running (either periodic or
+    /// user-initiated). Used to skip redundant force update requests when an
+    /// update is already in progress — the callback will arrive from the
+    /// running update.
+    private var isFiltersUpdateInProgress = false
+
     var filtersSpecialIds: FLMConstants
 
     init(
@@ -518,6 +524,10 @@ extension FiltersSupervisorImpl: FlmApi.UserRules {
 
 extension FiltersSupervisorImpl: FlmApi.Update {
     func filtersForceUpdate() {
+        guard !self.isFiltersUpdateInProgress else {
+            LogInfo("\(LogTag.flm) filtersForceUpdate skipped — update already in progress")
+            return
+        }
         LogInfo("\(LogTag.flm) filtersForceUpdate start")
         self.filtersManager.update(ignoringFiltersExpiration: true, pullMetadata: false)
         LogInfo("\(LogTag.flm) filtersForceUpdate dispatched")
@@ -551,10 +561,13 @@ extension FiltersSupervisorImpl: FLMDelegate {}
 
 extension FiltersSupervisorImpl: FLMUpdateDelegate {
     func willStartFiltersUpdate() {
+        self.isFiltersUpdateInProgress = true
         self.eventBus.post(event: .filtersUpdateStarted, userInfo: nil)
     }
 
     func didUpdateFilters(_ result: Result<FiltersUpdateResult, Error>) {
+        self.isFiltersUpdateInProgress = false
+
         switch result {
         case .success(let updated):
             self.userSettingsService.lastFiltersUpdateTime = Date()

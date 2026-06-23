@@ -10,20 +10,50 @@ import { GetAdvancedBlockingRequest } from 'Apis/requests/AdvancedBlockingServic
 import { GetLicenseRequest, GetTrialAvailableDaysRequest } from 'Apis/requests/AccountService';
 import { GetFiltersMetadataRequest, RequestFiltersUpdateRequest } from 'Apis/requests/FiltersService';
 import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
-import { GlobalSettings, LicenseOrError, LicenseStatus, ReleaseVariants, StatisticsPeriod, StatisticsResponse } from 'Apis/types';
+import { GlobalSettings, LicenseOrError, LicenseStatus, ReleaseVariants, StatisticsPeriod, StatisticsResponse, FiltersStatus } from 'Apis/types';
 import { SafariExtensionsStore } from 'Common/stores/SafariExtensionsStore';
 import { updateLanguage } from 'Intl';
 
-import type { Filters, Filter, FiltersStatus, SafariExtensionUpdate, AdvancedBlocking, SafariExtensions } from 'Apis/types';
+import type { Filters, Filter, FilterUpdateStatus, SafariExtensionUpdate, AdvancedBlocking, SafariExtensions } from 'Apis/types';
 import type { StoryId } from 'Modules/tray/modules/stories/model';
 import type { TrayStore } from 'TrayStore';
 
-const FILTERS_UPDATE_INTERVAL = 5 * 60 * 1000;
+/**
+ * Compares two arrays of filter update statuses for equality.
+ *
+ * Returns `true` when both arrays contain the same entries (same filter IDs,
+ * versions, and success flags), regardless of order.
+ *
+ * @param a - First status array.
+ * @param b - Second status array.
+ * @returns Whether the arrays represent the same update results.
+ */
+function filtersStatusesEqual(
+    a: FilterUpdateStatus[],
+    b: FilterUpdateStatus[],
+): boolean {
+    if (a.length !== b.length) {
+        return false;
+    }
+
+    return a.every((statusA) => {
+        return b.some((statusB) => {
+            return statusA.id === statusB.id
+                && statusA.success === statusB.success
+                && statusA.version === statusB.version;
+        });
+    });
+}
 
 /**
  * Store that manages tray home screen
  */
 export class SettingsStore {
+    /**
+     * Previous filters update result, used to detect duplicate update responses.
+     */
+    private previousFiltersUpdateResult: FiltersStatus | null = null;
+
     public settings: GlobalSettings | null = null;
 
     /**
@@ -40,11 +70,6 @@ export class SettingsStore {
      * User License
      */
     public license = new LicenseOrError({ error: true });
-
-    /**
-     * Debouncer for update checking
-     */
-    private lastTimeUpdate: number | undefined;
 
     /**
      * Bool describes if login item is enabled, undefined for pending
@@ -223,14 +248,9 @@ export class SettingsStore {
      * Start the process of checking filters updates
      */
     public checkFiltersUpdate() {
-        if (Date.now() < (this.lastTimeUpdate || 0) + FILTERS_UPDATE_INTERVAL) {
-            return;
-        }
         this.getFiltersMetadata();
 
         window.API.Execute(new RequestFiltersUpdateRequest());
-
-        this.lastTimeUpdate = Date.now();
 
         this.filtersUpdateResult = null;
         this.filtersUpdating = true;
@@ -286,9 +306,25 @@ export class SettingsStore {
 
     /**
      * Set filters status
+     *
+     * Compares the new result against the previous one to detect duplicate
+     * update responses. When the native side reports the same filters with
+     * the same versions as the previous update, the result is treated as
+     * "nothing to update" so the UI shows the up-to-date state instead of
+     * repeating outdated update counts.
      */
     public setFiltersStatus(result: FiltersStatus) {
         this.filtersUpdating = false;
+
+        if (this.previousFiltersUpdateResult
+            && !result.error
+            && filtersStatusesEqual(result.status, this.previousFiltersUpdateResult.status)
+        ) {
+            this.filtersUpdateResult = new FiltersStatus({ status: [], error: false });
+            return;
+        }
+
+        this.previousFiltersUpdateResult = result;
         this.filtersUpdateResult = result;
     }
 
