@@ -122,6 +122,12 @@ final class SciterAppsControllerImpl: SciterAppsController {
 
         _ = await Task(priority: .userInitiated) { @MainActor in
             _ = self.tray
+
+            // Brief delay to let the Sciter engine settle after creating
+            // `self.tray`. Prevents a SIGABRT during rapid sequential
+            // `SciterWindow` creation (AG-55605).
+            try? await Task.sleep(nanoseconds: 100_000_000) // 100ms
+
             _ = self.settings
             self.sciterOnboardingCallbackService.stop()
             self.sciterCallbackService.start()

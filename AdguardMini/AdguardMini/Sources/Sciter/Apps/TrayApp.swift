@@ -55,6 +55,13 @@ final class TrayApp: SciterApp, TrayChangesDelegate, StatusBarItemControllerDele
     var appStoreRateUs: AppStoreRateUs!
     #endif
 
+    // MARK: Private
+
+    /// Prevents re-entrant show/hide operations that can cause
+    /// an `EXC_BAD_ACCESS` crash in the Sciter engine (libsciter.dylib).
+    /// See AG-55605.
+    private var isTransitioning = false
+
     // MARK: Public
 
     var statusBarItemIsHidden: Bool {
@@ -118,6 +125,12 @@ final class TrayApp: SciterApp, TrayChangesDelegate, StatusBarItemControllerDele
 
     @MainActor
     override func hideWindow() async {
+        guard !self.isTransitioning else {
+            LogDebug("Ignoring hideWindow while transitioning")
+            return
+        }
+        self.isTransitioning = true
+
         await super.hideWindow()
         await self.statusBarItemController.updateTrayIconVisibility(isHidden: self.statusBarItemIsHidden)
 
@@ -127,6 +140,8 @@ final class TrayApp: SciterApp, TrayChangesDelegate, StatusBarItemControllerDele
             )
         }
         LogDebug("Tray window hidden")
+
+        self.isTransitioning = false
     }
 
     // MARK: Public methods
@@ -157,6 +172,12 @@ final class TrayApp: SciterApp, TrayChangesDelegate, StatusBarItemControllerDele
 
     @MainActor
     func showTrayWindow(forced: Bool) async {
+        guard !self.isTransitioning else {
+            LogDebug("Ignoring showTrayWindow while transitioning")
+            return
+        }
+        self.isTransitioning = true
+
         if forced {
             await self.statusBarItemController.updateTrayIconVisibility(isHidden: false)
         }
@@ -177,6 +198,8 @@ final class TrayApp: SciterApp, TrayChangesDelegate, StatusBarItemControllerDele
             )
         }
         LogDebug("Tray window shown (forced: \(forced))")
+
+        self.isTransitioning = false
     }
 
     // MARK: Private methods
@@ -202,13 +225,13 @@ final class TrayApp: SciterApp, TrayChangesDelegate, StatusBarItemControllerDele
         }
 
         LogDebug("Final panel rect: \(panelRect)")
-        Task { [panelRect] in
-            // First call to fix Tahoe (beta) window top most issue (AG-45839),
-            // Second - to fix alert issue (AG-42588)
+        // First call to fix Tahoe (beta) window top most issue (AG-45839),
+        // Second - to fix alert issue (AG-42588)
+        await Task { [panelRect] in
             NSApplication.shared.activate(ignoringOtherApps: true)
             NSRunningApplication.current.activate(options: .activateIgnoringOtherApps)
             await self.showWindowAtCoords(frame: panelRect)
-        }
+        }.value
     }
 
     @MainActor
