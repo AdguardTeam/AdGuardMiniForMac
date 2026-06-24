@@ -123,9 +123,13 @@ final class SciterAppsControllerImpl: SciterAppsController {
         _ = await Task(priority: .userInitiated) { @MainActor in
             _ = self.tray
 
-            // Brief delay to let the Sciter engine settle after creating
-            // `self.tray`. Prevents a SIGABRT during rapid sequential
-            // `SciterWindow` creation (AG-55605).
+            // Workaround for a Sciter SDK bug (`sp-sciter-sdk`
+            // `mac/6.0.3.18-rev-4`) on Intel macOS 12 / 13. Creating two
+            // `SciterWindow` instances in rapid succession inside the same
+            // `Task` causes either a SIGABRT or an `EXC_BAD_ACCESS` deep in
+            // `sciter::om::asset<T>::~asset()` / `SAPI()`. The delay lets
+            // `libsciter` settle before the second window is created.
+            // TODO: Remove after updating `sp-sciter-sdk` (AG-55605).
             try? await Task.sleep(nanoseconds: 100_000_000) // 100ms
 
             _ = self.settings
@@ -137,7 +141,7 @@ final class SciterAppsControllerImpl: SciterAppsController {
                 await self.settings.showWindow()
             }
             LogInfo("Main Sciter app started")
-        }.result
+        }.value
     }
 
     func showApp(_ appType: AvailableSciterApp) {

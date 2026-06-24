@@ -130,6 +130,7 @@ final class TrayApp: SciterApp, TrayChangesDelegate, StatusBarItemControllerDele
             return
         }
         self.isTransitioning = true
+        defer { self.isTransitioning = false }
 
         await super.hideWindow()
         await self.statusBarItemController.updateTrayIconVisibility(isHidden: self.statusBarItemIsHidden)
@@ -140,8 +141,6 @@ final class TrayApp: SciterApp, TrayChangesDelegate, StatusBarItemControllerDele
             )
         }
         LogDebug("Tray window hidden")
-
-        self.isTransitioning = false
     }
 
     // MARK: Public methods
@@ -177,6 +176,7 @@ final class TrayApp: SciterApp, TrayChangesDelegate, StatusBarItemControllerDele
             return
         }
         self.isTransitioning = true
+        defer { self.isTransitioning = false }
 
         if forced {
             await self.statusBarItemController.updateTrayIconVisibility(isHidden: false)
@@ -198,8 +198,6 @@ final class TrayApp: SciterApp, TrayChangesDelegate, StatusBarItemControllerDele
             )
         }
         LogDebug("Tray window shown (forced: \(forced))")
-
-        self.isTransitioning = false
     }
 
     // MARK: Private methods
