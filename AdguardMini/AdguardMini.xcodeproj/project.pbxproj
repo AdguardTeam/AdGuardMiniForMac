@@ -611,6 +611,7 @@
 				Core/Models/QuitReaction.swift,
 				Core/Models/WindowGeometryDTO.swift,
 				Core/RestartableService.swift,
+				Filters/FilteringDecision.swift,
 				Filters/Models/BlockerConversionError.swift,
 				Filters/Models/SafariConversionResult.swift,
 				Filters/Safari/SafariUserRulesDistributor.swift,

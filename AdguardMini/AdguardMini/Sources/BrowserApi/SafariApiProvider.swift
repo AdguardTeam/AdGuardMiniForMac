@@ -254,13 +254,9 @@ extension SafariApiProvider: MainAppApi {
             let hostToUpdate = URL(string: url)?.host ?? ""
             LogInfo("Set filtering status \(isEnabled) for \(!hostToUpdate.isEmpty ? hostToUpdate : "(invalid url)")")
             let result = if isEnabled {
-                await self.filtersSupervisor.removeUserRules(.matching { rule in
-                    self.urlFilteringChecker.isHostInAllowList(hostToUpdate, by: [rule])
-                })
+                await self.enableFiltering(for: hostToUpdate)
             } else {
-                await self.filtersSupervisor.addUserRule(
-                    self.urlFilteringChecker.basicAllowlistRule(for: hostToUpdate)
-                )
+                await self.disableFiltering(for: hostToUpdate)
             }
             await self.onUserRulesChanged()
 
@@ -269,6 +265,59 @@ extension SafariApiProvider: MainAppApi {
             }
             reply(Date().timeIntervalSince1970, commonError)
         }
+    }
+
+    /// Enables protection for the given host by delegating to `FilteringDecision`
+    /// and applying the result via `FiltersSupervisor`.
+    private func enableFiltering(for host: String) async -> Bool {
+        let userRules = await self.filtersSupervisor.getEnabledUserRules()
+        let decision = FilteringDecision.resolveEnable(
+            host: host,
+            rules: userRules,
+            checker: self.urlFilteringChecker
+        )
+
+        // Apply removals if any
+        var lastResult = true
+        if !decision.rulesToRemove.isEmpty {
+            lastResult = await self.filtersSupervisor.removeUserRules(.matching { rule in
+                decision.rulesToRemove.contains(rule)
+            })
+        }
+
+        // Apply addition if specified
+        if let ruleToAdd = decision.ruleToAdd {
+            lastResult = await self.filtersSupervisor.addUserRule(ruleToAdd)
+        }
+
+        return lastResult
+    }
+
+    /// Disables protection for the given host by delegating to `FilteringDecision`
+    /// and applying the result via `FiltersSupervisor`.
+    private func disableFiltering(for host: String) async -> Bool {
+        let userRules = await self.filtersSupervisor.getEnabledUserRules()
+        let decision = FilteringDecision.resolveDisable(
+            host: host,
+            rules: userRules,
+            checker: self.urlFilteringChecker
+        )
+
+        // Apply removals if any (consolidated into single call per A12).
+        var lastResult = true
+        if !decision.rulesToRemove.isEmpty {
+            lastResult = await self.filtersSupervisor.removeUserRules(.matching { rule in
+                decision.rulesToRemove.contains(rule)
+            })
+        }
+
+        // Apply addition (always present for disable).
+        guard let ruleToAdd = decision.ruleToAdd else {
+            return lastResult
+        }
+
+        let addResult = await self.filtersSupervisor.addUserRule(ruleToAdd)
+        return lastResult && addResult
     }
 
     func addRule(_ ruleText: String, reply: @escaping (Error?) -> Void) {
