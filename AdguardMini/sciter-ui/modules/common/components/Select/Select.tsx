@@ -56,18 +56,19 @@ export function Select<T,>({
 
     const renderItems = () => {
         return itemList.map((item) => {
+            const isSelected = String(item.value) === String(currentValue);
             return (
                 <option
                     key={item.value}
                     aria-label={item.label}
-                    selected={String(item.value) === String(currentValue)}
+                    selected={isSelected}
                     value={String(item.value)}
                 >
                     {item.optionIcon}
                     <span>
                         {item.label}
                     </span>
-                    {String(item.value) === String(currentValue) && <Icon className="select_check" icon="check" />}
+                    {isSelected && <Icon className="select_check" icon="check" />}
                 </option>
             );
         });

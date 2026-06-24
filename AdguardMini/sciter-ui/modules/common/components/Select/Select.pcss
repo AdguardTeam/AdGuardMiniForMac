@@ -8,11 +8,10 @@
     border-radius: 8px;
     flow: horizontal;
     cursor: pointer;
-    border: 1px solid var(--stroke-inputs-inactive-input-stroke-default);
+    border: 1px solid var(--stroke-inputs-active-input-stroke-default);
     background-color: var(--fills-inputs-input-background-default);
     box-sizing: content-box;
     padding: 12px var(--m-s);
-    height: 30px;
 }
 
 .select_check {
@@ -46,14 +45,16 @@
         border-color: var(--fills-menus-dropdown-menu-background-default) !important;
         outline: none !important;
         border-radius: 8px !important;
+        padding: 0 !important;
         margin-top: 16px !important;
         margin-left: -16px !important;
         margin-right: -16px !important;
         border-radius: 8px;
-        box-shadow: 8px 8px 24px 0px rgba(0, 0, 0, 0.10) !important;
+        box-shadow: 8px 8px 12px 0px rgba(0, 0, 0, 0.10) !important;
         
         > option {
-            padding: 16px 16px 8px !important;
+            padding: var(--m-s) !important;
+            height: 24px !important;
             flow: horizontal !important;
             vertical-align: middle !important;
             font-size: 16px !important;
@@ -64,14 +65,20 @@
 
             &:first-of-type {
                 border-top: 0 !important;
+                border-radius: 8px 8px 0 0 !important;
             }
 
             &:hover {
                 background-color: var(--fills-backgrounds-page-background-additional-default) !important;
             }
 
+            &:last-of-type {
+                border-radius: 0 0 8px 8px !important;
+            }
+
             &:current {
-                background-color: transparent !important;
+                background-color: var(--fills-backgrounds-page-background-additional-default) !important;
+                font-weight: var(--fw-semibold) !important;
                 fill: inherit !important;
                 color: inherit !important;
 
@@ -82,7 +89,7 @@
         }
     }
     > caption {
-        outline: 0;
+        outline: 0 !important;
         flow: horizontal !important;
         margin-left: -8px !important;
         > span {
