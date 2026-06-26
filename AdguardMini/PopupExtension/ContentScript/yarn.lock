@@ -17,10 +17,10 @@
     tldts "^5.7.112"
     zod "3.24.4"
 
-"@adguard/assistant@^4.3.77":
-  version "4.3.77"
-  resolved "https://registry.yarnpkg.com/@adguard/assistant/-/assistant-4.3.77.tgz#b087f052b818139076cbd69120d298764c93be9e"
-  integrity sha512-JfOcZBS1Ih47DneyA9p38WY2ZqB7MLd9M6sPydM6rArmsdkVEN922G7srSiqwnxW4QZtMYHIIkdwcYKAr09FUA==
+"@adguard/assistant@^4.4.13":
+  version "4.4.13"
+  resolved "https://registry.yarnpkg.com/@adguard/assistant/-/assistant-4.4.13.tgz#0c76580d0bfffacde73a7945d756f5473a85ffff"
+  integrity sha512-ATeccs1PSWg9yoqN/4SZ1L2UfTgEN375WEGw4uhHXVllPbjJkSjsr9Rk6tsRb6IvZT9YNOAP3R/kQfc0/opLbA==
 
 "@adguard/css-tokenizer@^1.2.0":
   version "1.2.0"

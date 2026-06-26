@@ -78,7 +78,7 @@
       "location" : "ssh://git@bit.int.agrd.dev:7999/adguard-mac/sp-sciter-sdk.git",
       "state" : {
         "branch" : "mac/6.0.3.18-rev-4",
-        "revision" : "022ce62989dafe6191c2dd9a3d79bc16ead7ade6"
+        "revision" : "d621640589ec17929de0052a63b6624a0b03b467"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ameshkov/swift-psl",
       "state" : {
-        "revision" : "dfcc558c33cbd27062d2c73e7e98c9782f0ef7c5",
-        "version" : "1.1.143"
+        "revision" : "7188b8450b37e669a9b2dbeb8f864ba698c86826",
+        "version" : "1.1.147"
       }
     },
     {
