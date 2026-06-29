@@ -20,6 +20,8 @@ export const quitReactionText = (val: QuitReaction) => {
             return translate('settings.hardware.quit.reaction.quit');
         case QuitReaction.keepRunning:
             return translate('settings.hardware.quit.reaction.background');
+        case QuitReaction.unknown:
+            return '';
     }
 };
 
@@ -36,6 +38,8 @@ export const themeText = (val: Theme) => {
             return translate('settings.theme.light');
         case Theme.dark:
             return translate('settings.theme.dark');
+        case Theme.unknown:
+            return '';
     }
 };
 

@@ -95,17 +95,17 @@ export class NotificationsQueue {
     protected readonly queue: Map<string, NotificationPropsHolder<NotificationPropertiesSelector>> = new Map();
 
     /**
-     * Ctor
-     */
-    constructor() {
-        makeAutoObservable(this, undefined, { autoBind: true });
-    }
-
-    /**
      * Gets queue size
      */
     public get queueLength() {
         return this.queue.size;
+    }
+
+    /**
+     * Ctor
+     */
+    constructor() {
+        makeAutoObservable(this, undefined, { autoBind: true });
     }
 
     /**

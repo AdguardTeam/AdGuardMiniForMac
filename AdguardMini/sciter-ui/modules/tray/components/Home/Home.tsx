@@ -7,8 +7,8 @@ import { observer } from 'mobx-react-lite';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { Fragment } from 'preact/jsx-runtime';
 
-import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SettingsService';
 import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
+import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SettingsService';
 import { OptionalStringValue } from 'Apis/types';
 import { getCountableEntityStatuses } from 'Common/utils/utils';
 import theme from 'Theme';
@@ -137,7 +137,7 @@ function HomeComponent() {
     useEffect(() => {
         const isLoadingExts = settings.getSafariExtensionsLoading();
         setIsLoading(isLoadingExts);
-    }, [settings.safariExtensionsStore.safariExtensions]);
+    }, [settings, settings.safariExtensionsStore.safariExtensions]);
 
     /**
      * Fix for Home component to fix infinite convertation status
@@ -264,8 +264,8 @@ function HomeComponent() {
         someDisabled: someExtensionsDisabled,
         allEnabled: allExtensionsEnabled,
     } = getCountableEntityStatuses(
-        settings.safariExtensionsStore.enabledSafariExtensionsCount, 
-        settings.safariExtensionsStore.safariExtensionsCount
+        settings.safariExtensionsStore.enabledSafariExtensionsCount,
+        settings.safariExtensionsStore.safariExtensionsCount,
     );
 
     const getDisabledExtensionsStatus = () => {

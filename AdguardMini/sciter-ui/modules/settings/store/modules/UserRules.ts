@@ -18,7 +18,15 @@ export type UserRulesContainer = Array<(UserRuleObject & { index: number })>;
  * App UserRules store
  */
 export class UserRules {
-    rootStore: SettingsStore;
+    /**
+     * Decorator that used for debounce calls to platform and ignores all intermediate updates
+     * Saves only last element
+     */
+    private readonly commitUserRules = withLast<UserRulesEnt, OptionalError>(async (data) => {
+        return window.API.Execute(new UpdateUserRulesRequest(data));
+    }, 'commitUserRules');
+
+    public rootStore: SettingsStore;
 
     /**
      * User rules
@@ -42,6 +50,24 @@ export class UserRules {
         makeAutoObservable(this, {
             rootStore: false,
         }, { autoBind: true });
+    }
+
+    /**
+     * private setter
+     */
+    private setUserRules(data: UserRulesEnt) {
+        this.userRules = data;
+        this.rules = data.rules.map((r, index) => ({ ...r.toObject() as UserRuleObject, index }));
+    }
+
+    /**
+     * Private update helper
+     */
+    private updateHelper() {
+        return new UserRulesEnt({
+            enabled: this.userRules.enabled,
+            rules: this.userRules.rules,
+        });
     }
 
     /**
@@ -134,31 +160,5 @@ export class UserRules {
         const newValue = this.updateHelper();
         newValue.rules = data.rules;
         this.setUserRules(newValue);
-    }
-
-    /**
-     * Decorator that used for debounce calls to platform and ignores all intermediate updates
-     * Saves only last element
-     */
-    private readonly commitUserRules = withLast<UserRulesEnt, OptionalError>(async (data) => {
-        return window.API.Execute(new UpdateUserRulesRequest(data));
-    }, 'commitUserRules');
-
-    /**
-     * private setter
-     */
-    private setUserRules(data: UserRulesEnt) {
-        this.userRules = data;
-        this.rules = data.rules.map((r, index) => ({ ...r.toObject() as UserRuleObject, index }));
-    }
-
-    /**
-     * Private update helper
-     */
-    private updateHelper() {
-        return new UserRulesEnt({
-            enabled: this.userRules.enabled,
-            rules: this.userRules.rules,
-        });
     }
 }

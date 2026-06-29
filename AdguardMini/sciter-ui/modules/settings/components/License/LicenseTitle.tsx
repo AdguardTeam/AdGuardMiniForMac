@@ -55,7 +55,7 @@ function LicenseTitleComponent() {
     const actionType = useLicenseStatusActionType();
 
     const licenseStatusActionHandler = (): void => {
-        switch (actionType) {
+        switch (actionType!) {
             case LicenseStatusActionType.manageLicense:
                 telemetry.trackEvent(SettingsEvent.ManageSubscriptionClick);
                 if (isAppStoreSubscription) {

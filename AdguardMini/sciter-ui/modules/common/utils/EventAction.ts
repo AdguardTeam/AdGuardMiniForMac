@@ -14,6 +14,13 @@ export class Action<TArgs = void> {
     private readonly listeners = new Set<(...args: ArgsTuple<TArgs>) => void>();
 
     /**
+     * Get number of listeners
+     */
+    public get size(): number {
+        return this.listeners.size;
+    }
+
+    /**
      * Subscribe to event
      */
     public addEventListener(listener: (...args: ArgsTuple<TArgs>) => void): Unsubscribe {
@@ -58,12 +65,5 @@ export class Action<TArgs = void> {
      */
     public removeAllListeners(): void {
         this.listeners.clear();
-    }
-
-    /**
-     * Get number of listeners
-     */
-    public get size(): number {
-        return this.listeners.size;
     }
 }

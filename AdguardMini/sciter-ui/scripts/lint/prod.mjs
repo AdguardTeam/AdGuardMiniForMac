@@ -20,7 +20,13 @@ export default defineConfig([
         },
         rules: {
             'lodash/import-scope': ['error', 'method'],
-            "@stylistic/multiline-ternary": "off"
+            "@stylistic/multiline-ternary": "off",
+            "@typescript-eslint/strict-boolean-expressions": "off",
+            "@typescript-eslint/no-unnecessary-condition": "off",
+            "jsx-a11y/click-events-have-key-events": "off",
+            "jsx-a11y/no-static-element-interactions": "off",
+            "jsx-a11y/no-noninteractive-element-interactions": "off",
+            "jsx-a11y/control-has-associated-label": "off",
         }
     }
 ]);

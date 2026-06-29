@@ -12,7 +12,7 @@ import type { IOnboardingCallbackService, IOnboardingCallbackServiceInternal } f
  * Proto callbacks for Onboarding module;
  */
 export class API_CALLBACK {
-    OnboardingCallbackService: IOnboardingCallbackService;
+    public OnboardingCallbackService: IOnboardingCallbackService;
 
     /**
      *

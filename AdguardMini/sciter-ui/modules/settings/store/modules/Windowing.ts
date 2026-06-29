@@ -40,6 +40,14 @@ export class Windowing {
     }
 
     /**
+     * Retrieves all SciterWindow instances.
+     * @returns {SciterWindow[]} An array of all SciterWindow instances.
+     */
+    private getAllWindows(): SciterWindow[] {
+        return (Window as any).all;
+    }
+
+    /**
      * Set window opened state
      */
     public setWindowOpened(id: SciterWindowId, flag: boolean) {
@@ -138,14 +146,6 @@ export class Windowing {
      */
     public findWindowByParam(paramKey: string, paramValue: any): SciterWindow | undefined {
         return this.getAllWindows().find(({ parameters }: any) => parameters && parameters[paramKey] === paramValue);
-    }
-
-    /**
-     * Retrieves all SciterWindow instances.
-     * @returns {SciterWindow[]} An array of all SciterWindow instances.
-     */
-    private getAllWindows(): SciterWindow[] {
-        return (Window as any).all;
     }
 
     /**

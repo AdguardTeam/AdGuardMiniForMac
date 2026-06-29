@@ -34,6 +34,10 @@ function StepHeaderComponent() {
             case OnboardingSteps.finish:
                 prevStep = skipTuning ? OnboardingSteps.ads : OnboardingSteps.annoyances;
                 break;
+            case OnboardingSteps.extensions:
+            case OnboardingSteps.start:
+                prevStep = undefined;
+                break;
         }
         if (prevStep) {
             return (

@@ -12,7 +12,7 @@ import type { ITrayCallbackService, ITrayCallbackServiceInternal } from 'Common/
  * Proto callbacks for Tray module;
  */
 export class API_CALLBACK {
-    TrayCallbackService: ITrayCallbackService;
+    public TrayCallbackService: ITrayCallbackService;
 
     /**
      *

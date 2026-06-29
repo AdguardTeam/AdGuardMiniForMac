@@ -5,8 +5,8 @@
 import { makeAutoObservable } from 'mobx';
 
 import { GetFiltersIndexRequest, GetFiltersMetadataRequest, UpdateFiltersRequest } from 'Apis/requests/FiltersService';
-import { GetSafariExtensionsRequest, GetSystemLanguageRequest, OpenSafariExtensionPreferencesRequest, UpdateConsentRequest } from 'Apis/requests/SettingsService';
 import { OnboardingDidCompleteRequest } from 'Apis/requests/OnboardingService';
+import { GetSafariExtensionsRequest, GetSystemLanguageRequest, OpenSafariExtensionPreferencesRequest, UpdateConsentRequest } from 'Apis/requests/SettingsService';
 import { FiltersIndex, OptionalStringValue, FiltersUpdate, UserConsent } from 'Apis/types';
 import { SafariExtensionsStore } from 'Common/stores/SafariExtensionsStore';
 import { updateLanguage } from 'Intl';
@@ -29,19 +29,11 @@ export enum OnboardingSteps {
 export class Steps {
     private _currentStep = OnboardingSteps.start;
 
-    /**
-     * Use for navigating with back arrow
-     * When user skip tuning and come to finish screen, back arrow should return to start of tuning
-     */
-    public skipTuning = false;
-
     private index = new FiltersIndex();
 
     private recommendedFiltersIdsByGroups: Record<string, number[]> = {};
 
-    public annoyanceFilters: Filter[] = [];
-
-    public annoyanceHasBeenAccepted = false;
+    private _safariSettingsHaveBeenOpened = false;
 
     /**
      * Property for checking if user selected to block trackers
@@ -54,16 +46,19 @@ export class Steps {
     private _blockAnnoyance = false;
 
     /**
+     * Use for navigating with back arrow
+     * When user skip tuning and come to finish screen, back arrow should return to start of tuning
+     */
+    public skipTuning = false;
+
+    public annoyanceFilters: Filter[] = [];
+
+    public annoyanceHasBeenAccepted = false;
+
+    /**
      * Safari extensions store
      */
     public safariExtensionsStore = new SafariExtensionsStore();
-
-    /**
-     * Whether all safari extensions are enabled (delegated to store)
-     */
-    public get allExtensionsEnabled() {
-        return this.safariExtensionsStore.allExtensionsEnabled;
-    }
 
     /**
      * System language
@@ -77,13 +72,18 @@ export class Steps {
         return this._currentStep;
     }
 
-    private _safariSettingsHaveBeenOpened = false;
-
     /**
      * Indicates whether the Safari settings have been opened or not
      */
     public get safariSettingsHaveBeenOpened() {
         return this._safariSettingsHaveBeenOpened;
+    }
+
+    /**
+     * Whether all safari extensions are enabled (delegated to store)
+     */
+    public get allExtensionsEnabled() {
+        return this.safariExtensionsStore.allExtensionsEnabled;
     }
 
     /**
@@ -94,46 +94,6 @@ export class Steps {
         this.getFiltersIndex();
         this.getSafariExtensions();
         this.getSystemLanguage();
-    }
-
-    /**
-     * Get filters index to enable specific filters on steps
-     */
-    private async getFiltersIndex() {
-        const index = await window.API.Execute(new GetFiltersIndexRequest());
-        this.setFiltersIndex(index);
-        this.getFilters();
-    }
-
-    /**
-     * Get safari protection status
-     */
-    public async getSafariExtensions() {
-        const ext = await window.API.Execute(new GetSafariExtensionsRequest());
-        this.setSafariExtensions(ext);
-    }
-
-    /**
-     * Set safari protection status (delegated to safariExtensionsStore)
-     */
-    public setSafariExtensions(data: SafariExtensions) {
-        this.safariExtensionsStore.setSafariExtensions(data);
-    }
-
-    /**
-     * Get system language
-     */
-    public async getSystemLanguage() {
-        const ext = await window.API.Execute(new GetSystemLanguageRequest());
-        this.setSystemLanguage(ext.value);
-    }
-
-    /**
-     * Set safari protection status
-     */
-    public setSystemLanguage(data: string) {
-        updateLanguage(data);
-        this.systemLanguage = data;
     }
 
     /**
@@ -178,18 +138,12 @@ export class Steps {
     }
 
     /**
-     * Set current onboarding step
+     * Get filters index to enable specific filters on steps
      */
-    public setCurrentStep(step: OnboardingSteps) {
-        this._currentStep = step;
-    }
-
-    /**
-     * Opens the Safari settings
-     */
-    public async openSafariSettings() {
-        await window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
-        this.setSafariSettingsHasBeenOpened(true);
+    private async getFiltersIndex() {
+        const index = await window.API.Execute(new GetFiltersIndexRequest());
+        this.setFiltersIndex(index);
+        this.getFilters();
     }
 
     /**
@@ -205,6 +159,52 @@ export class Steps {
     private async updateFilters(ids: number[]) {
         const filters = new FiltersUpdate({ ids, isEnabled: true });
         await window.API.Execute(new UpdateFiltersRequest(filters));
+    }
+
+    /**
+     * Get safari protection status
+     */
+    public async getSafariExtensions() {
+        const ext = await window.API.Execute(new GetSafariExtensionsRequest());
+        this.setSafariExtensions(ext);
+    }
+
+    /**
+     * Set safari protection status (delegated to safariExtensionsStore)
+     */
+    public setSafariExtensions(data: SafariExtensions) {
+        this.safariExtensionsStore.setSafariExtensions(data);
+    }
+
+    /**
+     * Get system language
+     */
+    public async getSystemLanguage() {
+        const ext = await window.API.Execute(new GetSystemLanguageRequest());
+        this.setSystemLanguage(ext.value);
+    }
+
+    /**
+     * Set safari protection status
+     */
+    public setSystemLanguage(data: string) {
+        updateLanguage(data);
+        this.systemLanguage = data;
+    }
+
+    /**
+     * Set current onboarding step
+     */
+    public setCurrentStep(step: OnboardingSteps) {
+        this._currentStep = step;
+    }
+
+    /**
+     * Opens the Safari settings
+     */
+    public async openSafariSettings() {
+        await window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
+        this.setSafariSettingsHasBeenOpened(true);
     }
 
     /**

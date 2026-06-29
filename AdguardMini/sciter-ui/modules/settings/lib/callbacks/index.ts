@@ -19,13 +19,13 @@ import type { ISettingsCallbackService, ISettingsCallbackServiceInternal } from 
  * Proto callbacks for Settings module;
  */
 export class API_CALLBACK {
-    SettingsCallbackService: ISettingsCallbackService;
+    public SettingsCallbackService: ISettingsCallbackService;
 
-    AccountCallbackService: IAccountCallbackService;
+    public AccountCallbackService: IAccountCallbackService;
 
-    FiltersCallbackService: IFiltersCallbackService;
+    public FiltersCallbackService: IFiltersCallbackService;
 
-    UserRulesCallbackService: IUserRulesCallbackService;
+    public UserRulesCallbackService: IUserRulesCallbackService;
 
     /**
      *

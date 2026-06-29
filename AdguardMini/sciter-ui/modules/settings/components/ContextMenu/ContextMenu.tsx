@@ -116,7 +116,7 @@ function ContextMenuComponent({ elements, reportBug, className, showReportBugToo
                             </Text>
                         </div>
                     ) : elements?.map(({ text, action, className: cs }) => (
-                        <div key={text} className={s.ContextMenu_action} role="button" onClick={handleAction(action)}>
+                        <div key={text} className={s.ContextMenu_action} role="button" tabIndex={0} onClick={handleAction(action)}>
                             <Text className={cs} lineHeight="none" type="t1">{text}</Text>
                         </div>
                     ))}

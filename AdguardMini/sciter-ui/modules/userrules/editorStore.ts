@@ -10,7 +10,19 @@ import { updateLanguage } from 'Intl';
  * Store for the User rules editor
  */
 class EditorStore {
+    private $chunkLoading = false;
+
     private $loading = false;
+
+    private $isDirty = false;
+
+    private $language = 'en';
+
+    private $exportValue = '';
+
+    private $editorValue = '';
+
+    private $draftValue = '';
 
     /**
      * Returns the current loading state of the editor.
@@ -18,10 +30,6 @@ class EditorStore {
     public get loading() {
         return this.$loading;
     }
-
-    private $isDirty = false;
-
-    private $language = 'en';
 
     /**
      * Returns the current language of the editor.
@@ -31,22 +39,11 @@ class EditorStore {
     }
 
     /**
-     * Updates the language of the editor.
-     * @param {string} language - The new language for the editor.
-     */
-    public setLanguage(language: string) {
-        this.$language = language;
-        updateLanguage(language);
-    }
-
-    /**
      * Indicates if there are unsaved changes in the editor
      */
     public get isDirty() {
         return this.$isDirty;
     }
-
-    private $chunkLoading = false;
 
     /**
      * Indicates if the chunk loading is in progress
@@ -56,23 +53,11 @@ class EditorStore {
     }
 
     /**
-     * Updates the 'chunkLoading' flag.
-     * @param {boolean} flag - The new value for the 'chunkLoading' flag.
-     */
-    public setChunkLoading(flag: boolean) {
-        this.$chunkLoading = flag;
-    }
-
-    private $exportValue = '';
-
-    /**
      * Represents the value that should be exported from the editor
      */
     public get exportValue() {
         return this.$exportValue;
     }
-
-    private $editorValue = '';
 
     /**
      * Represents the current value in the editor
@@ -80,8 +65,6 @@ class EditorStore {
     public get editorValue() {
         return this.$editorValue;
     }
-
-    private $draftValue = '';
 
     /**
      * Represents the temporary or "draft" value in the editor
@@ -95,6 +78,23 @@ class EditorStore {
      */
     constructor() {
         makeAutoObservable(this, undefined, { autoBind: true });
+    }
+
+    /**
+     * Updates the language of the editor.
+     * @param {string} language - The new language for the editor.
+     */
+    public setLanguage(language: string) {
+        this.$language = language;
+        updateLanguage(language);
+    }
+
+    /**
+     * Updates the 'chunkLoading' flag.
+     * @param {boolean} flag - The new value for the 'chunkLoading' flag.
+     */
+    public setChunkLoading(flag: boolean) {
+        this.$chunkLoading = flag;
     }
 
     /**

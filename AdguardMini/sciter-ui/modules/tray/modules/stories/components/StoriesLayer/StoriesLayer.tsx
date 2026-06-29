@@ -90,7 +90,7 @@ export function StoriesLayer({
 
     useEffect(() => {
         frame?.onFrameShown?.();
-    }, [frame?.onFrameShown]);
+    }, [frame, frame?.onFrameShown]);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {

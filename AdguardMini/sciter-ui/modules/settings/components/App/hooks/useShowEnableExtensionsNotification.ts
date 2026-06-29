@@ -25,11 +25,6 @@ export function useShowEnableExtensionsNotification() {
         settings.safariExtensionsStore.safariExtensionsCount,
     );
 
-    const openSafariPref = () => {
-        window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
-        telemetry.trackEvent(SettingsEvent.FixItClick);
-    };
-
     const closeNotification = useCallback(() => {
         if (notificationUid.current) {
             notification.closeNotify(notificationUid.current);
@@ -37,6 +32,11 @@ export function useShowEnableExtensionsNotification() {
     }, [notification]);
 
     const showNotification = useCallback(() => {
+        const openSafariPref = () => {
+            window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
+            telemetry.trackEvent(SettingsEvent.FixItClick);
+        };
+
         notificationUid.current = notification.notify({
             message: allExtensionsDisabled
                 ? translate('settings.enable.extensions.all.desc')

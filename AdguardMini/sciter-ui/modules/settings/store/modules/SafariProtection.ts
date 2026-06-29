@@ -12,7 +12,7 @@ import type { SettingsStore } from 'SettingsStore';
  * This store is excusably use enabled filters ids and filtersMap, that split filters to groups.
  */
 export class SafariProtection {
-    rootStore: SettingsStore;
+    public rootStore: SettingsStore;
 
     /**
      * Get all enabled filters Ids

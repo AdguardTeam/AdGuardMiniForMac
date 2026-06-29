@@ -67,10 +67,11 @@ export function Input({
             return true;
         };
         if (inputRef.current) {
-            inputRef.current.addEventListener('contextmenu', onContextMenu);
+            const el = inputRef.current;
+            el.addEventListener('contextmenu', onContextMenu);
 
             return () => {
-                inputRef.current?.removeEventListener('contextmenu', onContextMenu);
+                el.removeEventListener('contextmenu', onContextMenu);
             };
         }
     }, []);

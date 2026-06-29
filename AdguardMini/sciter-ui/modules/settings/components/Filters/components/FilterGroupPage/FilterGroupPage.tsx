@@ -107,7 +107,7 @@ function FilterGroupPageComponent({
             ))}
             {isCustomGroup && (
                 <>
-                    <div className={s.FilterGroupPage_addFilter} role="button" onClick={() => setAddFilterModal(true)}>
+                    <div className={s.FilterGroupPage_addFilter} role="button" tabIndex={0} onClick={() => setAddFilterModal(true)}>
                         <Icon icon="plus" />
                         <Text className={s.FilterGroupPage_addFilter_text} lineHeight="none" type="t1">{translate('filters.add.custom')}</Text>
                     </div>

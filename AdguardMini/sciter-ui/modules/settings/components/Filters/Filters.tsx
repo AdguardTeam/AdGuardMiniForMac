@@ -103,6 +103,8 @@ function FiltersComponent() {
         case RouteName.safari_protection:
             navigationTitle = translate('menu.safari.protection');
             break;
+        case undefined:
+            break;
     }
     return (
         <>

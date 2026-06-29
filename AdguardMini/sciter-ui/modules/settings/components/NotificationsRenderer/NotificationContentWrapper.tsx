@@ -35,7 +35,7 @@ export function NotificationContentWrapper({
 
     useEffect(() => {
         notification.props.onMount?.();
-    }, [notification.props.onMount]);
+    }, [notification.props, notification.props.onMount]);
 
     if ('variant' in notification.props) {
         switch (notification.props.variant) {

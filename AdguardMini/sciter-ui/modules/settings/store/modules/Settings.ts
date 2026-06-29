@@ -13,17 +13,17 @@ import {
 import { SafariExtensionsStore } from 'Common/stores/SafariExtensionsStore';
 import { updateLanguage } from 'Intl';
 
+import { SciterWindowId } from './Windowing';
+
 import type { ImportMode, QuitReaction, SafariExtensionUpdate, Theme,
     SafariExtensions } from 'Apis/types';
 import type { SettingsStore } from 'SettingsStore';
-
-import { SciterWindowId } from './Windowing';
 
 /**
  * App Settings store
  */
 export class Settings {
-    rootStore: SettingsStore;
+    public rootStore: SettingsStore;
 
     /**
      * app settings
@@ -72,6 +72,27 @@ export class Settings {
     public dissmissedHealthCheckCards = new Set<string>();
 
     /**
+     * Getter for safari extensions with loading status
+     */
+    public get safariExtensionsLoading() {
+        return this.safariExtensionsStore.safariExtensionsLoading;
+    }
+
+    /**
+     * Checks if the app release variant is the MAS
+     */
+    public get isMASReleaseVariant() {
+        return this.settings.releaseVariant === ReleaseVariants.MAS;
+    }
+
+    /**
+     * Checks if the app release variant is the standalone
+     */
+    public get isStandaloneReleaseVariant() {
+        return this.settings.releaseVariant === ReleaseVariants.standAlone;
+    }
+
+    /**
      * Ctor
      *
      * @param rootStore
@@ -81,6 +102,34 @@ export class Settings {
         makeAutoObservable(this, {
             rootStore: false,
         }, { autoBind: true });
+    }
+
+    /**
+     * Private setter for user action last directory
+     */
+    private setUserActionLastDirectory(value: string) {
+        this.userActionLastDirectory = value;
+    }
+
+    /**
+     * Setter for contentBlockersRulesLimit
+     */
+    private setContentBlockersRulesLimit(value: number) {
+        this.contentBlockersRulesLimit = value;
+    }
+
+    /**
+     * Updates settings
+     */
+    private commitSettings(data: SettingsEnt) {
+        this.setSettings(new SettingsEnt(data));
+    }
+
+    /**
+     * Private update helper
+     */
+    private updateHelper() {
+        return this.settings.clone();
     }
 
     /**
@@ -113,6 +162,9 @@ export class Settings {
         this.setHealthCheckCardDismissed(resp.value);
     }
 
+    /**
+     *
+     */
     public setHealthCheckCardDismissed(cardIds: string[]) {
         this.dissmissedHealthCheckCards = new Set(cardIds);
     }
@@ -139,13 +191,6 @@ export class Settings {
     public updateUserActionLastDirectory(value: string) {
         window.API.Execute(new UpdateUserActionLastDirectoryRequest({ value }));
         this.setUserActionLastDirectory(value);
-    }
-
-    /**
-     * Private setter for user action last directory
-     */
-    private setUserActionLastDirectory(value: string) {
-        this.userActionLastDirectory = value;
     }
 
     /**
@@ -192,20 +237,6 @@ export class Settings {
         ]);
         this.setSafariExtensions(ext);
         this.setContentBlockersRulesLimit(limit.value);
-    }
-
-    /**
-     * Setter for contentBlockersRulesLimit
-     */
-    private setContentBlockersRulesLimit(value: number) {
-        this.contentBlockersRulesLimit = value;
-    }
-
-    /**
-     * Getter for safari extensions with loading status
-     */
-    public get safariExtensionsLoading() {
-        return this.safariExtensionsStore.safariExtensionsLoading;
     }
 
     /**
@@ -374,27 +405,6 @@ export class Settings {
     }
 
     /**
-     * Checks if the app release variant is the MAS
-     */
-    public get isMASReleaseVariant() {
-        return this.settings.releaseVariant === ReleaseVariants.MAS;
-    }
-
-    /**
-     * Checks if the app release variant is the standalone
-     */
-    public get isStandaloneReleaseVariant() {
-        return this.settings.releaseVariant === ReleaseVariants.standAlone;
-    }
-
-    /**
-     * Updates settings
-     */
-    private commitSettings(data: SettingsEnt) {
-        this.setSettings(new SettingsEnt(data));
-    }
-
-    /**
      * private setter
      */
     public setSettings(data: SettingsEnt) {
@@ -419,12 +429,5 @@ export class Settings {
      */
     public setIncomingHardwareAcceleration(data: boolean | undefined) {
         this.incomeHardwareAcceleration = data;
-    }
-
-    /**
-     * Private update helper
-     */
-    private updateHelper() {
-        return this.settings.clone();
     }
 }

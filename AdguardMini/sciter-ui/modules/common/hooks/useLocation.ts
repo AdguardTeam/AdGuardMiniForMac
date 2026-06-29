@@ -20,7 +20,9 @@ export function useLocation<Routes extends string>(
 ) {
     const ref = useRef(action);
 
+    const pathHash = detectParamsChanges ? router.getPathHash() : undefined;
+
     useEffect(() => {
         ref.current(router.currentPath);
-    }, [router.currentPath, detectParamsChanges ? router.getPathHash() : undefined]);
+    }, [router.currentPath, pathHash]);
 }

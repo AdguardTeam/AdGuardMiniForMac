@@ -11,16 +11,16 @@ import type { IRouter, RouteParamsMap } from './interfaces/IRouter';
  */
 export class RouterStore<Route extends string> implements IRouter<Route> {
     /**
-     * Current route
-     */
-    public currentPath: Route;
-
-    /**
      * Current route params
      *
      * @protected
      */
     protected params: RouteParamsMap;
+
+    /**
+     * Current route
+     */
+    public currentPath: Route;
 
     /**
      * Ctor

@@ -71,7 +71,7 @@ function UserRulesComponent() {
         if (isRuleEditorWindowOpened) {
             setIsScrolling(false);
         }
-    }, [isRuleEditorWindowOpened]);
+    }, [isRuleEditorWindowOpened, setIsScrolling]);
 
     const {
         foundItems,
@@ -112,7 +112,7 @@ function UserRulesComponent() {
             ui.resetUserRulesScrollTop();
             setIsScrolling(true);
         });
-    }, [ui, ui.userRulesScrollTop, isRuleEditorWindowOpened, rulesToRender.length]);
+    }, [ui, ui.userRulesScrollTop, isRuleEditorWindowOpened, rulesToRender.length, setIsScrolling]);
 
     const showInFinder = (path: string) => {
         window.API.Execute(new ShowInFinderRequest({ path }));
@@ -260,6 +260,7 @@ function UserRulesComponent() {
                     <div
                         className={cx(s.UserRules_addRule, isScrolling && s.UserRules_addRule__scroll)}
                         role="button"
+                        tabIndex={0}
                         onClick={() => navigateToUserRule()}
                     >
                         <Icon className={s.UserRules_addRule_icon} icon="plus" />

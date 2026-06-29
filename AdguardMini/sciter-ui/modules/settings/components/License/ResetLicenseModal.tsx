@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { observer } from 'mobx-react-lite';
-import { provideContactSupportParam } from 'SettingsLib/utils/translate';
 
 import { useSettingsStore } from 'SettingsLib/hooks';
+import { provideContactSupportParam } from 'SettingsLib/utils/translate';
 import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType } from 'SettingsStore/modules';
 import theme from 'Theme';
 import { Modal } from 'UILib';

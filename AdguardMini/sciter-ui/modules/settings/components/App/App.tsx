@@ -15,13 +15,13 @@ import {
 } from 'SettingsStore/modules/NotificationsQueue';
 
 import { ActivationFlowStatusController } from '../ActivationFlow';
+import { EnableExtensionsController } from '../EnableExtensionsController';
 import { ErrorBoundary } from '../ErrorBoundary';
 import { MigrationFiltersConsentController } from '../MigrationFiltersConsentController';
 import { NotificationsRenderer } from '../NotificationsRenderer';
 import { PaywallController } from '../Paywall';
 import { Router } from '../Router';
 import { Tooltip } from '../Tooltip';
-import { EnableExtensionsController } from '../EnableExtensionsController';
 
 import './App.pcss';
 import {

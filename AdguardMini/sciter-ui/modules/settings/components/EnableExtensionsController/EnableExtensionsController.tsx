@@ -4,14 +4,13 @@
 
 import { observer } from 'mobx-react-lite';
 
-import { OptionalStringValue } from 'Apis/types';
 import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SettingsService';
+import { OptionalStringValue } from 'Apis/types';
 import { TDS_PARAMS, getTdsLink } from 'Common/utils/links';
 import { getCountableEntityStatuses } from 'Common/utils/utils';
+import { EnableAdGuardExtensions } from 'Common/views';
 import { useSettingsStore, useTheme } from 'SettingsLib/hooks';
 import { RouteName } from 'SettingsStore/modules';
-
-import { EnableAdGuardExtensions } from 'Common/views';
 
 import s from './EnableExtensionsController.module.pcss';
 
@@ -42,13 +41,13 @@ function EnableExtensionsControllerComponent() {
 
     return (
         <EnableAdGuardExtensions
-            privacyPolicyUrl={getTdsLink(TDS_PARAMS.privacy, RouteName.safari_protection)}
             buttons={[
                 { buttonType: 'submit', action: openSafariPref, label: translate('onboarding.extensions.open.settings') },
                 { buttonType: 'text', action: onClose, label: translate('onboarding.skip') },
             ]}
-            useTheme={useTheme}
             containerClassName={s.EnableExtensionsController}
+            privacyPolicyUrl={getTdsLink(TDS_PARAMS.privacy, RouteName.safari_protection)}
+            useTheme={useTheme}
         />
     );
 }

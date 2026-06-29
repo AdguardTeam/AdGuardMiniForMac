@@ -131,9 +131,9 @@ function AddCustomFilterModalComponent({
         <Modal
             contentPadding={false}
             description={description}
+            size="large"
             title={error === 'addCustomFilterError' ? translate('filters.add.custom.failed') : translate('filters.add.custom')}
             onClose={onClose}
-            size="large"
         >
             <div className={s.AddCustomFilterModal_container}>
                 {error === 'addCustomFilterError' && (

@@ -16,17 +16,17 @@ const CHECK_UPDATES_INTERVAL = 60 * 1000;
  *  AppInfo store
  */
 export class AppInfo {
-    rootStore: SettingsStore;
+    /**
+     * Debouncer for update checking
+     */
+    private readonly lastTimeUpdate: number | undefined;
+
+    public rootStore: SettingsStore;
 
     /**
      * info about application
      */
     public appInfo = new AppInfoEnt();
-
-    /**
-     * Debouncer for update checking
-     */
-    private readonly lastTimeUpdate: number | undefined;
 
     /**
      * Bool describes if new version of application is available
@@ -46,11 +46,15 @@ export class AppInfo {
     }
 
     /**
-     * receive app info from sciter
+     * Private update helper
      */
-    public async getAppInfo() {
-        const resp = await window.API.Execute(new GetAboutRequest());
-        this.setAppInfo(resp);
+    private updateHelper() {
+        return new AppInfoEnt({
+            channel: this.appInfo.channel,
+            dependencies: this.appInfo.dependencies,
+            updateAvailable: this.appInfo.updateAvailable,
+            version: this.appInfo.version,
+        });
     }
 
     /**
@@ -58,6 +62,14 @@ export class AppInfo {
      */
     private setAppInfo(info: AppInfoEnt) {
         this.appInfo = info;
+    }
+
+    /**
+     * receive app info from sciter
+     */
+    public async getAppInfo() {
+        const resp = await window.API.Execute(new GetAboutRequest());
+        this.setAppInfo(resp);
     }
 
     /**
@@ -91,17 +103,5 @@ export class AppInfo {
         const appInfo = this.updateHelper();
         appInfo.updateAvailable = updateAvailable;
         this.setAppInfo(appInfo);
-    }
-
-    /**
-     * Private update helper
-     */
-    private updateHelper() {
-        return new AppInfoEnt({
-            channel: this.appInfo.channel,
-            dependencies: this.appInfo.dependencies,
-            updateAvailable: this.appInfo.updateAvailable,
-            version: this.appInfo.version,
-        });
     }
 }

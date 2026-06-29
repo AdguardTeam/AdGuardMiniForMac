@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import type { ComponentChildren, JSX } from 'preact';
-
 import './Text.module.pcss';
+
+import type { ComponentChildren, JSX } from 'preact';
 
 export type TextProps = {
     // Be sure that type are the same with theme/Typography.module.pcss

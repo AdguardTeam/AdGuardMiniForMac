@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import type { JSX } from 'preact/jsx-runtime';
-
 import { Button, Icon, Text } from 'Modules/common/components';
+import theme from 'Theme';
 
 import s from './HealthCheckCard.module.pcss';
-import theme from 'Theme';
+
+import type { JSX } from 'preact/jsx-runtime';
 
 /**
  * Props for the HealthCheckCard component.
@@ -38,25 +38,25 @@ export function HealthCheckCard({ title, description, cta, onClose, color }: Hea
     return (
         <div className={cx(s.HealthCheckCard, s[`HealthCheckCard__${color}`])}>
             <div className={s.HealthCheckCard_icon}>
-                <Icon icon="info" className={cx(s[`HealthCheckCard_icon__${color}`])}/>
+                <Icon className={cx(s[`HealthCheckCard_icon__${color}`])} icon="info" />
             </div>
             <div className={s.HealthCheckCard_content}>
                 <div className={s.HealthCheckCard_content_title}>
-                    <Text type='t1'>{title}</Text>
+                    <Text type="t1">{title}</Text>
                 </div>
                 <div className={s.HealthCheckCard_content_desc}>
                     {description}
                 </div>
                 <div className={s.HealthCheckCard_content_cta}>
                     {cta.map(({ label, onClick }, index) => (
-                        <Button type="text" key={index} className={cx(s.HealthCheckCard_content_cta_button, color === "orange" && theme.button.orangeText)} onClick={onClick}>
-                            <Text type='t2'>{label}</Text>
+                        <Button key={index} className={cx(s.HealthCheckCard_content_cta_button, color === 'orange' && theme.button.orangeText)} type="text" onClick={onClick}>
+                            <Text type="t2">{label}</Text>
                         </Button>
                     ))}
                 </div>
             </div>
             {onClose && (
-                <Button type="icon" icon="cross" className={s.HealthCheckCard_close} onClick={onClose} />
+                <Button className={s.HealthCheckCard_close} icon="cross" type="icon" onClick={onClose} />
             )}
         </div>
     );

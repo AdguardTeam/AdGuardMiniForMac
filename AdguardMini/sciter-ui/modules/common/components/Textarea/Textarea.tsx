@@ -50,10 +50,11 @@ export function Textarea({
             return true;
         };
         if (inputRef.current) {
-            inputRef.current.addEventListener('contextmenu', onContextMenu);
+            const el = inputRef.current;
+            el.addEventListener('contextmenu', onContextMenu);
 
             return () => {
-                inputRef.current?.removeEventListener('contextmenu', onContextMenu);
+                el.removeEventListener('contextmenu', onContextMenu);
             };
         }
     }, []);
@@ -97,12 +98,12 @@ export function Textarea({
                 <textarea
                     ref={inputRef}
                     autoFocus={autoFocus}
+                    className={cx(s.Textarea_textarea, theme.typo.t1, textAreaClassName)}
                     id={id}
                     name={id}
-                    placeholder={placeholder}
-                    className={cx(s.Textarea_textarea, theme.typo.t1, textAreaClassName)}
                     // FIXME: NOT WORKING SINCE 5.0.3.13
                     // onChange={(e) => onChange(e.currentTarget.value)}
+                    placeholder={placeholder}
                     onBlur={(e) => onBlur?.(e.currentTarget.value)}
                 >
                     {value}

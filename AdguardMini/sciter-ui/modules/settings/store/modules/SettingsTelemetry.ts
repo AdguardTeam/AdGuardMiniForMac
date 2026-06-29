@@ -4,7 +4,7 @@
 
 import Telemetry from 'Modules/common/stores/Telemetry';
 
-import { UserRulesPages, UserRulesEvents } from 'Modules/common/utils/consts';
+import type { UserRulesPages, UserRulesEvents } from 'Modules/common/utils/consts';
 
 /**
  * Settings-specific pages
