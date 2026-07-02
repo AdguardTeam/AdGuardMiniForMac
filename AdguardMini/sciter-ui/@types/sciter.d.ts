@@ -70,6 +70,19 @@ interface HTMLWebViewElement {
      * It's called from web pages loaded by webview. All parameters are passed to webview.jsBridgeCall.
      */
     jsBridgeCall(params: [eventName: string, ...eventParams: unknown[]]): void;
+
+    /**
+     * Subscribes to a sciter behavior event fired on this `<webview>` element.
+     *
+     * The `webview` behavior fires `webview-ready` (after the underlying
+     * WKWebView is created), `webview-unavailable`, `webview-will-navigate`,
+     * `webview-did-navigate`, `webview-navigate-failure` and
+     * `webview-title-change`. These events bubble up the DOM.
+     *
+     * @param eventName - Name of the behavior event to listen for.
+     * @param handler - Event handler invoked when the event fires.
+     */
+    on(eventName: string, handler: (event: CustomEvent) => void): void;
 }
 
 interface Window {

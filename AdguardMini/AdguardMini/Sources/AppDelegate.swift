@@ -274,7 +274,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
 
-        Task {
+        Task { @MainActor in
             await self.startAppStep2()
 
             self.checkLoginItem()
@@ -307,6 +307,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return true
     }
 
+    @MainActor
     private func startAppStep2() async {
         LogInfo("Start App Step 2")
         if self.userSettingsManager.firstRun && !self.migrationSuccess {

@@ -24,7 +24,9 @@ protocol SciterAppsController {
     func configureAndLoadSciter(hardwareAcceleration: Bool)
     func shutdown()
 
+    @MainActor
     func startOnboarding() async
+    @MainActor
     func startMainApp(openSettings: Bool) async
     func showApp(_ appType: AvailableSciterApp)
     @MainActor
@@ -99,6 +101,7 @@ final class SciterAppsControllerImpl: SciterAppsController {
         }
     }
 
+    @MainActor
     func startOnboarding() async {
         guard self.checkSciterConfigured() else {
             LogWarn("Sciter not configured")
@@ -114,6 +117,7 @@ final class SciterAppsControllerImpl: SciterAppsController {
         }.value
     }
 
+    @MainActor
     func startMainApp(openSettings: Bool = false) async {
         guard self.checkSciterConfigured() else {
             LogWarn("Sciter not configured")

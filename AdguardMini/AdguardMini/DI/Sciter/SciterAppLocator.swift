@@ -42,33 +42,48 @@ final class SciterAppLocator {
     private var _trayApp: TrayApp?
     private var _settingsApp: SettingsApp?
 
+    @inline(__always)
+    private func ensureMainThread<T>(_ block: () -> T) -> T {
+        if Thread.isMainThread { return block() }
+        return DispatchQueue.main.sync(execute: block)
+    }
+
     var onboardingApp: OnboardingApp {
-        locked(self.lk) {
-            let app = self._onboardingApp ?? self.newOnboardingApp()
-            if self._onboardingApp.isNil {
+        self.ensureMainThread {
+            locked(self.lk) {
+                if let app = self._onboardingApp {
+                    return app
+                }
+                let app = self.newOnboardingApp()
                 self._onboardingApp = app
+                return app
             }
-            return app
         }
     }
 
     var trayApp: TrayApp {
-        locked(self.lk) {
-            let app = self._trayApp ?? self.newTrayApp()
-            if self._trayApp.isNil {
+        self.ensureMainThread {
+            locked(self.lk) {
+                if let app = self._trayApp {
+                    return app
+                }
+                let app = self.newTrayApp()
                 self._trayApp = app
+                return app
             }
-            return app
         }
     }
 
     var settingsApp: SettingsApp {
-        locked(self.lk) {
-            let app = self._settingsApp ?? self.newSettingsApp()
-            if self._settingsApp.isNil {
+        self.ensureMainThread {
+            locked(self.lk) {
+                if let app = self._settingsApp {
+                    return app
+                }
+                let app = self.newSettingsApp()
                 self._settingsApp = app
+                return app
             }
-            return app
         }
     }
 
