@@ -1,20 +1,65 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "หน้าเว็บที่ปลอดภัย";
 
+/* Domain view - Domain Item hint "Website protection disabled" */
+"item_hint_domain_protection_off" = "การป้องกันเว็บไซต์ถูกปิดใช้งาน";
+
+/* Domain view - Item title "Still seeing ads? Learn how to fix this" */
+"item_attention_title_health_check_trouble" = "ยังเห็นโฆษณาอยู่ใช่ไหม? เรียนรู้วิธีแก้ไข";
+
+/* Domain view - Item title "Block element" */
+"item_title_block_element" = "บล็อกองค์ประกอบ";
+
 /* Domain view - Item title "Report an issue" */
 "item_title_report_an_issue" = "รายงานปัญหา";
+
+/* Domain view - Item title "Rate AdGuard Mini" */
+"item_title_rate_adguard_mini" = "ให้คะแนน AdGuard Mini";
+
+/* Domain view - Stats label "{count} ad(s) blocked" */
+"item_stats_ads_blocked" = "%d โฆษณาถูกบล็อก";
+
+/* Domain view - Stats label "{count} tracker(s) blocked" */
+"item_stats_trackers_blocked" = "%d ตัวติดตามถูกบล็อก";
 
 /* Info view - Title "Protection is disabled" */
 "info_title_protection_disabled" = "การป้องกันปิดอยู่";
 
+/* Info view - Title "Failed to enable protection" */
+"info_title_failed_enable_protection" = "ไม่สามารถเปิดใช้งานการป้องกันได้";
+
 /* Info view - Button title "Enable" */
 "info_button_title_enable" = "เปิดใช้งาน";
+
+/* Info view - Button title "Enabling..." */
+"info_button_title_enabling" = "กำลังเปิดใช้งาน...";
+
+/* Info view - Title "AdGuard Mini is not launched" */
+"info_title_main_app_not_running" = "AdGuard Mini ยังไม่ได้เปิดใช้งาน";
+
+/* Info view - Title "Failed to launch AdGuard Mini" */
+"info_title_failed_launch_main_app" = "ไม่สามารถเปิดใช้งาน AdGuard Mini ได้";
 
 /* Info view - Button title "Launch AdGuard Mini" */
 "info_button_title_launch" = "เปิดใช้งาน AdGuard Mini";
 
+/* Info view - Button title "Launching..." */
+"info_button_title_launching" = "กำลังเปิดใช้งาน...";
+
+/* Info view - Title "Something went wrong" */
+"info_title_something_went_wrong" = "มีบางอย่างผิดปกติ";
+
+/* Info view - Title "Failed to restart AdGuard Mini" */
+"info_title_failed_restart_main_app" = "ไม่สามารถรีสตาร์ท AdGuard Mini ได้";
+
+/* Info view - Subtitle "Please restart the app or contact support" */
+"info_subtitle_restart_app" = "กรุณารีสตาร์ทแอปหรือ ติดต่อฝ่ายสนับสนุน";
+
 /* Info view - Button title "Restart AdGuard Mini" */
-"info_button_title_restart" = "คุณต้องรีสตาร์ท AdGuard";
+"info_button_title_restart" = "รีสตาร์ท AdGuard Mini";
+
+/* Info view - Button title "Launching..." */
+"info_button_title_restarting" = "กำลังรีสตาร์ท...";
 
 /* Info view - Common button title "Try again" */
 "info_common_button_title_try_again" = "ลองอีกครั้ง";
@@ -24,3 +69,25 @@
 
 /* Info view - Common subtitle after an error occurs */
 "info_error_subtitle" = "กรุณาลองอีกครั้งหรือติดต่อฝ่ายสนับสนุน";
+
+/* Info view - Title "Set up your ad blocker" */
+"info_title_set_up_ad_blocker" = "ตั้งค่าตัวปิดกั้นโฆษณาของคุณ";
+
+/* info_subtitle_set_up_ad_blocker
+Info view - Subtitle "To get AdGuard Mini up and running properly, you’ll need to enable a few settings" */
+"info_subtitle_set_up_ad_blocker" = "เพื่อให้ AdGuard Mini ทำงานได้อย่างถูกต้อง คุณจำเป็นต้องตรวจสอบการตั้งค่าสองสามอย่าง";
+
+/* Info view - Button title "Open AdGuard Mini" */
+"info_button_title_open_main_app" = "เปิด AdGuard Mini";
+
+/* Info view - Button title "Opening..." */
+"info_button_title_opening" = "กำลังเปิด...";
+
+/* Domain view - Upsell CTA title "Unlock full protection" */
+"item_upsell_title" = "ปลดล็อกการป้องกันเต็มรูปแบบ";
+
+/* Domain view - Upsell CTA description when trial is available */
+"item_upsell_description_trial" = "ลองใช้ฟรี %d วัน";
+
+/* Domain view - Upsell CTA description when trial is not available */
+"item_upsell_description_upgrade" = "คลิกเพื่ออัปเกรด";

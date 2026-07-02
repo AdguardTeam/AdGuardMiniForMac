@@ -42,5 +42,25 @@
         <string>%2$@ slídičů zablokováno</string>
       </dict>
     </dict>
+    <key>item_upsell_description_trial</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Vyzkoušejte %1$d den zdarma</string>
+        <key>few</key>
+        <string>Vyzkoušejte %1$d dny zdarma</string>
+        <key>many</key>
+        <string>Vyzkoušejte %1$d dnů zdarma</string>
+        <key>other</key>
+        <string>Vyzkoušejte %1$d dnů zdarma</string>
+      </dict>
+    </dict>
   </dict>
 </plist>

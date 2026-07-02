@@ -4,6 +4,9 @@
 /* Domain view - Domain Item hint "Website protection disabled" */
 "item_hint_domain_protection_off" = "Webstedsbeskyttelse slået fra";
 
+/* Domain view - Item title "Still seeing ads? Learn how to fix this" */
+"item_attention_title_health_check_trouble" = "Ser du stadig annoncer? Lær, hvordan du løser det";
+
 /* Domain view - Item title "Block element" */
 "item_title_block_element" = "Blokér element";
 
@@ -79,3 +82,12 @@ Info view - Subtitle "To get AdGuard Mini up and running properly, you’ll need
 
 /* Info view - Button title "Opening..." */
 "info_button_title_opening" = "Åbner...";
+
+/* Domain view - Upsell CTA title "Unlock full protection" */
+"item_upsell_title" = "Lås op for fuld beskyttelse";
+
+/* Domain view - Upsell CTA description when trial is available */
+"item_upsell_description_trial" = "Prøv %d dage gratis";
+
+/* Domain view - Upsell CTA description when trial is not available */
+"item_upsell_description_upgrade" = "Klik for at opgradere";

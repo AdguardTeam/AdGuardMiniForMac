@@ -1,6 +1,12 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "Pagină sigură";
 
+/* Domain view - Domain Item hint "Website protection disabled" */
+"item_hint_domain_protection_off" = "Protecția site-ului web este dezactivată";
+
+/* Domain view - Item title "Still seeing ads? Learn how to fix this" */
+"item_attention_title_health_check_trouble" = "Încă vezi reclame? Află cum să rezolvi asta";
+
 /* Domain view - Item title "Block element" */
 "item_title_block_element" = "Blocați elementul";
 
@@ -9,6 +15,12 @@
 
 /* Domain view - Item title "Rate AdGuard Mini" */
 "item_title_rate_adguard_mini" = "Evaluează AdGuard Mini";
+
+/* Domain view - Stats label "{count} ad(s) blocked" */
+"item_stats_ads_blocked" = "%d reclame blocate";
+
+/* Domain view - Stats label "{count} tracker(s) blocked" */
+"item_stats_trackers_blocked" = "%d trackere blocate";
 
 /* Info view - Title "Protection is disabled" */
 "info_title_protection_disabled" = "Protecția este dezactivată";
@@ -70,3 +82,12 @@ Info view - Subtitle "To get AdGuard Mini up and running properly, you’ll need
 
 /* Info view - Button title "Opening..." */
 "info_button_title_opening" = "Se deschide...";
+
+/* Domain view - Upsell CTA title "Unlock full protection" */
+"item_upsell_title" = "Deblochează protecția completă";
+
+/* Domain view - Upsell CTA description when trial is available */
+"item_upsell_description_trial" = "Încearcă gratuit timp de %d zile";
+
+/* Domain view - Upsell CTA description when trial is not available */
+"item_upsell_description_upgrade" = "Faceți clic pentru a face upgrade";

@@ -1,6 +1,9 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "Pagina sicura";
 
+/* Domain view - Domain Item hint "Website protection disabled" */
+"item_hint_domain_protection_off" = "Protezione del sito web disabilitata";
+
 /* Domain view - Item title "Still seeing ads? Learn how to fix this" */
 "item_attention_title_health_check_trouble" = "Vedi ancora gli annunci? Scopri come risolvere il problema";
 
@@ -12,6 +15,12 @@
 
 /* Domain view - Item title "Rate AdGuard Mini" */
 "item_title_rate_adguard_mini" = "Valuta AdGuard Mini";
+
+/* Domain view - Stats label "{count} ad(s) blocked" */
+"item_stats_ads_blocked" = "%d annunci bloccati";
+
+/* Domain view - Stats label "{count} tracker(s) blocked" */
+"item_stats_trackers_blocked" = "%d tracciatori bloccati";
 
 /* Info view - Title "Protection is disabled" */
 "info_title_protection_disabled" = "Protezione disattivata";
