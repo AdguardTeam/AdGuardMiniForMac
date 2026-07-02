@@ -90,50 +90,58 @@ export function useOpenSciterWindow(params: OpenSciterWindowParams) {
             return;
         }
 
-        const targetWindow = getTargetWindow();
+        // Window creation and listener setup, run synchronously on the direct
+        // click path (rationale at the call site below).
+        const createAndSetupWindow = () => {
+            const targetWindow = getTargetWindow();
 
-        const savedGeometry = windowing.getSavedGeometry(windowParams.id);
-        if (savedGeometry) {
-            const validated = validateGeometry(savedGeometry);
-            if (validated) {
-                targetWindow.moveTo(validated.monitor, validated.x, validated.y, validated.width, validated.height);
-            }
-        }
-
-        targetWindow.document.addEventListener('ready', () => {
-            const webviewElement = getWebviewElement();
-            webviewElement.webview.loadHtml(html);
-
-            sendMessage(RulesEditorEvents.fallback_mode, Boolean(false).toString());
-
-            webviewElement.jsBridgeCall = (jsBridgeCallParams) => {
-                const [eventName, ...args] = jsBridgeCallParams;
-
-                Object.keys(events).forEach((eventKey) => {
-                    if (eventName.toString() === eventKey) {
-                        events[eventKey](args);
-                    }
-                });
-
-                switch (eventName.toString()) {
-                    case RulesEditorEvents.init_theme:
-                        break;
+            const savedGeometry = windowing.getSavedGeometry(windowParams.id);
+            if (savedGeometry) {
+                const validated = validateGeometry(savedGeometry);
+                if (validated) {
+                    targetWindow.moveTo(validated.monitor, validated.x, validated.y, validated.width, validated.height);
                 }
-            };
-        });
-
-        targetWindow.on('theme', ({ detail }) => {
-            sendMessage(RulesEditorEvents.theme, `'${detail}'`);
-        });
-
-        Object.keys(eventListeners).forEach((key) => {
-            const { type, handler } = eventListeners[key];
-
-            if (type === 'window') {
-                targetWindow.on(key, handler);
-            } else if (type === 'document') {
-                targetWindow.document.addEventListener(key, handler);
             }
+
+            targetWindow.document.addEventListener('ready', () => {
+                const webviewElement = getWebviewElement();
+                webviewElement.webview.loadHtml(html);
+
+                sendMessage(RulesEditorEvents.fallback_mode, Boolean(false).toString());
+
+                webviewElement.jsBridgeCall = (jsBridgeCallParams) => {
+                    const [eventName, ...args] = jsBridgeCallParams;
+
+                    Object.keys(events).forEach((eventKey) => {
+                        if (eventName.toString() === eventKey) {
+                            events[eventKey](args);
+                        }
+                    });
+
+                    switch (eventName.toString()) {
+                        case RulesEditorEvents.init_theme:
+                            break;
+                    }
+                };
+            });
+
+            targetWindow.on('theme', ({ detail }) => {
+                sendMessage(RulesEditorEvents.theme, `'${detail}'`);
+            });
+
+            Object.keys(eventListeners).forEach((key) => {
+                const { type, handler } = eventListeners[key];
+
+                if (type === 'window') {
+                    targetWindow.on(key, handler);
+                } else if (type === 'document') {
+                    targetWindow.document.addEventListener(key, handler);
+                }
+            });
+        };
+
+        requestAnimationFrame(() => {
+            createAndSetupWindow();
         });
     };
 
