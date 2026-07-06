@@ -32,8 +32,8 @@ const FILTERLISTS_URL = 'https://filterlists.com';
 function AddCustomFilterModalComponent({
     onClose,
 }: AddCustomFilterModalProps) {
-    const { notification, filters } = useSettingsStore();
-    const [url, setUrl] = useState(filters.customFiltersSubscribeURL || '');
+    const { notification, customFilters } = useSettingsStore();
+    const [url, setUrl] = useState(customFilters.customFiltersSubscribeURL || '');
     const [name, setName] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<AddCustomFilterError>(null);
@@ -63,22 +63,22 @@ function AddCustomFilterModalComponent({
             }
 
             setLoading(false);
-            filters.setCustomFiltersSubscribeURL('');
+            customFilters.setCustomFiltersSubscribeURL('');
             return;
         }
 
         if (!name) {
             setLoading(false);
             setError('addCustomFilterError');
-            filters.setCustomFiltersSubscribeURL('');
+            customFilters.setCustomFiltersSubscribeURL('');
             return;
         }
 
-        const addError = await filters.addCustomFilter(url, name, trusted);
+        const addError = await customFilters.addCustomFilter(url, name, trusted);
         if (addError) {
             setLoading(false);
             setError('addCustomFilterError');
-            filters.setCustomFiltersSubscribeURL('');
+            customFilters.setCustomFiltersSubscribeURL('');
             return;
         }
 
@@ -90,7 +90,7 @@ function AddCustomFilterModalComponent({
             closeable: true,
         });
 
-        filters.setCustomFiltersSubscribeURL('');
+        customFilters.setCustomFiltersSubscribeURL('');
         onClose();
     };
 
@@ -121,11 +121,11 @@ function AddCustomFilterModalComponent({
     }
 
     useEffect(() => {
-        if (filters.customFiltersSubscribeURL) {
+        if (customFilters.customFiltersSubscribeURL) {
             onSubmit();
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filters.customFiltersSubscribeURL]);
+    }, [customFilters.customFiltersSubscribeURL]);
 
     return (
         <Modal

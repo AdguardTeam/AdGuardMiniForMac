@@ -17,7 +17,7 @@ import { HealthCheckCard } from './HealthCheckCard';
  */
 function BackgroundDisabledCardComponent() {
     const {
-        settings,
+        appSettings,
     } = useSettingsStore();
 
     return (
@@ -25,7 +25,7 @@ function BackgroundDisabledCardComponent() {
             color="orange"
             cta={[{
                 label: translate('safari.protection.health.login.item.cta'),
-                onClick: settings.openLoginItemsSettings,
+                onClick: appSettings.openLoginItemsSettings,
             }]}
             description={(
                 <div>

@@ -113,7 +113,7 @@ export function useToggleHeader(
             content.removeEventListener('gesture-pan', handleScroll);
             window.removeEventListener('sizechange', handleScroll);
         };
-    }, [rules, isRuleEditorWindowOpened, containerRef]);
+    }, [containerRef, rules, isRuleEditorWindowOpened]);
 
     return [isScrolling, setIsScrolling];
 }

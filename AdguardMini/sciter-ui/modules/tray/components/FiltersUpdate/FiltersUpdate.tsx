@@ -15,9 +15,9 @@ import s from './FiltersUpdate.module.pcss';
  * Component that shows which filters were updated
  */
 function FiltersUpdateComponent() {
-    const { router, settings } = useTrayStore();
+    const { router, trayFilters } = useTrayStore();
     useMoreFrequentUpdatesNotify();
-    const { filtersUpdateResult, filtersMap } = settings;
+    const { filtersUpdateResult, filtersMap } = trayFilters;
 
     if (!filtersMap) {
         return null;

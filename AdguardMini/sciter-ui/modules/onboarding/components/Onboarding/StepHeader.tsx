@@ -15,13 +15,19 @@ import s from './StepHeader.module.pcss';
  * Header for Step component
  */
 function StepHeaderComponent() {
-    const { steps } = useOnboardingStore();
+    const { steps, safariExtensions } = useOnboardingStore();
 
-    const { currentStep, safariExtensionsStore: { allExtensionsEnabled }, skipTuning } = steps;
+    const { currentStep, skipTuning } = steps;
+
+    const { allExtensionsEnabled } = safariExtensions;
 
     const renderBackButton = () => {
         let prevStep: OnboardingSteps | undefined;
         switch (currentStep) {
+            case OnboardingSteps.start:
+                break;
+            case OnboardingSteps.extensions:
+                break;
             case OnboardingSteps.ads:
                 prevStep = allExtensionsEnabled ? undefined : OnboardingSteps.extensions;
                 break;

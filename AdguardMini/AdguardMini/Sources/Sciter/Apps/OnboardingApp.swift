@@ -15,6 +15,7 @@ final class OnboardingApp: SciterApp,
                            OnboardingServiceDependent,
                            FiltersServiceDependent,
                            SettingsServiceDependent,
+                           CommonServiceDependent,
                            TelemetrySciterServiceDependent,
                            OnboardingCallbackServiceDependent {
     override init(

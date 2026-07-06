@@ -40,6 +40,7 @@ private extension SciterServiceLocator {
         if client is UserRulesServiceDependent { client.app.add(service: self.userRulesService) }
         if client is OnboardingServiceDependent { client.app.add(service: self.onboardingService) }
         if client is TrayServiceDependent { client.app.add(service: self.trayService) }
+        if client is CommonServiceDependent { client.app.add(service: self.commonService) }
         if client is TelemetrySciterServiceDependent { client.app.add(service: self.telemetryService) }
     }
 
@@ -64,6 +65,7 @@ private final class SciterServiceLocator {
     private lazy var filtersService: FiltersService.ServiceType = Sciter.FiltersServiceImpl()
     private lazy var userRulesService: UserRulesService.ServiceType = Sciter.UserRulesServiceImpl()
     private lazy var onboardingService: OnboardingService.ServiceType = Sciter.OnboardingServiceImpl()
+    private lazy var commonService: CommonService.ServiceType = Sciter.CommonServiceImpl()
     private lazy var trayService: TrayService.ServiceType = Sciter.TrayServiceImpl()
     private lazy var telemetryService: TelemetryService.ServiceType = Sciter.TelemetryServiceImpl()
 

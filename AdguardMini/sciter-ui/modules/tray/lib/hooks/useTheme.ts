@@ -2,35 +2,23 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { useLayoutEffect } from 'preact/hooks';
-
-import { Theme, type EffectiveTheme } from 'Apis/types';
+import { Theme } from 'Apis/types';
+import { useTheme as useCommonTheme } from 'Common/hooks/useTheme';
 import { useTrayStore } from 'TrayLib/hooks';
-import { getColorTheme, getEffectiveTheme } from 'Utils/colorThemes';
 
 import type { OnColorThemeChanged } from 'Utils/colorThemes';
 
 /**
- * Hook for theme changes
+ * Tray-specific theme hook adapter.
  */
 export function useTheme(onThemeChanged: OnColorThemeChanged) {
-    const trayStore = useTrayStore();
-    const { trayWindowEffectiveThemeChanged, settings: { settings: globalSettings } } = trayStore;
+    const store = useTrayStore();
+    const { traySettings: { settings: globalSettings } } = store;
     const { theme } = globalSettings ?? { theme: Theme.system };
 
-    useLayoutEffect(() => {
-        if (theme === Theme.system) {
-            (async () => {
-                const value = await trayStore.getEffectiveTheme();
-                onThemeChanged(getColorTheme(value));
-            })();
-
-            return trayWindowEffectiveThemeChanged.addEventListener((value: EffectiveTheme) => {
-                onThemeChanged(getColorTheme(value));
-            });
-        }
-
-        const value = getEffectiveTheme(theme);
-        onThemeChanged(getColorTheme(value));
-    }, [theme]);
+    useCommonTheme(onThemeChanged, {
+        theme,
+        getEffectiveTheme: async () => store.getEffectiveTheme(),
+        effectiveThemeChangedEvent: store.trayWindowEffectiveThemeChanged,
+    });
 }

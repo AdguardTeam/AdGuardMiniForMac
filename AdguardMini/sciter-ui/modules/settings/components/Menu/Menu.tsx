@@ -19,7 +19,7 @@ import s from './Menu.module.pcss';
  * Main menu in settings app
  */
 function MenuComponent() {
-    const { account, settings, telemetry } = useSettingsStore();
+    const { account, appSettings, telemetry } = useSettingsStore();
 
     const {
         isFreeware,
@@ -28,6 +28,7 @@ function MenuComponent() {
         isLicenseBlockedAppId,
         isAppStoreSubscription,
         isLicenseExpired,
+        license,
     } = account;
 
     const showGetFullVersionButton = isFreeware
@@ -36,15 +37,15 @@ function MenuComponent() {
         || isLicenseExpired
         // We do not show buy button for App Store trial versions.
         // Apple trial license is packed with full subscription.
-        || (isTrialActive && !account.isAppStoreSubscription);
+        || (isTrialActive && !isAppStoreSubscription);
 
     const handleGetFullVersionClick = () => {
-        const key = account.license.license?.licenseKey?.getHiddenValue() || '';
+        const key = license?.licenseKey?.getHiddenValue() || '';
         if (isTrialActive) {
             window.API.Execute(new RequestRenewRequest({ value: key }));
         } else if (isLicenseExpired) {
             account.requestRenewLicense(key);
-        } else if (isAppStoreSubscription || (settings.isMASReleaseVariant && isFreeware)) {
+        } else if (isAppStoreSubscription || (appSettings.isMasReleaseVariant && isFreeware)) {
             account.showPaywall();
         } else {
             account.requestWebSubscription(Subscription.standalone);

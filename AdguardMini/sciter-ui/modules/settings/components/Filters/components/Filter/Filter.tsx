@@ -29,8 +29,13 @@ function FilterComponent({
 }: FilterProps) {
     const [showConsentModal, setShowConsentModal] = useState(false);
     const {
-        filters, notification, settings, settings: { settings: { consentFiltersIds } }, router } = useSettingsStore();
-    const { enabledFilters, filtersMap, filtersIndex: { definedGroups }, languageSpecific } = filters;
+        filtersMeta,
+        notification,
+        appSettings,
+        appSettings: { settings: { consentFiltersIds } },
+        router,
+    } = useSettingsStore();
+    const { enabledFilters, filtersMap, filtersIndex: { definedGroups }, languageSpecific } = filtersMeta;
 
     const format = useDateFormat();
 
@@ -46,7 +51,7 @@ function FilterComponent({
             return;
         }
 
-        const error = await filters.switchFiltersState([filter.id], e);
+        const error = await filtersMeta.switchFiltersState([filter.id], e);
         if (error) {
             notification.notify({
                 message: getNotificationSomethingWentWrongText(),
@@ -60,9 +65,9 @@ function FilterComponent({
 
     const onEnableConsent = async () => {
         const newConsent = [...consentFiltersIds, filter.id];
-        settings.updateUserConsent(newConsent);
+        appSettings.updateUserConsent(newConsent);
 
-        const error = await filters.switchFiltersState([filter.id], true);
+        const error = await filtersMeta.switchFiltersState([filter.id], true);
         if (error) {
             notification.notify({
                 message: getNotificationSomethingWentWrongText(),

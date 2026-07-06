@@ -37,13 +37,13 @@ type HealthCheckProps = {
 function HealthCheckComponent({ setShowConsent }: HealthCheckProps) {
     const [showAllIssues, setShowAllIssues] = useState(false);
 
-    const { settings, safariProtection } = useSettingsStore();
+    const { appSettings, safariProtection } = useSettingsStore();
 
     const {
         dissmissedHealthCheckCards,
         loginItemEnabled,
         settings: { lastUpdateMoreSevenDays },
-    } = settings;
+    } = appSettings;
 
     const {
         blockAds,

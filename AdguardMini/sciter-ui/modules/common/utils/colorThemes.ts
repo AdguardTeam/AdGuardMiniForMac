@@ -23,7 +23,6 @@ export function getColorTheme(colorTheme: EffectiveTheme): ColorTheme {
     switch (colorTheme) {
         case EffectiveTheme.dark: return SUPPORTED_COLOR_THEMES.dark;
         case EffectiveTheme.light: return SUPPORTED_COLOR_THEMES.light;
-
         default: return SUPPORTED_COLOR_THEMES.light;
     }
 }
@@ -35,8 +34,9 @@ export function getColorTheme(colorTheme: EffectiveTheme): ColorTheme {
 export function getEffectiveTheme(colorTheme: Theme): EffectiveTheme {
     switch (colorTheme) {
         case Theme.dark: return EffectiveTheme.dark;
-
-        default: return EffectiveTheme.light;
+        case Theme.light: return EffectiveTheme.light;
+        case Theme.system: return EffectiveTheme.light;
+        case Theme.unknown: return EffectiveTheme.light;
     }
 }
 

@@ -25,7 +25,7 @@ function FilterGroupComponent({
     onClick,
 }: FilterGroupProps) {
     const {
-        filters: {
+        filtersMeta: {
             filtersByGroups,
             enabledFilters,
             filters: { customFilters },

@@ -6,14 +6,10 @@ import { useSearch } from '@adg/sciter-utils-kit';
 import { observer } from 'mobx-react-lite';
 import { useState, useEffect, useRef } from 'preact/hooks';
 
-import { ShowInFinderRequest } from 'Apis/requests/InternalService';
-import { getFormattedDateTime } from 'Common/utils/date';
 import { TDS_PARAMS, getTdsLink } from 'Common/utils/links';
-import { selectFile } from 'Common/utils/selectFile';
 import { useSettingsStore } from 'SettingsLib/hooks';
 import { useOpenUserRulesWindow } from 'SettingsLib/hooks/useOpenUserRulesWindow';
-import { getNotificationSomethingWentWrongText, provideContactSupportParam } from 'SettingsLib/utils/translate';
-import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType, NotificationsQueueVariant, RouteName, SettingsEvent } from 'SettingsStore/modules';
+import { RouteName, SettingsEvent } from 'SettingsStore/modules';
 import theme from 'Theme';
 import { Modal, Input, Pagination, Icon, Text, Button } from 'UILib';
 
@@ -21,13 +17,40 @@ import { SettingsItemSwitch } from '../SettingsItem';
 import { SettingsTitle } from '../SettingsTitle';
 
 import { RulesList, OpenedEditorPlug, ImportModal } from './components';
+import { useImportExport } from './hooks/useImportExport';
 import { useToggleHeader } from './hooks/useToggleHeader';
 import s from './UserRules.module.pcss';
 
-/**
- * Elements count per page
- */
 const PAGE_SIZE = 100;
+
+/**
+ * Restores scroll position after navigating back from the rule editor.
+ */
+const useScrollRestoration = (
+    contentRef: { current: HTMLDivElement | null },
+    savedScrollTop: number | undefined,
+    resetScrollTop: () => void,
+    isRuleEditorOpened: boolean,
+    rulesLength: number,
+    setIsScrolling: (v: boolean) => void,
+) => {
+    useEffect(() => {
+        if (!savedScrollTop || isRuleEditorOpened || rulesLength === 0) {
+            return;
+        }
+        const content = contentRef.current;
+        if (!content) {
+            return;
+        }
+        requestAnimationFrame(() => {
+            const maxScrollTop = Math.max(0, content.scrollHeight - content.clientHeight);
+            content.scrollTop = Math.min(Math.max(savedScrollTop, 0), maxScrollTop);
+            resetScrollTop();
+            setIsScrolling(true);
+        });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [savedScrollTop, isRuleEditorOpened, rulesLength]);
+};
 
 /**
  * User rules page in settings module
@@ -38,8 +61,8 @@ function UserRulesComponent() {
         ui,
         notification,
         router,
-        settings,
-        settings: { userActionLastDirectory },
+        appSettings,
+        appSettings: { userActionLastDirectory },
         telemetry,
     } = useSettingsStore();
 
@@ -49,6 +72,9 @@ function UserRulesComponent() {
     const { userRules: { enabled }, rules, dontAskAgainImportModal } = userRules;
 
     const { openUserRulesWindow, isRuleEditorWindowOpened } = useOpenUserRulesWindow();
+    const { onImportRules, onExportRules, onDeleteAll } = useImportExport({
+        userRules, notification, settings: appSettings, userActionLastDirectory,
+    });
 
     const contentRef = useRef<HTMLDivElement>(null);
     const [isScrolling, setIsScrolling] = useToggleHeader(rules, isRuleEditorWindowOpened, contentRef);
@@ -58,13 +84,7 @@ function UserRulesComponent() {
         if (typeof savedScrollTop === 'number') {
             ui.setUserRulesScrollTop(savedScrollTop);
         }
-
-        if (typeof index === 'number') {
-            router.changePath(RouteName.user_rule, { index });
-            return;
-        }
-
-        router.changePath(RouteName.user_rule);
+        router.changePath(typeof index === 'number' ? RouteName.user_rule : RouteName.user_rule, typeof index === 'number' ? { index } : undefined);
     };
 
     useEffect(() => {
@@ -73,123 +93,29 @@ function UserRulesComponent() {
         }
     }, [isRuleEditorWindowOpened, setIsScrolling]);
 
-    const {
-        foundItems,
-        searchQuery,
-        updateSearchQuery,
-    } = useSearch(rules, ['rule']);
+    const { foundItems, searchQuery, updateSearchQuery } = useSearch(rules, ['rule']);
 
     const onSearch = (e: string) => {
         setIsScrolling(false);
         updateSearchQuery(e);
     };
 
-    const rulesToRender = foundItems.slice((page - 1) * PAGE_SIZE, (page * PAGE_SIZE));
+    const rulesToRender = foundItems.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
     const showPagination = Math.ceil(foundItems.length / PAGE_SIZE) > 1;
 
-    useEffect(() => {
-        if (!ui.userRulesScrollTop) {
-            return;
-        }
+    // Scroll position restoration
+    useScrollRestoration(
+        contentRef,
+        ui.userRulesScrollTop,
+        () => ui.resetUserRulesScrollTop(),
+        isRuleEditorWindowOpened,
+        rulesToRender.length,
+        setIsScrolling,
+    );
 
-        if (isRuleEditorWindowOpened) {
-            return;
-        }
-
-        if (rulesToRender.length === 0) {
-            return;
-        }
-
-        const content = contentRef.current;
-        if (!content) {
-            return;
-        }
-
-        requestAnimationFrame(() => {
-            const maxScrollTop = Math.max(0, content.scrollHeight - content.clientHeight);
-            const nextScrollTop = Math.min(Math.max(ui.userRulesScrollTop, 0), maxScrollTop);
-            content.scrollTop = nextScrollTop;
-            ui.resetUserRulesScrollTop();
-            setIsScrolling(true);
-        });
-    }, [ui, ui.userRulesScrollTop, isRuleEditorWindowOpened, rulesToRender.length, setIsScrolling]);
-
-    const showInFinder = (path: string) => {
-        window.API.Execute(new ShowInFinderRequest({ path }));
-    };
-
-    const onImportRules = () => {
-        try {
-            const defaultPath = userActionLastDirectory ?? window.DocumentsPath;
-            selectFile(false, '(*.txt)|*.txt', translate('import'), defaultPath, async (path: string) => {
-                const pathParts = path.split('/');
-                pathParts.pop();
-                settings.updateUserActionLastDirectory(pathParts.join('/'));
-                userRules.importUserRules(path);
-                notification.notify({
-                    message: translate('notification.user.rules.import'),
-                    notificationContext: NotificationContext.info,
-                    type: NotificationsQueueType.success,
-                    iconType: NotificationsQueueIconType.done,
-                    closeable: true,
-                });
-            });
-        } catch (error) {
-            log.error(String(error), 'onImportRules');
-            notification.notify({
-                message: translate('notification.user.rules.import.failed', provideContactSupportParam({
-                    className: tx.color.linkGreen,
-                })),
-                notificationContext: NotificationContext.info,
-                type: NotificationsQueueType.warning,
-                iconType: NotificationsQueueIconType.error,
-                closeable: true,
-            });
-        }
-    };
-
-    const onExportRules = () => {
-        const defaultPath = userActionLastDirectory ?? window.DocumentsPath;
-        selectFile(true, '(*.txt)|*.txt', translate('export'), `${defaultPath}/adguard_mini_user_rules_${getFormattedDateTime()}`, async (path: string) => {
-            settings.updateUserActionLastDirectory(path);
-            const error = await userRules.exportUserRules(path);
-            if (error) {
-                notification.notify({
-                    message: getNotificationSomethingWentWrongText(),
-                    notificationContext: NotificationContext.info,
-                    type: NotificationsQueueType.warning,
-                    iconType: NotificationsQueueIconType.error,
-                    closeable: true,
-                });
-            } else {
-                notification.notify({
-                    message: translate('notification.user.rules.export'),
-                    notificationContext: NotificationContext.ctaButton,
-                    type: NotificationsQueueType.success,
-                    iconType: NotificationsQueueIconType.done,
-                    closeable: true,
-                    onClick: () => { showInFinder(path); },
-                    btnLabel: translate('notification.open.in.finder'),
-                    variant: NotificationsQueueVariant.textOnly,
-                });
-            }
-        });
-    };
-
-    const onDeleteAll = () => {
-        const { rules: currentRules } = userRules.userRules;
-        userRules.resetUserRules();
+    const handleDeleteAll = () => {
+        onDeleteAll();
         setShowDeleteModal(false);
-        notification.notify({
-            message: translate('notification.user.rules.delete.all'),
-            notificationContext: NotificationContext.info,
-            type: NotificationsQueueType.success,
-            iconType: NotificationsQueueIconType.done,
-            undoAction: () => {
-                userRules.updateRules(currentRules);
-            },
-            closeable: true,
-        });
     };
 
     return (
@@ -230,9 +156,7 @@ function UserRulesComponent() {
                                 telemetry.trackEvent(SettingsEvent.RuleSyntaxClick);
                             }}
                         >
-                            <Text lineHeight="none" type="t1">
-                                {translate('user.rules.how.create.rule')}
-                            </Text>
+                            <Text lineHeight="none" type="t1">{translate('user.rules.how.create.rule')}</Text>
                         </Button>
                     )}
                 </SettingsTitle>
@@ -240,9 +164,7 @@ function UserRulesComponent() {
                     <SettingsItemSwitch
                         className={s.UserRules_mainControl}
                         icon="custom_rule"
-                        setValue={(e) => {
-                            userRules.updateUserRulesEnabled(e);
-                        }}
+                        setValue={(e) => userRules.updateUserRulesEnabled(e)}
                         title={translate('user.rules')}
                         value={enabled}
                     />
@@ -259,8 +181,6 @@ function UserRulesComponent() {
                 {!isRuleEditorWindowOpened && (
                     <div
                         className={cx(s.UserRules_addRule, isScrolling && s.UserRules_addRule__scroll)}
-                        role="button"
-                        tabIndex={0}
                         onClick={() => navigateToUserRule()}
                     >
                         <Icon className={s.UserRules_addRule_icon} icon="plus" />
@@ -269,16 +189,12 @@ function UserRulesComponent() {
                 )}
             </div>
             {isScrolling && <div className={s.UserRules_shadow} />}
-            {isRuleEditorWindowOpened && (<OpenedEditorPlug onGoToEditor={openUserRulesWindow} />)}
+            {isRuleEditorWindowOpened && <OpenedEditorPlug onGoToEditor={openUserRulesWindow} />}
             {!isRuleEditorWindowOpened && (
                 <>
                     {rulesToRender.length !== 0 && (
                         <div ref={contentRef} className={s.UserRules_scrollableContainer}>
-                            <RulesList
-                                muted={!enabled}
-                                rulesList={rulesToRender}
-                                onEdit={navigateToUserRule}
-                            />
+                            <RulesList muted={!enabled} rulesList={rulesToRender} onEdit={navigateToUserRule} />
                         </div>
                     )}
                     {rulesToRender.length === 0 && (
@@ -304,11 +220,10 @@ function UserRulesComponent() {
                     )}
                 </>
             )}
-
             {showDeleteModal && (
                 <Modal
                     description={translate('user.rules.delete.all.desc')}
-                    submitAction={onDeleteAll}
+                    submitAction={handleDeleteAll}
                     submitClassName={theme.button.redSubmit}
                     submitText={translate('delete')}
                     title={`${translate('delete.all')}?`}

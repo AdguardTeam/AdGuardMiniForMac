@@ -30,7 +30,7 @@ function LicenseStatusComponent() {
     const licenseStatusTitle = useLicenseStatusTitle();
 
     // Getters are unreliable
-    const license = account?.license?.license;
+    const license = account?.license;
     const isAppStoreSubscription = account?.isAppStoreSubscription;
     const licenseKey = license?.licenseKey;
 

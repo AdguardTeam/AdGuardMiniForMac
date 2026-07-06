@@ -2,232 +2,71 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { clamp } from '@adg/sciter-utils-kit';
 import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import { useCallback, useEffect, useState } from 'preact/hooks';
 import { Fragment } from 'preact/jsx-runtime';
 
 import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
-import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SettingsService';
-import { OptionalStringValue } from 'Apis/types';
-import { getCountableEntityStatuses } from 'Common/utils/utils';
 import theme from 'Theme';
-import { useTheme, useTrayStore } from 'TrayLib/hooks';
+import { useTrayStore } from 'TrayLib/hooks';
 import { TrayEvent, TrayRoute } from 'TrayStore/modules';
-import { Loader, Logo, Button, Text, Switch } from 'UILib';
-import { isDarkColorTheme } from 'Utils/colorThemes';
+import { Loader, Logo, Button, Text } from 'UILib';
 
 import { StoryNavigation } from '../../modules/stories/classes';
-import { StoriesLayer, StoryCard, ShowHiddenCard } from '../../modules/stories/components';
+import { StoriesLayer, StoryCard } from '../../modules/stories/components';
 import { FlushCompletedStories } from '../../modules/stories/components/FlushCompletedStories';
 import { useStoriesConfig } from '../../modules/stories/hooks';
 import { resolveStoryEntryFrame } from '../../modules/stories/utils/navigationBoundary';
 
+import { ProtectionStatus } from './components/ProtectionStatus';
 import s from './Home.module.pcss';
-
-import type { StoryId } from '../../modules/stories/model';
-
-const STORIES_CONTAINER_WIDTH = 344;
-const STORY_SWITCH_INTERACTABLE_AREA_WIDTH = 156;
-
-/**
- * Opens Safari preferences window
- */
-const openSafariPreferences = () => {
-    window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
-};
-
-/**
- * Story IDs that cannot be hidden (required stories)
- */
-const NON_HIDEABLE_STORY_IDS = new Set([
-    'extensions',
-    'loginItem',
-    'statistics',
-    'statisticsPrivacy',
-]);
+import { useExtensionPolling } from './hooks/useExtensionPolling';
+import { useStoriesNavigation } from './hooks/useStoriesNavigation';
+import { useStoryCarouselScroll } from './hooks/useStoryCarouselScroll';
+import { useThemeWithRAF } from './hooks/useThemeWithRAF';
 
 /**
  * Home screen of tray
  */
 function HomeComponent() {
     const trayStore = useTrayStore();
-    const { settings, router, trayWindowVisibilityChanged, telemetry } = trayStore;
-    const { settings: traySettings } = settings;
+    const { traySettings, router, trayWindowVisibilityChanged, telemetry, safariExtensions } = trayStore;
 
     const stories = useStoriesConfig();
-    const { hiddenStories } = settings;
-    const [selectedStoryId, setSelectedStoryId] = useState<StoryId | null>(null);
-    // Snapshot of Home cards order used during story-session navigation.
-    const [storiesNavigationOrder, setStoriesNavigationOrder] = useState<StoryId[]>([]);
-    const [storyEntryMode, setStoryEntryMode] = useState<'first' | 'last'>('first');
+    const {
+        selectedStoryId,
+        storyEntryMode,
+        storiesById,
+        openStory,
+        moveToNextStory,
+        moveToPreviousStory,
+        closeStories,
+        getAdjacentStoryId,
+    } = useStoriesNavigation(stories);
+
     const [isLoading, setIsLoading] = useState(false);
 
-    const storiesById = useMemo(() => {
-        return new Map(stories.map(({ storyConfig }) => [storyConfig.id, storyConfig] as const));
-    }, [stories]);
-    const orderedStoryIds = storiesNavigationOrder.length > 0
-        ? storiesNavigationOrder
-        : stories.map(({ storyConfig }) => storyConfig.id);
-
-    const currentStoryIndex = selectedStoryId !== null
-        ? orderedStoryIds.findIndex((storyId) => storyId === selectedStoryId)
-        : -1;
-
-    // Finds previous/next story using the captured order, skipping stories no longer present.
-    const getAdjacentStoryId = useCallback((direction: -1 | 1) => {
-        if (currentStoryIndex < 0) {
-            return null;
-        }
-
-        for (
-            let nextIndex = currentStoryIndex + direction;
-            nextIndex >= 0 && nextIndex < orderedStoryIds.length;
-            nextIndex += direction
-        ) {
-            const candidateStoryId = orderedStoryIds[nextIndex];
-            if (storiesById.has(candidateStoryId)) {
-                return candidateStoryId;
-            }
-        }
-
-        return null;
-    }, [currentStoryIndex, orderedStoryIds, storiesById]);
-
-    // Freeze the current Home order at open time to keep in-story navigation consistent.
-    const openStory = useCallback((storyId: StoryId) => {
-        setStoriesNavigationOrder(stories.map(({ storyConfig }) => storyConfig.id));
-        setStoryEntryMode('first');
-        setSelectedStoryId(storyId);
-    }, [stories]);
-
-    const moveToNextStory = useCallback(() => {
-        const nextStoryId = getAdjacentStoryId(1);
-
-        if (nextStoryId === null) {
-            setStoryEntryMode('first');
-            setStoriesNavigationOrder([]);
-            setSelectedStoryId(null);
-            return;
-        }
-
-        setStoryEntryMode('first');
-        setSelectedStoryId(nextStoryId);
-    }, [getAdjacentStoryId]);
-
-    const moveToPreviousStory = useCallback(() => {
-        const previousStoryId = getAdjacentStoryId(-1);
-
-        if (previousStoryId === null) {
-            return;
-        }
-
-        setStoryEntryMode('last');
-        setSelectedStoryId(previousStoryId);
-    }, [getAdjacentStoryId]);
-
-    const closeStories = useCallback(() => {
-        setStoryEntryMode('first');
-        setStoriesNavigationOrder([]);
-        setSelectedStoryId(null);
-    }, []);
-
-    const [isDarkTheme, setIsDarkTheme] = useState(false);
-
     useEffect(() => {
-        const isLoadingExts = settings.getSafariExtensionsLoading();
-        setIsLoading(isLoadingExts);
-    }, [settings, settings.safariExtensionsStore.safariExtensions]);
+        setIsLoading(safariExtensions.getSafariExtensionsLoading());
+    }, [safariExtensions, safariExtensions.safariExtensions]);
 
-    /**
-     * Fix for Home component to fix infinite convertation status
-     */
-    useEffect(() => {
-        let rafId: number | undefined;
-        let lastCallTime = Date.now();
+    // Poll extensions while loading
+    useExtensionPolling(isLoading, async () => safariExtensions.getSafariExtensions());
 
-        /**
-         * Function to update safari extensions in RAF
-         * There is some unexpected behavior with Safari extensions status
-         */
-        function loop() {
-            if (!isLoading) {
-                return;
-            }
-            const now = Date.now();
-            if (now - lastCallTime >= 1000) {
-                settings.getSafariExtensions();
-                lastCallTime = now;
-            }
-            rafId = requestAnimationFrame(loop);
-        }
-
-        if (isLoading) {
-            rafId = requestAnimationFrame(loop);
-        }
-
-        return () => {
-            if (rafId !== undefined) {
-                cancelAnimationFrame(rafId);
-            }
-        };
-    }, [isLoading, settings]);
-
-    const ref = useRef<HTMLDivElement>(null);
-
-    const [scrollIsAvailable, setScrollIsAvailable] = useState({
-        left: false,
-        right: stories.length > 2,
-    });
+    // Scroll management for stories carousel
+    const {
+        ref, scrollIsAvailable, handleMoveStoriesCards, handleStoriesCardsScroll,
+    } = useStoryCarouselScroll(stories.length);
 
     const openSettingsWindow = useCallback(() => {
         window.API.Execute(new OpenSettingsWindowRequest());
         telemetry.trackEvent(TrayEvent.SettingsClick);
     }, [telemetry]);
 
-    const handleToggleSwitch = useCallback((checked: boolean) => {
-        settings.updateSettings(checked);
-        telemetry.trackEvent(TrayEvent.MainProtectionClick);
-    }, [settings, telemetry]);
-
     const navigateToUpdates = useCallback(() => {
         telemetry.trackEvent(TrayEvent.UpdateClick);
         router.changePath(TrayRoute.updates);
     }, [router, telemetry]);
-
-    /**
-     * Handle click on arrows in stories cards box
-     */
-    const handleMoveStoriesCards = useCallback((e?: MouseEvent) => {
-        // Sciter does not support dataset
-        const direction = (e?.target as HTMLButtonElement)?.getAttribute('data-switch-direction');
-
-        if (!ref.current || !direction) {
-            return;
-        }
-
-        const position = clamp(
-            ref.current.scrollLeft + (direction === 'left' ? -STORY_SWITCH_INTERACTABLE_AREA_WIDTH : STORY_SWITCH_INTERACTABLE_AREA_WIDTH),
-            0,
-            ref.current.scrollWidth - STORIES_CONTAINER_WIDTH,
-        );
-
-        setScrollIsAvailable({
-            left: position > 0,
-            right: position < ref.current.scrollWidth - STORIES_CONTAINER_WIDTH,
-        });
-
-        ref.current.scrollTo({ left: position, behavior: 'smooth' });
-    }, []);
-
-    const handleStoriesCardsScroll = useCallback((e: UIEvent) => {
-        const target = e.target as HTMLDivElement;
-
-        setScrollIsAvailable({
-            left: target.scrollLeft > 0,
-            right: target.scrollLeft < target.scrollWidth - STORIES_CONTAINER_WIDTH,
-        });
-    }, []);
 
     useEffect(() => {
         return trayWindowVisibilityChanged.addEventListener((visible) => {
@@ -235,75 +74,19 @@ function HomeComponent() {
                 closeStories();
             }
         });
-    }, [closeStories]);
+    }, [closeStories, trayWindowVisibilityChanged]);
 
-    const rafRef = useRef<number | null>(null);
-    useTheme((th) => {
-        // We have to change theme attribute in next frame to fix bug with no rerender from sciter
-        // This probably happens because sciter doesn't see changes in theme attribute
-        // TODO: AG-51217 remove this when sciter will be fixed
-        if (rafRef.current != null) {
-            cancelAnimationFrame(rafRef.current);
-        }
-        rafRef.current = requestAnimationFrame(() => {
-            document.documentElement.setAttribute('theme', th);
-        });
-        setIsDarkTheme(isDarkColorTheme(th));
-    });
+    // Theme handling with RAF workaround for sciter render bug
+    const isDarkTheme = useThemeWithRAF();
 
     if (!traySettings) {
-        return (
-            <Loader className={s.Home_loader} large />
-        );
+        return <Loader className={s.Home_loader} large />;
     }
 
-    const { enabled } = traySettings;
-
-    const {
-        allDisabled: allExtensionsDisabled,
-        someDisabled: someExtensionsDisabled,
-        allEnabled: allExtensionsEnabled,
-    } = getCountableEntityStatuses(
-        settings.safariExtensionsStore.enabledSafariExtensionsCount,
-        settings.safariExtensionsStore.safariExtensionsCount,
-    );
-
-    const getDisabledExtensionsStatus = () => {
-        if (someExtensionsDisabled) {
-            return translate('tray.home.title.protection.extensions.disabled', {
-                link: (text: string) => {
-                    return (
-                        <div
-                            onClick={() => {
-                                telemetry.trackEvent(TrayEvent.FixItClick);
-                                openSafariPreferences();
-                            }}
-                        >
-                            {text}
-                        </div>
-                    );
-                },
-            });
-        }
-
-        if (allExtensionsDisabled) {
-            return translate('tray.home.title.protection.extensions.all.disabled', {
-                link: (text: string) => (<div onClick={openSafariPreferences}>{text}</div>),
-            });
-        }
-    };
-
-    const currentStoryConfig = selectedStoryId !== null
-        ? storiesById.get(selectedStoryId)
-        : undefined;
-    const currentStory = currentStoryConfig
-        ? new StoryNavigation(currentStoryConfig)
-        : undefined;
-
+    const currentStoryConfig = selectedStoryId !== null ? storiesById.get(selectedStoryId) : undefined;
+    const currentStory = currentStoryConfig ? new StoryNavigation(currentStoryConfig) : undefined;
     if (currentStory && storyEntryMode === 'last') {
-        // Enter previous story from its last visible frame.
-        const entryIndex = resolveStoryEntryFrame(currentStory.length, 'last');
-        currentStory.setIndex(entryIndex);
+        currentStory.setIndex(resolveStoryEntryFrame(currentStory.length, 'last'));
     }
 
     return (
@@ -316,7 +99,7 @@ function HomeComponent() {
                             addCompletedStory={addCompletedStory}
                             closeStories={closeStories}
                             hasPreviousStory={getAdjacentStoryId(-1) !== null}
-                            isMASReleaseVariant={settings.isMASReleaseVariant}
+                            isMASReleaseVariant={traySettings.isMASReleaseVariant}
                             moveToNextStory={moveToNextStory}
                             moveToPreviousStory={moveToPreviousStory}
                             story={currentStory!}
@@ -340,32 +123,7 @@ function HomeComponent() {
                         onClick={openSettingsWindow}
                     />
                 </div>
-                {isLoading ? (
-                    <>
-                        <Text className={s.Home_title} type="h4">
-                            {translate('tray.home.title.converting')}
-                        </Text>
-                        <Text className={cx(s.Home_status)} type="t2">
-                            {translate('tray.home.title.converting.desc')}
-                        </Text>
-                    </>
-                ) : (
-                    <>
-                        <Text className={s.Home_title} type="h4">
-                            {enabled ? translate('tray.home.title.protection.enabled') : translate('tray.home.title.protection.disabled')}
-                        </Text>
-                        <Text className={cx(s.Home_status, !allExtensionsEnabled && s.Home_extensionsDisabled)} type="t2" div>
-                            {allExtensionsEnabled && (enabled ? translate('tray.home.title.protection.enabled.desc') : translate('tray.home.title.protection.disabled.desc'))}
-                            {getDisabledExtensionsStatus()}
-                        </Text>
-                    </>
-                )}
-                <Switch
-                    checked={enabled}
-                    className={s.Home_switch}
-                    icon
-                    onChange={handleToggleSwitch}
-                />
+                <ProtectionStatus isLoading={isLoading} />
                 {stories.length > 0 && (
                     <>
                         <div className={s.Home_storiesControls}>
@@ -374,35 +132,28 @@ function HomeComponent() {
                             </Text>
                             {stories.length > 2 && (
                                 <>
-                                    <Button
-                                        className={s.Home_storiesControls_button}
-                                        data-switch-direction="left"
-                                        icon="arrow_left"
-                                        iconClassName={!scrollIsAvailable.left
-                                            ? s.Home_storiesControls_button__disabled : theme.button.grayIcon}
-                                        type="icon"
-                                        onClick={handleMoveStoriesCards}
-                                    />
-                                    <Button
-                                        className={cx(
-                                            s.Home_storiesControls_button,
-                                            s.Home_storiesControls_button__right,
-                                        )}
-                                        data-switch-direction="right"
-                                        icon="arrow_left"
-                                        iconClassName={!scrollIsAvailable.right
-                                            ? s.Home_storiesControls_button__disabled : theme.button.grayIcon}
-                                        type="icon"
-                                        onClick={handleMoveStoriesCards}
-                                    />
+                                    {(['left', 'right'] as const).map((direction) => (
+                                        <Button
+                                            key={direction}
+                                            className={cx(
+                                                s.Home_storiesControls_button,
+                                                direction === 'right' && s.Home_storiesControls_button__right,
+                                            )}
+                                            data-switch-direction={direction}
+                                            icon="arrow_left"
+                                            iconClassName={
+                                                !scrollIsAvailable[direction]
+                                                    ? s.Home_storiesControls_button__disabled
+                                                    : theme.button.grayIcon
+                                            }
+                                            type="icon"
+                                            onClick={handleMoveStoriesCards}
+                                        />
+                                    ))}
                                 </>
                             )}
                         </div>
-                        <div
-                            ref={ref}
-                            className={s.Home_stories}
-                            onScroll={handleStoriesCardsScroll}
-                        >
+                        <div ref={ref} className={s.Home_stories} onScroll={handleStoriesCardsScroll}>
                             <div className={s.Home_stories_container}>
                                 {stories.map((props) => (
                                     <StoryCard
@@ -410,14 +161,8 @@ function HomeComponent() {
                                         key={props.storyConfig.id}
                                         setSelectedStoryId={openStory}
                                         storyId={props.storyConfig.id}
-                                        onHide={NON_HIDEABLE_STORY_IDS.has(props.storyConfig.id)
-                                            ? undefined
-                                            : () => settings.setHiddenStory(props.storyConfig.id)}
                                     />
                                 ))}
-                                {hiddenStories.size > 0 && (
-                                    <ShowHiddenCard onShowHidden={() => settings.showAllHiddenStories()} />
-                                )}
                             </div>
                         </div>
                     </>

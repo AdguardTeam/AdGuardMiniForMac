@@ -144,52 +144,6 @@ public enum LicenseType: SwiftProtobuf.Enum, Swift.CaseIterable {
 
 }
 
-public enum SubscriptionStatus: SwiftProtobuf.Enum, Swift.CaseIterable {
-  public typealias RawValue = Int
-  case unknown // = 0
-  case active // = 1
-  case pastDue // = 2
-  case paused // = 3
-  case deleted // = 4
-  case UNRECOGNIZED(Int)
-
-  public init() {
-    self = .unknown
-  }
-
-  public init?(rawValue: Int) {
-    switch rawValue {
-    case 0: self = .unknown
-    case 1: self = .active
-    case 2: self = .pastDue
-    case 3: self = .paused
-    case 4: self = .deleted
-    default: self = .UNRECOGNIZED(rawValue)
-    }
-  }
-
-  public var rawValue: Int {
-    switch self {
-    case .unknown: return 0
-    case .active: return 1
-    case .pastDue: return 2
-    case .paused: return 3
-    case .deleted: return 4
-    case .UNRECOGNIZED(let i): return i
-    }
-  }
-
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static let allCases: [SubscriptionStatus] = [
-    .unknown,
-    .active,
-    .pastDue,
-    .paused,
-    .deleted,
-  ]
-
-}
-
 public enum WebActivateResult: SwiftProtobuf.Enum, Swift.CaseIterable {
   public typealias RawValue = Int
   case unknown // = 0
@@ -267,7 +221,7 @@ public struct LicenseOrError: Sendable {
   public init() {}
 }
 
-/// Describes user license
+/// Describes user license (full, used by settings module)
 public struct License: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -287,8 +241,6 @@ public struct License: Sendable {
 
   public var type: LicenseType = .unknown
 
-  public var subscriptionStatus: SubscriptionStatus = .unknown
-
   public var applicationKeyOwner: String = String()
 
   public var licenseLifetime: Bool = false
@@ -298,6 +250,25 @@ public struct License: Sendable {
   public var appStoreSubscription: Bool = false
 
   public var canReset: Bool = false
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+/// Lightweight license info for tray module
+public struct TrayLicense: Sendable {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var hasLicense_p: Bool = false
+
+  public var status: LicenseStatus = .unknown
+
+  public var applicationKeyOwner: String = String()
+
+  public var appStoreSubscription: Bool = false
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -343,10 +314,6 @@ extension LicenseStatus: SwiftProtobuf._ProtoNameProviding {
 
 extension LicenseType: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0LicenseType_unknown\0\u{1}LicenseType_personal\0\u{1}LicenseType_family\0\u{1}LicenseType_standard\0\u{1}LicenseType_mobile\0\u{1}LicenseType_premium\0\u{1}LicenseType_beta\0\u{1}LicenseType_bonus\0")
-}
-
-extension SubscriptionStatus: SwiftProtobuf._ProtoNameProviding {
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0SubscriptionStatus_unknown\0\u{1}SubscriptionStatus_active\0\u{1}SubscriptionStatus_past_due\0\u{1}SubscriptionStatus_paused\0\u{1}SubscriptionStatus_deleted\0")
 }
 
 extension WebActivateResult: SwiftProtobuf._ProtoNameProviding {
@@ -417,7 +384,7 @@ extension LicenseOrError: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
 
 extension License: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "License"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}valid_until\0\u{3}renewal_date\0\u{3}license_key\0\u{3}current_devices\0\u{3}total_devices\0\u{1}status\0\u{1}type\0\u{3}subscription_status\0\u{3}application_key_owner\0\u{3}license_lifetime\0\u{3}license_trial\0\u{3}app_store_subscription\0\u{3}can_reset\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}valid_until\0\u{3}renewal_date\0\u{3}license_key\0\u{3}current_devices\0\u{3}total_devices\0\u{1}status\0\u{1}type\0\u{4}\u{2}application_key_owner\0\u{3}license_lifetime\0\u{3}license_trial\0\u{3}app_store_subscription\0\u{3}can_reset\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -432,7 +399,6 @@ extension License: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
       case 5: try { try decoder.decodeSingularInt32Field(value: &self.totalDevices) }()
       case 6: try { try decoder.decodeSingularEnumField(value: &self.status) }()
       case 7: try { try decoder.decodeSingularEnumField(value: &self.type) }()
-      case 8: try { try decoder.decodeSingularEnumField(value: &self.subscriptionStatus) }()
       case 9: try { try decoder.decodeSingularStringField(value: &self.applicationKeyOwner) }()
       case 10: try { try decoder.decodeSingularBoolField(value: &self.licenseLifetime) }()
       case 11: try { try decoder.decodeSingularBoolField(value: &self.licenseTrial) }()
@@ -465,9 +431,6 @@ extension License: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
     if self.type != .unknown {
       try visitor.visitSingularEnumField(value: self.type, fieldNumber: 7)
     }
-    if self.subscriptionStatus != .unknown {
-      try visitor.visitSingularEnumField(value: self.subscriptionStatus, fieldNumber: 8)
-    }
     if !self.applicationKeyOwner.isEmpty {
       try visitor.visitSingularStringField(value: self.applicationKeyOwner, fieldNumber: 9)
     }
@@ -494,12 +457,56 @@ extension License: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
     if lhs.totalDevices != rhs.totalDevices {return false}
     if lhs.status != rhs.status {return false}
     if lhs.type != rhs.type {return false}
-    if lhs.subscriptionStatus != rhs.subscriptionStatus {return false}
     if lhs.applicationKeyOwner != rhs.applicationKeyOwner {return false}
     if lhs.licenseLifetime != rhs.licenseLifetime {return false}
     if lhs.licenseTrial != rhs.licenseTrial {return false}
     if lhs.appStoreSubscription != rhs.appStoreSubscription {return false}
     if lhs.canReset != rhs.canReset {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension TrayLicense: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "TrayLicense"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}has_license\0\u{1}status\0\u{3}application_key_owner\0\u{3}app_store_subscription\0")
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularBoolField(value: &self.hasLicense_p) }()
+      case 2: try { try decoder.decodeSingularEnumField(value: &self.status) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self.applicationKeyOwner) }()
+      case 4: try { try decoder.decodeSingularBoolField(value: &self.appStoreSubscription) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.hasLicense_p != false {
+      try visitor.visitSingularBoolField(value: self.hasLicense_p, fieldNumber: 1)
+    }
+    if self.status != .unknown {
+      try visitor.visitSingularEnumField(value: self.status, fieldNumber: 2)
+    }
+    if !self.applicationKeyOwner.isEmpty {
+      try visitor.visitSingularStringField(value: self.applicationKeyOwner, fieldNumber: 3)
+    }
+    if self.appStoreSubscription != false {
+      try visitor.visitSingularBoolField(value: self.appStoreSubscription, fieldNumber: 4)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: TrayLicense, rhs: TrayLicense) -> Bool {
+    if lhs.hasLicense_p != rhs.hasLicense_p {return false}
+    if lhs.status != rhs.status {return false}
+    if lhs.applicationKeyOwner != rhs.applicationKeyOwner {return false}
+    if lhs.appStoreSubscription != rhs.appStoreSubscription {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

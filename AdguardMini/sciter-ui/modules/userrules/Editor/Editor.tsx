@@ -195,6 +195,7 @@ function EditorComponent({
                     {fallbackValue}
                 </textarea>
             ) : (
+
                 <textarea className={s.Editor__fallback} id="area" />
             )}
         </div>

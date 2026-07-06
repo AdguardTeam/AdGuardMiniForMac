@@ -9,11 +9,11 @@ import { render } from 'preact';
 // eslint-disable-next-line import/no-unresolved
 import 'SciterPolyfills';
 
-// Should be imported before any other module to avoid errors in other modules
-import 'Common/api';
-import 'Modules/onboarding/lib/callbacks';
 // Default css styles (reset, colors, dark/light)...
+import 'Modules/onboarding/lib/callbacks';
 import 'Theme/default';
+
+import '../common/api';
 
 import { App } from './components/App';
 

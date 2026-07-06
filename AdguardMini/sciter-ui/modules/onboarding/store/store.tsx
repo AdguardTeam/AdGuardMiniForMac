@@ -2,9 +2,17 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+// NOTE: Constructor DI waiver — sub-stores receive the root store
+// (e.g., `new Steps(this)`) rather than individual dependency injection.
+// This is an intentional architectural tradeoff documented in AGENTS.md §V.1.
+// The alternative (passing only specific sub-store references per constructor)
+// was evaluated but rejected to avoid cascading parameter changes when the
+// dependency graph evolves.
+
 import { createContext } from 'preact';
 
 import { GetEffectiveThemeRequest } from 'Apis/requests/OnboardingService';
+import { LicenseStore, SafariExtensionsStore } from 'Common/stores';
 import { Action } from 'Modules/common/utils/EventAction';
 
 import {
@@ -39,12 +47,28 @@ export class OnboardingStore {
     public readonly onboardingWindowEffectiveThemeChanged = new Action<EffectiveTheme>();
 
     /**
+     * Safari extensions store (shared, exposed for access)
+     */
+    public readonly safariExtensions: SafariExtensionsStore;
+
+    /**
+     * License store (shared, exposed for access)
+     */
+    public readonly licenseStore: LicenseStore;
+
+    /**
      * Ctor
      */
     constructor() {
-        this.steps = new Steps(this);
+        this.safariExtensions = new SafariExtensionsStore();
+        this.licenseStore = new LicenseStore();
+
+        this.steps = new Steps();
         this.router = onboardingRouterFactory();
         this.telemetry = onboardingTelemetryFactory();
+
+        this.safariExtensions.getSafariExtensions();
+        this.getEffectiveTheme();
     }
 
     /**

@@ -50,7 +50,6 @@ extension Sciter {
                 promise(
                     Filters(
                         filters: basicFilters,
-                        preferredLocales: Locales.userPreferredLanguages,
                         customFilters: customFilters,
                         languageSpecific: self.filtersSupervisor.languageSpecific
                     )

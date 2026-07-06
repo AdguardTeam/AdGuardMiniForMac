@@ -20,8 +20,8 @@ import s from '../Settings.module.pcss';
  */
 export const AdBlockingSection = observer(() => {
     const {
-        settings: { safariExtensionsStore: { enabledSafariExtensionsCount, safariExtensionsCount } },
-        filters,
+        safariExtensions: { enabledSafariExtensionsCount, safariExtensionsCount },
+        filtersMeta: filters,
     } = useSettingsStore();
 
     const {

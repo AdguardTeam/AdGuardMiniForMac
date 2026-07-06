@@ -17,15 +17,15 @@ import { Paywall } from './Paywall';
 function PaywallControllerComponent() {
     const {
         account,
-        settings: { isMASReleaseVariant },
+        appSettings: { isMasReleaseVariant },
         account: { paywallShouldBeShown, isLicenseOrTrialActive },
         notification,
     } = useSettingsStore();
 
     useEffect(() => {
-        if (isMASReleaseVariant) {
-            account.getSubscriptionsInfo().then(({ error }) => {
-                if (error && paywallShouldBeShown && !isLicenseOrTrialActive) {
+        if (isMasReleaseVariant) {
+            account.getSubscriptionsInfo().then((result) => {
+                if (result?.error && paywallShouldBeShown && !isLicenseOrTrialActive) {
                     notification.notify({
                         message: getNotificationSomethingWentWrongText(),
                         notificationContext: NotificationContext.info,
@@ -36,7 +36,7 @@ function PaywallControllerComponent() {
                 }
             });
         }
-    }, [notification, account, isMASReleaseVariant, paywallShouldBeShown, isLicenseOrTrialActive]);
+    }, [notification, account, isMasReleaseVariant, paywallShouldBeShown, isLicenseOrTrialActive]);
 
     if (paywallShouldBeShown && !isLicenseOrTrialActive) {
         return <Paywall />;

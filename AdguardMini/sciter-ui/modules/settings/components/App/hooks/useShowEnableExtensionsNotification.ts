@@ -14,16 +14,21 @@ import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType
  * Shows a notification if the user has disabled one or more extensions
  */
 export function useShowEnableExtensionsNotification() {
-    const { router: { currentPath }, notification, settings, telemetry } = useSettingsStore();
+    const { router: { currentPath }, notification, safariExtensions, telemetry } = useSettingsStore();
     const notificationUid = useRef<string>();
 
     const {
         allEnabled: allExtensionsEnabled,
         allDisabled: allExtensionsDisabled,
     } = getCountableEntityStatuses(
-        settings.safariExtensionsStore.enabledSafariExtensionsCount,
-        settings.safariExtensionsStore.safariExtensionsCount,
+        safariExtensions.enabledSafariExtensionsCount,
+        safariExtensions.safariExtensionsCount,
     );
+
+    const openSafariPref = useCallback(() => {
+        window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
+        telemetry.trackEvent(SettingsEvent.FixItClick);
+    }, [telemetry]);
 
     const closeNotification = useCallback(() => {
         if (notificationUid.current) {
@@ -32,11 +37,6 @@ export function useShowEnableExtensionsNotification() {
     }, [notification]);
 
     const showNotification = useCallback(() => {
-        const openSafariPref = () => {
-            window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
-            telemetry.trackEvent(SettingsEvent.FixItClick);
-        };
-
         notificationUid.current = notification.notify({
             message: allExtensionsDisabled
                 ? translate('settings.enable.extensions.all.desc')
@@ -51,7 +51,7 @@ export function useShowEnableExtensionsNotification() {
             variant: NotificationsQueueVariant.textOnly,
             timeout: false,
         });
-    }, [notification, allExtensionsDisabled, telemetry]);
+    }, [notification, allExtensionsDisabled, openSafariPref]);
 
     /**
      * We should force an update on the snack each time allExtensionsDisabled changes,

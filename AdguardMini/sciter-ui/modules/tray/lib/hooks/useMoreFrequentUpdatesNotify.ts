@@ -13,9 +13,9 @@ import { useTrayStore } from './useTrayStore';
  * Hook for showing notification to buy full version for more frequent updates
  */
 export function useMoreFrequentUpdatesNotify() {
-    const { settings, notification, telemetry } = useTrayStore();
+    const { traySettings, notification, telemetry, trayLicense } = useTrayStore();
 
-    const { isLicenseOrTrialActive, license } = settings;
+    const { isLicenseOrTrialActive } = trayLicense;
 
     useEffect(() => {
         if (!isLicenseOrTrialActive) {
@@ -29,7 +29,7 @@ export function useMoreFrequentUpdatesNotify() {
                 timeout: false,
                 closeable: true,
                 onClick: () => {
-                    settings.requestOpenPaywallScreen();
+                    traySettings.requestOpenPaywallScreen();
                     telemetry.layersRelay.trackEvent(TrayEvent.FrequentUpdatesClick);
                 },
                 onMount: () => {
@@ -38,5 +38,12 @@ export function useMoreFrequentUpdatesNotify() {
                 },
             }, true);
         }
-    }, [license, isLicenseOrTrialActive, notification, settings, settings.requestOpenPaywallScreen, telemetry]);
+    }, [
+        traySettings,
+        trayLicense,
+        isLicenseOrTrialActive,
+        notification,
+        traySettings.requestOpenPaywallScreen,
+        telemetry,
+    ]);
 }

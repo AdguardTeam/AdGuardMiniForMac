@@ -12,59 +12,36 @@ import { useSettingsStore } from 'SettingsLib/hooks';
 import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
 import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType, RouteName } from 'SettingsStore/modules';
 import theme from 'Theme';
-import { ExternalLink, Icon, Input, Layout, Text } from 'UILib';
+import { ExternalLink, Input, Layout, Text } from 'UILib';
 
 import { EditCustomFilterModal, CustomFilter, Filter, FilterGroup, FilterGroupPage } from './components';
+import { FiltersEmptyResult } from './components/FiltersEmptyResult';
 import s from './Filters.module.pcss';
+import { divideByGroups } from './helpers';
 
-import type { GroupWithFilters } from './helpers';
-import type { Filter as FilterEnt, FilterGroup as FilterGroupEnt } from 'Apis/types';
 import type { FiltersPageParams } from 'SettingsLib/const/routeParams';
-
-/**
- * Used for dividing Filter[] by filterGroups after search;
- */
-const divideByGroups = (list: FilterEnt[], groups: FilterGroupEnt[]) => {
-    const temp = new Map<number, Set<number>>();
-    list.forEach((f) => {
-        if (temp.has(f.groupId)) {
-            temp.get(f.groupId)!.add(f.id);
-        } else {
-            const set = new Set<number>();
-            set.add(f.id);
-            temp.set(f.groupId, set);
-        }
-    });
-    const extendedGroups: GroupWithFilters[] = [];
-    groups.forEach((g) => {
-        if (temp.has(g.groupId)) {
-            extendedGroups.push({
-                groupId: g.groupId,
-                groupName: g.groupName,
-                displayNumber: g.displayNumber,
-                filters: Array.from(temp.get(g.groupId)!.values()),
-            });
-        }
-    });
-    return extendedGroups;
-};
 
 /**
  * Filters page of settings module
  */
 function FiltersComponent() {
-    const { notification, router, filters: filtersStore, filters: {
-        filters: { filters, customFilters },
-        filtersIndex: { groups, customGroupId },
-        filtersMap,
-    } } = useSettingsStore();
+    const {
+        notification,
+        router,
+        filtersMeta: {
+            filters: { filters, customFilters },
+            filtersIndex: { groups, customGroupId },
+            filtersMap,
+        },
+        customFilters: customFiltersStore,
+    } = useSettingsStore();
     const params = router.castParams<FiltersPageParams>();
     const [groupView, setGroupView] = useState<number | undefined>(params?.groupId);
 
     const [editCustomFilterId, setEditCustomFilterId] = useState<number | undefined>();
 
     const onFilterUpdate = async (filter_id: number, name: string, trusted: boolean) => {
-        const error = await filtersStore.updateCustomFilter(filter_id, name, trusted);
+        const error = await customFiltersStore.updateCustomFilter(filter_id, name, trusted);
         if (error) {
             notification.notify({
                 message: getNotificationSomethingWentWrongText(),
@@ -145,12 +122,7 @@ function FiltersComponent() {
                     {(searchQuery || params?.filtersIds) && (
                         <>
                             {preselectedFilters.length === 0 ? (
-                                <div className={s.Filters_emptyResult}>
-                                    <Icon className={s.Filters_emptyResult_icon} icon={searchQuery ? 'noRulesFound' : 'noRules'} />
-                                    <div className={s.Filters_emptyResult_text}>
-                                        <Text type="t2">{searchQuery ? translate('nothing.found') : translate('user.rules.no.rules')}</Text>
-                                    </div>
-                                </div>
+                                <FiltersEmptyResult searchQuery={searchQuery} />
                             ) : (
                                 <>
                                     {data.map((group) => (

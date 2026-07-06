@@ -20,19 +20,17 @@ function LicenseStatusDescriptionComponent() {
     const format = useDateFormat();
     const fieldsToShow = useLicenseStatusDescriptionFields();
 
-    if (!fieldsToShow || !account.hasLicense || !account.license.license) {
+    if (!fieldsToShow || !account.hasLicense || !account.license) {
         return null;
     }
 
     const {
         license: {
-            license: {
-                validUntil,
-                renewalDate,
-                currentDevices,
-                totalDevices,
-                applicationKeyOwner,
-            },
+            validUntil,
+            renewalDate,
+            currentDevices,
+            totalDevices,
+            applicationKeyOwner,
         },
     } = account;
 

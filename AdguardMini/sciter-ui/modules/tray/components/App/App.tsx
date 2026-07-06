@@ -22,13 +22,7 @@ export function App() {
     return (
         <>
             <Router />
-            {createPortal(
-                <NotificationsRenderer
-                    className="TrayNotificationsContainer"
-                    notification={notification}
-                />,
-                notifyContainer,
-            )}
+            {createPortal(<NotificationsRenderer className="trayNotificationsContainer" notification={notification} />, notifyContainer)}
         </>
     );
 }

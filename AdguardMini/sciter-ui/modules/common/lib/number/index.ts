@@ -120,14 +120,14 @@ function formatGroupedNumber(value: number, rule: NumberLocaleRule): string {
 // --- Compact formatting (at or above compact threshold) ---
 
 /**
- * Round a number to a single decimal place, returning a float.
+ *
  */
 function roundToSingleDecimal(value: number): number {
     return Math.round(value * 10) / 10;
 }
 
 /**
- * Floor a number to a single decimal place, returning a float.
+ *
  */
 function floorToSingleDecimal(value: number): number {
     return Math.floor(value * 10) / 10;

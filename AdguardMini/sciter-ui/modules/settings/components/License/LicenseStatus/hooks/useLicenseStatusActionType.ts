@@ -29,7 +29,7 @@ export function useLicenseStatusActionType(): Nullable<LicenseStatusActionType> 
         return null;
     }
 
-    if (isAppStoreSubscription ? license.license?.applicationKeyOwner : isLicenseOrTrialActive || isLicenseBlocked) {
+    if (isAppStoreSubscription ? license?.applicationKeyOwner : isLicenseOrTrialActive || isLicenseBlocked) {
         return LicenseStatusActionType.manageLicense;
     }
 

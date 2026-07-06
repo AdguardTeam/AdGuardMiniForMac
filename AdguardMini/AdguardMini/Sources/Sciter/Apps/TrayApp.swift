@@ -29,6 +29,7 @@ private enum Constants {
 
 extension TrayApp: InternalServiceDependent,
                    SettingsServiceDependent,
+                   CommonServiceDependent,
                    FiltersServiceDependent,
                    TrayCallbackServiceDependent,
                    AccountServiceDependent,

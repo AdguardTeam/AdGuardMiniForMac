@@ -6,7 +6,6 @@ import { makeAutoObservable } from 'mobx';
 
 import type { Subject } from 'Modules/settings/components/SupportContact';
 import type { VNode, ComponentChild } from 'preact';
-import type { SettingsStore } from 'SettingsStore';
 
 /**
  * Tooltip show data
@@ -39,8 +38,6 @@ export enum ReportProblemVariant {
  * Store that manages UI settings
  */
 export class UI {
-    public rootStore: SettingsStore;
-
     public tooltipData: Nullable<TooltipData> = null;
 
     public supportContactFormData: Nullable<SupportContactFormData> = null;
@@ -55,13 +52,10 @@ export class UI {
     public showSafariExtensionsEnableScreen = false;
 
     /**
-     *
+     * Ctor
      */
-    constructor(rootStore: SettingsStore) {
-        this.rootStore = rootStore;
-        makeAutoObservable(this, {
-            rootStore: false,
-        });
+    constructor() {
+        makeAutoObservable(this, undefined, { autoBind: true });
     }
 
     /**

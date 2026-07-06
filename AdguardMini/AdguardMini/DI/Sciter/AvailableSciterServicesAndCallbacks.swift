@@ -20,6 +20,7 @@ protocol FiltersServiceDependent: SciterServiceDependent {}
 protocol UserRulesServiceDependent: SciterServiceDependent {}
 protocol OnboardingServiceDependent: SciterServiceDependent {}
 protocol TrayServiceDependent: SciterServiceDependent {}
+protocol CommonServiceDependent: SciterServiceDependent {}
 protocol TelemetrySciterServiceDependent: SciterServiceDependent {}
 
 // MARK: - Callbacks

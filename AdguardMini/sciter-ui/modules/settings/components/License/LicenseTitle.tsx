@@ -37,7 +37,11 @@ function LicenseTitleComponent() {
     const failedToRefreshLicenseNotificationUidRef = useRef<Nullable<string>>(null);
 
     const {
-        isFreeware, isLicenseBlocked, isLicenseBlockedAppId, isAppStoreSubscription, license: { license },
+        isFreeware,
+        isLicenseBlocked,
+        isLicenseBlockedAppId,
+        isAppStoreSubscription,
+        license,
     } = account;
 
     const [showAlreadyPurchasedFlowModal, setShowAlreadyPurchasedFlowModal] = useState(!!showAlreadyPurchasedFlow);
@@ -68,7 +72,7 @@ function LicenseTitleComponent() {
                 account.requestWebSubscription(Subscription.standalone);
                 break;
             case LicenseStatusActionType.renewLicense:
-                account.requestRenewLicense(account.license.license?.licenseKey?.getHiddenValue() || '');
+                account.requestRenewLicense(license?.licenseKey?.getHiddenValue() || '');
                 break;
         }
     };

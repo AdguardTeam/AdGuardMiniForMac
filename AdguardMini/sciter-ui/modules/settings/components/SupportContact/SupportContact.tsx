@@ -46,7 +46,7 @@ function SupportContactComponent() {
     const [showSuccessSubmitModal, setShowSuccessSubmitModal] = useState(false);
     const [showFailedSubmitModal, setShowFailedSubmitModal] = useState(false);
 
-    const [email, setEmail] = useState(supportContactFormData?.email ?? (license.license?.applicationKeyOwner || ''));
+    const [email, setEmail] = useState(supportContactFormData?.email ?? (license?.applicationKeyOwner || ''));
 
     useEffect(() => {
         ui.setSupportContactFormData({

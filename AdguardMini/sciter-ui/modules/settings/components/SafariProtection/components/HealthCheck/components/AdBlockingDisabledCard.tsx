@@ -16,12 +16,12 @@ import { HealthCheckDismissId } from './HealthCheckDismissId';
  */
 function AdBlockingDisabledCardComponent() {
     const {
-        settings,
+        appSettings,
         safariProtection,
     } = useSettingsStore();
     const {
         dissmissedHealthCheckCards,
-    } = settings;
+    } = appSettings;
     const notifyError = useNotificationSomethingWentWrongText();
 
     const enableAdBlocking = async () => {
@@ -41,7 +41,7 @@ function AdBlockingDisabledCardComponent() {
                 </Text>
             )}
             title={translate('safari.protection.health.ad.blocking')}
-            onClose={() => settings.updateHealthCheckDismissedCards([
+            onClose={() => appSettings.updateHealthCheckDismissedCards([
                 ...dissmissedHealthCheckCards,
                 HealthCheckDismissId.AdBlockingDisabled,
             ])}

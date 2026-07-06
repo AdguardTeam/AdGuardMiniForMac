@@ -2,148 +2,129 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { makeAutoObservable, computed } from 'mobx';
+//
+//  SafariProtection.ts
+//  AdguardMini
+//
 
-import type { SettingsStore } from 'SettingsStore';
+import { makeAutoObservable } from 'mobx';
+
+import type { FiltersMetaStore } from 'Common/stores/FiltersMetaStore';
 
 /**
- * SafariProtection store. Because settings in safari protection page depends on enable/disabled filters
- * all platform data received from Filters store, and action update also filter.
- * This store is excusably use enabled filters ids and filtersMap, that split filters to groups.
+ * Safari Protection health-check computed properties and update actions.
+ * Extracted from the merged Filters/SafariProtection store.
  */
 export class SafariProtection {
-    public rootStore: SettingsStore;
+    // This should be private but due to MobX typings we make it public or we have error in makeAutoObservable
+    public readonly filtersMeta: FiltersMetaStore;
 
-    /**
-     * Get all enabled filters Ids
-     */
-    public get enabledFilters() {
-        return Array.from(this.rootStore.filters.enabledFilters);
-    }
+    // ---- Health-check computed properties ----
 
     /**
      * Value for block ads
      */
-    public get blockAds() {
-        const { recommendedFiltersByGroups, filtersIndex } = this.rootStore.filters;
-        const definedGroups = filtersIndex.definedGroups || {};
-        return !!recommendedFiltersByGroups[definedGroups.adBlocking]?.every(
-            (id) => this.enabledFilters.includes(id),
+    public get blockAds(): boolean {
+        const definedGroups = this.filtersMeta.filtersIndex.definedGroups || {};
+        return !!this.filtersMeta.recommendedFiltersByGroups[definedGroups.adBlocking]?.every(
+            (id) => this.filtersMeta.enabledFilters.has(id),
         );
     }
 
     /**
      * Value for search ads
      */
-    public get blockSearchAds() {
-        const { filtersIndex } = this.rootStore.filters;
-        return !this.enabledFilters.includes(filtersIndex.unblockSearchAdsFilterId);
+    public get blockSearchAds(): boolean {
+        return !this.filtersMeta.enabledFilters.has(this.filtersMeta.filtersIndex.unblockSearchAdsFilterId);
     }
 
     /**
      * Value for language specific
      */
-    public get languageSpecific() {
-        const { recommendedFiltersByGroups, filtersIndex } = this.rootStore.filters;
-        const definedGroups = filtersIndex.definedGroups || {};
-        return !!recommendedFiltersByGroups[definedGroups.languageSpecific]?.find(
-            (id) => this.enabledFilters.includes(id),
+    public get languageSpecificEnabled(): boolean {
+        const definedGroups = this.filtersMeta.filtersIndex.definedGroups || {};
+        return !!this.filtersMeta.recommendedFiltersByGroups[definedGroups.languageSpecific]?.find(
+            (id) => this.filtersMeta.enabledFilters.has(id),
         );
     }
 
     /**
      * Value for block trackers
      */
-    public get blockTrackers() {
-        const { recommendedFiltersByGroups, filtersIndex } = this.rootStore.filters;
-        const definedGroups = filtersIndex.definedGroups || {};
-        return !!recommendedFiltersByGroups[definedGroups.privacy]?.every(
-            (id) => this.enabledFilters.includes(id),
+    public get blockTrackers(): boolean {
+        const definedGroups = this.filtersMeta.filtersIndex.definedGroups || {};
+        return !!this.filtersMeta.recommendedFiltersByGroups[definedGroups.privacy]?.every(
+            (id) => this.filtersMeta.enabledFilters.has(id),
         );
     }
 
     /**
      * Value for block social buttons
      */
-    public get blockSocialButtons() {
-        const { recommendedFiltersByGroups, filtersIndex } = this.rootStore.filters;
-        const definedGroups = filtersIndex.definedGroups || {};
-        return !!recommendedFiltersByGroups[definedGroups.socialWidgets]?.every(
-            (id) => this.enabledFilters.includes(id),
+    public get blockSocialButtons(): boolean {
+        const definedGroups = this.filtersMeta.filtersIndex.definedGroups || {};
+        return !!this.filtersMeta.recommendedFiltersByGroups[definedGroups.socialWidgets]?.every(
+            (id) => this.filtersMeta.enabledFilters.has(id),
         );
     }
 
     /**
      * Value for block cookie notice
      */
-    public get blockCookieNotice() {
-        const { filtersIndex } = this.rootStore.filters;
-        return this.enabledFilters.includes(filtersIndex.cookieNoticeFilterId);
+    public get blockCookieNotice(): boolean {
+        return this.filtersMeta.enabledFilters.has(this.filtersMeta.filtersIndex.cookieNoticeFilterId);
     }
 
     /**
      * Value for block pop ups
      */
-    public get blockPopups() {
-        const { filtersIndex } = this.rootStore.filters;
-        return this.enabledFilters.includes(filtersIndex.popUpsFilterId);
+    public get blockPopups(): boolean {
+        return this.filtersMeta.enabledFilters.has(this.filtersMeta.filtersIndex.popUpsFilterId);
     }
 
     /**
      * Value for block widgets
      */
-    public get blockWidgets() {
-        const { filtersIndex } = this.rootStore.filters;
-        return this.enabledFilters.includes(filtersIndex.widgetsFilterId);
+    public get blockWidgets(): boolean {
+        return this.filtersMeta.enabledFilters.has(this.filtersMeta.filtersIndex.widgetsFilterId);
     }
 
     /**
      * Value for block other annoyance
      */
-    public get blockOtherAnnoyance() {
-        const { filtersIndex } = this.rootStore.filters;
-        return this.enabledFilters.includes(filtersIndex.otherAnnoyanceFilterId);
+    public get blockOtherAnnoyance(): boolean {
+        return this.filtersMeta.enabledFilters.has(this.filtersMeta.filtersIndex.otherAnnoyanceFilterId);
     }
 
     /**
      * Enabled custom filters count
      */
-    public get enabledCustomFiltersCount() {
-        const { filters: { customFilters } } = this.rootStore.filters;
-        const enabledCustomFilters = customFilters.filter(({ enabled }) => enabled);
+    public get enabledCustomFiltersCount(): number {
+        const enabledCustomFilters = this.filtersMeta.filters.customFilters.filter(({ enabled }) => enabled);
         return enabledCustomFilters.length;
     }
 
     /**
      * Ctor
      *
-     * @param rootStore
+     * @param filtersMeta Filters metadata store for health-check data
      */
-    public constructor(rootStore: SettingsStore) {
-        this.rootStore = rootStore;
+    constructor(filtersMeta: FiltersMetaStore) {
+        this.filtersMeta = filtersMeta;
         makeAutoObservable(this, {
-            rootStore: false,
-            enabledFilters: computed,
-            blockAds: computed,
-            blockSearchAds: computed,
-            languageSpecific: computed,
-            blockTrackers: computed,
-            blockSocialButtons: computed,
-            blockCookieNotice: computed,
-            blockPopups: computed,
-            blockWidgets: computed,
-            blockOtherAnnoyance: computed,
+            filtersMeta: false,
         }, { autoBind: true });
     }
+
+    // ---- SafariProtection update actions ----
 
     /**
      * Update blockAds in safari protection
      */
     public async updateBlockAds(value: boolean) {
-        const { recommendedFiltersByGroups, filtersIndex } = this.rootStore.filters;
-        const definedGroups = filtersIndex.definedGroups || {};
-        return this.rootStore.filters.switchFiltersState(
-            recommendedFiltersByGroups[definedGroups.adBlocking],
+        const definedGroups = this.filtersMeta.filtersIndex.definedGroups || {};
+        return this.filtersMeta.switchFiltersState(
+            this.filtersMeta.recommendedFiltersByGroups[definedGroups.adBlocking],
             value,
         );
     }
@@ -152,9 +133,8 @@ export class SafariProtection {
      * Update blockSearchAds in safari protection
      */
     public async updateBlockSearchAds(value: boolean) {
-        const { filtersIndex } = this.rootStore.filters;
-        return this.rootStore.filters.switchFiltersState(
-            [filtersIndex.unblockSearchAdsFilterId],
+        return this.filtersMeta.switchFiltersState(
+            [this.filtersMeta.filtersIndex.unblockSearchAdsFilterId],
             !value,
         );
     }
@@ -163,10 +143,9 @@ export class SafariProtection {
      * Update blockTrackers in safari protection
      */
     public async updateBlockTrackers(value: boolean) {
-        const { recommendedFiltersByGroups, filtersIndex } = this.rootStore.filters;
-        const definedGroups = filtersIndex.definedGroups || {};
-        return this.rootStore.filters.switchFiltersState(
-            recommendedFiltersByGroups[definedGroups.privacy],
+        const definedGroups = this.filtersMeta.filtersIndex.definedGroups || {};
+        return this.filtersMeta.switchFiltersState(
+            this.filtersMeta.recommendedFiltersByGroups[definedGroups.privacy],
             value,
         );
     }
@@ -175,10 +154,9 @@ export class SafariProtection {
      * Update blockSocialButtons in safari protection
      */
     public async updateBlockSocialButtons(value: boolean) {
-        const { recommendedFiltersByGroups, filtersIndex } = this.rootStore.filters;
-        const definedGroups = filtersIndex.definedGroups || {};
-        return this.rootStore.filters.switchFiltersState(
-            recommendedFiltersByGroups[definedGroups.socialWidgets],
+        const definedGroups = this.filtersMeta.filtersIndex.definedGroups || {};
+        return this.filtersMeta.switchFiltersState(
+            this.filtersMeta.recommendedFiltersByGroups[definedGroups.socialWidgets],
             value,
         );
     }
@@ -187,9 +165,8 @@ export class SafariProtection {
      * Update blockCookieNotice in safari protection
      */
     public async updateBlockCookieNotice(value: boolean) {
-        const { filtersIndex } = this.rootStore.filters;
-        return this.rootStore.filters.switchFiltersState(
-            [filtersIndex.cookieNoticeFilterId],
+        return this.filtersMeta.switchFiltersState(
+            [this.filtersMeta.filtersIndex.cookieNoticeFilterId],
             value,
         );
     }
@@ -198,9 +175,8 @@ export class SafariProtection {
      * Update blockPopups in safari protection
      */
     public async updateBlockPopups(value: boolean) {
-        const { filtersIndex } = this.rootStore.filters;
-        return this.rootStore.filters.switchFiltersState(
-            [filtersIndex.popUpsFilterId],
+        return this.filtersMeta.switchFiltersState(
+            [this.filtersMeta.filtersIndex.popUpsFilterId],
             value,
         );
     }
@@ -209,9 +185,18 @@ export class SafariProtection {
      * Update blockWidgets in safari protection
      */
     public async updateBlockWidgets(value: boolean) {
-        const { filtersIndex } = this.rootStore.filters;
-        return this.rootStore.filters.switchFiltersState(
-            [filtersIndex.widgetsFilterId],
+        return this.filtersMeta.switchFiltersState(
+            [this.filtersMeta.filtersIndex.widgetsFilterId],
+            value,
+        );
+    }
+
+    /**
+     * Update blockOther in safari protection
+     */
+    public async updateBlockOther(value: boolean) {
+        return this.filtersMeta.switchFiltersState(
+            [this.filtersMeta.filtersIndex.otherAnnoyanceFilterId],
             value,
         );
     }
@@ -219,18 +204,7 @@ export class SafariProtection {
     /**
      * Resets safari protection
      */
-    public resetSafariProtection() {
-        // todo: add to swift
-    }
-
-    /**
-     * Update blockOther in safari protection
-     */
-    public async updateBlockOther(value: boolean) {
-        const { filtersIndex } = this.rootStore.filters;
-        return this.rootStore.filters.switchFiltersState(
-            [filtersIndex.otherAnnoyanceFilterId],
-            value,
-        );
+    public resetSafariProtection(): void {
+        // TODO: AG-XXXX
     }
 }

@@ -25,15 +25,15 @@ type AnnoyanceBlockingDisabledCardProps = {
  */
 function AnnoyanceBlockingDisabledCardComponent({ setShowConsent }: AnnoyanceBlockingDisabledCardProps) {
     const {
-        settings,
-        filters,
+        appSettings,
+        filtersMeta,
         safariProtection,
     } = useSettingsStore();
     const {
         dissmissedHealthCheckCards,
         settings: { consentFiltersIds },
-    } = settings;
-    const { filtersIndex } = filters;
+    } = appSettings;
+    const { filtersIndex } = filtersMeta;
 
     const notifyError = useNotificationSomethingWentWrongText();
 
@@ -58,7 +58,7 @@ function AnnoyanceBlockingDisabledCardComponent({ setShowConsent }: AnnoyanceBlo
             return;
         }
 
-        const error = await filters.switchFiltersState(annoyanceFilterIds, true);
+        const error = await filtersMeta.switchFiltersState(annoyanceFilterIds, true);
         if (error) {
             notifyError();
         }
@@ -74,7 +74,7 @@ function AnnoyanceBlockingDisabledCardComponent({ setShowConsent }: AnnoyanceBlo
                 </Text>
             )}
             title={translate('safari.protection.health.annoyance')}
-            onClose={() => settings.updateHealthCheckDismissedCards([
+            onClose={() => appSettings.updateHealthCheckDismissedCards([
                 ...dissmissedHealthCheckCards,
                 HealthCheckDismissId.AnnoyanceBlockingDisabled,
             ])}

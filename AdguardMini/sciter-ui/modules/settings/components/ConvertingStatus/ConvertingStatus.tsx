@@ -17,7 +17,8 @@ import s from './ConvertingStatus.module.pcss';
 function ConvertingStatusComponent() {
     const store = useSettingsStore();
 
-    const { settings: { safariExtensionsLoading } } = store;
+    const { safariExtensions } = store;
+    const { safariExtensionsLoading } = safariExtensions;
 
     if (!safariExtensionsLoading) {
         return <div className={s.ConvertingStatus_tooltipContainer} />;

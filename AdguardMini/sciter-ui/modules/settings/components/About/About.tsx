@@ -5,7 +5,7 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState, useCallback } from 'preact/hooks';
 
-import { Channel, ReleaseVariants } from 'Apis/types';
+import { Channel } from 'Apis/types';
 import { ADGUARD_MINI_TITLE } from 'Common/utils/consts';
 import { TDS_PARAMS, getTdsLink } from 'Common/utils/links';
 import { notifySuccess } from 'Common/utils/notifications';
@@ -48,7 +48,7 @@ const copyToClipboardAndNotify = (
  * About page component for settings module
  */
 export function AboutComponent() {
-    const { appInfo, settings, notification } = useSettingsStore();
+    const { appInfo, appSettings, notification } = useSettingsStore();
 
     const LINKS = [
         {
@@ -79,15 +79,11 @@ export function AboutComponent() {
         dependencies,
     } } = appInfo;
 
-    const { settings: {
-        releaseVariant,
-    } } = settings;
-
     useEffect(() => {
-        if (releaseVariant === ReleaseVariants.standAlone) {
+        if (appSettings.isStandaloneReleaseVariant) {
             appInfo.checkApplicationVersion();
         }
-    }, [appInfo, releaseVariant]);
+    }, [appInfo, appSettings.isStandaloneReleaseVariant]);
     const [showDependencies, setShowDependencies] = useState(false);
 
     const year = (new Date()).getFullYear();
@@ -117,7 +113,7 @@ export function AboutComponent() {
         <Layout type="settingsPage">
             <SettingsTitle title={translate('menu.about')} maxTopPadding />
             <div className={cx(s.About_description, theme.layout.content)}>
-                {releaseVariant === ReleaseVariants.standAlone && newVersionAvailable && (
+                {appSettings.isStandaloneReleaseVariant && newVersionAvailable && (
                     <SettingsItem
                         className={s.About_update}
                         icon="update"
@@ -150,7 +146,7 @@ export function AboutComponent() {
                         onClick={copyVersion}
                     />
                 </div>
-                {releaseVariant === ReleaseVariants.standAlone && !newVersionAvailable && (
+                {appSettings.isStandaloneReleaseVariant && !newVersionAvailable && (
                     <Text className={s.About_updateSection} type="t1" div>{translate('about.use.last.verion')}</Text>
                 )}
                 <Text className={s.About_rights} type="t1">{translate('about.rights', { year })}</Text>

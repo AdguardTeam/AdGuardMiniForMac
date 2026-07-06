@@ -27,13 +27,6 @@ export enum LicenseType {
     beta = 6,
     bonus = 7
 }
-export enum SubscriptionStatus {
-    unknown = 0,
-    active = 1,
-    past_due = 2,
-    paused = 3,
-    deleted = 4
-}
 export enum WebActivateResult {
     unknown = 0,
     cancelled = 1,
@@ -66,7 +59,7 @@ export class LicenseOrError extends pb_1.Message {
     set license(value: License) {
         pb_1.Message.setOneofWrapperField(this, 1, this.#one_of_decls[0], value);
     }
-    get has_license() {
+    get hasLicense() {
         return pb_1.Message.getField(this, 1) != null;
     }
     get error() {
@@ -118,7 +111,7 @@ export class LicenseOrError extends pb_1.Message {
     serialize(w: pb_1.BinaryWriter): void;
     serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
         const writer = w || new pb_1.BinaryWriter();
-        if (this.has_license)
+        if (this.hasLicense)
             writer.writeMessage(1, this.license, () => this.license.serialize(writer));
         if (this.has_error)
             writer.writeBool(2, this.error);
@@ -159,7 +152,6 @@ export class License extends pb_1.Message {
         totalDevices?: number;
         status?: LicenseStatus;
         type?: LicenseType;
-        subscriptionStatus?: SubscriptionStatus;
         applicationKeyOwner?: string;
         licenseLifetime?: boolean;
         licenseTrial?: boolean;
@@ -189,9 +181,6 @@ export class License extends pb_1.Message {
             }
             if ("type" in data && data.type != undefined) {
                 this.type = data.type;
-            }
-            if ("subscriptionStatus" in data && data.subscriptionStatus != undefined) {
-                this.subscriptionStatus = data.subscriptionStatus;
             }
             if ("applicationKeyOwner" in data && data.applicationKeyOwner != undefined) {
                 this.applicationKeyOwner = data.applicationKeyOwner;
@@ -252,12 +241,6 @@ export class License extends pb_1.Message {
     set type(value: LicenseType) {
         pb_1.Message.setField(this, 7, value);
     }
-    get subscriptionStatus() {
-        return pb_1.Message.getFieldWithDefault(this, 8, SubscriptionStatus.unknown) as SubscriptionStatus;
-    }
-    set subscriptionStatus(value: SubscriptionStatus) {
-        pb_1.Message.setField(this, 8, value);
-    }
     get applicationKeyOwner() {
         return pb_1.Message.getFieldWithDefault(this, 9, "") as string;
     }
@@ -296,7 +279,6 @@ export class License extends pb_1.Message {
         totalDevices?: number;
         status?: LicenseStatus;
         type?: LicenseType;
-        subscriptionStatus?: SubscriptionStatus;
         applicationKeyOwner?: string;
         licenseLifetime?: boolean;
         licenseTrial?: boolean;
@@ -325,9 +307,6 @@ export class License extends pb_1.Message {
         if (data.type != null) {
             message.type = data.type;
         }
-        if (data.subscriptionStatus != null) {
-            message.subscriptionStatus = data.subscriptionStatus;
-        }
         if (data.applicationKeyOwner != null) {
             message.applicationKeyOwner = data.applicationKeyOwner;
         }
@@ -354,7 +333,6 @@ export class License extends pb_1.Message {
             totalDevices?: number;
             status?: LicenseStatus;
             type?: LicenseType;
-            subscriptionStatus?: SubscriptionStatus;
             applicationKeyOwner?: string;
             licenseLifetime?: boolean;
             licenseTrial?: boolean;
@@ -381,9 +359,6 @@ export class License extends pb_1.Message {
         }
         if (this.type != null) {
             data.type = this.type;
-        }
-        if (this.subscriptionStatus != null) {
-            data.subscriptionStatus = this.subscriptionStatus;
         }
         if (this.applicationKeyOwner != null) {
             data.applicationKeyOwner = this.applicationKeyOwner;
@@ -420,8 +395,6 @@ export class License extends pb_1.Message {
             writer.writeEnum(6, this.status);
         if (this.type != LicenseType.unknown)
             writer.writeEnum(7, this.type);
-        if (this.subscriptionStatus != SubscriptionStatus.unknown)
-            writer.writeEnum(8, this.subscriptionStatus);
         if (this.applicationKeyOwner.length)
             writer.writeString(9, this.applicationKeyOwner);
         if (this.licenseLifetime != false)
@@ -462,9 +435,6 @@ export class License extends pb_1.Message {
                 case 7:
                     message.type = reader.readEnum();
                     break;
-                case 8:
-                    message.subscriptionStatus = reader.readEnum();
-                    break;
                 case 9:
                     message.applicationKeyOwner = reader.readString();
                     break;
@@ -490,6 +460,142 @@ export class License extends pb_1.Message {
     }
     static deserializeBinary(bytes: Uint8Array): License {
         return License.deserialize(bytes);
+    }
+}
+export class TrayLicense extends pb_1.Message {
+    #one_of_decls: number[][] = [];
+    constructor(data?: any[] | {
+        hasLicense?: boolean;
+        status?: LicenseStatus;
+        applicationKeyOwner?: string;
+        appStoreSubscription?: boolean;
+    }) {
+        super();
+        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+        if (!Array.isArray(data) && typeof data == "object") {
+            if ("hasLicense" in data && data.hasLicense != undefined) {
+                this.hasLicense = data.hasLicense;
+            }
+            if ("status" in data && data.status != undefined) {
+                this.status = data.status;
+            }
+            if ("applicationKeyOwner" in data && data.applicationKeyOwner != undefined) {
+                this.applicationKeyOwner = data.applicationKeyOwner;
+            }
+            if ("appStoreSubscription" in data && data.appStoreSubscription != undefined) {
+                this.appStoreSubscription = data.appStoreSubscription;
+            }
+        }
+    }
+    get hasLicense() {
+        return pb_1.Message.getFieldWithDefault(this, 1, false) as boolean;
+    }
+    set hasLicense(value: boolean) {
+        pb_1.Message.setField(this, 1, value);
+    }
+    get status() {
+        return pb_1.Message.getFieldWithDefault(this, 2, LicenseStatus.unknown) as LicenseStatus;
+    }
+    set status(value: LicenseStatus) {
+        pb_1.Message.setField(this, 2, value);
+    }
+    get applicationKeyOwner() {
+        return pb_1.Message.getFieldWithDefault(this, 3, "") as string;
+    }
+    set applicationKeyOwner(value: string) {
+        pb_1.Message.setField(this, 3, value);
+    }
+    get appStoreSubscription() {
+        return pb_1.Message.getFieldWithDefault(this, 4, false) as boolean;
+    }
+    set appStoreSubscription(value: boolean) {
+        pb_1.Message.setField(this, 4, value);
+    }
+    static fromObject(data: {
+        hasLicense?: boolean;
+        status?: LicenseStatus;
+        applicationKeyOwner?: string;
+        appStoreSubscription?: boolean;
+    }): TrayLicense {
+        const message = new TrayLicense({});
+        if (data.hasLicense != null) {
+            message.hasLicense = data.hasLicense;
+        }
+        if (data.status != null) {
+            message.status = data.status;
+        }
+        if (data.applicationKeyOwner != null) {
+            message.applicationKeyOwner = data.applicationKeyOwner;
+        }
+        if (data.appStoreSubscription != null) {
+            message.appStoreSubscription = data.appStoreSubscription;
+        }
+        return message;
+    }
+    toObject() {
+        const data: {
+            hasLicense?: boolean;
+            status?: LicenseStatus;
+            applicationKeyOwner?: string;
+            appStoreSubscription?: boolean;
+        } = {};
+        if (this.hasLicense != null) {
+            data.hasLicense = this.hasLicense;
+        }
+        if (this.status != null) {
+            data.status = this.status;
+        }
+        if (this.applicationKeyOwner != null) {
+            data.applicationKeyOwner = this.applicationKeyOwner;
+        }
+        if (this.appStoreSubscription != null) {
+            data.appStoreSubscription = this.appStoreSubscription;
+        }
+        return data;
+    }
+    serialize(): Uint8Array;
+    serialize(w: pb_1.BinaryWriter): void;
+    serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+        const writer = w || new pb_1.BinaryWriter();
+        if (this.hasLicense != false)
+            writer.writeBool(1, this.hasLicense);
+        if (this.status != LicenseStatus.unknown)
+            writer.writeEnum(2, this.status);
+        if (this.applicationKeyOwner.length)
+            writer.writeString(3, this.applicationKeyOwner);
+        if (this.appStoreSubscription != false)
+            writer.writeBool(4, this.appStoreSubscription);
+        if (!w)
+            return writer.getResultBuffer();
+    }
+    static deserialize(bytes: Uint8Array | pb_1.BinaryReader): TrayLicense {
+        const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new TrayLicense();
+        while (reader.nextField()) {
+            if (reader.isEndGroup())
+                break;
+            switch (reader.getFieldNumber()) {
+                case 1:
+                    message.hasLicense = reader.readBool();
+                    break;
+                case 2:
+                    message.status = reader.readEnum();
+                    break;
+                case 3:
+                    message.applicationKeyOwner = reader.readString();
+                    break;
+                case 4:
+                    message.appStoreSubscription = reader.readBool();
+                    break;
+                default: reader.skipField();
+            }
+        }
+        return message;
+    }
+    serializeBinary(): Uint8Array {
+        return this.serialize();
+    }
+    static deserializeBinary(bytes: Uint8Array): TrayLicense {
+        return TrayLicense.deserialize(bytes);
     }
 }
 export class WebActivateResultMessage extends pb_1.Message {

@@ -18,7 +18,7 @@ import s from '../SafariProtection.module.pcss';
  * Ad blocking section for Safari protection
  */
 function AdBlockingSectionComponent() {
-    const { safariProtection, filters, telemetry } = useSettingsStore();
+    const { safariProtection, filtersMeta, telemetry } = useSettingsStore();
     const notifyError = useNotificationSomethingWentWrongText();
 
     const onToggleBlockAds = async (value: boolean) => {
@@ -39,7 +39,7 @@ function AdBlockingSectionComponent() {
 
     const onToggleLanguageSpecific = (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.LanguageAdBlockingClick);
-        return filters.updateLanguageSpecific(value);
+        return filtersMeta.updateLanguageSpecific(value);
     };
 
     const isTest = useABTest(ActiveABTest.AG_51019_advanced_settings) === ABTestOption.option_b;
@@ -68,7 +68,7 @@ function AdBlockingSectionComponent() {
                 setValue={onToggleLanguageSpecific}
                 title={translate('safari.protection.block.language')}
                 trackEventOnRouteChange={SettingsEvent.LanguageAdBlockingSettingsClick}
-                value={filters.languageSpecific}
+                value={filtersMeta.languageSpecific}
             />
             {isTest && <AdvancedRulesSwitch />}
         </div>

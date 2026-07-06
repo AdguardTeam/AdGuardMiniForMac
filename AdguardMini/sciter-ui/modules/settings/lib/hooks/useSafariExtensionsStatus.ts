@@ -18,11 +18,12 @@ const BROKEN_EXTENSION_STATUSES = [
  * known non-loading state during filter conversion.
  */
 export const useSafariExtensionsStatus = () => {
-    const { settings } = useSettingsStore();
+    const { safariExtensions } = useSettingsStore();
 
     const {
-        safariExtensionsStore: { effectiveExtensionsList, allExtensionsEffectivelyEnabled },
-    } = settings;
+        effectiveExtensionsList,
+        allExtensionsEffectivelyEnabled,
+    } = safariExtensions;
 
     const hasExtensionsDisabled = !allExtensionsEffectivelyEnabled;
 

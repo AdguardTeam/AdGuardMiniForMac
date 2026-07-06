@@ -25,7 +25,7 @@ function ActivationFlowStatusControllerComponent() {
         activationResult,
     } = account;
 
-    const licenseStatus = license.license?.status || LicenseStatus.unknown;
+    const licenseStatus = license?.status || LicenseStatus.unknown;
 
     const initialLicenseStatusRef = useRef(licenseUpdateTime);
 

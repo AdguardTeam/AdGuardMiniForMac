@@ -3,9 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { QuitReaction, Theme } from 'Apis/types';
+import { createProvideContactSupportParam } from 'Common/utils/translate';
 import { ContactSupportLink } from 'Modules/settings/components/ContactSupportLink';
-
-import type { ContactSupportLinkProps } from 'Modules/settings/components/ContactSupportLink';
 
 /**
  * Translations for quit reactions
@@ -46,11 +45,9 @@ export const themeText = (val: Theme) => {
 /**
  * Provides a contactSupport parameter for use with the translate lib's messages
  */
-export const provideContactSupportParam = (props?: Omit<ContactSupportLinkProps, 'text'>) => ({
-    contactSupport: (text: string) => (
-        <ContactSupportLink text={text} {...props} />
-    ),
-});
+export const provideContactSupportParam = (
+    createProvideContactSupportParam(ContactSupportLink)
+);
 
 /**
  * Provides a notification text for settings import failure

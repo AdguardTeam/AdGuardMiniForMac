@@ -4,6 +4,7 @@
 
 import { makeAutoObservable } from 'mobx';
 
+import { GetSafariExtensionsRequest } from 'Apis/requests/CommonService';
 import { SafariExtensions, SafariExtension, SafariExtensionStatus, SafariExtensionType } from 'Apis/types';
 
 import type { SafariExtensionUpdate } from 'Apis/types';
@@ -108,7 +109,22 @@ export class SafariExtensionsStore {
      * Ctor
      */
     constructor() {
-        makeAutoObservable(this);
+        makeAutoObservable(this, undefined, { autoBind: true });
+    }
+
+    /**
+     * Get safari protection status
+     */
+    public async getSafariExtensions(): Promise<void> {
+        const ext = await window.API.Execute(new GetSafariExtensionsRequest());
+        this.setSafariExtensions(ext);
+    }
+
+    /**
+     * Getter for safari extensions with loading status
+     */
+    public getSafariExtensionsLoading(): boolean {
+        return this.safariExtensionsLoading;
     }
 
     /**

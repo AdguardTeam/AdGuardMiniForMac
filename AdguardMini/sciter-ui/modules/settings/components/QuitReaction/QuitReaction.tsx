@@ -26,10 +26,10 @@ const QUIT_REACTIONS = [
  * Page for choose QuitReaction
  */
 function QuitReactionComponent() {
-    const { router, settings: { settings: { quitReaction } }, settings } = useSettingsStore();
+    const { router, appSettings: { settings: { quitReaction } }, appSettings } = useSettingsStore();
 
     const onReactionChange = (e: QuitReactionEnum) => () => {
-        settings.updateQuitReaction(e);
+        appSettings.updateQuitReaction(e);
     };
 
     const quitReactions = QUIT_REACTIONS.reduce<IOption<QuitReactionEnum>[]>((prev, v) => {

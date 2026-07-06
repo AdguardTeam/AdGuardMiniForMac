@@ -7,7 +7,7 @@ import { useMemo } from 'preact/hooks';
 import { useSettingsStore } from './useSettingsStore';
 
 export const useOtherEnabledFilters = () => {
-    const { filters: {
+    const { filtersMeta: {
         filtersIndex,
         recommendedFiltersByGroups,
         otherFiltersByGroups,

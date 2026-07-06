@@ -5,7 +5,7 @@
 import { observer } from 'mobx-react-lite';
 
 import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
-import { RequestOpenSettingsPageRequest } from 'Apis/requests/SettingsService';
+import { RequestOpenSettingsPageRequest } from 'Apis/requests/TrayService';
 import { RouteName as SettingsRouteName } from 'SettingsStore/modules/SettingsRouter';
 import { Button } from 'UILib';
 

@@ -105,7 +105,7 @@ function PerksOfTheFullVersionComponent({
 }: PerksOfTheFullVersionProps) {
     const {
         account,
-        settings: { isMASReleaseVariant },
+        appSettings: { isMasReleaseVariant },
         telemetry,
     } = useSettingsStore();
 
@@ -164,7 +164,7 @@ function PerksOfTheFullVersionComponent({
 
     const renderButton = () => {
         const renderLabel = () => {
-            if (isMASReleaseVariant) {
+            if (isMasReleaseVariant) {
                 if (trialAvailableDays > 0 && !isTrialActive) {
                     return translate.plural('license.try.for.free', trialAvailableDays, provideTrialDaysParam(trialAvailableDays));
                 }
@@ -180,18 +180,18 @@ function PerksOfTheFullVersionComponent({
         };
 
         const onClickHandler = () => {
-            const key = account.license.license?.licenseKey?.getHiddenValue() || '';
+            const key = account.license?.licenseKey?.getHiddenValue() || '';
             if (isTrialActive) {
                 window.API.Execute(new RequestRenewRequest({ value: key }));
             } else if (isLicenseExpired) {
                 account.requestRenewLicense(key);
-            } else if (isAppStoreSubscription || (isMASReleaseVariant && isFreeware)) {
+            } else if (isAppStoreSubscription || (isMasReleaseVariant && isFreeware)) {
                 account.showPaywall();
             } else {
                 account.requestWebSubscription(Subscription.standalone);
             }
 
-            if (isMASReleaseVariant) {
+            if (isMasReleaseVariant) {
                 if (trialAvailableDays > 0 && !isTrialActive) {
                     telemetry.trackEvent(SettingsEvent.Try14DaysClick);
                 } else if (isAppStoreSubscription || isFreeware) {

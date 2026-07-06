@@ -2,6 +2,8 @@ syntax = "proto3";
 
 option optimize_for = CODE_SIZE;
 
+import "Common.proto";
+
 // Describes window geometry (position and size, monitor-relative)
 message WindowGeometry {
     int32 x = 1;
@@ -30,16 +32,6 @@ message Settings {
     bool last_update_more_seven_days = 15;
 }
 
-message UserConsent {
-    repeated int32 filters_ids = 1;
-}
-
-enum ReleaseVariants {
-    ReleaseVariants_unknown = 0;
-    ReleaseVariants_MAS = 1;
-    ReleaseVariants_standAlone = 2;
-}
-
 enum ImportMode {
     ImportMode_unknown = 0;
     ImportMode_full = 1;
@@ -56,80 +48,6 @@ message ImportStatus {
     repeated int32 filters_ids = 2;
 }
 
-message GlobalSettings {
-    bool enabled = 1;
-    bool newVersionAvailable = 3;
-    ReleaseVariants releaseVariant = 4;
-    string language = 5;
-    bool debug_logging = 6;
-    bool allow_telemetry = 8;
-    Theme theme = 9;
-    int64 last_filters_update_timestamp_ms = 10;
-    repeated string hidden_stories = 11;
-}
-
 message UpdateQuitReactionMessage {
     QuitReaction reaction = 1;
-}
-
-enum QuitReaction {
-    QuitReaction_unknown = 0;
-    QuitReaction_ask = 1;
-    QuitReaction_quit = 2;
-    QuitReaction_keepRunning = 3;
-}
-
-message SafariExtensions {
-    SafariExtension general = 1;
-    SafariExtension privacy = 2;
-    SafariExtension social = 3;
-    SafariExtension security = 4;
-    SafariExtension other = 5;
-    SafariExtension custom = 6;
-    SafariExtension adguard_for_safari = 7;
-}
-
-message SafariExtension {
-    string id = 1;
-    int32 rules_enabled = 2;
-    int32 rules_total = 3;
-    SafariExtensionStatus status = 4;
-    optional string safari_error = 6;
-    bool is_considered_enabled = 7;
-}
-
-message SafariExtensionUpdate {
-    SafariExtensionType type = 1;
-    SafariExtension state = 2;
-}
-
-enum SafariExtensionType {
-    SafariExtensionType_general = 0;
-    SafariExtensionType_privacy = 1;
-    SafariExtensionType_security = 2;
-    SafariExtensionType_social = 3;
-    SafariExtensionType_other = 4;
-    SafariExtensionType_custom = 5;
-    SafariExtensionType_adguard_for_safari = 6;
-}
-
-enum SafariExtensionStatus {
-    SafariExtensionStatus_unknown = 0;
-    SafariExtensionStatus_ok = 1;
-    SafariExtensionStatus_loading = 2;
-    SafariExtensionStatus_disabled = 3;
-    SafariExtensionStatus_limit_exceeded = 4;
-    SafariExtensionStatus_converter_error = 5;
-    SafariExtensionStatus_safari_error = 6;
-}
-
-message UpdateThemeMessage {
-    Theme theme = 1;
-}
-
-enum Theme {
-    Theme_unknown = 0;
-    Theme_system = 1;
-    Theme_light = 2;
-    Theme_dark = 3;
 }

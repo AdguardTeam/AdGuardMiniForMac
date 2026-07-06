@@ -28,8 +28,6 @@ public struct Filters: Sendable {
 
   public var filters: [Filter] = []
 
-  public var preferredLocales: [String] = []
-
   public var customFilters: [Filter] = []
 
   public var languageSpecific: Bool = false
@@ -370,7 +368,7 @@ public struct FilterUpdateStatus: Sendable {
 
 extension Filters: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "Filters"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}filters\0\u{1}preferredLocales\0\u{1}customFilters\0\u{1}languageSpecific\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}filters\0\u{2}\u{2}customFilters\0\u{1}languageSpecific\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -379,7 +377,6 @@ extension Filters: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeRepeatedMessageField(value: &self.filters) }()
-      case 2: try { try decoder.decodeRepeatedStringField(value: &self.preferredLocales) }()
       case 3: try { try decoder.decodeRepeatedMessageField(value: &self.customFilters) }()
       case 4: try { try decoder.decodeSingularBoolField(value: &self.languageSpecific) }()
       default: break
@@ -390,9 +387,6 @@ extension Filters: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if !self.filters.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.filters, fieldNumber: 1)
-    }
-    if !self.preferredLocales.isEmpty {
-      try visitor.visitRepeatedStringField(value: self.preferredLocales, fieldNumber: 2)
     }
     if !self.customFilters.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.customFilters, fieldNumber: 3)
@@ -405,7 +399,6 @@ extension Filters: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
 
   public static func ==(lhs: Filters, rhs: Filters) -> Bool {
     if lhs.filters != rhs.filters {return false}
-    if lhs.preferredLocales != rhs.preferredLocales {return false}
     if lhs.customFilters != rhs.customFilters {return false}
     if lhs.languageSpecific != rhs.languageSpecific {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}

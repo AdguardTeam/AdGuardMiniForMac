@@ -2,15 +2,15 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { DATE_FORMAT, getDateString } from 'Common/lib/date';
+export { DATE_FORMAT } from 'Common/hooks/useDateFormat';
+
+import { useDateFormat as useCommonDateFormat } from 'Common/hooks/useDateFormat';
 
 import { useTrayStore } from './useTrayStore';
 
 const useDateFormat = () => {
-    const { settings: { settings } } = useTrayStore();
-    const locale = settings?.language || 'enUS';
-
-    return (date: string | number, format: DATE_FORMAT) => getDateString(date, format, locale);
+    const { traySettings: { settings } } = useTrayStore();
+    return useCommonDateFormat(settings?.language);
 };
 
-export { DATE_FORMAT, useDateFormat };
+export { useDateFormat };
