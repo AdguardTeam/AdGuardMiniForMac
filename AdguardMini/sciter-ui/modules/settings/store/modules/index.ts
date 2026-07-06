@@ -12,6 +12,6 @@ export * from './SafariProtection';
 export * from './Settings';
 export * from './UserRules';
 export * from './Windowing';
-export * from './NotificationsQueue';
+export * from 'Common/stores/NotificationsQueue';
 export * from './UI';
 export * from './SettingsTelemetry';

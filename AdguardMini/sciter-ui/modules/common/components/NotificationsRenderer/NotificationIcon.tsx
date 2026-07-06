@@ -2,13 +2,15 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { NotificationsQueueIconType as NQIconType, NotificationsQueueType } from 'SettingsStore/modules';
+import { cx } from 'classix';
+
+import { NotificationsQueueIconType as NQIconType, NotificationsQueueType } from 'Common/stores/NotificationsQueue';
 import { Icon } from 'UILib';
 
 import s from './NotificationsRenderer.module.pcss';
 
-import type { NotificationPropsHolder } from 'SettingsLib/utils/NotificationPropsHolder';
-import type { NotificationPropertiesSelector } from 'SettingsStore/modules';
+import type { NotificationPropertiesSelector } from 'Common/stores/NotificationsQueue';
+import type { NotificationPropsHolder } from 'Common/utils/NotificationPropsHolder';
 import type { IconType } from 'UILib';
 
 type Props = {
@@ -20,13 +22,11 @@ type Props = {
  *
  * @param notification
  */
-export function NotificationIcon({
-    notification,
-}: Props) {
+export function NotificationIcon({ notification }: Props) {
     const { type, iconType } = notification.props;
 
-    let color: string; // Colors;
-    let icon: IconType; // Icon;
+    let color = '';
+    let icon: IconType = 'info';
     let customClassName = '';
 
     switch (type) {
@@ -36,9 +36,6 @@ export function NotificationIcon({
         case NotificationsQueueType.warning:
             color = s.NotificationIcon__orange;
             break;
-        case NotificationsQueueType.danger:
-            color = s.NotificationIcon__red;
-            break;
     }
 
     switch (iconType) {
@@ -46,17 +43,18 @@ export function NotificationIcon({
             icon = 'logo_check';
             break;
         }
-        case NQIconType.delete: {
-            icon = 'trash';
+        case NQIconType.error: {
+            icon = 'info';
+            break;
+        }
+        case NQIconType.info: {
+            icon = 'info';
             break;
         }
         case NQIconType.loading: {
             icon = 'loading';
             customClassName = s.NotificationIcon__loader;
             break;
-        }
-        default: {
-            icon = 'info';
         }
     }
 

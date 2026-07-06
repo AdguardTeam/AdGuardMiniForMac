@@ -8,15 +8,18 @@ import { useEffect, useState, useCallback } from 'preact/hooks';
 import { Channel, ReleaseVariants } from 'Apis/types';
 import { ADGUARD_MINI_TITLE } from 'Common/utils/consts';
 import { TDS_PARAMS, getTdsLink } from 'Common/utils/links';
+import { notifySuccess } from 'Common/utils/notifications';
 import { SettingsTitle } from 'Modules/settings/components/SettingsTitle';
 import { useSettingsStore } from 'SettingsLib/hooks';
-import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType, RouteName } from 'SettingsStore/modules';
+import { RouteName } from 'SettingsStore/modules';
 import theme from 'Theme';
 import { Button, ExternalLink, Icon, Layout, Text } from 'UILib';
 
 import { SettingsItem } from '../SettingsItem/SettingsItem';
 
 import s from './About.module.pcss';
+
+import type { NotificationsQueue } from 'SettingsStore/modules';
 
 const channelToText = (ch: Channel): string => {
     const texts = {
@@ -27,6 +30,18 @@ const channelToText = (ch: Channel): string => {
         [Channel.standalone_release]: 'Release',
     };
     return texts[ch];
+};
+
+/**
+ * Copies text to the system clipboard and shows a success notification.
+ */
+const copyToClipboardAndNotify = (
+    text: string,
+    message: string,
+    notification: NotificationsQueue,
+) => {
+    window.SystemClipboard.writeText(text);
+    notifySuccess(notification, message);
 };
 
 /**
@@ -78,28 +93,16 @@ export function AboutComponent() {
     const year = (new Date()).getFullYear();
 
     const copyVersion = useCallback(() => {
-        window.SystemClipboard.writeText(`${ADGUARD_MINI_TITLE} ${version} ${channelToText(channel) ? `(${channelToText(channel)})` : ''}`);
-
-        notification.notify({
-            message: translate('about.version.copy.notify'),
-            notificationContext: NotificationContext.info,
-            type: NotificationsQueueType.success,
-            iconType: NotificationsQueueIconType.done,
-            closeable: true,
-        });
+        copyToClipboardAndNotify(
+            `${ADGUARD_MINI_TITLE} ${version} ${channelToText(channel) ? `(${channelToText(channel)})` : ''}`,
+            translate('about.version.copy.notify'),
+            notification,
+        );
     }, [version, channel, notification]);
 
     const copyLibraries = useCallback(() => {
         const libraries = dependencies.map((dep) => `${dep.name} ${dep.version}`).join('\n');
-        window.SystemClipboard.writeText(libraries);
-
-        notification.notify({
-            message: translate('about.libraries.copy.notify'),
-            notificationContext: NotificationContext.info,
-            type: NotificationsQueueType.success,
-            iconType: NotificationsQueueIconType.done,
-            closeable: true,
-        });
+        copyToClipboardAndNotify(libraries, translate('about.libraries.copy.notify'), notification);
     }, [dependencies, notification]);
 
     // const onClickRateUs = () => {

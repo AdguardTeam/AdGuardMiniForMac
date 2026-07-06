@@ -2,15 +2,18 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { NotificationsQueueVariant } from 'TrayStore/modules';
+import { cx } from 'classix';
+
+import { NotificationsQueueVariant } from 'Common/stores/NotificationsQueue';
 
 import s from './NotificationsRenderer.module.pcss';
 
+import type { NotificationPropertiesSelector } from 'Common/stores/NotificationsQueue';
+import type { NotificationPropsHolder } from 'Common/utils/NotificationPropsHolder';
 import type { ComponentChildren } from 'preact';
-import type { NotificationPropsHolder } from 'TrayLib/utils/NotificationPropsHolder';
 
 type Props = {
-    notification: NotificationPropsHolder;
+    notification: NotificationPropsHolder<NotificationPropertiesSelector>;
     children: ComponentChildren;
 };
 
@@ -28,9 +31,6 @@ export function NotificationIconWrapper({
 
     if ('variant' in notification.props) {
         switch (notification.props.variant) {
-            case NotificationsQueueVariant.buttonAccent:
-                className = s.NotificationIconWrapper_icon__center;
-                break;
             case NotificationsQueueVariant.textOnly:
                 className = s.NotificationIconWrapper_icon__top;
                 break;

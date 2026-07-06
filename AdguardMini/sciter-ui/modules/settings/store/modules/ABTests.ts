@@ -23,6 +23,13 @@ export class ABTests {
     }
 
     /**
+     * Set the active A/B tests
+     */
+    private setTests(tests: ABTestsMap) {
+        this.tests = tests;
+    }
+
+    /**
      * Get the option for a specific A/B test
      */
     public getOption(test: ActiveABTest): ABTestOption | null {
@@ -63,6 +70,6 @@ export class ABTests {
             next.set(t.name, t.option);
         }
 
-        this.tests = next;
+        this.setTests(next);
     }
 }

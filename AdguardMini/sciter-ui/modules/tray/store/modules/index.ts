@@ -4,5 +4,5 @@
 
 export * from './TrayRouter';
 export * from './Settings';
-export * from './NotificationsQueue';
+export * from 'Common/stores/NotificationsQueue';
 export * from './TrayTelemetry';

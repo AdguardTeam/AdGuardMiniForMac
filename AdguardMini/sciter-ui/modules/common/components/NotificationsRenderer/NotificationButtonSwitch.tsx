@@ -2,23 +2,20 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { NotificationContext, NotificationsQueueVariant } from 'TrayStore/modules';
+import { NotificationContext, NotificationsQueueVariant } from 'Common/stores/NotificationsQueue';
 import { Button, Text } from 'UILib';
 
 import s from './NotificationsRenderer.module.pcss';
 
-import type { NotificationPropsHolder } from 'TrayLib/utils/NotificationPropsHolder';
+import type { NotificationPropertiesSelector } from 'Common/stores/NotificationsQueue';
+import type { NotificationPropsHolder } from 'Common/utils/NotificationPropsHolder';
 
 type Props = {
-    notification: NotificationPropsHolder;
+    notification: NotificationPropsHolder<NotificationPropertiesSelector>;
     onCloseNotification(): void;
 };
 
-const buttonPropsVariant = {
-    [NotificationsQueueVariant.buttonAccent]: {
-        type: 'outlined',
-        size: 'medium',
-    },
+const buttonProps = {
     [NotificationsQueueVariant.textOnly]: {
         type: 'text',
         size: 'regular',
@@ -29,7 +26,6 @@ const buttonPropsVariant = {
  * Switch for rendering right button component, based on notification context
  *
  * @param notification
- * @param platformType
  * @param onCloseNotification
  */
 export function NotificationButtonSwitch({
@@ -46,7 +42,7 @@ export function NotificationButtonSwitch({
             content = (
                 <Button
                     onClick={onClick}
-                    {...buttonPropsVariant[variant]}
+                    {...buttonProps[variant]}
                 >
                     <Text type="t1">{btnLabel}</Text>
                 </Button>

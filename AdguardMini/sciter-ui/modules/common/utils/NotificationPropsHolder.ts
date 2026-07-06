@@ -8,6 +8,8 @@
 export class NotificationPropsHolder<Props> {
     /**
      * Ctor
+     *
+     * @param props - notification properties
      */
     constructor(public readonly props: Props) {}
 }

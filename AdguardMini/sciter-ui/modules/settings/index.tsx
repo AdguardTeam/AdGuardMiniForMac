@@ -10,10 +10,9 @@ import { render } from 'preact';
 import 'SciterPolyfills';
 
 // Default css styles (reset, colors, dark/light)...
+import 'Common/api';
 import 'Modules/settings/lib/callbacks';
 import 'Theme/default';
-
-import '../common/api';
 
 import { App } from './components/App';
 

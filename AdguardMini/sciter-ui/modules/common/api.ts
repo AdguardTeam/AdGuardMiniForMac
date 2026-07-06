@@ -13,7 +13,6 @@ declare global {
         API: ApiServiceExecutor;
     }
 }
-
 window.API = new ApiServiceExecutor();
 
 window.xcallWrapper = xcall;

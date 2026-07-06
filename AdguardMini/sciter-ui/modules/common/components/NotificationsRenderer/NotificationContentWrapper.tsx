@@ -2,19 +2,21 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { cx } from 'classix';
 import { useEffect } from 'preact/hooks';
 
-import { NotificationsQueueVariant } from 'TrayStore/modules';
+import { NotificationsQueueVariant } from 'Common/stores/NotificationsQueue';
 
 import { NotificationButtonSwitch } from './NotificationButtonSwitch';
 import s from './NotificationsRenderer.module.pcss';
 
+import type { NotificationPropertiesSelector } from 'Common/stores/NotificationsQueue';
+import type { NotificationPropsHolder } from 'Common/utils/NotificationPropsHolder';
 import type { ComponentChild } from 'preact';
-import type { NotificationPropsHolder } from 'TrayLib/utils/NotificationPropsHolder';
 
 type Props = {
     message: ComponentChild;
-    notification: NotificationPropsHolder;
+    notification: NotificationPropsHolder<NotificationPropertiesSelector>;
     onCloseNotification(): void;
 };
 
@@ -32,20 +34,17 @@ export function NotificationContentWrapper({
 }: Props) {
     let className = '';
 
+    useEffect(() => {
+        notification.props.onMount?.();
+    }, [notification.props, notification.props.onMount]);
+
     if ('variant' in notification.props) {
         switch (notification.props.variant) {
-            case NotificationsQueueVariant.buttonAccent:
-                className = s.NotificationContentWrapper_content__horizontal;
-                break;
             case NotificationsQueueVariant.textOnly:
                 className = s.NotificationContentWrapper_content__vertical;
                 break;
         }
     }
-
-    useEffect(() => {
-        notification.props.onMount?.();
-    }, [notification.props]);
 
     return (
         <div className={cx(s.NotificationContentWrapper_content, className)}>
