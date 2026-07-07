@@ -48,6 +48,8 @@
 	<string>__KEY_ONLY</string>
 	<key>advancedExtensionState</key>
 	<string>__KEY_ONLY</string>
+	<key>mailExtensionState</key>
+	<string>__KEY_ONLY</string>
 	<key>feedbackEmail</key>
 	<string>__KEY_ONLY</string>
 	<key>rateUsNoCrashesDate</key>
@@ -68,5 +70,7 @@
 	<string>__KEY_ONLY</string>
 	<key>hiddenStories</key>
 	<array/>
+	<key>mailProtection</key>
+	<false/>
 </dict>
 </plist>

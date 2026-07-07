@@ -57,6 +57,7 @@ adguard-mini/
 │   │   │   ├── Settings/                 # User settings management
 │   │   │   ├── Telemetry/                # Telemetry event definitions
 │   │   │   ├── LoginItem/                # Launch-at-login management
+│   │   │   ├── Mail/                     # Mail Tracking Protection (generator, updater, seams)
 │   │   │   ├── UI/                       # Native UI elements (alerts, windows)
 │   │   │   └── Utils/                    # Utility classes
 │   │   ├── Resources/                    # Assets, plists, configs
@@ -74,6 +75,7 @@ adguard-mini/
 │   ├── SocialContentBlocker/             # Content blocker: social widgets
 │   ├── OtherContentBlocker/              # Content blocker: other annoyances
 │   ├── CustomContentBlocker/             # Content blocker: user custom rules
+│   ├── MailBlocker/                      # MailKit content blocker (Mail.app)
 │   ├── SharedSources/                    # Code shared across all targets
 │   │   ├── DI/                           # Shared DI containers
 │   │   ├── ContentBlockers/              # Content blocker shared logic
@@ -400,12 +402,16 @@ You MUST follow the following rules for EVERY task that you perform:
 
    **Rationale**: Centralized localization management.
 
-2. **Content Blockers**: There are 6 content blocker extensions (General,
-   Privacy, Security, Social, Other, Custom). Each has the same structure.
-   Rules are split across them due to Safari's per-extension rule limit.
+2. **Content Blockers**: There are 7 content blocker extensions. Six are
+   Safari content blockers (General, Privacy, Security, Social, Other,
+   Custom), each with the same structure, with rules split across them due to
+   Safari's per-extension rule limit. The seventh is `MailBlocker`, a MailKit
+   content blocker that serves WebKit Content Blocking JSON to Mail.app from
+   the shared App Group; it is not subject to the Safari rule-splitting.
 
    **Rationale**: Safari limits the number of rules per content blocker
-   extension; splitting across 6 extensions maximizes total capacity.
+   extension; splitting across 6 Safari extensions maximizes total capacity.
+   `MailBlocker` is a single MailKit extension with a separate rule source.
 
 3. **Concurrency (Swift)**: Use Swift Concurrency (async/await) with proper
    lifecycle management. Avoid uncontrolled `Task { }` without cancellation

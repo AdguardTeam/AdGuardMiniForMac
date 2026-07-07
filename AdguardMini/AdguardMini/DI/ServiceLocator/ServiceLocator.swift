@@ -44,6 +44,7 @@ extension ServiceLocator {
         (client as? SafariApiHandlerDependent)?.safariApiHandler = self.safariApiHandler
         (client as? LoginItemServiceDependent)?.loginItemService = self.loginItemService
         (client as? FiltersSupervisorDependent)?.filtersSupervisor = self.filtersSupervisor
+        (client as? MailFiltersUpdaterDependent)?.mailFiltersUpdater = self.mailFiltersUpdater
         (client as? SystemInfoManagerDependent)?.systemInfoManager = self.coreDIContainer.systemInfoManager
         (client as? ProtectionServiceDependent)?.protectionService = self.protectionService
         (client as? StatisticsServiceDependent)?.statisticsService = self.statisticsService
@@ -103,15 +104,23 @@ private final class ServiceLocator {
     }()
     #endif
 
+    private lazy var mailExtensionStateService: MailExtensionStateService = {
+        MailExtensionStateServiceImpl(
+            storage: MailExtensionStateStorageImpl()
+        )
+    }()
+
     private lazy var support: Support = SupportImpl(
         safariFiltersStorage: self.safariFiltersStorage,
+        filtersStorage: SharedDIContainer.shared.filtersStorage,
         filtersSupervisor: self.filtersSupervisor,
         supportService: self.supportService,
         productInfo: self.productInfoStorage,
         userSettings: self.userSettingsService,
         sharedSettings: SharedDIContainer.shared.sharedSettingsStorage,
         keychain: self.coreDIContainer.keychain,
-        safariExtensionStateService: self.safariExtensionStateService
+        safariExtensionStateService: self.safariExtensionStateService,
+        mailExtensionStateService: self.mailExtensionStateService
     )
 
     private lazy var groupFolderFileService: GroupFolderFileService = GroupFolderFileServiceImpl(
@@ -121,6 +130,25 @@ private final class ServiceLocator {
     private lazy var filtersConverter: FiltersConverter = FiltersConverterImpl(
         converter: self.coreDIContainer.contentBlockerConverter
     )
+
+    // `MailRulesetStorageAdapter` wraps the shared `FiltersStorage`.
+    // The writer path matches the log-export reader and `MailBlocker` reader.
+    private lazy var mailRulesetConverter: MailRulesetConverting = MailRulesetConverter(
+        converter: self.filtersConverter,
+        storage: MailRulesetStorageAdapter(storage: SharedDIContainer.shared.filtersStorage)
+    )
+
+    private lazy var mailRuleProvider: MailRuleProvider = MailRuleProviderImpl(
+        filterListManager: self.filterListManager
+    )
+
+    private lazy var mailPremiumStatusProvider: MailPremiumStatusProvider = MailPremiumStatusProviderImpl(
+        keychain: self.coreDIContainer.keychain
+    )
+
+    private lazy var mailExtensionReloader: MailExtensionReloader = MailExtensionReloaderImpl()
+
+    private lazy var mailFiltersUpdater: MailFiltersUpdater = MailFiltersUpdaterNoOp()
     private lazy var filtersUpdateModeProvider: FiltersUpdateModeProvider = {
         FiltersUpdateModeProviderImpl(
             storage: self.userSettingsManager,
@@ -325,7 +353,8 @@ private final class ServiceLocator {
             filtersUpdateService: self.filtersUpdateService,
             filtersManager: self.filterListManager,
             userSettingsService: self.userSettingsService,
-            eventBus: self.eventBus
+            eventBus: self.eventBus,
+            mailFiltersUpdater: self.mailFiltersUpdater
         )
     }()
 
@@ -333,7 +362,8 @@ private final class ServiceLocator {
         AppSettingUpdateHandlerImpl(
             appLifecycle: self.appLifecycleService,
             safariPopupApi: self.safariPopupApiClient,
-            updateService: self.filtersUpdateService
+            updateService: self.filtersUpdateService,
+            mailFiltersUpdater: self.mailFiltersUpdater
         )
     }()
 
@@ -343,7 +373,8 @@ private final class ServiceLocator {
             userSettingsManager: self.userSettingsManager,
             appSettingUpdateHandler: self.appSettingUpdateHandler,
             sharedSettingsStorage: SharedDIContainer.shared.sharedSettingsStorage,
-            eventBus: self.eventBus
+            eventBus: self.eventBus,
+            mailFiltersUpdater: self.mailFiltersUpdater
         )
     }()
 

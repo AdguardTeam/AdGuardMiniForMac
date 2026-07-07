@@ -11,7 +11,7 @@ import Foundation
 
 // MARK: - UserSettingsManager protocol
 
-protocol UserSettingsManager: UserSettingsProtocol {
+protocol UserSettingsManager: UserSettingsProtocol, MailProtectionStatusProvider {
     var quitReaction: QuitReaction { get set }
     var theme: Theme { get set }
     var currentUpdateChannel: String { get set }

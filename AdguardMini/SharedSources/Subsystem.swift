@@ -17,6 +17,8 @@ enum Subsystem: CaseIterable {
     case safariPopup
     /// Helper subsystem name.
     case helper
+    /// Mail content blocker subsystem name.
+    case mailBlocker
 
     var name: String {
         switch self {
@@ -26,6 +28,8 @@ enum Subsystem: CaseIterable {
             BuildConfig.AG_POPUP_EXTENSION_BUNDLEID
         case .helper:
             BuildConfig.AG_HELPER_ID
+        case .mailBlocker:
+            BuildConfig.AG_MAIL_EXTENSION_BUNDLEID
         }
     }
 

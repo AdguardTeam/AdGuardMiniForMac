@@ -77,6 +77,8 @@ service SettingsService {
     rpc UpdateUserRulesEditorGeometry(WindowGeometry) returns (EmptyValue);
     /* Updates Safari toolbar badge visibility */
     rpc UpdateShowSafariToolbarBadge(BoolValue) returns (EmptyValue);
+    /* Updates Mail Protection toggle */
+    rpc UpdateMailProtection(BoolValue) returns (EmptyValue);
     /* Get dismissed Safari Protection health check cards */
     rpc GetHealthCheckDismissedCards(EmptyValue) returns (StringValueArray);
     /* Update dismissed Safari Protection health check cards */

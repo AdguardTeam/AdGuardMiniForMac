@@ -19,4 +19,5 @@ struct SettingsDTO: Codable, Equatable {
     let quitReaction: QuitReaction
     let theme: Theme
     let showSafariToolbarBadge: Bool
+    let mailProtection: Bool
 }

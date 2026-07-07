@@ -26,6 +26,7 @@ extension Settings {
         allowTelemetry: Bool = false,
         showSafariToolbarBadge: Bool = false,
         lastUpdateMoreSevenDays: Bool = false,
+        mailProtectionEnabled: Bool = false,
     ) {
         self.init()
         self.launchOnStartup = launchOnStartup
@@ -42,5 +43,6 @@ extension Settings {
         self.allowTelemetry = allowTelemetry
         self.showSafariToolbarBadge = showSafariToolbarBadge
         self.lastUpdateMoreSevenDays = lastUpdateMoreSevenDays
+        self.mailProtectionEnabled = mailProtectionEnabled
     }
 }

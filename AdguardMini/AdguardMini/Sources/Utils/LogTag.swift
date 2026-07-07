@@ -10,4 +10,5 @@
 enum LogTag {
     static let safari = "[Safari]"
     static let flm = "[FLM]"
+    static let mail = "[Mail]"
 }

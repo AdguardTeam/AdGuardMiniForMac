@@ -32,6 +32,7 @@ protocol AppSettingUpdateHandler: TrayIconUpdatesHandler {
     func handleHardwareAccelerationUpdates(_ old: Bool, _ new: Bool)
     func handleShowInMenuUpdates(_ old: Bool, _ new: Bool)
     func handleThemeUpdates(_ old: Theme, _ new: Theme)
+    func handleMailProtectionUpdates(_ old: Bool, _ new: Bool)
 }
 
 // MARK: - UserSettingUpdateHandlerImpl
@@ -40,17 +41,20 @@ final class AppSettingUpdateHandlerImpl {
     private let appLifecycle: AppLifecycleService
     private let safariPopupApi: SafariPopupApi
     private let updateService: FiltersUpdateService
+    private let mailFiltersUpdater: MailFiltersUpdater
 
     weak var trayChangesDelegate: TrayChangesDelegate?
 
     init(
         appLifecycle: AppLifecycleService,
         safariPopupApi: SafariPopupApi,
-        updateService: FiltersUpdateService
+        updateService: FiltersUpdateService,
+        mailFiltersUpdater: MailFiltersUpdater
     ) {
         self.appLifecycle = appLifecycle
         self.safariPopupApi = safariPopupApi
         self.updateService = updateService
+        self.mailFiltersUpdater = mailFiltersUpdater
     }
 }
 
@@ -66,6 +70,7 @@ extension AppSettingUpdateHandlerImpl: AppSettingUpdateHandler {
 
         self.handleDebugLoggingUpdates(old.debugLogging, new.debugLogging)
         self.handleHardwareAccelerationUpdates(old.hardwareAcceleration, new.hardwareAcceleration)
+        self.handleMailProtectionUpdates(old.mailProtection, new.mailProtection)
     }
 
     func handleAutoFiltersUpdateUpdates(_ old: Bool, _ new: Bool) {
@@ -109,5 +114,10 @@ extension AppSettingUpdateHandlerImpl: AppSettingUpdateHandler {
         Task {
             await NSApplication.shared.setTheme(new)
         }
+    }
+
+    func handleMailProtectionUpdates(_ old: Bool, _ new: Bool) {
+        guard old != new else { return }
+        self.mailFiltersUpdater.updateMailFilters()
     }
 }

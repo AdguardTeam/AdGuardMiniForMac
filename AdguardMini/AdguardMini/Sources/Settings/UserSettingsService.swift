@@ -34,6 +34,7 @@ protocol UserSettingsService: AnyObject {
     var realTimeFiltersUpdate: Bool { get }
     var settings: SettingsDTO { get }
     var theme: Theme { get }
+    var mailProtection: Bool { get }
 
     func setAutoFiltersUpdate(_ value: Bool)
     func setRealTimeFiltersUpdate(_ value: Bool)
@@ -42,6 +43,7 @@ protocol UserSettingsService: AnyObject {
     func setLaunchOnStartup(_ value: Bool)
     func setShowInMenuBar(_ value: Bool)
     func setTheme(_ theme: Theme)
+    func setMailProtection(_ value: Bool)
 
     @discardableResult
     func updateSettings(newSettings: SettingsDTO) -> SettingsDTO
@@ -56,6 +58,7 @@ final class UserSettingsServiceImpl {
     private let appSettingUpdateHandler: AppSettingUpdateHandler
     private let sharedSettingsStorage: SharedSettingsStorage
     private let eventBus: EventBus
+    private let mailFiltersUpdater: MailFiltersUpdater
 
     @UserDefault(key: .lastFiltersUpdateTime, defaultValue: Date.distantPast)
     var lastFiltersUpdateTime: Date
@@ -74,13 +77,15 @@ final class UserSettingsServiceImpl {
         userSettingsManager: UserSettingsManager,
         appSettingUpdateHandler: AppSettingUpdateHandler,
         sharedSettingsStorage: SharedSettingsStorage,
-        eventBus: EventBus
+        eventBus: EventBus,
+        mailFiltersUpdater: MailFiltersUpdater
     ) {
         self.keychain = keychain
         self.userSettingsManager = userSettingsManager
         self.appSettingUpdateHandler = appSettingUpdateHandler
         self.sharedSettingsStorage = sharedSettingsStorage
         self.eventBus = eventBus
+        self.mailFiltersUpdater = mailFiltersUpdater
 
         self.setup()
 
@@ -190,6 +195,10 @@ extension UserSettingsServiceImpl: UserSettingsService {
         self.userSettingsManager.theme
     }
 
+    var mailProtection: Bool {
+        self.userSettingsManager.mailProtection
+    }
+
     var settings: SettingsDTO {
         get {
             SettingsDTO(
@@ -201,13 +210,15 @@ extension UserSettingsServiceImpl: UserSettingsService {
                 showInMenuBar:          self.userSettingsManager.showInMenuBar,
                 quitReaction:           self.userSettingsManager.quitReaction,
                 theme:                  self.theme,
-                showSafariToolbarBadge: self.showSafariToolbarBadge
+                showSafariToolbarBadge: self.showSafariToolbarBadge,
+                mailProtection:         self.mailProtection
             )
         }
         set(obj) {
             self.setAutoFiltersUpdate(obj.autoFiltersUpdate)
             self.setRealTimeFiltersUpdate(obj.realTimeFiltersUpdate)
             self.setTheme(obj.theme)
+            self.setMailProtection(obj.mailProtection)
 
             self.keychain.debugLogging = obj.debugLogging
             self.userSettingsManager.hardwareAcceleration = obj.hardwareAcceleration
@@ -243,6 +254,11 @@ extension UserSettingsServiceImpl: UserSettingsService {
     }
 
     @objc func handlePaidStatusChange(notification: Notification) {
+        // Regenerate the mail ruleset on EVERY Premium status change.
+        // Every exit path is covered, including the nil-license fallback path.
+        // `defer` ensures the updater fires on all exits.
+        defer { self.mailFiltersUpdater.updateMailFilters() }
+
         let license: AppStatusInfo? = self.eventBus.parseNotification(notification)
 
         guard let license else {
@@ -278,6 +294,12 @@ extension UserSettingsServiceImpl: UserSettingsService {
         let oldValue = self.userSettingsManager.showInMenuBar
         self.userSettingsManager.showInMenuBar = value
         self.appSettingUpdateHandler.handleShowInMenuUpdates(oldValue, value)
+    }
+
+    func setMailProtection(_ value: Bool) {
+        let oldValue = self.userSettingsManager.mailProtection
+        self.userSettingsManager.mailProtection = value
+        self.appSettingUpdateHandler.handleMailProtectionUpdates(oldValue, value)
     }
 
     func updateSettings(newSettings: SettingsDTO) -> SettingsDTO {

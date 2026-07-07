@@ -28,6 +28,7 @@ message Settings {
     optional WindowGeometry user_rules_editor_geometry = 13;
     bool show_safari_toolbar_badge = 14;
     bool last_update_more_seven_days = 15;
+    bool mail_protection_enabled = 16;
 }
 
 message UserConsent {
@@ -98,6 +99,15 @@ message SafariExtension {
     bool is_considered_enabled = 7;
 }
 
+message MailExtension {
+    string id = 1;
+    int32 rules_enabled = 2;
+    int32 rules_total = 3;
+    MailExtensionStatus status = 4;
+    optional string mail_error = 6;
+    bool is_considered_enabled = 7;
+}
+
 message SafariExtensionUpdate {
     SafariExtensionType type = 1;
     SafariExtension state = 2;
@@ -121,6 +131,15 @@ enum SafariExtensionStatus {
     SafariExtensionStatus_limit_exceeded = 4;
     SafariExtensionStatus_converter_error = 5;
     SafariExtensionStatus_safari_error = 6;
+}
+
+enum MailExtensionStatus {
+    MailExtensionStatus_unknown = 0;
+    MailExtensionStatus_ok = 1;
+    MailExtensionStatus_loading = 2;
+    MailExtensionStatus_limit_exceeded = 3;
+    MailExtensionStatus_converter_error = 4;
+    MailExtensionStatus_write_error = 5;
 }
 
 message UpdateThemeMessage {

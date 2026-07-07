@@ -41,7 +41,8 @@ extension SettingsDTO {
             language:               language,
             allowTelemetry:         allowTelemetry,
             showSafariToolbarBadge: self.showSafariToolbarBadge,
-            lastUpdateMoreSevenDays: lastUpdateMoreSevenDays
+            lastUpdateMoreSevenDays: lastUpdateMoreSevenDays,
+            mailProtectionEnabled: self.mailProtection
         )
     }
 }

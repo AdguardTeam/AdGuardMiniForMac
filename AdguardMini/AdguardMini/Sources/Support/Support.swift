@@ -75,6 +75,7 @@ protocol ReportSiteProtocol {
 /// Aggregates all interaction with user support.
 final class SupportImpl {
     private let safariFiltersStorage: SafariFiltersStorage
+    private let filtersStorage: FiltersStorage
     private let filtersSupervisor: FiltersSupervisor
     private let supportService: SupportService
     private let productInfo: ProductInfoStorage
@@ -82,18 +83,22 @@ final class SupportImpl {
     private let sharedSettings: SharedSettingsStorage
     private let keychain: KeychainManager
     private let safariExtensionStateService: SafariExtensionStateService
+    private let mailExtensionStateService: MailExtensionStateService
 
     init(
         safariFiltersStorage: SafariFiltersStorage,
+        filtersStorage: FiltersStorage,
         filtersSupervisor: FiltersSupervisor,
         supportService: SupportService,
         productInfo: ProductInfoStorage,
         userSettings: UserSettingsService,
         sharedSettings: SharedSettingsStorage,
         keychain: KeychainManager,
-        safariExtensionStateService: SafariExtensionStateService
+        safariExtensionStateService: SafariExtensionStateService,
+        mailExtensionStateService: MailExtensionStateService
     ) {
         self.safariFiltersStorage = safariFiltersStorage
+        self.filtersStorage = filtersStorage
         self.filtersSupervisor = filtersSupervisor
         self.supportService = supportService
         self.productInfo = productInfo
@@ -101,6 +106,7 @@ final class SupportImpl {
         self.sharedSettings = sharedSettings
         self.keychain = keychain
         self.safariExtensionStateService = safariExtensionStateService
+        self.mailExtensionStateService = mailExtensionStateService
     }
 
     private func createAdditionalFilesDict(state: String?) async -> [String: Any] {
@@ -113,6 +119,17 @@ final class SupportImpl {
                 LogWarn("Rules file for \(type) not found")
             }
         }
+
+        // Include the mail ruleset JSON in the log archive.
+        if await self.filtersStorage.isFileExists(relativePath: MailRulesFileName.contentRules,
+                                                  fileExtension: MailRulesFileName.fileExtension) {
+            let url = self.filtersStorage.buildUrl(relativePath: MailRulesFileName.contentRules,
+                                                  with: MailRulesFileName.fileExtension)
+            dict[url.lastPathComponent] = url
+        } else {
+            LogWarn("\(LogTag.mail) Ruleset file not found for log export")
+        }
+
         if let state {
             dict[Constants.stateFilename] = state
         }
@@ -212,23 +229,25 @@ final class SupportImpl {
 
     private func getSafariExtensionsSection() async -> String {
         let extensionsStates = await self.safariExtensionStateService.getAllExtensionsStatus()
+//        let mailState = await self.mailExtensionStateService.getState()
 
-        let allStates: [(String, CurrentExtensionState)] = [
-            ("General", extensionsStates.general),
-            ("Privacy", extensionsStates.privacy),
-            ("Security", extensionsStates.security),
-            ("Social", extensionsStates.social),
-            ("Other", extensionsStates.other),
-            ("Custom", extensionsStates.custom),
-            ("Advanced", extensionsStates.advanced)
+        let allStates: [(String, String)] = [
+            ("General", "\(extensionsStates.general.status)"),
+            ("Privacy", "\(extensionsStates.privacy.status)"),
+            ("Security", "\(extensionsStates.security.status)"),
+            ("Social", "\(extensionsStates.social.status)"),
+            ("Other", "\(extensionsStates.other.status)"),
+            ("Custom", "\(extensionsStates.custom.status)"),
+            ("Advanced", "\(extensionsStates.advanced.status)")
+            // ("Mail", "\(mailState.status)")
         ]
 
         let statusLines = allStates
-            .map { "    \($0.0): \($0.1.status)" }
+            .map { "    \($0.0): \($0.1)" }
             .joined(separator: "\n")
 
         return """
-        Safari Extensions:
+        Extensions:
         \(statusLines)
         """
     }

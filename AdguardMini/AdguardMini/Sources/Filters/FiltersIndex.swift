@@ -53,6 +53,9 @@ struct FilterTagWithLang {
 
 enum AdGuardAdditionalFilterId {
     static let unblockSearchAdsFilterId: Int = 10
+
+    /// Id of AdGuard Mail Tracking Protection filter.
+    static let mailTrackingProtection: Int = 25
 }
 
 private enum Constants {

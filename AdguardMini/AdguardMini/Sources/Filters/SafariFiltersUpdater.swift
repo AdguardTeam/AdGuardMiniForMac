@@ -80,7 +80,6 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
         }
     }
 
-    @objc
     func updateSafariFilters() {
         locked(self.lk) {
             guard self.isStarted

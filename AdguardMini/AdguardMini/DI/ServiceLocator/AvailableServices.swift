@@ -8,6 +8,7 @@
 //
 
 protocol SupportDependent:         ServiceDependent { var support:         Support! { get set } }
+protocol EventBusDependent:        ServiceDependent { var eventBus:        EventBus! { get set } }
 protocol AppUpdaterDependent:      ServiceDependent { var appUpdater:      AppUpdater! { get set } }
 protocol AppMetadataDependent:     ServiceDependent { var appMetadata:     AppMetadata! { get set } }
 protocol SentryHelperDependent:    ServiceDependent { var sentryHelper:    SentryHelper! { get set } }
@@ -24,6 +25,7 @@ protocol SystemInfoManagerDependent: ServiceDependent { var systemInfoManager: S
 protocol ProtectionServiceDependent: ServiceDependent { var protectionService: ProtectionService! { get set } }
 protocol StatisticsServiceDependent: ServiceDependent { var statisticsService: StatisticsService! { get set } }
 
+protocol MailFiltersUpdaterDependent: ServiceDependent { var mailFiltersUpdater: MailFiltersUpdater! { get set } }
 protocol AppLifecycleServiceDependent: ServiceDependent { var appLifecycleService: AppLifecycleService! { get set } }
 protocol ImportExportServiceDependent: ServiceDependent { var importExportService: ImportExportService! { get set } }
 protocol SciterAppControllerDependent: ServiceDependent { var sciterAppController: SciterAppsController! { get set } }
@@ -34,8 +36,6 @@ protocol LicenseStateProviderDependent: ServiceDependent { var licenseStateProvi
 protocol AppActivationObserverDependent:  ServiceDependent {
     var appActivationObserver: AppActivationObserver! { get set }
 }
-
-protocol EventBusDependent: ServiceDependent { var eventBus: EventBus! { get set } }
 
 protocol SciterCallbackServiceDependent:  ServiceDependent {
     var sciterCallbackService: SciterCallbackService! { get set }

@@ -250,6 +250,56 @@ public enum SafariExtensionStatus: SwiftProtobuf.Enum, Swift.CaseIterable {
 
 }
 
+public enum MailExtensionStatus: SwiftProtobuf.Enum, Swift.CaseIterable {
+  public typealias RawValue = Int
+  case unknown // = 0
+  case ok // = 1
+  case loading // = 2
+  case limitExceeded // = 3
+  case converterError // = 4
+  case writeError // = 5
+  case UNRECOGNIZED(Int)
+
+  public init() {
+    self = .unknown
+  }
+
+  public init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .unknown
+    case 1: self = .ok
+    case 2: self = .loading
+    case 3: self = .limitExceeded
+    case 4: self = .converterError
+    case 5: self = .writeError
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  public var rawValue: Int {
+    switch self {
+    case .unknown: return 0
+    case .ok: return 1
+    case .loading: return 2
+    case .limitExceeded: return 3
+    case .converterError: return 4
+    case .writeError: return 5
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static let allCases: [MailExtensionStatus] = [
+    .unknown,
+    .ok,
+    .loading,
+    .limitExceeded,
+    .converterError,
+    .writeError,
+  ]
+
+}
+
 public enum Theme: SwiftProtobuf.Enum, Swift.CaseIterable {
   public typealias RawValue = Int
   case unknown // = 0
@@ -396,6 +446,11 @@ public struct Settings: @unchecked Sendable {
   public var lastUpdateMoreSevenDays: Bool {
     get {return _storage._lastUpdateMoreSevenDays}
     set {_uniqueStorage()._lastUpdateMoreSevenDays = newValue}
+  }
+
+  public var mailProtectionEnabled: Bool {
+    get {return _storage._mailProtectionEnabled}
+    set {_uniqueStorage()._mailProtectionEnabled = newValue}
   }
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -589,6 +644,37 @@ public struct SafariExtension: Sendable {
   fileprivate var _safariError: String? = nil
 }
 
+public struct MailExtension: Sendable {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var id: String = String()
+
+  public var rulesEnabled: Int32 = 0
+
+  public var rulesTotal: Int32 = 0
+
+  public var status: MailExtensionStatus = .unknown
+
+  public var mailError: String {
+    get {return _mailError ?? String()}
+    set {_mailError = newValue}
+  }
+  /// Returns true if `mailError` has been explicitly set.
+  public var hasMailError: Bool {return self._mailError != nil}
+  /// Clears the value of `mailError`. Subsequent reads from it will return its default value.
+  public mutating func clearMailError() {self._mailError = nil}
+
+  public var isConsideredEnabled: Bool = false
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _mailError: String? = nil
+}
+
 public struct SafariExtensionUpdate: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -644,6 +730,10 @@ extension SafariExtensionType: SwiftProtobuf._ProtoNameProviding {
 
 extension SafariExtensionStatus: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0SafariExtensionStatus_unknown\0\u{1}SafariExtensionStatus_ok\0\u{1}SafariExtensionStatus_loading\0\u{1}SafariExtensionStatus_disabled\0\u{1}SafariExtensionStatus_limit_exceeded\0\u{1}SafariExtensionStatus_converter_error\0\u{1}SafariExtensionStatus_safari_error\0")
+}
+
+extension MailExtensionStatus: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0MailExtensionStatus_unknown\0\u{1}MailExtensionStatus_ok\0\u{1}MailExtensionStatus_loading\0\u{1}MailExtensionStatus_limit_exceeded\0\u{1}MailExtensionStatus_converter_error\0\u{1}MailExtensionStatus_write_error\0")
 }
 
 extension Theme: SwiftProtobuf._ProtoNameProviding {
@@ -702,7 +792,7 @@ extension WindowGeometry: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
 
 extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "Settings"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{3}real_time_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0\u{3}user_rules_editor_geometry\0\u{3}show_safari_toolbar_badge\0\u{3}last_update_more_seven_days\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{3}real_time_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0\u{3}user_rules_editor_geometry\0\u{3}show_safari_toolbar_badge\0\u{3}last_update_more_seven_days\0\u{3}mail_protection_enabled\0")
 
   fileprivate class _StorageClass {
     var _launchOnStartup: Bool = false
@@ -720,6 +810,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     var _userRulesEditorGeometry: WindowGeometry? = nil
     var _showSafariToolbarBadge: Bool = false
     var _lastUpdateMoreSevenDays: Bool = false
+    var _mailProtectionEnabled: Bool = false
 
       // This property is used as the initial default value for new instances of the type.
       // The type itself is protecting the reference to its storage via CoW semantics.
@@ -745,6 +836,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       _userRulesEditorGeometry = source._userRulesEditorGeometry
       _showSafariToolbarBadge = source._showSafariToolbarBadge
       _lastUpdateMoreSevenDays = source._lastUpdateMoreSevenDays
+      _mailProtectionEnabled = source._mailProtectionEnabled
     }
   }
 
@@ -778,6 +870,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         case 13: try { try decoder.decodeSingularMessageField(value: &_storage._userRulesEditorGeometry) }()
         case 14: try { try decoder.decodeSingularBoolField(value: &_storage._showSafariToolbarBadge) }()
         case 15: try { try decoder.decodeSingularBoolField(value: &_storage._lastUpdateMoreSevenDays) }()
+        case 16: try { try decoder.decodeSingularBoolField(value: &_storage._mailProtectionEnabled) }()
         default: break
         }
       }
@@ -835,6 +928,9 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       if _storage._lastUpdateMoreSevenDays != false {
         try visitor.visitSingularBoolField(value: _storage._lastUpdateMoreSevenDays, fieldNumber: 15)
       }
+      if _storage._mailProtectionEnabled != false {
+        try visitor.visitSingularBoolField(value: _storage._mailProtectionEnabled, fieldNumber: 16)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -859,6 +955,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         if _storage._userRulesEditorGeometry != rhs_storage._userRulesEditorGeometry {return false}
         if _storage._showSafariToolbarBadge != rhs_storage._showSafariToolbarBadge {return false}
         if _storage._lastUpdateMoreSevenDays != rhs_storage._lastUpdateMoreSevenDays {return false}
+        if _storage._mailProtectionEnabled != rhs_storage._mailProtectionEnabled {return false}
         return true
       }
       if !storagesAreEqual {return false}
@@ -1228,6 +1325,65 @@ extension SafariExtension: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     if lhs.rulesTotal != rhs.rulesTotal {return false}
     if lhs.status != rhs.status {return false}
     if lhs._safariError != rhs._safariError {return false}
+    if lhs.isConsideredEnabled != rhs.isConsideredEnabled {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension MailExtension: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "MailExtension"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}id\0\u{3}rules_enabled\0\u{3}rules_total\0\u{1}status\0\u{4}\u{2}mail_error\0\u{3}is_considered_enabled\0")
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
+      case 2: try { try decoder.decodeSingularInt32Field(value: &self.rulesEnabled) }()
+      case 3: try { try decoder.decodeSingularInt32Field(value: &self.rulesTotal) }()
+      case 4: try { try decoder.decodeSingularEnumField(value: &self.status) }()
+      case 6: try { try decoder.decodeSingularStringField(value: &self._mailError) }()
+      case 7: try { try decoder.decodeSingularBoolField(value: &self.isConsideredEnabled) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if !self.id.isEmpty {
+      try visitor.visitSingularStringField(value: self.id, fieldNumber: 1)
+    }
+    if self.rulesEnabled != 0 {
+      try visitor.visitSingularInt32Field(value: self.rulesEnabled, fieldNumber: 2)
+    }
+    if self.rulesTotal != 0 {
+      try visitor.visitSingularInt32Field(value: self.rulesTotal, fieldNumber: 3)
+    }
+    if self.status != .unknown {
+      try visitor.visitSingularEnumField(value: self.status, fieldNumber: 4)
+    }
+    try { if let v = self._mailError {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 6)
+    } }()
+    if self.isConsideredEnabled != false {
+      try visitor.visitSingularBoolField(value: self.isConsideredEnabled, fieldNumber: 7)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: MailExtension, rhs: MailExtension) -> Bool {
+    if lhs.id != rhs.id {return false}
+    if lhs.rulesEnabled != rhs.rulesEnabled {return false}
+    if lhs.rulesTotal != rhs.rulesTotal {return false}
+    if lhs.status != rhs.status {return false}
+    if lhs._mailError != rhs._mailError {return false}
     if lhs.isConsideredEnabled != rhs.isConsideredEnabled {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true

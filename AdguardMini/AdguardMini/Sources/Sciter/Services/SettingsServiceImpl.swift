@@ -40,7 +40,8 @@ extension Sciter.SettingsServiceImpl:
     StatisticsServiceDependent,
     SciterAppControllerDependent,
     AppLifecycleServiceDependent,
-    AppMetadataDependent {}
+    AppMetadataDependent,
+    MailFiltersUpdaterDependent {}
 
 extension Sciter {
     final class SettingsServiceImpl: SettingsService.ServiceType {
@@ -58,6 +59,7 @@ extension Sciter {
         var sciterAppController: SciterAppsController!
         var appLifecycleService: AppLifecycleService!
         var appMetadata: AppMetadata!
+        var mailFiltersUpdater: MailFiltersUpdater!
 
         override init() {
             super.init()
@@ -134,6 +136,12 @@ extension Sciter {
         func updateShowSafariToolbarBadge(_ message: BoolValue,
                                           _ promise: @escaping (EmptyValue) -> Void) {
             self.userSettingsService.showSafariToolbarBadge = message.value
+            promise(EmptyValue())
+        }
+
+        func updateMailProtection(_ message: BoolValue,
+                                  _ promise: @escaping (EmptyValue) -> Void) {
+            self.userSettingsService.setMailProtection(message.value)
             promise(EmptyValue())
         }
 

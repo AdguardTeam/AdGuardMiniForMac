@@ -110,6 +110,7 @@ protocol FiltersSupervisor: RestartableService, FlmApi.All {
 final class FiltersSupervisorImpl: RestartableServiceBase {
     private let safariFiltersStorage: SafariFiltersStorage
     private let safariFiltersUpdater: SafariFiltersUpdater
+    private let mailFiltersUpdater: MailFiltersUpdater
     private let filtersUpdateService: FiltersUpdateService
     private let filtersManager: FLMProtocol
     private let userSettingsService: UserSettingsService
@@ -129,7 +130,8 @@ final class FiltersSupervisorImpl: RestartableServiceBase {
         filtersUpdateService: FiltersUpdateService,
         filtersManager: FLMProtocol,
         userSettingsService: UserSettingsService,
-        eventBus: EventBus
+        eventBus: EventBus,
+        mailFiltersUpdater: MailFiltersUpdater
     ) {
         self.safariFiltersStorage = safariFiltersStorage
         self.safariFiltersUpdater = safariFiltersUpdater
@@ -137,6 +139,7 @@ final class FiltersSupervisorImpl: RestartableServiceBase {
         self.filtersManager = filtersManager
         self.userSettingsService = userSettingsService
         self.eventBus = eventBus
+        self.mailFiltersUpdater = mailFiltersUpdater
 
         self.filtersSpecialIds = filtersManager.constants
 
@@ -155,6 +158,7 @@ final class FiltersSupervisorImpl: RestartableServiceBase {
                 self.safariFiltersUpdater.updateSafariFilters()
             }
             self.safariFiltersUpdater.start()
+            self.mailFiltersUpdater.start()
             self.filtersUpdateService.start()
             self.filtersUpdateService.rescheduleTimer()
         }
@@ -164,6 +168,7 @@ final class FiltersSupervisorImpl: RestartableServiceBase {
         super.stop()
 
         self.safariFiltersUpdater.stop()
+        self.mailFiltersUpdater.stop()
         self.filtersUpdateService.stop()
     }
 
@@ -190,20 +195,39 @@ final class FiltersSupervisorImpl: RestartableServiceBase {
         self.filtersManager.setFilters(filterIdsToEnable, enabled: true)
     }
 
+    /// Installs index filters that are not yet installed.
+    /// New filters appear in the index after a metadata pull but are not
+    /// installed by default, which would hide them from the UI.
+    /// - Returns: Full filter list on first install, empty array otherwise.
+    @discardableResult
     private func installIndexFilters() -> [FilterInfo] {
         let finfos = self.filtersManager.getAllFilters()
-        guard finfos.first(where: { $0.isInstalled }).isNil
-        else { return [] }
+        let isFirstInstall = finfos.first { $0.isInstalled }.isNil
 
-        let filterIdsToInstall = finfos.map(\.filterId)
-        self.filtersManager.setIndexFilters(filterIdsToInstall, installed: true)
+        // Custom filters have their own installation lifecycle and are skipped.
+        let filterIdsToInstall = finfos
+            .filter { !$0.isCustom && !$0.isInstalled }
+            .map(\.filterId)
 
-        return finfos
+        if !filterIdsToInstall.isEmpty {
+            LogInfo("\(LogTag.flm) Installing index filters: \(filterIdsToInstall)")
+            self.filtersManager.setIndexFilters(filterIdsToInstall, installed: true)
+        }
+
+        return isFirstInstall ? finfos : []
     }
 
-    private func updateSafariFiltersOnSuccess(_ isSuccess: Bool = true) {
+    private func updateContentBlockersOnSuccess(
+        _ isSuccess: Bool = true,
+        affectsMail: Bool = false
+    ) {
         if isSuccess {
             self.safariFiltersUpdater.updateSafariFilters()
+        }
+        // `affectsMail` defaults to `false`. Only user-rules callers pass
+        // `affectsMail: true`. Filter toggles use the filter-25 decision.
+        if isSuccess, affectsMail {
+            self.mailFiltersUpdater.updateMailFilters()
         }
     }
 
@@ -318,14 +342,17 @@ extension FiltersSupervisorImpl: FlmApi.Interact {
                     )
                 }
             }
-            self.updateSafariFiltersOnSuccess()
+            self.updateContentBlockersOnSuccess(
+                true,
+                affectsMail: MailRegenerationDecision.includesMailFilter(filterIds)
+            )
         }
     }
 
     func updateCustomFilterMetadata(_ filterId: Int, title: String, trusted: Bool) async {
         await self.flmCall("updateCustomFilterMetadata(\(filterId))") {
             self.filtersManager.updateCustomFilterMetadata(filterId, title: title, trusted: trusted)
-            self.updateSafariFiltersOnSuccess()
+            self.updateContentBlockersOnSuccess()
         }
     }
 
@@ -334,7 +361,7 @@ extension FiltersSupervisorImpl: FlmApi.Interact {
             if !self.filtersManager.removeCustomFilters(filterIds) {
                 throw FiltersSupervisorError.cantRemoveCustomFilter
             }
-            self.updateSafariFiltersOnSuccess()
+            self.updateContentBlockersOnSuccess()
         }
     }
 
@@ -355,7 +382,7 @@ extension FiltersSupervisorImpl: FlmApi.Interact {
         if filterId == FLM.constants.invalidFilterId {
             throw FiltersSupervisorError.cantInstallFilter
         }
-        self.updateSafariFiltersOnSuccess()
+        self.updateContentBlockersOnSuccess()
     }
 
     func installCustomFilter(_ filter: CustomFilterDTO) async -> Int {
@@ -369,7 +396,7 @@ extension FiltersSupervisorImpl: FlmApi.Interact {
                 title: filter.customTitle,
                 description: filter.customDescription
             )
-            self.updateSafariFiltersOnSuccess(result > 0)
+            self.updateContentBlockersOnSuccess(result > 0)
             return result
         }
     }
@@ -383,7 +410,7 @@ extension FiltersSupervisorImpl: FlmApi.Interact {
     func switchLanguageSpecific(_ state: Bool) async {
         await self.flmCall("switchLanguageSpecific(\(state))") {
             self.userSettingsService.languageSpecific = state
-            self.updateSafariFiltersOnSuccess()
+            self.updateContentBlockersOnSuccess()
         }
     }
 }
@@ -485,21 +512,21 @@ extension FiltersSupervisorImpl: FlmApi.UserRules {
     func saveUserRules(_ rules: [FilterRule]) async {
         await self.flmCall("saveUserRules(rules: [\(rules.count) items])") {
             self.filtersManager.saveUserRules(rules)
-            self.updateSafariFiltersOnSuccess()
+            self.updateContentBlockersOnSuccess(affectsMail: true)  // user rules affect mail
         }
     }
 
     func saveUserRules(_ rules: String) async {
         await self.flmCall("saveUserRules(string)") {
             self.filtersManager.saveUserRules(rules)
-            self.updateSafariFiltersOnSuccess()
+            self.updateContentBlockersOnSuccess(affectsMail: true)
         }
     }
 
     func addUserRule(_ newRuleText: String) async -> Bool {
         await self.flmCall {
             let result = self.filtersManager.addUserRule(newRuleText, toBeggining: true)
-            self.updateSafariFiltersOnSuccess(result)
+            self.updateContentBlockersOnSuccess(result, affectsMail: true)
             return result
         }
     }
@@ -507,7 +534,7 @@ extension FiltersSupervisorImpl: FlmApi.UserRules {
     func removeUserRules(_ option: UserRulesRemoveOption) async -> Bool {
         await self.flmCall("removeUserRules(\(option))") {
             let result = self.filtersManager.removeUserRules(option)
-            self.updateSafariFiltersOnSuccess(result)
+            self.updateContentBlockersOnSuccess(result, affectsMail: true)
             return result
         }
     }
@@ -515,7 +542,7 @@ extension FiltersSupervisorImpl: FlmApi.UserRules {
     func removeUserRules() async {
         await self.flmCall {
             self.filtersManager.removeUserRules()
-            self.safariFiltersUpdater.updateSafariFilters()
+            self.updateContentBlockersOnSuccess(affectsMail: true)
         }
     }
 }
@@ -566,6 +593,8 @@ extension FiltersSupervisorImpl: FLMUpdateDelegate {
     }
 
     func didUpdateFilters(_ result: Result<FiltersUpdateResult, Error>) {
+        // The in-progress flag gates `filtersForceUpdate()`'s early-return guard.
+        // Clear it on every exit so subsequent force-updates are not skipped.
         self.isFiltersUpdateInProgress = false
 
         switch result {
@@ -573,7 +602,12 @@ extension FiltersSupervisorImpl: FLMUpdateDelegate {
             self.userSettingsService.lastFiltersUpdateTime = Date()
             LogInfo("\(LogTag.flm) filtersUpdate end (updated: \(updated.updatedList.count))")
             if updated.hasAnyUpdates {
-                self.updateSafariFiltersOnSuccess()
+                // Every successful update triggers Safari regeneration.
+                // Mail regenerates only when filter 25 was among the updated filter IDs.
+                self.updateContentBlockersOnSuccess(true, affectsMail: false)
+                if MailRegenerationDecision.includesMailFilter(updated.updatedList.map(\.filterId)) {
+                    self.mailFiltersUpdater.updateMailFilters()
+                }
                 self.eventBus.post(event: .filtersRulesUpdated, userInfo: nil)
             }
             self.eventBus.post(event: .filterStatusResolved, userInfo: updated)
@@ -591,6 +625,11 @@ extension FiltersSupervisorImpl: FLMUpdateDelegate {
 
         LogInfo("\(LogTag.flm) didPullMetadata success")
         Task {
+            // Pulled metadata may contain filters that are new to the index.
+            // Install them so their rules get downloaded and counted.
+            await self.asyncly {
+                _ = self.installIndexFilters()
+            }
             let newIndex = await self.getFiltersIndex()
             self.eventBus.post(event: .filtersMetadataUpdated, userInfo: newIndex)
         }
