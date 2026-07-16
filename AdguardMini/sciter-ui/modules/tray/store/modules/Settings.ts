@@ -170,19 +170,10 @@ export class SettingsStore {
      * Helper for update
      */
     private buildGlobalSettings() {
-        const newValue = new GlobalSettings();
         if (this.settings) {
-            newValue.enabled = this.settings.enabled;
-            newValue.newVersionAvailable = this.settings.newVersionAvailable;
-            newValue.releaseVariant = this.settings.releaseVariant;
-            newValue.language = this.settings.language;
-            newValue.debugLogging = this.settings.debugLogging;
-            newValue.allowTelemetry = this.settings.allowTelemetry;
-            newValue.theme = this.settings.theme;
-            newValue.lastFiltersUpdateTimestampMs = this.settings.lastFiltersUpdateTimestampMs;
-            newValue.hiddenStories = this.settings.hiddenStories || [];
+            return this.settings.clone();
         }
-        return newValue;
+        return new GlobalSettings();
     }
 
     /**
@@ -315,6 +306,7 @@ export class SettingsStore {
         this.settings = settings;
         this.newVersionAvailable = settings.newVersionAvailable;
         this.hiddenStories = new Set(settings.hiddenStories || []);
+        this.loginItemEnabled = settings.loginItemEnabled;
         log.setLogLevel(settings.debugLogging ? LogLevel.DBG : LogLevel.ERR);
         updateLanguage(settings.language);
     }

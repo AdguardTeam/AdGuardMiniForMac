@@ -116,10 +116,11 @@ final class FiltersSupervisorImpl: RestartableServiceBase {
     private let userSettingsService: UserSettingsService
     private let eventBus: EventBus
 
-    /// Tracks whether any FLM update is currently running (either periodic or
-    /// user-initiated). Used to skip redundant force update requests when an
-    /// update is already in progress — the callback will arrive from the
-    /// running update.
+    /// Lock that serializes all access to `isFiltersUpdateInProgress`.
+    private let lock = UnfairLock()
+
+    /// Tracks whether any FLM update is currently running.
+    /// Used to skip redundant update requests
     private var isFiltersUpdateInProgress = false
 
     var filtersSpecialIds: FLMConstants
@@ -322,6 +323,9 @@ extension FiltersSupervisorImpl: FiltersSupervisor {
 
 extension FiltersSupervisorImpl: FLMFatalErrorDelegate {
     func onFatalError(_ flm: FLMProtocol) {
+        locked(self.lock) {
+            self.isFiltersUpdateInProgress = false
+        }
         LogError("Fatal error occurred in FLM. See logs above")
         self.eventBus.post(event: .flmFatalError, userInfo: nil)
     }
@@ -551,7 +555,12 @@ extension FiltersSupervisorImpl: FlmApi.UserRules {
 
 extension FiltersSupervisorImpl: FlmApi.Update {
     func filtersForceUpdate() {
-        guard !self.isFiltersUpdateInProgress else {
+        let shouldStart = locked(self.lock) {
+            guard !self.isFiltersUpdateInProgress else { return false }
+            self.isFiltersUpdateInProgress = true
+            return true
+        }
+        guard shouldStart else {
             LogInfo("\(LogTag.flm) filtersForceUpdate skipped — update already in progress")
             return
         }
@@ -567,6 +576,12 @@ extension FiltersSupervisorImpl {
     func reset() async {
         let isStartedNow = self.isStarted
         self.stop()
+
+        // The DB is about to be wiped and the service restarted.
+        // Any in-flight update state is meaningless, so clear the flag.
+        locked(self.lock) {
+            self.isFiltersUpdateInProgress = false
+        }
 
         do {
             let dbPath = self.filtersManager.dbPath.deletingLastPathComponent
@@ -588,14 +603,16 @@ extension FiltersSupervisorImpl: FLMDelegate {}
 
 extension FiltersSupervisorImpl: FLMUpdateDelegate {
     func willStartFiltersUpdate() {
-        self.isFiltersUpdateInProgress = true
+        locked(self.lock) {
+            self.isFiltersUpdateInProgress = true
+        }
         self.eventBus.post(event: .filtersUpdateStarted, userInfo: nil)
     }
 
     func didUpdateFilters(_ result: Result<FiltersUpdateResult, Error>) {
-        // The in-progress flag gates `filtersForceUpdate()`'s early-return guard.
-        // Clear it on every exit so subsequent force-updates are not skipped.
-        self.isFiltersUpdateInProgress = false
+        locked(self.lock) {
+            self.isFiltersUpdateInProgress = false
+        }
 
         switch result {
         case .success(let updated):

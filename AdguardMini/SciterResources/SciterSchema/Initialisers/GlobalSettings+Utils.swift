@@ -20,7 +20,8 @@ extension GlobalSettings {
         allowTelemetry: Bool = false,
         theme: Theme,
         lastFiltersUpdateTimestampMs: Int64 = 0,
-        hiddenStories: [String] = []
+        hiddenStories: [String] = [],
+        loginItemEnabled: Bool = false
     ) {
         self.init()
         self.enabled = enabled
@@ -32,5 +33,6 @@ extension GlobalSettings {
         self.theme = theme
         self.lastFiltersUpdateTimestampMs = lastFiltersUpdateTimestampMs
         self.hiddenStories = hiddenStories
+        self.loginItemEnabled = loginItemEnabled
     }
 }

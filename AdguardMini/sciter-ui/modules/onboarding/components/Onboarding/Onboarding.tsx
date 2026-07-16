@@ -7,6 +7,7 @@ import { observer } from 'mobx-react-lite';
 import { useGuardedTelemetryLayerTracking } from 'Modules/onboarding/lib/hooks/useGuardedTelemetryLayerTracking';
 import { useOnboardingStore, useTheme } from 'OnboardingLib/hooks';
 import { OnboardingLayer, OnboardingSteps } from 'OnboardingStore/modules';
+import { applyThemeAttribute } from 'Utils/colorThemes';
 
 import { Start, Extensions, Ads, Trackers, Annoyances, Finish } from './steps';
 
@@ -19,8 +20,10 @@ function OnboardingComponent() {
 
     const { currentStep } = steps;
 
-    useTheme((theme) => {
-        document.documentElement.setAttribute('theme', theme);
+   useTheme((theme) => {
+        // AG-51217: defer theme change to next animation frame so Sciter's
+        // `drop_styles` reaches all elements (including translator-rendered).
+        applyThemeAttribute(theme);
     });
 
     switch (currentStep) {

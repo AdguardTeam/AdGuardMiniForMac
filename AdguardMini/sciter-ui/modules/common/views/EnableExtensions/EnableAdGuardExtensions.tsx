@@ -11,6 +11,8 @@ import dark from './images/extensions-dark.png';
 import light from './images/extensions-light.png';
 import { Template } from './Template';
 
+import s from './Template.module.pcss';
+
 import type { TemplateProps } from './Template';
 import type { UseColorTheme } from 'Utils/colorThemes';
 
@@ -39,10 +41,9 @@ export function EnableAdGuardExtensions({
             buttons={buttons}
             containerClassName={containerClassName}
             description={(
-                // FIXME: Bug in sciter 6.0.2.16-rev-1
-                // If <b> tag isn't wrapped, its color, font-weight, font-family are unset
                 <div>
                     {translate('onboarding.extensions.desc', {
+                        b: (text: string) => <div className={s.Template_content_desc_text}>{text}</div>,
                         policy: (text: string) => (
                             <ExternalLink
                                 href={privacyPolicyUrl}

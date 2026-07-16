@@ -29,6 +29,7 @@ message Settings {
     bool show_safari_toolbar_badge = 14;
     bool last_update_more_seven_days = 15;
     bool mail_protection_enabled = 16;
+    bool login_item_enabled = 17;
 }
 
 message UserConsent {
@@ -67,6 +68,7 @@ message GlobalSettings {
     Theme theme = 9;
     int64 last_filters_update_timestamp_ms = 10;
     repeated string hidden_stories = 11;
+    bool login_item_enabled = 12;
 }
 
 message UpdateQuitReactionMessage {

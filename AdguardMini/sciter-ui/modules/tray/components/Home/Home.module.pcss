@@ -43,13 +43,20 @@
 
     &_extensionsDisabled {
         color: var(--text-links-attention-link-default);
+    }
 
-        > div {
-            display: inline;
-            text-decoration: underline;
-            cursor: pointer;
-            font-size: var(--ft-m) !important;
-        }
+    /*
+        Translator-rendered link. Sciter does not reliably apply parent
+        child-selector rules ("> div") to dynamically inserted elements on the
+        first paint, so the link uses a direct class with "color: inherit" to
+        pick up the attention color immediately.
+    */
+    &_link {
+        display: inline;
+        text-decoration: underline;
+        cursor: pointer;
+        font-size: var(--ft-m) !important;
+        color: inherit;
     }
 
     &_switch {

@@ -14,6 +14,7 @@ import {
 } from 'Common/stores/NotificationsQueue';
 import { useSettingsStore, useTheme } from 'SettingsLib/hooks';
 import { RouteName } from 'SettingsStore/modules';
+import { applyThemeAttribute } from 'Utils/colorThemes';
 
 import { ActivationFlowStatusController } from '../ActivationFlow';
 import { EnableExtensionsController } from '../EnableExtensionsController';
@@ -60,7 +61,9 @@ function AppComponent() {
     }, []);
 
     useTheme((theme) => {
-        document.documentElement.setAttribute('theme', theme);
+        // AG-51217: defer theme change to next animation frame so Sciter's
+        // `drop_styles` reaches all elements (including translator-rendered).
+        applyThemeAttribute(theme);
         settingsStore.setColorTheme(theme);
     });
 

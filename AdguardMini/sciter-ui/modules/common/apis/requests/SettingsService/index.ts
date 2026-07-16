@@ -27,6 +27,7 @@ export * from './UpdateDebugLoggingRequest';
 export * from './UpdateHardwareAccelerationRequest';
 export * from './UpdateHealthCheckDismissedCardsRequest';
 export * from './UpdateLaunchOnStartupRequest';
+export * from './UpdateMailProtectionRequest';
 export * from './UpdateQuitReactionRequest';
 export * from './UpdateRealTimeFiltersUpdateRequest';
 export * from './UpdateShowInMenuBarRequest';

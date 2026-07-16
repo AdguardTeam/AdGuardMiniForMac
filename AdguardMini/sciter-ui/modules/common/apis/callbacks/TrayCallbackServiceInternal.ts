@@ -12,6 +12,11 @@ export class TrayCallbackServiceInternal implements ITrayCallbackServiceInternal
             store.settings.getSettings();
             store.settings.getStatistics();
             store.settings.getSafariExtensions();
+            // Recover data for DOM-mutating callbacks gated while the tray
+            // window is hidden (license, app version). Mirrors the fresh-data
+            // set fetched on tray init.
+            store.settings.getLicense();
+            store.settings.checkApplicationVersion();
             store.telemetry.setPage(TrayPage.TrayMenu);
             store.telemetry.trackPageView();
         } else {

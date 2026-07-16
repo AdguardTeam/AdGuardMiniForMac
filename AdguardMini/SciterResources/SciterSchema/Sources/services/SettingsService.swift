@@ -150,6 +150,10 @@ public protocol SettingsServiceProtocol
 	func updateShowSafariToolbarBadge (
 						_ message: BoolValue,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void
+	/// Updates Mail Protection toggle
+	func updateMailProtection (
+						_ message: BoolValue,
+						_ promise: @escaping (EmptyValue) -> Void) -> Void
 	/// Get dismissed Safari Protection health check cards
 	func getHealthCheckDismissedCards (
 						_ message: EmptyValue,
@@ -584,6 +588,18 @@ open class SettingsService: SciterBridge
 			inputType: BoolValue.self,
 			outputType: EmptyValue.self,
 			method: cast.updateShowSafariToolbarBadge(_:_:),
+			message,
+			promise
+		)
+	}
+
+	/// Wrapper for `UpdateMailProtection`
+	@objc func UpdateMailProtection(_ message: Data, promise: @escaping (Data) -> Void)
+	{
+		swiftCall(
+			inputType: BoolValue.self,
+			outputType: EmptyValue.self,
+			method: cast.updateMailProtection(_:_:),
 			message,
 			promise
 		)

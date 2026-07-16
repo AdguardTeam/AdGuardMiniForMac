@@ -452,3 +452,26 @@ You MUST follow the following rules for EVERY task that you perform:
 
    **Rationale**: Eliminates magic numbers, makes intent clear, and simplifies
    future changes.
+
+### V. Sciter runtime
+
+1. **Hidden Sciter windows do not process idle.** In the Sciter engine
+   (`wing::ET_WINDOW_IDLE`), windows whose state is `WINDOW_HIDDEN` skip
+   `request_idle()`, so `html::view::process_posted_things` is never run while a
+   window is hidden. DOM-mutating work delivered to a hidden Sciter view (for
+   example a Swift→Sciter callback that updates a MobX store and triggers a
+   re-render) is therefore queued and only drained on the first idle after the
+   window is shown. Processing that stale work can dereference invalidated
+   elements and crash inside `process_posted_things` (`EXC_BAD_ACCESS`,
+   byte write at 0x0).
+
+   - Do NOT deliver DOM-mutating callback data into a Sciter view while its
+     window is hidden. Gate delivery on window visibility (for example
+     `SciterApp.isAppHidden()`), invoked on the main actor.
+   - When a callback is gated off because the window was hidden, the window MUST
+     re-fetch the corresponding data when it becomes visible (for example in
+     `OnWindowDidBecomeMain`) so the freshly shown view is not stale.
+
+   **Rationale**: Prevents the accumulate-then-crash pattern observed when
+   user-rules updates were pushed into the hidden settings window and the window
+   was subsequently opened from the tray.

@@ -27,6 +27,7 @@ extension Settings {
         showSafariToolbarBadge: Bool = false,
         lastUpdateMoreSevenDays: Bool = false,
         mailProtectionEnabled: Bool = false,
+        loginItemEnabled: Bool = false,
     ) {
         self.init()
         self.launchOnStartup = launchOnStartup
@@ -44,5 +45,6 @@ extension Settings {
         self.showSafariToolbarBadge = showSafariToolbarBadge
         self.lastUpdateMoreSevenDays = lastUpdateMoreSevenDays
         self.mailProtectionEnabled = mailProtectionEnabled
+        self.loginItemEnabled = loginItemEnabled
     }
 }

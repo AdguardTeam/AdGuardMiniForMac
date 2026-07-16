@@ -219,18 +219,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func startAppStep1() async {
         LogInfo("Start App Step 1")
 
-        var updatedFields: [String: Any] = [:]
+        self.userSettingsManager.registerUserDefaults(SettingsKey.asDict)
+
         let isPaid = await self.backendService.getStoredAppStatusInfo()?.isPaid ?? false
         if self.userSettingsManager.firstRun && isPaid {
-            updatedFields =
-            [
-                SettingsKey.adguardExtra.rawValue: true,
-                SettingsKey.realTimeFiltersUpdate.rawValue: true
-            ]
+            self.userSettingsManager.adguardExtra = true
+            self.userSettingsManager.realTimeFiltersUpdate = true
         }
-        self.userSettingsManager.registerUserDefaults(
-            SettingsKey.asDict.merging(updatedFields) { $1 }
-        )
 
         if let currentBuild = Int(BuildConfig.AG_BUILD) {
             await BuildMigration.run(

@@ -230,6 +230,7 @@ export class Settings extends pb_1.Message {
         showSafariToolbarBadge?: boolean;
         lastUpdateMoreSevenDays?: boolean;
         mailProtectionEnabled?: boolean;
+        loginItemEnabled?: boolean;
     } & (({
         userRulesEditorGeometry?: WindowGeometry;
     })))) {
@@ -283,6 +284,9 @@ export class Settings extends pb_1.Message {
             }
             if ("mailProtectionEnabled" in data && data.mailProtectionEnabled != undefined) {
                 this.mailProtectionEnabled = data.mailProtectionEnabled;
+            }
+            if ("loginItemEnabled" in data && data.loginItemEnabled != undefined) {
+                this.loginItemEnabled = data.loginItemEnabled;
             }
         }
     }
@@ -385,6 +389,12 @@ export class Settings extends pb_1.Message {
     set mailProtectionEnabled(value: boolean) {
         pb_1.Message.setField(this, 16, value);
     }
+    get loginItemEnabled() {
+        return pb_1.Message.getFieldWithDefault(this, 17, false) as boolean;
+    }
+    set loginItemEnabled(value: boolean) {
+        pb_1.Message.setField(this, 17, value);
+    }
     get _userRulesEditorGeometry() {
         const cases: {
             [index: number]: "none" | "userRulesEditorGeometry";
@@ -411,6 +421,7 @@ export class Settings extends pb_1.Message {
         showSafariToolbarBadge?: boolean;
         lastUpdateMoreSevenDays?: boolean;
         mailProtectionEnabled?: boolean;
+        loginItemEnabled?: boolean;
     }): Settings {
         const message = new Settings({});
         if (data.launchOnStartup != null) {
@@ -461,6 +472,9 @@ export class Settings extends pb_1.Message {
         if (data.mailProtectionEnabled != null) {
             message.mailProtectionEnabled = data.mailProtectionEnabled;
         }
+        if (data.loginItemEnabled != null) {
+            message.loginItemEnabled = data.loginItemEnabled;
+        }
         return message;
     }
     toObject() {
@@ -481,6 +495,7 @@ export class Settings extends pb_1.Message {
             showSafariToolbarBadge?: boolean;
             lastUpdateMoreSevenDays?: boolean;
             mailProtectionEnabled?: boolean;
+            loginItemEnabled?: boolean;
         } = {};
         if (this.launchOnStartup != null) {
             data.launchOnStartup = this.launchOnStartup;
@@ -530,6 +545,9 @@ export class Settings extends pb_1.Message {
         if (this.mailProtectionEnabled != null) {
             data.mailProtectionEnabled = this.mailProtectionEnabled;
         }
+        if (this.loginItemEnabled != null) {
+            data.loginItemEnabled = this.loginItemEnabled;
+        }
         return data;
     }
     serialize(): Uint8Array;
@@ -568,6 +586,8 @@ export class Settings extends pb_1.Message {
             writer.writeBool(15, this.lastUpdateMoreSevenDays);
         if (this.mailProtectionEnabled != false)
             writer.writeBool(16, this.mailProtectionEnabled);
+        if (this.loginItemEnabled != false)
+            writer.writeBool(17, this.loginItemEnabled);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -624,6 +644,9 @@ export class Settings extends pb_1.Message {
                     break;
                 case 16:
                     message.mailProtectionEnabled = reader.readBool();
+                    break;
+                case 17:
+                    message.loginItemEnabled = reader.readBool();
                     break;
                 default: reader.skipField();
             }
@@ -873,6 +896,7 @@ export class GlobalSettings extends pb_1.Message {
         theme?: Theme;
         lastFiltersUpdateTimestampMs?: number;
         hiddenStories?: string[];
+        loginItemEnabled?: boolean;
     }) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [11], this.#one_of_decls);
@@ -903,6 +927,9 @@ export class GlobalSettings extends pb_1.Message {
             }
             if ("hiddenStories" in data && data.hiddenStories != undefined) {
                 this.hiddenStories = data.hiddenStories;
+            }
+            if ("loginItemEnabled" in data && data.loginItemEnabled != undefined) {
+                this.loginItemEnabled = data.loginItemEnabled;
             }
         }
     }
@@ -960,6 +987,12 @@ export class GlobalSettings extends pb_1.Message {
     set hiddenStories(value: string[]) {
         pb_1.Message.setField(this, 11, value);
     }
+    get loginItemEnabled() {
+        return pb_1.Message.getFieldWithDefault(this, 12, false) as boolean;
+    }
+    set loginItemEnabled(value: boolean) {
+        pb_1.Message.setField(this, 12, value);
+    }
     static fromObject(data: {
         enabled?: boolean;
         newVersionAvailable?: boolean;
@@ -970,6 +1003,7 @@ export class GlobalSettings extends pb_1.Message {
         theme?: Theme;
         lastFiltersUpdateTimestampMs?: number;
         hiddenStories?: string[];
+        loginItemEnabled?: boolean;
     }): GlobalSettings {
         const message = new GlobalSettings({});
         if (data.enabled != null) {
@@ -999,6 +1033,9 @@ export class GlobalSettings extends pb_1.Message {
         if (data.hiddenStories != null) {
             message.hiddenStories = data.hiddenStories;
         }
+        if (data.loginItemEnabled != null) {
+            message.loginItemEnabled = data.loginItemEnabled;
+        }
         return message;
     }
     toObject() {
@@ -1012,6 +1049,7 @@ export class GlobalSettings extends pb_1.Message {
             theme?: Theme;
             lastFiltersUpdateTimestampMs?: number;
             hiddenStories?: string[];
+            loginItemEnabled?: boolean;
         } = {};
         if (this.enabled != null) {
             data.enabled = this.enabled;
@@ -1040,6 +1078,9 @@ export class GlobalSettings extends pb_1.Message {
         if (this.hiddenStories != null) {
             data.hiddenStories = this.hiddenStories;
         }
+        if (this.loginItemEnabled != null) {
+            data.loginItemEnabled = this.loginItemEnabled;
+        }
         return data;
     }
     serialize(): Uint8Array;
@@ -1064,6 +1105,8 @@ export class GlobalSettings extends pb_1.Message {
             writer.writeInt64(10, this.lastFiltersUpdateTimestampMs);
         if (this.hiddenStories.length)
             writer.writeRepeatedString(11, this.hiddenStories);
+        if (this.loginItemEnabled != false)
+            writer.writeBool(12, this.loginItemEnabled);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -1099,6 +1142,9 @@ export class GlobalSettings extends pb_1.Message {
                     break;
                 case 11:
                     pb_1.Message.addToRepeatedField(message, 11, reader.readString());
+                    break;
+                case 12:
+                    message.loginItemEnabled = reader.readBool();
                     break;
                 default: reader.skipField();
             }

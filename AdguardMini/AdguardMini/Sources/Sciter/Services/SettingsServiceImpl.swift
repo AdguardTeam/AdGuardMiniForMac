@@ -41,6 +41,7 @@ extension Sciter.SettingsServiceImpl:
     SciterAppControllerDependent,
     AppLifecycleServiceDependent,
     AppMetadataDependent,
+    HealthCheckAttentionProviderDependent,
     MailFiltersUpdaterDependent {}
 
 extension Sciter {
@@ -59,6 +60,7 @@ extension Sciter {
         var sciterAppController: SciterAppsController!
         var appLifecycleService: AppLifecycleService!
         var appMetadata: AppMetadata!
+        var healthCheckAttentionProvider: HealthCheckAttentionProvider!
         var mailFiltersUpdater: MailFiltersUpdater!
 
         override init() {
@@ -169,7 +171,8 @@ extension Sciter {
                 releaseVariant: ProductInfo.releaseVariant,
                 language: Locales.navigatorLang,
                 allowTelemetry: self.userSettingsService.allowTelemetry,
-                lastUpdateMoreSevenDays: timeSinceLastFiltersUpdate > Constants.noUpdatesThreshold
+                lastUpdateMoreSevenDays: timeSinceLastFiltersUpdate > Constants.noUpdatesThreshold,
+                loginItemEnabled: !self.healthCheckAttentionProvider.hasLoginItemDisabled()
             )
 
             if let geometry = self.userSettingsService.userRulesEditorGeometry {
@@ -215,7 +218,8 @@ extension Sciter {
                         releaseVariant: ProductInfo.releaseVariant,
                         language: Locales.navigatorLang,
                         allowTelemetry: self.userSettingsService.allowTelemetry,
-                        lastUpdateMoreSevenDays: false
+                        lastUpdateMoreSevenDays: false,
+                        loginItemEnabled: !self.healthCheckAttentionProvider.hasLoginItemDisabled()
                     )
                 )
             }
@@ -235,6 +239,7 @@ extension Sciter {
                     lastFiltersUpdateTimestampMs: Int64(
                         max(0, self.userSettingsService.lastFiltersUpdateTime.timeIntervalSince1970 * 1000)
                     ),
+                    loginItemEnabled: !self.healthCheckAttentionProvider.hasLoginItemDisabled()
                 )
                 traySettings.hiddenStories = self.userSettingsService.hiddenStories
                 promise(traySettings)

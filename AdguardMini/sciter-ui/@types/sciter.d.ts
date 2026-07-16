@@ -134,6 +134,17 @@ declare type SciterWindow = {
     selectFile(params: Sciter.FS.SelectFileParams): string;
 
     /**
+     * Returns the value of a named media variable.
+     *
+     * Known variables include `ui-ambience` (the system appearance,
+     * `"light"` or `"dark"`) and dimension variables (`width`, `height`, …)
+     * which return numeric lengths. Returns `undefined` for unknown names.
+     *
+     * @link https://docs.sciter.com/docs/DOM/Window#mediavar
+     */
+    mediaVar(name: string): string | number | undefined;
+
+    /**
      * Window state
      */
     state: number;

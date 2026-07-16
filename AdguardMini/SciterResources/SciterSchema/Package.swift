@@ -15,7 +15,7 @@ let package = Package(
             targets: ["SciterSchema"]),
     ],
     dependencies: [
-        .package(id: "mac.sp-sciter-sdk", exact: "6.0.3-18.mac.rev.14.main.thread"),
+        .package(id: "mac.sp-sciter-sdk", exact: "6.0.3-18.mac.rev.17.main.thread"),
         .package(url: "https://github.com/apple/swift-protobuf.git", exact: "1.31.0")
     ],
     targets: [
