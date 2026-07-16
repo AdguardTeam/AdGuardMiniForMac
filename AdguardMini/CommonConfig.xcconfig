@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 //
-//  MainConfig.xcconfig
+//  CommonConfig.xcconfig
 //  AdguardMini
 //
 
@@ -19,8 +19,8 @@ AGP_PUBLIC_CONFIG_CONSTANTS_PREFIX = AG_
 
 //============= Development Settings ============
 
-#include "../../adguard-mini-private/configuration/Config.xcconfig"
-#include "../../adguard-mini-private/configuration/PrivateConfig.xcconfig"
+#include "AppConfig.xcconfig"
+#include "../../sciter-adguard-mini-private/configuration/PrivateConfig.xcconfig"
 
 //=========== Global Product Settings ===========
 
@@ -117,8 +117,6 @@ AGP_PACKAGE_RESOLVED_PATH = $(SRCROOT)/AdguardMini.xcodeproj/project.xcworkspace
 
 SENS_REQUEST_ENCRYPTION_KEY = $(CONFIG_BACKEND_REQUEST_ENCRYPTION_KEY)
 SENS_BACKEND_REQUEST_KEY = $(CONFIG_BACKEND_REQUEST_KEY)
-
-SENS_LICENSE_ENCRYPTION_KEY = $(CONFIG_MAC_MINI_LICENSE_ENCRYPTION_KEY)
 
 //============ Backend Configuration ============
 

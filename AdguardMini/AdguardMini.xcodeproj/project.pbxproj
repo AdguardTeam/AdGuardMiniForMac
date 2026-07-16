@@ -71,33 +71,55 @@
 		162BAACE2EA0132800421157 /* ThirdPartyDeps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162BAACD2EA0132800421157 /* ThirdPartyDeps.swift */; };
 		162BC5E82EA0DBFE00421157 /* UserscriptParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162BC5DB2EA0DBBA00421157 /* UserscriptParser.swift */; };
 		162BC5E92EA0DC0E00421157 /* UserscriptParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162BC5DB2EA0DBBA00421157 /* UserscriptParser.swift */; };
-		162E1EE02FF6616300232A89 /* FLM in Frameworks */ = {isa = PBXBuildFile; productRef = D9606EDE2D75D228004E12B0 /* FLM */; };
 		162E2FE62FF687CE00232A89 /* Subsystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB52735E2BBDA61D00196F03 /* Subsystem.swift */; };
 		162E2FE72FF687D800232A89 /* LogConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5273422BBD65B800196F03 /* LogConfig.swift */; };
 		162E2FE82FF695FD00232A89 /* BuildConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB88F5C62C00848B0033E2E8 /* BuildConfig.swift */; };
-		162E777A2FF2B09A00232A89 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = 162E77792FF2B09A00232A89 /* AdGuardMacLib */; };
 		163C981F2FB32E7A00752872 /* TelemetryEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1675B7592EFD7490004D72B7 /* TelemetryEvents.swift */; };
 		16426FD02DC21471004276C0 /* advanced-script.js in Resources */ = {isa = PBXBuildFile; fileRef = 16426FCF2DC21471004276C0 /* advanced-script.js */; };
 		16426FD12DC21471004276C0 /* advanced-script.js in Resources */ = {isa = PBXBuildFile; fileRef = 16426FCF2DC21471004276C0 /* advanced-script.js */; };
 		1644A0A52DB8D977003852C6 /* ContentBlockerConverter in Frameworks */ = {isa = PBXBuildFile; productRef = 1644A0A42DB8D977003852C6 /* ContentBlockerConverter */; };
-		1644A0A72DB8D97F003852C6 /* ContentBlockerConverter in Frameworks */ = {isa = PBXBuildFile; productRef = 1644A0A62DB8D97F003852C6 /* ContentBlockerConverter */; };
-		165B08DF2E99102900590B12 /* AppStore in Frameworks */ = {isa = PBXBuildFile; productRef = 165B08DE2E99102900590B12 /* AppStore */; };
-		165B0D8B2E9D514200590B12 /* AppBackend in Frameworks */ = {isa = PBXBuildFile; productRef = 165B0D8A2E9D514200590B12 /* AppBackend */; };
 		165BA8B72F1926A900511F4E /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165BA8B52F1926A300511F4E /* Theme.swift */; };
 		165BA8B82F19277E00511F4E /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165BA8B52F1926A300511F4E /* Theme.swift */; };
 		165BA8B92F19277E00511F4E /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165BA8B52F1926A300511F4E /* Theme.swift */; };
 		165BAD722F1E966A00511F4E /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165BA8B52F1926A300511F4E /* Theme.swift */; };
 		1675B75A2EFD7498004D72B7 /* TelemetryEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1675B7592EFD7490004D72B7 /* TelemetryEvents.swift */; };
 		1675B75B2EFD8B50004D72B7 /* TelemetryEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1675B7592EFD7490004D72B7 /* TelemetryEvents.swift */; };
-		169664ED2E9FEE2F00E0B87E /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = 169664EC2E9FEE2F00E0B87E /* AdGuardMacLib */; };
+		16901A882FFFC059007DF535 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901A872FFFC059007DF535 /* AdGuardMacLib */; };
+		16901A8A2FFFC063007DF535 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901A892FFFC063007DF535 /* AdGuardMacLib */; };
+		16901A8E2FFFC098007DF535 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901A8D2FFFC098007DF535 /* AdGuardMacLib */; };
+		16901A902FFFCCB5007DF535 /* XPCGateLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901A8F2FFFCCB5007DF535 /* XPCGateLib */; };
+		16901A962FFFCCFA007DF535 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901A952FFFCCFA007DF535 /* AdGuardMacLib */; };
+		16901A9C2FFFCD36007DF535 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901A9B2FFFCD36007DF535 /* AdGuardMacLib */; };
+		16901A9E2FFFCD49007DF535 /* FLMBuilder in Frameworks */ = {isa = PBXBuildFile; productRef = 16901A9D2FFFCD49007DF535 /* FLMBuilder */; };
+		16901AA02FFFCD66007DF535 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901A9F2FFFCD66007DF535 /* AdGuardMacLib */; };
+		16901AA22FFFCD6E007DF535 /* AGSentry in Frameworks */ = {isa = PBXBuildFile; productRef = 16901AA12FFFCD6E007DF535 /* AGSentry */; };
+		16901AA42FFFCD74007DF535 /* XPCGateLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901AA32FFFCD74007DF535 /* XPCGateLib */; };
+		16901AA62FFFCD7D007DF535 /* ContentBlockerConverter in Frameworks */ = {isa = PBXBuildFile; productRef = 16901AA52FFFCD7D007DF535 /* ContentBlockerConverter */; };
+		16901AA82FFFCD8F007DF535 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901AA72FFFCD8F007DF535 /* AdGuardMacLib */; };
+		16901AAA2FFFCD9C007DF535 /* ContentBlockerConverter in Frameworks */ = {isa = PBXBuildFile; productRef = 16901AA92FFFCD9C007DF535 /* ContentBlockerConverter */; };
+		16901AAC2FFFCDB2007DF535 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901AAB2FFFCDB2007DF535 /* AdGuardMacLib */; };
+		16901AAE2FFFCDF0007DF535 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901AAD2FFFCDF0007DF535 /* AdGuardMacLib */; };
+		16901AB02FFFCE01007DF535 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901AAF2FFFCE01007DF535 /* AdGuardMacLib */; };
+		16901AB22FFFCE0B007DF535 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901AB12FFFCE0B007DF535 /* AdGuardMacLib */; };
+		16901AB42FFFCE13007DF535 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901AB32FFFCE13007DF535 /* AdGuardMacLib */; };
+		16901AB62FFFCE1A007DF535 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901AB52FFFCE1A007DF535 /* AdGuardMacLib */; };
+		16901AB82FFFCE20007DF535 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901AB72FFFCE20007DF535 /* AdGuardMacLib */; };
+		16901ABC2FFFCE58007DF535 /* AGSentry in Frameworks */ = {isa = PBXBuildFile; productRef = 16901ABB2FFFCE58007DF535 /* AGSentry */; };
+		16901ABE2FFFCE5D007DF535 /* XPCGateLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901ABD2FFFCE5D007DF535 /* XPCGateLib */; };
+		16901AC02FFFCEF6007DF535 /* AppBackend in Frameworks */ = {isa = PBXBuildFile; productRef = 16901ABF2FFFCEF6007DF535 /* AppBackend */; };
+		16901AC22FFFCEFD007DF535 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901AC12FFFCEFD007DF535 /* AdGuardMacLib */; };
+		16901AC42FFFCF0B007DF535 /* FLM in Frameworks */ = {isa = PBXBuildFile; productRef = 16901AC32FFFCF0B007DF535 /* FLM */; };
+		16901AC62FFFCF34007DF535 /* AGSentry in Frameworks */ = {isa = PBXBuildFile; productRef = 16901AC52FFFCF34007DF535 /* AGSentry */; };
+		16901AC82FFFCF3E007DF535 /* AGCrashReporterLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901AC72FFFCF3E007DF535 /* AGCrashReporterLib */; };
+		16901ACA2FFFCF9B007DF535 /* XPCGateLib in Frameworks */ = {isa = PBXBuildFile; productRef = 16901AC92FFFCF9B007DF535 /* XPCGateLib */; };
+		16901ACC2FFFCFAA007DF535 /* AppStore in Frameworks */ = {isa = PBXBuildFile; productRef = 16901ACB2FFFCFAA007DF535 /* AppStore */; };
 		169664EF2E9FF09C00E0B87E /* adguard-extra.js in Resources */ = {isa = PBXBuildFile; fileRef = 169664EE2E9FF09C00E0B87E /* adguard-extra.js */; };
-		D9606EE12D75D23B004E12B0 /* FLMBuilder in Frameworks */ = {isa = PBXBuildFile; productRef = D9606EE02D75D23B004E12B0 /* FLMBuilder */; };
+		16B91426300139130046E668 /* AGSentry in Frameworks */ = {isa = PBXBuildFile; productRef = 16B91425300139130046E668 /* AGSentry */; };
 		EB00BB882ABAF71F007FA047 /* AGSEDesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = EB00BB872ABAF71F007FA047 /* AGSEDesignSystem */; };
 		EB0532072C4FDD400054CF62 /* SharedSettingsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3F1C582BADC40400DD2717 /* SharedSettingsStorage.swift */; };
 		EB08495D2AB33E4900222913 /* DIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB08495C2AB33E4900222913 /* DIContainer.swift */; };
 		EB1A0DA22D81EB6D006DB3CF /* SharedSettingsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3F1C582BADC40400DD2717 /* SharedSettingsStorage.swift */; };
 		EB1A0DA32D81EB6D006DB3CF /* SharedSettingsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3F1C582BADC40400DD2717 /* SharedSettingsStorage.swift */; };
-		EB3B75182C948EC500D9512F /* AppBackend in Frameworks */ = {isa = PBXBuildFile; productRef = EB3B75172C948EC500D9512F /* AppBackend */; };
 		EB3F1C592BADC40400DD2717 /* SharedSettingsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3F1C582BADC40400DD2717 /* SharedSettingsStorage.swift */; };
 		EB3F1C5A2BADC41000DD2717 /* SharedSettingsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3F1C582BADC40400DD2717 /* SharedSettingsStorage.swift */; };
 		EB3F1C5B2BADC41000DD2717 /* SharedSettingsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3F1C582BADC40400DD2717 /* SharedSettingsStorage.swift */; };
@@ -105,7 +127,6 @@
 		EB3F1C5D2BADC41100DD2717 /* SharedSettingsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3F1C582BADC40400DD2717 /* SharedSettingsStorage.swift */; };
 		EB3F1C5E2BADC41200DD2717 /* SharedSettingsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3F1C582BADC40400DD2717 /* SharedSettingsStorage.swift */; };
 		EB3F1C5F2BADC41200DD2717 /* SharedSettingsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3F1C582BADC40400DD2717 /* SharedSettingsStorage.swift */; };
-		EB4410332C076D6D003F4DB5 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = EB4410322C076D6D003F4DB5 /* AdGuardMacLib */; };
 		EB44103E2C0786DC003F4DB5 /* BuildConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB88F5C62C00848B0033E2E8 /* BuildConfig.swift */; };
 		EB455C842B3B0B000010C9B3 /* watchdog in Embed additional executables */ = {isa = PBXBuildFile; fileRef = EB455C702B3AD41B0010C9B3 /* watchdog */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		EB5273432BBD65B800196F03 /* LogConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5273422BBD65B800196F03 /* LogConfig.swift */; };
@@ -137,7 +158,6 @@
 		EB88F5D02C0084CC0033E2E8 /* BuildConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB88F5C62C00848B0033E2E8 /* BuildConfig.swift */; };
 		EB88F5D32C00868A0033E2E8 /* SensitiveBuildConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB88F5D22C00868A0033E2E8 /* SensitiveBuildConfig.swift */; };
 		EB88F5D42C00868A0033E2E8 /* SensitiveBuildConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB88F5D22C00868A0033E2E8 /* SensitiveBuildConfig.swift */; };
-		EB93A6842C218CB6003D84A5 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = EB93A6832C218CB6003D84A5 /* AdGuardMacLib */; };
 		EB93A68C2C219D2B003D84A5 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB93A68B2C219D2B003D84A5 /* UserDefaults.swift */; };
 		EB93A68F2C240B12003D84A5 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB93A68B2C219D2B003D84A5 /* UserDefaults.swift */; };
 		EBA525492D5BA11800B8ABA4 /* Subsystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB52735E2BBDA61D00196F03 /* Subsystem.swift */; };
@@ -160,30 +180,7 @@
 		EBAA09DF2BAC7EBD0032C591 /* OtherContentBlocker.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = EBAA09D42BAC7EBD0032C591 /* OtherContentBlocker.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		EBAA09FD2BAC7EE20032C591 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC4197B32A6FE790000F363D /* Cocoa.framework */; };
 		EBAA0A072BAC7EE20032C591 /* CustomContentBlocker.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = EBAA09FC2BAC7EE20032C591 /* CustomContentBlocker.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		EBAA0A0D2BAC80080032C591 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = EBAA0A0C2BAC80080032C591 /* AdGuardMacLib */; };
-		EBAA0A0F2BAC800D0032C591 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = EBAA0A0E2BAC800D0032C591 /* AdGuardMacLib */; };
-		EBAA0A112BAC80120032C591 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = EBAA0A102BAC80120032C591 /* AdGuardMacLib */; };
-		EBAA0A132BAC80160032C591 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = EBAA0A122BAC80160032C591 /* AdGuardMacLib */; };
-		EBAA0A152BAC801A0032C591 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = EBAA0A142BAC801A0032C591 /* AdGuardMacLib */; };
-		EBBADE132B90EDEB001B22EE /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = EBBADE122B90EDEB001B22EE /* AdGuardMacLib */; };
-		EBBADE152B90EDF0001B22EE /* ContentBlockerConverter in Frameworks */ = {isa = PBXBuildFile; productRef = EBBADE142B90EDF0001B22EE /* ContentBlockerConverter */; };
-		EBC3E1882B3323A5000AFCE3 /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = EBC3E1872B3323A5000AFCE3 /* AdGuardMacLib */; };
-		EBE514462D68CD930009F9DB /* AdGuardFLMLib in Frameworks */ = {isa = PBXBuildFile; productRef = EBE514452D68CD930009F9DB /* AdGuardFLMLib */; };
 		EBE991992C173FA50099CC0E /* emptyBlockingRules.json in Resources */ = {isa = PBXBuildFile; fileRef = EC41980B2A71141C000F363D /* emptyBlockingRules.json */; };
-		EBFFD3652D8062A600E8409F /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = EBFFD3642D8062A600E8409F /* Sentry */; };
-		EBFFD3672D8062CE00E8409F /* AGCrashReporterLib in Frameworks */ = {isa = PBXBuildFile; productRef = EBFFD3662D8062CE00E8409F /* AGCrashReporterLib */; };
-		EBFFD36B2D80643E00E8409F /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = EBFFD36A2D80643E00E8409F /* AdGuardMacLib */; };
-		EBFFD36D2D80644800E8409F /* AGSentry in Frameworks */ = {isa = PBXBuildFile; productRef = EBFFD36C2D80644800E8409F /* AGSentry */; };
-		EBFFD36F2D80644E00E8409F /* XPCGateLib in Frameworks */ = {isa = PBXBuildFile; productRef = EBFFD36E2D80644E00E8409F /* XPCGateLib */; };
-		EBFFD3712D80645600E8409F /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = EBFFD3702D80645600E8409F /* AdGuardMacLib */; };
-		EBFFD3732D80645B00E8409F /* AGSentry in Frameworks */ = {isa = PBXBuildFile; productRef = EBFFD3722D80645B00E8409F /* AGSentry */; };
-		EBFFD3752D80646000E8409F /* XPCGateLib in Frameworks */ = {isa = PBXBuildFile; productRef = EBFFD3742D80646000E8409F /* XPCGateLib */; };
-		EBFFD3772D80646800E8409F /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = EBFFD3762D80646800E8409F /* AdGuardMacLib */; };
-		EBFFD3792D80646E00E8409F /* AGSentry in Frameworks */ = {isa = PBXBuildFile; productRef = EBFFD3782D80646E00E8409F /* AGSentry */; };
-		EBFFD37B2D80647400E8409F /* XPCGateLib in Frameworks */ = {isa = PBXBuildFile; productRef = EBFFD37A2D80647400E8409F /* XPCGateLib */; };
-		EBFFD37D2D80647B00E8409F /* AdGuardMacLib in Frameworks */ = {isa = PBXBuildFile; productRef = EBFFD37C2D80647B00E8409F /* AdGuardMacLib */; };
-		EBFFD37F2D80648000E8409F /* AGSentry in Frameworks */ = {isa = PBXBuildFile; productRef = EBFFD37E2D80648000E8409F /* AGSentry */; };
-		EBFFD3812D80648600E8409F /* XPCGateLib in Frameworks */ = {isa = PBXBuildFile; productRef = EBFFD3802D80648600E8409F /* XPCGateLib */; };
 		EC3848DF2A2DD626005AE5CD /* resources.bin in Resources */ = {isa = PBXBuildFile; fileRef = EC3848DE2A2DD626005AE5CD /* resources.bin */; };
 		EC4131A62A6ED42400C93BDF /* SciterSchema in Frameworks */ = {isa = PBXBuildFile; productRef = EC4131A52A6ED42400C93BDF /* SciterSchema */; };
 		EC4197B42A6FE790000F363D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC4197B32A6FE790000F363D /* Cocoa.framework */; };
@@ -963,7 +960,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				162E777A2FF2B09A00232A89 /* AdGuardMacLib in Frameworks */,
+				16901A8E2FFFC098007DF535 /* AdGuardMacLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -971,7 +968,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				169664ED2E9FEE2F00E0B87E /* AdGuardMacLib in Frameworks */,
+				16901A962FFFCCFA007DF535 /* AdGuardMacLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -979,10 +976,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1644A0A72DB8D97F003852C6 /* ContentBlockerConverter in Frameworks */,
-				EBFFD37D2D80647B00E8409F /* AdGuardMacLib in Frameworks */,
-				EBFFD3812D80648600E8409F /* XPCGateLib in Frameworks */,
-				EBFFD37F2D80648000E8409F /* AGSentry in Frameworks */,
+				16901AA62FFFCD7D007DF535 /* ContentBlockerConverter in Frameworks */,
+				16901AA02FFFCD66007DF535 /* AdGuardMacLib in Frameworks */,
+				16901AA42FFFCD74007DF535 /* XPCGateLib in Frameworks */,
+				16901AA22FFFCD6E007DF535 /* AGSentry in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -990,8 +987,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EB4410332C076D6D003F4DB5 /* AdGuardMacLib in Frameworks */,
-				D9606EE12D75D23B004E12B0 /* FLMBuilder in Frameworks */,
+				16901A9E2FFFCD49007DF535 /* FLMBuilder in Frameworks */,
+				16901A9C2FFFCD36007DF535 /* AdGuardMacLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1006,8 +1003,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EBBADE132B90EDEB001B22EE /* AdGuardMacLib in Frameworks */,
-				EBBADE152B90EDF0001B22EE /* ContentBlockerConverter in Frameworks */,
+				16901AAA2FFFCD9C007DF535 /* ContentBlockerConverter in Frameworks */,
+				16901AA82FFFCD8F007DF535 /* AdGuardMacLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1015,7 +1012,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EB93A6842C218CB6003D84A5 /* AdGuardMacLib in Frameworks */,
+				16901AAC2FFFCDB2007DF535 /* AdGuardMacLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1024,7 +1021,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EBAA09992BAC7AD60032C591 /* Cocoa.framework in Frameworks */,
-				EBAA0A0D2BAC80080032C591 /* AdGuardMacLib in Frameworks */,
+				16901AAE2FFFCDF0007DF535 /* AdGuardMacLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1033,7 +1030,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EBAA09AD2BAC7DDA0032C591 /* Cocoa.framework in Frameworks */,
-				EBAA0A0F2BAC800D0032C591 /* AdGuardMacLib in Frameworks */,
+				16901AB22FFFCE0B007DF535 /* AdGuardMacLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1042,7 +1039,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EBAA09C12BAC7EA10032C591 /* Cocoa.framework in Frameworks */,
-				EBAA0A112BAC80120032C591 /* AdGuardMacLib in Frameworks */,
+				16901AB42FFFCE13007DF535 /* AdGuardMacLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1051,7 +1048,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EBAA09D52BAC7EBD0032C591 /* Cocoa.framework in Frameworks */,
-				EBAA0A132BAC80160032C591 /* AdGuardMacLib in Frameworks */,
+				16901AB62FFFCE1A007DF535 /* AdGuardMacLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1060,7 +1057,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EBAA09FD2BAC7EE20032C591 /* Cocoa.framework in Frameworks */,
-				EBAA0A152BAC801A0032C591 /* AdGuardMacLib in Frameworks */,
+				16901AB82FFFCE20007DF535 /* AdGuardMacLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1068,9 +1065,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EBFFD3752D80646000E8409F /* XPCGateLib in Frameworks */,
-				EBFFD3732D80645B00E8409F /* AGSentry in Frameworks */,
-				EBFFD3712D80645600E8409F /* AdGuardMacLib in Frameworks */,
+				16901A882FFFC059007DF535 /* AdGuardMacLib in Frameworks */,
+				16901ABE2FFFCE5D007DF535 /* XPCGateLib in Frameworks */,
+				16901ABC2FFFCE58007DF535 /* AGSentry in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1078,18 +1075,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				162E1EE02FF6616300232A89 /* FLM in Frameworks */,
-				165B08DF2E99102900590B12 /* AppStore in Frameworks */,
-				EBFFD36F2D80644E00E8409F /* XPCGateLib in Frameworks */,
-				EBE514462D68CD930009F9DB /* AdGuardFLMLib in Frameworks */,
-				EBFFD3652D8062A600E8409F /* Sentry in Frameworks */,
-				EBFFD3672D8062CE00E8409F /* AGCrashReporterLib in Frameworks */,
 				EC4131A62A6ED42400C93BDF /* SciterSchema in Frameworks */,
-				EB3B75182C948EC500D9512F /* AppBackend in Frameworks */,
-				EBFFD36B2D80643E00E8409F /* AdGuardMacLib in Frameworks */,
+				16901AC62FFFCF34007DF535 /* AGSentry in Frameworks */,
+				16901ACC2FFFCFAA007DF535 /* AppStore in Frameworks */,
+				16901AC22FFFCEFD007DF535 /* AdGuardMacLib in Frameworks */,
+				16901AC42FFFCF0B007DF535 /* FLM in Frameworks */,
 				EC4906222AB3120E00830379 /* ContentBlockerConverter in Frameworks */,
-				EBFFD36D2D80644800E8409F /* AGSentry in Frameworks */,
-				165B0D8B2E9D514200590B12 /* AppBackend in Frameworks */,
+				16901ACA2FFFCF9B007DF535 /* XPCGateLib in Frameworks */,
+				16901AC02FFFCEF6007DF535 /* AppBackend in Frameworks */,
+				16901AC82FFFCF3E007DF535 /* AGCrashReporterLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1098,7 +1092,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC4197B42A6FE790000F363D /* Cocoa.framework in Frameworks */,
-				EBC3E1882B3323A5000AFCE3 /* AdGuardMacLib in Frameworks */,
+				16901AB02FFFCE01007DF535 /* AdGuardMacLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1106,11 +1100,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				16B91426300139130046E668 /* AGSentry in Frameworks */,
+				16901A8A2FFFC063007DF535 /* AdGuardMacLib in Frameworks */,
+				16901A902FFFCCB5007DF535 /* XPCGateLib in Frameworks */,
 				1644A0A52DB8D977003852C6 /* ContentBlockerConverter in Frameworks */,
 				EB00BB882ABAF71F007FA047 /* AGSEDesignSystem in Frameworks */,
-				EBFFD37B2D80647400E8409F /* XPCGateLib in Frameworks */,
-				EBFFD3792D80646E00E8409F /* AGSentry in Frameworks */,
-				EBFFD3772D80646800E8409F /* AdGuardMacLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1355,7 +1349,7 @@
 			);
 			name = MailBlocker;
 			packageProductDependencies = (
-				162E77792FF2B09A00232A89 /* AdGuardMacLib */,
+				16901A8D2FFFC098007DF535 /* AdGuardMacLib */,
 			);
 			productName = BlockerMail;
 			productReference = 162E77642FF2B04E00232A89 /* MailBlocker.appex */;
@@ -1379,7 +1373,7 @@
 			);
 			name = "SafariExtension Builder";
 			packageProductDependencies = (
-				169664EC2E9FEE2F00E0B87E /* AdGuardMacLib */,
+				16901A952FFFCCFA007DF535 /* AdGuardMacLib */,
 			);
 			productName = "SafariExtension Builder";
 			productReference = 169664D62E9FEB2B00E0B87E /* SafariExtension Builder */;
@@ -1406,10 +1400,10 @@
 			);
 			name = WebExtension;
 			packageProductDependencies = (
-				EBFFD37C2D80647B00E8409F /* AdGuardMacLib */,
-				EBFFD37E2D80648000E8409F /* AGSentry */,
-				EBFFD3802D80648600E8409F /* XPCGateLib */,
-				1644A0A62DB8D97F003852C6 /* ContentBlockerConverter */,
+				16901A9F2FFFCD66007DF535 /* AdGuardMacLib */,
+				16901AA12FFFCD6E007DF535 /* AGSentry */,
+				16901AA32FFFCD74007DF535 /* XPCGateLib */,
+				16901AA52FFFCD7D007DF535 /* ContentBlockerConverter */,
 			);
 			productName = WebExt;
 			productReference = EB0A20A52D5B56C1002A8029 /* WebExtension.appex */;
@@ -1434,8 +1428,8 @@
 			);
 			name = "AdguardMini Builder";
 			packageProductDependencies = (
-				EB4410322C076D6D003F4DB5 /* AdGuardMacLib */,
-				D9606EE02D75D23B004E12B0 /* FLMBuilder */,
+				16901A9B2FFFCD36007DF535 /* AdGuardMacLib */,
+				16901A9D2FFFCD49007DF535 /* FLMBuilder */,
 			);
 			productName = "AdguardMini Builder";
 			productReference = EB4410222C076D0F003F4DB5 /* AdguardMini Builder */;
@@ -1489,8 +1483,8 @@
 			);
 			name = AdguardMiniTests;
 			packageProductDependencies = (
-				EBBADE122B90EDEB001B22EE /* AdGuardMacLib */,
-				EBBADE142B90EDF0001B22EE /* ContentBlockerConverter */,
+				16901AA72FFFCD8F007DF535 /* AdGuardMacLib */,
+				16901AA92FFFCD9C007DF535 /* ContentBlockerConverter */,
 			);
 			productName = AdguardMiniTests;
 			productReference = EB843F062B90ED15009179E0 /* AdguardMiniTests.xctest */;
@@ -1514,7 +1508,7 @@
 			);
 			name = "AdguardMini Prebuilder";
 			packageProductDependencies = (
-				EB93A6832C218CB6003D84A5 /* AdGuardMacLib */,
+				16901AAB2FFFCDB2007DF535 /* AdGuardMacLib */,
 			);
 			productName = "AdguardMini Prebuilder";
 			productReference = EB93A6772C218C14003D84A5 /* AdguardMini Prebuilder */;
@@ -1541,7 +1535,7 @@
 			);
 			name = PrivacyContentBlocker;
 			packageProductDependencies = (
-				EBAA0A0C2BAC80080032C591 /* AdGuardMacLib */,
+				16901AAD2FFFCDF0007DF535 /* AdGuardMacLib */,
 			);
 			productName = PrivacyContentBlocker;
 			productReference = EBAA09982BAC7AD60032C591 /* PrivacyContentBlocker.appex */;
@@ -1568,7 +1562,7 @@
 			);
 			name = SecurityContentBlocker;
 			packageProductDependencies = (
-				EBAA0A0E2BAC800D0032C591 /* AdGuardMacLib */,
+				16901AB12FFFCE0B007DF535 /* AdGuardMacLib */,
 			);
 			productName = SecurityContentBlocker;
 			productReference = EBAA09AC2BAC7DDA0032C591 /* SecurityContentBlocker.appex */;
@@ -1595,7 +1589,7 @@
 			);
 			name = SocialContentBlocker;
 			packageProductDependencies = (
-				EBAA0A102BAC80120032C591 /* AdGuardMacLib */,
+				16901AB32FFFCE13007DF535 /* AdGuardMacLib */,
 			);
 			productName = SocialContentBlocker;
 			productReference = EBAA09C02BAC7EA10032C591 /* SocialContentBlocker.appex */;
@@ -1622,7 +1616,7 @@
 			);
 			name = OtherContentBlocker;
 			packageProductDependencies = (
-				EBAA0A122BAC80160032C591 /* AdGuardMacLib */,
+				16901AB52FFFCE1A007DF535 /* AdGuardMacLib */,
 			);
 			productName = OtherContentBlocker;
 			productReference = EBAA09D42BAC7EBD0032C591 /* OtherContentBlocker.appex */;
@@ -1649,7 +1643,7 @@
 			);
 			name = CustomContentBlocker;
 			packageProductDependencies = (
-				EBAA0A142BAC801A0032C591 /* AdGuardMacLib */,
+				16901AB72FFFCE20007DF535 /* AdGuardMacLib */,
 			);
 			productName = CustomContentBlocker;
 			productReference = EBAA09FC2BAC7EE20032C591 /* CustomContentBlocker.appex */;
@@ -1675,9 +1669,9 @@
 			);
 			name = Helper;
 			packageProductDependencies = (
-				EBFFD3702D80645600E8409F /* AdGuardMacLib */,
-				EBFFD3722D80645B00E8409F /* AGSentry */,
-				EBFFD3742D80646000E8409F /* XPCGateLib */,
+				16901A872FFFC059007DF535 /* AdGuardMacLib */,
+				16901ABB2FFFCE58007DF535 /* AGSentry */,
+				16901ABD2FFFCE5D007DF535 /* XPCGateLib */,
 			);
 			productName = Helper;
 			productReference = EBC4D9B22AB8772000C255F4 /* TC3Q7MAJXF.com.adguard.safari.AdGuard.debug.Helper.app */;
@@ -1739,16 +1733,13 @@
 			packageProductDependencies = (
 				EC4131A52A6ED42400C93BDF /* SciterSchema */,
 				EC4906212AB3120E00830379 /* ContentBlockerConverter */,
-				EB3B75172C948EC500D9512F /* AppBackend */,
-				EBE514452D68CD930009F9DB /* AdGuardFLMLib */,
-				D9606EDE2D75D228004E12B0 /* FLM */,
-				EBFFD3642D8062A600E8409F /* Sentry */,
-				EBFFD3662D8062CE00E8409F /* AGCrashReporterLib */,
-				EBFFD36A2D80643E00E8409F /* AdGuardMacLib */,
-				EBFFD36C2D80644800E8409F /* AGSentry */,
-				EBFFD36E2D80644E00E8409F /* XPCGateLib */,
-				165B08DE2E99102900590B12 /* AppStore */,
-				165B0D8A2E9D514200590B12 /* AppBackend */,
+				16901ABF2FFFCEF6007DF535 /* AppBackend */,
+				16901AC32FFFCF0B007DF535 /* FLM */,
+				16901AC12FFFCEFD007DF535 /* AdGuardMacLib */,
+				16901AC52FFFCF34007DF535 /* AGSentry */,
+				16901AC72FFFCF3E007DF535 /* AGCrashReporterLib */,
+				16901AC92FFFCF9B007DF535 /* XPCGateLib */,
+				16901ACB2FFFCFAA007DF535 /* AppStore */,
 			);
 			productName = safari.AdGuard.BlockerSocial;
 			productReference = EC3462F42A29DD9200F59ABC /* AdGuard Mini.app */;
@@ -1775,7 +1766,7 @@
 			);
 			name = GeneralContentBlocker;
 			packageProductDependencies = (
-				EBC3E1872B3323A5000AFCE3 /* AdGuardMacLib */,
+				16901AAF2FFFCE01007DF535 /* AdGuardMacLib */,
 			);
 			productName = BlockerExtension;
 			productReference = EC4197B22A6FE790000F363D /* GeneralContentBlocker.appex */;
@@ -1793,11 +1784,11 @@
 			buildRules = (
 			);
 			dependencies = (
+				16B91424300138F40046E668 /* PBXTargetDependency */,
 				164E41302EA90B9900C28D3C /* PBXTargetDependency */,
 				169664E72E9FEC4400E0B87E /* PBXTargetDependency */,
 				16965BAA2E9FD5E100E0B87E /* PBXTargetDependency */,
 				EB2041BB2C00C87E0083E1DA /* PBXTargetDependency */,
-				EB7C3B7C2AA9A3060064CF40 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				16209B4B2E0C267E00F0B9F5 /* ExtensionBrowserApi */,
@@ -1816,10 +1807,10 @@
 			name = PopupExtension;
 			packageProductDependencies = (
 				EB00BB872ABAF71F007FA047 /* AGSEDesignSystem */,
-				EBFFD3762D80646800E8409F /* AdGuardMacLib */,
-				EBFFD3782D80646E00E8409F /* AGSentry */,
-				EBFFD37A2D80647400E8409F /* XPCGateLib */,
 				1644A0A42DB8D977003852C6 /* ContentBlockerConverter */,
+				16901A892FFFC063007DF535 /* AdGuardMacLib */,
+				16901A8F2FFFCCB5007DF535 /* XPCGateLib */,
+				16B91425300139130046E668 /* AGSentry */,
 			);
 			productName = EntryExtension;
 			productReference = ECDF568E2A6029570017A270 /* PopupExtension.appex */;
@@ -1947,15 +1938,15 @@
 			);
 			mainGroup = EC3462EB2A29DD9200F59ABC;
 			packageReferences = (
-				EB7C3B6C2AA9A0C00064CF40 /* XCRemoteSwiftPackageReference "adguard-mac-lib" */,
 				EC4906202AB3120E00830379 /* XCRemoteSwiftPackageReference "SafariConverterLib" */,
-				EBA8B5862AB1C2BB00E7BFC6 /* XCRemoteSwiftPackageReference "sp-xpcgate" */,
 				EB27B01F2C762946004403BD /* XCRemoteSwiftPackageReference "Sparkle" */,
-				EB6C52A82D37E03F0024F189 /* XCRemoteSwiftPackageReference "sp-sentry" */,
-				165BDBE62E96B2A800590B12 /* XCRemoteSwiftPackageReference "sp-flm" */,
-				165B08DD2E99102900590B12 /* XCRemoteSwiftPackageReference "sp-appstore" */,
-				165B0D892E9D514200590B12 /* XCRemoteSwiftPackageReference "sp-backend" */,
 				16965BA42E9FD5CD00E0B87E /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+				160C1C0A2FFFB6B200B840B9 /* XCRemoteSwiftPackageReference "aml" */,
+				160C1C0D2FFFB6DA00B840B9 /* XCRemoteSwiftPackageReference "sp-xpcgate" */,
+				160C1C102FFFB6EC00B840B9 /* XCRemoteSwiftPackageReference "sp-sentry" */,
+				160C1C112FFFB70300B840B9 /* XCRemoteSwiftPackageReference "sp-backend" */,
+				160C1C142FFFB76000B840B9 /* XCRemoteSwiftPackageReference "sp-appstore" */,
+				16901A842FFFC03B007DF535 /* XCRemoteSwiftPackageReference "sp-flm" */,
 			);
 			preferredProjectObjectVersion = 54;
 			productRefGroup = EC3462F52A29DD9200F59ABC /* Products */;
@@ -2197,7 +2188,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/MainConfig.xcconfig",
+				"$(SRCROOT)/CommonConfig.xcconfig",
 			);
 			name = "Generate Sensitive Config Constants";
 			outputFileListPaths = (
@@ -2239,7 +2230,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/MainConfig.xcconfig",
+				"$(SRCROOT)/CommonConfig.xcconfig",
 			);
 			name = "Generate Config Constants";
 			outputFileListPaths = (
@@ -2269,7 +2260,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/zsh -f\n\nset -e\n\nsrc=\"${BUILT_PRODUCTS_DIR}/${AG_HELPER_NAME}.app\"\ndst=\"${TARGET_BUILD_DIR}/${CONTENTS_FOLDER_PATH}/Library/LoginItems\"\n\n[[ -d \"$dst\" ]] || mkdir -p \"$dst\" || exit\ncp -rf \"$src\" \"$dst\"\n";
+			shellScript = "#!/bin/zsh -f\n\nset -e\n\nsrc=\"${BUILT_PRODUCTS_DIR}/${AG_HELPER_NAME}.app\"\ndst=\"${TARGET_BUILD_DIR}/${CONTENTS_FOLDER_PATH}/Library/LoginItems\"\n\n[[ -d \"$dst\" ]] || mkdir -p \"$dst\" || exit\nditto \"$src\" \"$dst/${AG_HELPER_NAME}.app\"\n";
 		};
 		EBDCFA932BA428B7002C3928 /* Generate String localizations */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2589,6 +2580,10 @@
 			isa = PBXTargetDependency;
 			productRef = 169664F02E9FF7A500E0B87E /* SwiftLintBuildToolPlugin */;
 		};
+		16B91424300138F40046E668 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 16B91423300138F40046E668 /* generate_strings_tables */;
+		};
 		EB0A20BD2D5B56C1002A8029 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = EB0A20A42D5B56C1002A8029 /* WebExtension */;
@@ -2663,10 +2658,6 @@
 			isa = PBXTargetDependency;
 			target = EB455C6F2B3AD41B0010C9B3 /* Watchdog */;
 			targetProxy = EB455C802B3AF2B50010C9B3 /* PBXContainerItemProxy */;
-		};
-		EB7C3B7C2AA9A3060064CF40 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = EB7C3B7B2AA9A3060064CF40 /* generate_strings_tables */;
 		};
 		EB88F5DE2C0088270033E2E8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2777,13 +2768,13 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = TC3Q7MAJXF;
+				DEVELOPMENT_TEAM = "$(AG_TEAM)";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -3104,7 +3095,7 @@
 		162BF3152EA2311900421157 /* Debug(MAS) */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "-";
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -3119,7 +3110,6 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_VERSION = 5.0;
@@ -3130,15 +3120,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_VERSION = 5.0;
@@ -3149,8 +3136,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -3160,7 +3145,6 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_VERSION = 5.0;
@@ -3232,9 +3216,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -3242,7 +3224,6 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.adguard.AdguardMiniTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -3266,7 +3247,6 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_MAIL_EXTENSION_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -3293,7 +3273,6 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_MAIL_EXTENSION_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -3320,7 +3299,6 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_MAIL_EXTENSION_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -3347,7 +3325,6 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_MAIL_EXTENSION_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -3374,7 +3351,6 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_MAIL_EXTENSION_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -3401,7 +3377,6 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_MAIL_EXTENSION_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -3428,7 +3403,6 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_MAIL_EXTENSION_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -3559,8 +3533,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -3570,7 +3542,6 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_VERSION = 5.0;
@@ -3581,14 +3552,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -3598,14 +3566,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -3615,14 +3580,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -3632,14 +3594,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -3649,14 +3608,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -3830,14 +3786,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = TC3Q7MAJXF;
+				DEVELOPMENT_TEAM = "$(AG_TEAM)";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -4141,7 +4097,7 @@
 		EB1A10A62D8415B7006DB3CF /* MAS(IAP) */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "-";
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -4156,7 +4112,6 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -4166,8 +4121,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -4233,9 +4186,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -4243,7 +4194,6 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.adguard.AdguardMiniTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 			};
@@ -4286,13 +4236,13 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "$(AGP_MAS_SIGN)";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = TC3Q7MAJXF;
+				DEVELOPMENT_TEAM = "$(AG_TEAM)";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -4349,7 +4299,6 @@
 				OTHER_LDFLAGS = "$(inherit)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_APP_ID)";
 				PRODUCT_NAME = "$(AG_PRODUCT_NAME)";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=*]" = "match AppStore com.adguard.safari.AdGuard macos";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -4406,7 +4355,6 @@
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_POPUP_EXTENSION_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "match AppStore com.adguard.safari.AdGuard.Extension macos";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -4484,7 +4432,7 @@
 		EB4410272C076D16003F4DB5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "-";
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -4499,7 +4447,6 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_VERSION = 5.0;
@@ -4509,7 +4456,7 @@
 		EB4410282C076D16003F4DB5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "-";
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -4524,7 +4471,6 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -4533,7 +4479,7 @@
 		EB4410292C076D16003F4DB5 /* Beta */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "-";
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -4548,7 +4494,6 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -4557,7 +4502,7 @@
 		EB44102A2C076D16003F4DB5 /* Nightly */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "-";
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -4572,7 +4517,6 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -4581,7 +4525,7 @@
 		EB44102B2C076D16003F4DB5 /* MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "-";
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -4596,7 +4540,6 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -4655,9 +4598,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -4665,7 +4606,6 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.adguard.AdguardMiniTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -4676,9 +4616,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -4686,7 +4624,6 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.adguard.AdguardMiniTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 			};
@@ -4696,9 +4633,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -4706,7 +4641,6 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.adguard.AdguardMiniTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 			};
@@ -4776,15 +4710,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_VERSION = 5.0;
@@ -4795,8 +4726,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -4812,8 +4741,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -4829,8 +4756,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -4846,8 +4771,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -5412,14 +5335,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = TC3Q7MAJXF;
+				DEVELOPMENT_TEAM = "$(AG_TEAM)";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -5716,9 +5639,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -5726,7 +5647,6 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.adguard.AdguardMiniTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 			};
@@ -5769,14 +5689,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = TC3Q7MAJXF;
+				DEVELOPMENT_TEAM = "$(AG_TEAM)";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -6073,9 +5993,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -6083,7 +6001,6 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.adguard.AdguardMiniTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 			};
@@ -6126,13 +6043,13 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = TC3Q7MAJXF;
+				DEVELOPMENT_TEAM = "$(AG_TEAM)";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -6196,14 +6113,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = TC3Q7MAJXF;
+				DEVELOPMENT_TEAM = "$(AG_TEAM)";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -6760,28 +6677,52 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		165B08DD2E99102900590B12 /* XCRemoteSwiftPackageReference "sp-appstore" */ = {
+		160C1C0A2FFFB6B200B840B9 /* XCRemoteSwiftPackageReference "aml" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "ssh://git@bit.int.agrd.dev:7999/adguard-mac/sp-appstore.git";
+			repositoryURL = mac.aml;
 			requirement = {
-				branch = 0.8.0;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.5.4;
 			};
 		};
-		165B0D892E9D514200590B12 /* XCRemoteSwiftPackageReference "sp-backend" */ = {
+		160C1C0D2FFFB6DA00B840B9 /* XCRemoteSwiftPackageReference "sp-xpcgate" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "ssh://git@bit.int.agrd.dev:7999/adguard-mac/sp-backend.git";
+			repositoryURL = "mac.sp-xpcgate";
 			requirement = {
-				branch = 0.7.0;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 15.0.1;
 			};
 		};
-		165BDBE62E96B2A800590B12 /* XCRemoteSwiftPackageReference "sp-flm" */ = {
+		160C1C102FFFB6EC00B840B9 /* XCRemoteSwiftPackageReference "sp-sentry" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "ssh://git@bit.int.agrd.dev:7999/adguard-mac/sp-flm.git";
+			repositoryURL = "mac.sp-sentry";
 			requirement = {
-				branch = 0.20.2;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.1.1;
+			};
+		};
+		160C1C112FFFB70300B840B9 /* XCRemoteSwiftPackageReference "sp-backend" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "mac.sp-backend";
+			requirement = {
+				kind = exactVersion;
+				version = 0.8.1;
+			};
+		};
+		160C1C142FFFB76000B840B9 /* XCRemoteSwiftPackageReference "sp-appstore" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "mac.sp-appstore";
+			requirement = {
+				kind = exactVersion;
+				version = 0.8.1;
+			};
+		};
+		16901A842FFFC03B007DF535 /* XCRemoteSwiftPackageReference "sp-flm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "mac.sp-flm";
+			requirement = {
+				kind = exactVersion;
+				version = 0.21.0;
 			};
 		};
 		16965BA42E9FD5CD00E0B87E /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
@@ -6800,30 +6741,6 @@
 				version = 2.8.0;
 			};
 		};
-		EB6C52A82D37E03F0024F189 /* XCRemoteSwiftPackageReference "sp-sentry" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "ssh://git@bit.int.agrd.dev:7999/adguard-mac/sp-sentry.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 9.0.0;
-			};
-		};
-		EB7C3B6C2AA9A0C00064CF40 /* XCRemoteSwiftPackageReference "adguard-mac-lib" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "ssh://git@bit.int.agrd.dev:7999/adguard-mac/adguard-mac-lib.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 12.5.2;
-			};
-		};
-		EBA8B5862AB1C2BB00E7BFC6 /* XCRemoteSwiftPackageReference "sp-xpcgate" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "ssh://git@bit.int.agrd.dev:7999/adguard-mac/sp-xpcgate.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 15.0.1;
-			};
-		};
 		EC4906202AB3120E00830379 /* XCRemoteSwiftPackageReference "SafariConverterLib" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/AdguardTeam/SafariConverterLib";
@@ -6835,11 +6752,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		162E77792FF2B09A00232A89 /* AdGuardMacLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB7C3B6C2AA9A0C00064CF40 /* XCRemoteSwiftPackageReference "adguard-mac-lib" */;
-			productName = AdGuardMacLib;
-		};
 		162E777C2FF2B3B800232A89 /* SwiftLintBuildToolPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 16965BA42E9FD5CD00E0B87E /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
@@ -6850,20 +6762,150 @@
 			package = EC4906202AB3120E00830379 /* XCRemoteSwiftPackageReference "SafariConverterLib" */;
 			productName = ContentBlockerConverter;
 		};
-		1644A0A62DB8D97F003852C6 /* ContentBlockerConverter */ = {
+		16901A872FFFC059007DF535 /* AdGuardMacLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C0A2FFFB6B200B840B9 /* XCRemoteSwiftPackageReference "aml" */;
+			productName = AdGuardMacLib;
+		};
+		16901A892FFFC063007DF535 /* AdGuardMacLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C0A2FFFB6B200B840B9 /* XCRemoteSwiftPackageReference "aml" */;
+			productName = AdGuardMacLib;
+		};
+		16901A8D2FFFC098007DF535 /* AdGuardMacLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C0A2FFFB6B200B840B9 /* XCRemoteSwiftPackageReference "aml" */;
+			productName = AdGuardMacLib;
+		};
+		16901A8F2FFFCCB5007DF535 /* XPCGateLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C0D2FFFB6DA00B840B9 /* XCRemoteSwiftPackageReference "sp-xpcgate" */;
+			productName = XPCGateLib;
+		};
+		16901A952FFFCCFA007DF535 /* AdGuardMacLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C0A2FFFB6B200B840B9 /* XCRemoteSwiftPackageReference "aml" */;
+			productName = AdGuardMacLib;
+		};
+		16901A9B2FFFCD36007DF535 /* AdGuardMacLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C0A2FFFB6B200B840B9 /* XCRemoteSwiftPackageReference "aml" */;
+			productName = AdGuardMacLib;
+		};
+		16901A9D2FFFCD49007DF535 /* FLMBuilder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16901A842FFFC03B007DF535 /* XCRemoteSwiftPackageReference "sp-flm" */;
+			productName = FLMBuilder;
+		};
+		16901A9F2FFFCD66007DF535 /* AdGuardMacLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C0A2FFFB6B200B840B9 /* XCRemoteSwiftPackageReference "aml" */;
+			productName = AdGuardMacLib;
+		};
+		16901AA12FFFCD6E007DF535 /* AGSentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C102FFFB6EC00B840B9 /* XCRemoteSwiftPackageReference "sp-sentry" */;
+			productName = AGSentry;
+		};
+		16901AA32FFFCD74007DF535 /* XPCGateLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C0D2FFFB6DA00B840B9 /* XCRemoteSwiftPackageReference "sp-xpcgate" */;
+			productName = XPCGateLib;
+		};
+		16901AA52FFFCD7D007DF535 /* ContentBlockerConverter */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = EC4906202AB3120E00830379 /* XCRemoteSwiftPackageReference "SafariConverterLib" */;
 			productName = ContentBlockerConverter;
 		};
-		165B08DE2E99102900590B12 /* AppStore */ = {
+		16901AA72FFFCD8F007DF535 /* AdGuardMacLib */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 165B08DD2E99102900590B12 /* XCRemoteSwiftPackageReference "sp-appstore" */;
-			productName = AppStore;
+			package = 160C1C0A2FFFB6B200B840B9 /* XCRemoteSwiftPackageReference "aml" */;
+			productName = AdGuardMacLib;
 		};
-		165B0D8A2E9D514200590B12 /* AppBackend */ = {
+		16901AA92FFFCD9C007DF535 /* ContentBlockerConverter */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 165B0D892E9D514200590B12 /* XCRemoteSwiftPackageReference "sp-backend" */;
+			package = EC4906202AB3120E00830379 /* XCRemoteSwiftPackageReference "SafariConverterLib" */;
+			productName = ContentBlockerConverter;
+		};
+		16901AAB2FFFCDB2007DF535 /* AdGuardMacLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C0A2FFFB6B200B840B9 /* XCRemoteSwiftPackageReference "aml" */;
+			productName = AdGuardMacLib;
+		};
+		16901AAD2FFFCDF0007DF535 /* AdGuardMacLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C0A2FFFB6B200B840B9 /* XCRemoteSwiftPackageReference "aml" */;
+			productName = AdGuardMacLib;
+		};
+		16901AAF2FFFCE01007DF535 /* AdGuardMacLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C0A2FFFB6B200B840B9 /* XCRemoteSwiftPackageReference "aml" */;
+			productName = AdGuardMacLib;
+		};
+		16901AB12FFFCE0B007DF535 /* AdGuardMacLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C0A2FFFB6B200B840B9 /* XCRemoteSwiftPackageReference "aml" */;
+			productName = AdGuardMacLib;
+		};
+		16901AB32FFFCE13007DF535 /* AdGuardMacLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C0A2FFFB6B200B840B9 /* XCRemoteSwiftPackageReference "aml" */;
+			productName = AdGuardMacLib;
+		};
+		16901AB52FFFCE1A007DF535 /* AdGuardMacLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C0A2FFFB6B200B840B9 /* XCRemoteSwiftPackageReference "aml" */;
+			productName = AdGuardMacLib;
+		};
+		16901AB72FFFCE20007DF535 /* AdGuardMacLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C0A2FFFB6B200B840B9 /* XCRemoteSwiftPackageReference "aml" */;
+			productName = AdGuardMacLib;
+		};
+		16901ABB2FFFCE58007DF535 /* AGSentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C102FFFB6EC00B840B9 /* XCRemoteSwiftPackageReference "sp-sentry" */;
+			productName = AGSentry;
+		};
+		16901ABD2FFFCE5D007DF535 /* XPCGateLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C0D2FFFB6DA00B840B9 /* XCRemoteSwiftPackageReference "sp-xpcgate" */;
+			productName = XPCGateLib;
+		};
+		16901ABF2FFFCEF6007DF535 /* AppBackend */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C112FFFB70300B840B9 /* XCRemoteSwiftPackageReference "sp-backend" */;
 			productName = AppBackend;
+		};
+		16901AC12FFFCEFD007DF535 /* AdGuardMacLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C0A2FFFB6B200B840B9 /* XCRemoteSwiftPackageReference "aml" */;
+			productName = AdGuardMacLib;
+		};
+		16901AC32FFFCF0B007DF535 /* FLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16901A842FFFC03B007DF535 /* XCRemoteSwiftPackageReference "sp-flm" */;
+			productName = FLM;
+		};
+		16901AC52FFFCF34007DF535 /* AGSentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C102FFFB6EC00B840B9 /* XCRemoteSwiftPackageReference "sp-sentry" */;
+			productName = AGSentry;
+		};
+		16901AC72FFFCF3E007DF535 /* AGCrashReporterLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C102FFFB6EC00B840B9 /* XCRemoteSwiftPackageReference "sp-sentry" */;
+			productName = AGCrashReporterLib;
+		};
+		16901AC92FFFCF9B007DF535 /* XPCGateLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C0D2FFFB6DA00B840B9 /* XCRemoteSwiftPackageReference "sp-xpcgate" */;
+			productName = XPCGateLib;
+		};
+		16901ACB2FFFCFAA007DF535 /* AppStore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160C1C142FFFB76000B840B9 /* XCRemoteSwiftPackageReference "sp-appstore" */;
+			productName = AppStore;
 		};
 		16965BA52E9FD5D700E0B87E /* SwiftLintBuildToolPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -6935,165 +6977,29 @@
 			package = 16965BA42E9FD5CD00E0B87E /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
 			productName = "plugin:SwiftLintBuildToolPlugin";
 		};
-		169664EC2E9FEE2F00E0B87E /* AdGuardMacLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB7C3B6C2AA9A0C00064CF40 /* XCRemoteSwiftPackageReference "adguard-mac-lib" */;
-			productName = AdGuardMacLib;
-		};
 		169664F02E9FF7A500E0B87E /* SwiftLintBuildToolPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 16965BA42E9FD5CD00E0B87E /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
 			productName = "plugin:SwiftLintBuildToolPlugin";
 		};
-		D9606EDE2D75D228004E12B0 /* FLM */ = {
+		16B91423300138F40046E668 /* generate_strings_tables */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = FLM;
+			package = 160C1C0A2FFFB6B200B840B9 /* XCRemoteSwiftPackageReference "aml" */;
+			productName = generate_strings_tables;
 		};
-		D9606EE02D75D23B004E12B0 /* FLMBuilder */ = {
+		16B91425300139130046E668 /* AGSentry */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = FLMBuilder;
+			package = 160C1C102FFFB6EC00B840B9 /* XCRemoteSwiftPackageReference "sp-sentry" */;
+			productName = AGSentry;
 		};
 		EB00BB872ABAF71F007FA047 /* AGSEDesignSystem */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AGSEDesignSystem;
 		};
-		EB3B75172C948EC500D9512F /* AppBackend */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = AppBackend;
-		};
-		EB4410322C076D6D003F4DB5 /* AdGuardMacLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB7C3B6C2AA9A0C00064CF40 /* XCRemoteSwiftPackageReference "adguard-mac-lib" */;
-			productName = AdGuardMacLib;
-		};
-		EB7C3B7B2AA9A3060064CF40 /* generate_strings_tables */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB7C3B6C2AA9A0C00064CF40 /* XCRemoteSwiftPackageReference "adguard-mac-lib" */;
-			productName = generate_strings_tables;
-		};
-		EB93A6832C218CB6003D84A5 /* AdGuardMacLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB7C3B6C2AA9A0C00064CF40 /* XCRemoteSwiftPackageReference "adguard-mac-lib" */;
-			productName = AdGuardMacLib;
-		};
-		EBAA0A0C2BAC80080032C591 /* AdGuardMacLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB7C3B6C2AA9A0C00064CF40 /* XCRemoteSwiftPackageReference "adguard-mac-lib" */;
-			productName = AdGuardMacLib;
-		};
-		EBAA0A0E2BAC800D0032C591 /* AdGuardMacLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB7C3B6C2AA9A0C00064CF40 /* XCRemoteSwiftPackageReference "adguard-mac-lib" */;
-			productName = AdGuardMacLib;
-		};
-		EBAA0A102BAC80120032C591 /* AdGuardMacLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB7C3B6C2AA9A0C00064CF40 /* XCRemoteSwiftPackageReference "adguard-mac-lib" */;
-			productName = AdGuardMacLib;
-		};
-		EBAA0A122BAC80160032C591 /* AdGuardMacLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB7C3B6C2AA9A0C00064CF40 /* XCRemoteSwiftPackageReference "adguard-mac-lib" */;
-			productName = AdGuardMacLib;
-		};
-		EBAA0A142BAC801A0032C591 /* AdGuardMacLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB7C3B6C2AA9A0C00064CF40 /* XCRemoteSwiftPackageReference "adguard-mac-lib" */;
-			productName = AdGuardMacLib;
-		};
-		EBBADE122B90EDEB001B22EE /* AdGuardMacLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB7C3B6C2AA9A0C00064CF40 /* XCRemoteSwiftPackageReference "adguard-mac-lib" */;
-			productName = AdGuardMacLib;
-		};
-		EBBADE142B90EDF0001B22EE /* ContentBlockerConverter */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EC4906202AB3120E00830379 /* XCRemoteSwiftPackageReference "SafariConverterLib" */;
-			productName = ContentBlockerConverter;
-		};
-		EBC3E1872B3323A5000AFCE3 /* AdGuardMacLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB7C3B6C2AA9A0C00064CF40 /* XCRemoteSwiftPackageReference "adguard-mac-lib" */;
-			productName = AdGuardMacLib;
-		};
-		EBE514452D68CD930009F9DB /* AdGuardFLMLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = AdGuardFLMLib;
-		};
-		EBFFD3642D8062A600E8409F /* Sentry */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB6C52A82D37E03F0024F189 /* XCRemoteSwiftPackageReference "sp-sentry" */;
-			productName = Sentry;
-		};
-		EBFFD3662D8062CE00E8409F /* AGCrashReporterLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB6C52A82D37E03F0024F189 /* XCRemoteSwiftPackageReference "sp-sentry" */;
-			productName = AGCrashReporterLib;
-		};
 		EBFFD3682D80634C00E8409F /* Sparkle */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = EB27B01F2C762946004403BD /* XCRemoteSwiftPackageReference "Sparkle" */;
 			productName = Sparkle;
-		};
-		EBFFD36A2D80643E00E8409F /* AdGuardMacLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB7C3B6C2AA9A0C00064CF40 /* XCRemoteSwiftPackageReference "adguard-mac-lib" */;
-			productName = AdGuardMacLib;
-		};
-		EBFFD36C2D80644800E8409F /* AGSentry */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB6C52A82D37E03F0024F189 /* XCRemoteSwiftPackageReference "sp-sentry" */;
-			productName = AGSentry;
-		};
-		EBFFD36E2D80644E00E8409F /* XPCGateLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EBA8B5862AB1C2BB00E7BFC6 /* XCRemoteSwiftPackageReference "sp-xpcgate" */;
-			productName = XPCGateLib;
-		};
-		EBFFD3702D80645600E8409F /* AdGuardMacLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB7C3B6C2AA9A0C00064CF40 /* XCRemoteSwiftPackageReference "adguard-mac-lib" */;
-			productName = AdGuardMacLib;
-		};
-		EBFFD3722D80645B00E8409F /* AGSentry */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB6C52A82D37E03F0024F189 /* XCRemoteSwiftPackageReference "sp-sentry" */;
-			productName = AGSentry;
-		};
-		EBFFD3742D80646000E8409F /* XPCGateLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EBA8B5862AB1C2BB00E7BFC6 /* XCRemoteSwiftPackageReference "sp-xpcgate" */;
-			productName = XPCGateLib;
-		};
-		EBFFD3762D80646800E8409F /* AdGuardMacLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB7C3B6C2AA9A0C00064CF40 /* XCRemoteSwiftPackageReference "adguard-mac-lib" */;
-			productName = AdGuardMacLib;
-		};
-		EBFFD3782D80646E00E8409F /* AGSentry */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB6C52A82D37E03F0024F189 /* XCRemoteSwiftPackageReference "sp-sentry" */;
-			productName = AGSentry;
-		};
-		EBFFD37A2D80647400E8409F /* XPCGateLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EBA8B5862AB1C2BB00E7BFC6 /* XCRemoteSwiftPackageReference "sp-xpcgate" */;
-			productName = XPCGateLib;
-		};
-		EBFFD37C2D80647B00E8409F /* AdGuardMacLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB7C3B6C2AA9A0C00064CF40 /* XCRemoteSwiftPackageReference "adguard-mac-lib" */;
-			productName = AdGuardMacLib;
-		};
-		EBFFD37E2D80648000E8409F /* AGSentry */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB6C52A82D37E03F0024F189 /* XCRemoteSwiftPackageReference "sp-sentry" */;
-			productName = AGSentry;
-		};
-		EBFFD3802D80648600E8409F /* XPCGateLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EBA8B5862AB1C2BB00E7BFC6 /* XCRemoteSwiftPackageReference "sp-xpcgate" */;
-			productName = XPCGateLib;
 		};
 		EC4131A52A6ED42400C93BDF /* SciterSchema */ = {
 			isa = XCSwiftPackageProductDependency;

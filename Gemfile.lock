@@ -1,12 +1,3 @@
-GIT
-  remote: ssh://git@bit.int.agrd.dev:7999/adguard-mac/fastlane-toolkit.git
-  revision: 9a4c5482a2e4ea276d3734c253f24332ccc5e3e3
-  tag: 1.1.1
-  specs:
-    fastlane_toolkit (1.1.1)
-      fastlane-plugin-sentry (= 1.28)
-      fastlane-plugin-xcconfig (~> 2.1)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -125,9 +116,6 @@ GEM
       xcodeproj (>= 1.13.0, < 2.0.0)
       xcpretty (~> 0.4.1)
       xcpretty-travis-formatter (>= 0.0.3, < 2.0.0)
-    fastlane-plugin-sentry (1.28.0)
-      os (~> 1.1, >= 1.1.4)
-    fastlane-plugin-xcconfig (2.1.0)
     fastlane-sirp (1.0.0)
       sysrandom (~> 1.0)
     gh_inspector (1.1.3)
@@ -275,7 +263,6 @@ PLATFORMS
 DEPENDENCIES
   abbrev
   fastlane
-  fastlane_toolkit!
   rubocop (~> 1.75.6)
   ruby-lsp (~> 0.23.21)
 

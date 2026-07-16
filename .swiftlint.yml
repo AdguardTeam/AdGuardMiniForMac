@@ -1,0 +1,8 @@
+# SPDX-FileCopyrightText: AdGuard Software Limited
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# Workaround for SwiftLint excluded paths not being matched correctly
+# when using --working-directory with a path argument.
+# parent_config forces proper path resolution relative to AdguardMini/.swiftlint.yml.
+parent_config: AdguardMini/.swiftlint.yml

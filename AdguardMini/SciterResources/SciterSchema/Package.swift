@@ -15,10 +15,7 @@ let package = Package(
             targets: ["SciterSchema"]),
     ],
     dependencies: [
-        .package(
-            url: "ssh://git@bit.int.agrd.dev:7999/adguard-mac/sp-sciter-sdk.git",
-            branch: "mac/6.0.3.18-rev-14-main-thread"
-        ),
+        .package(id: "mac.sp-sciter-sdk", exact: "6.0.3-18.mac.rev.14.main.thread"),
         .package(url: "https://github.com/apple/swift-protobuf.git", exact: "1.31.0")
     ],
     targets: [
@@ -30,7 +27,7 @@ let package = Package(
         .target(
             name: "BaseSciterSchema",
             dependencies: [
-                .product(name: "SciterSDK", package: "sp-sciter-sdk")
+                .product(name: "SciterSDK", package: "mac.sp-sciter-sdk")
             ],
             path: "Sources"
         )

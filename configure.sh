@@ -45,20 +45,53 @@ fi
 echo "==== Configure environment for: $ENV_NAME ===="
 echo
 
-if [ -f ../adguard-mini-private/config.env ]; then
-    source ../adguard-mini-private/config.env
+setup_toolchain
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PRIVATE_DIR="${SCRIPT_DIR}/../sciter-adguard-mini-private"
+PRIVATE_SOURCE="${PRIVATE_DIR}/configuration/PrivateConfig.xcconfig"
+
+mkdir -p "${PRIVATE_DIR}/configuration"
+
+# Load environment variables from private .env (dev-only, absent on CI)
+PRIVATE_ENV="${PRIVATE_DIR}/.env"
+if [ -f "$PRIVATE_ENV" ]; then
+    set -a
+    source "$PRIVATE_ENV"
+    set +a
 fi
 
-setup_toolchain
+if [ -n "${CONFIG_BACKEND_REQUEST_KEY:-}" ] && [ -n "${CONFIG_BACKEND_REQUEST_ENCRYPTION_KEY:-}" ]; then
+    cat > "$PRIVATE_SOURCE" <<-EOF
+	CONFIG_BACKEND_REQUEST_KEY = ${CONFIG_BACKEND_REQUEST_KEY}
+	CONFIG_BACKEND_REQUEST_ENCRYPTION_KEY = ${CONFIG_BACKEND_REQUEST_ENCRYPTION_KEY}
+EOF
+    echo "Generated PrivateConfig from environment variables"
+elif [ -f "$PRIVATE_SOURCE" ]; then
+    echo "PrivateConfig already exists, keeping existing values"
+else
+    cat > "$PRIVATE_SOURCE" <<-EOF
+	CONFIG_BACKEND_REQUEST_KEY = dummy_request_key
+	CONFIG_BACKEND_REQUEST_ENCRYPTION_KEY = dummy_encryption_key
+EOF
+    echo "Created $PRIVATE_SOURCE with dummy keys"
+fi
+
+# Configure Swift package registry for private packages
+if [ -z "${SWIFT_REGISTRY_URL:-}" ]; then
+    echo "Error: SWIFT_REGISTRY_URL is not set. Configure it in sciter-adguard-mini-private/.env (dev) or CI variables."
+    exit 1
+fi
+swift package-registry set --global --scope mac "${SWIFT_REGISTRY_URL}"
 
 if [[ "$1" == "dev" ]]; then
     # Clone support-scripts
 
-    SUPPORT_SCRIPTS_TAG="v1.2"
-    if [ -z "$SUPPORT_SCRIPTS_GIT" ]; then
-        echo "Error: SUPPORT_SCRIPTS_GIT not set. Source ../adguard-mini-private/config.env or set via environment."
+    if [ -z "${SUPPORT_SCRIPTS_GIT:-}" ]; then
+        echo "Error: SUPPORT_SCRIPTS_GIT is not set. Configure it in sciter-adguard-mini-private/.env."
         exit 1
     fi
+    SUPPORT_SCRIPTS_TAG="v1.3"
 
     rm -rf support-scripts
     git clone -c advice.detachedHead=false --depth 1 --branch "$SUPPORT_SCRIPTS_TAG" "$SUPPORT_SCRIPTS_GIT" support-scripts
@@ -84,19 +117,6 @@ bundle install
 # Generate Bundler binstubs with bin/ruby shebang
 bundle binstubs --all --force --shebang "$PWD/bin/ruby"
 
-if [ ! ${bamboo_no_need_private_vars} ]; then
-    if [ -z "$KEYCHAIN_GIT" ]; then
-        echo "Error: KEYCHAIN_GIT not set. Source ../adguard-mini-private/config.env or set via environment."
-        exit 1
-    fi
-    pushd fastlane
-    rm -rf keychain
-    git clone $KEYCHAIN_GIT
-    popd
-
-    bin/fastlane create_sens_config
-fi
-
 # Activate python venv and install components
 echo
 echo "Configure Python"
@@ -109,9 +129,4 @@ if [ "$1" == "dev" ]; then
 
     # Install protoc tools
     "`dirname $0`/Support/Scripts/install_protoc_tools.sh"
-
-    # syncs certificates for `MAS` distribution
-    bin/fastlane certs config:MAS
-    # syncs certificates for `Standalone` distribution
-    bin/fastlane certs config:Debug
 fi

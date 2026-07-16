@@ -7,10 +7,6 @@ const Webpack = require('webpack');
 const { merge } = require('webpack-merge');
 const baseConfig = require('./webpack.config.base');
 
-if (!process.env.APP_VERSION) {
-    throw new Error('pass the APP_VERSION via env variables to inject into the runtime metadata');
-}
-
 module.exports = (env) => {
     const { trace } = env;
     return merge(baseConfig(env), {
@@ -28,7 +24,6 @@ module.exports = (env) => {
             new Webpack.DefinePlugin({
                 DEV: false,
                 FULL_LOGS: Boolean(trace),
-                VERSION: process.env.APP_VERSION,
             }),
             // new Webpack.SourceMapDevToolPlugin({
             //     filename: 'app.js.map',

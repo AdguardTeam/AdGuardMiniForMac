@@ -15,7 +15,7 @@ private enum Constants {
         "sparkle": ("sparkle", "Sparkle"),
         "xmlcoder": ("xmlCoder", "XMLCoder"),
         "filterlistmanager": ("adguardFlm", "AdGuardFLM"),
-        "sp-sciter-sdk": ("sciter", "Sciter")
+        "mac.sp-sciter-sdk": ("sciter", "Sciter")
     ]
 }
 
@@ -52,7 +52,7 @@ struct PackageResolved: Decodable {
         struct State: Decodable {
             let version: String?
             let branch: String?
-            let revision: String
+            let revision: String?
         }
     }
 }
@@ -116,7 +116,7 @@ private func parseSPMDependencies() throws -> [DependencyInfo] {
             continue
         }
 
-        let rawVersion = pin.state.version ?? pin.state.branch ?? pin.state.revision
+        let rawVersion = pin.state.version ?? pin.state.branch ?? pin.state.revision ?? "unknown"
         let cleanedVersion = cleanVersion(rawVersion)
 
         dependencies.append(DependencyInfo(

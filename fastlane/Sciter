@@ -8,8 +8,6 @@ desc 'Create sciter resources and UI'
 desc 'Options:'
 desc '  - config: STRING If config is set to Debug, sciter resources will be built in `dev` configuration, otherwise `prod`. The default value is empty.'
 lane :build_sciter_ui do |options|
-  # Need for building Sciter UI
-  ENV['APP_VERSION'] = @build_settings['AG_FULL_VERSION'] if ENV['APP_VERSION'].nil?
   is_dev_build = options[:config] == 'Debug'
 
   build_type = 'prod'

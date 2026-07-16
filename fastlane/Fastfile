@@ -19,17 +19,8 @@
 require 'pathname'
 require 'tmpdir'
 
-import 'Building'
-import 'VCSWork'
-import 'Testing'
-import 'Deploying'
 import 'Updating/Updating'
-import 'Sparkle'
-import 'Sentry'
 import 'Sciter'
-
-require 'fastlane_toolkit'
-extend AG
 
 ensure_bundle_exec
 
@@ -38,49 +29,13 @@ before_all do |lane, options|
   project_bin = File.expand_path('../bin', __dir__)
   ENV['PATH'] = "#{project_bin}:#{ENV['PATH']}"
 
-  @is_bamboo = ENV['bamboo_agentId'] && true
-
-  unless %i[
-    increment_version
-    build_version_file
-    update_third_party_deps
-  ].include?(lane)
-    setup_fastlane_toolkit(@is_bamboo)
-  end
-
   @config = options[:config] || ENV['CONFIGURATION']
-  @scheme = ENV['SCHEME']
 
   @root_path = File.dirname(File.realpath(__dir__))
-  @root_build_path = "#{@root_path}/build"
-  @build_path = "#{@root_build_path}/#{@config}"
-  @derived_data_path = "#{@build_path}/derived_data"
   @project_file = "#{@root_path}/AdguardMini/AdguardMini.xcodeproj"
-
-  @build_settings = parse_build_settings(
-    project: @project_file,
-    scheme: @scheme,
-    configuration: @config
-  )
 
   DefaultUpdateConstants.root_path = @root_path
   DefaultUpdateConstants.project_path = @project_file
-end
-
-desc 'Create sensitive config'
-lane :create_sens_config do |_options|
-  config_path = "#{@root_path}/../adguard-mini-private/configuration/PrivateConfig.xcconfig"
-  prefix = 'mac-mini'
-  keys = [
-    "sentry-dsn-#{prefix}",
-    'backend-request-encryption-key',
-    'backend-request-key',
-    "#{prefix}-license-encryption-key"
-  ]
-  create_xcconfig(
-    keys: keys,
-    config_path: config_path
-  )
 end
 
 ENV['FASTLANE_PROC'] = 'true'

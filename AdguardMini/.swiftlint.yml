@@ -3,7 +3,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 excluded:
-    - "SciterResources/*"
+    - "SciterResources/**"
+    - "**/*.pb.swift"
     - "*/Localization/String+localized.swift"
     - "**/sp-flm"
     - "**/.build"
@@ -14,8 +15,10 @@ disabled_rules:
     - todo
     - class_delegate_protocol
     - type_body_length
+    - file_length
     - private_over_fileprivate
     - no_fallthrough_only
+    - blanket_disable_command
 
 opt_in_rules:
     - accessibility_trait_for_button

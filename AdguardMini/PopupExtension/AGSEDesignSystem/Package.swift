@@ -14,12 +14,12 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins.git", .upToNextMinor(from: "0.62.0")),
-        .package(url: "ssh://git@bit.int.agrd.dev:7999/adguard-mac/sp-color-palette.git", exact: "2025.5.0")
+        .package(id: "mac.sp-color-palette", exact: "2025.5.1")
     ],
     targets: [
         .target(
             name: "AGSEDesignSystem",
-            dependencies: [.product(name: "ColorPalette", package: "sp-color-palette")],
+            dependencies: [.product(name: "ColorPalette", package: "mac.sp-color-palette")],
             path: "Sources",
             resources: [
                 .copy("AGSEDesignSystem/Resources/Assets.xcassets")

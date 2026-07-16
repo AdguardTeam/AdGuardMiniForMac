@@ -18,7 +18,7 @@ setup_toolchain() {
     for tool in ruby node yarn; do
         if ! command -v "$tool" &>/dev/null; then
             echo "Error: $tool not found in PATH."
-            echo "Required: Ruby 3.2+, Node.js 22+, Yarn 1.22+"
+            echo "Required: Ruby 3.2+, Node.js $(sed 's/^v//; s/\..*//' < .nvmrc 2>/dev/null || echo 22)+, Yarn 1.22+"
             exit 1
         fi
     done
@@ -34,14 +34,22 @@ setup_toolchain() {
         exit 1
     fi
 
-    # Check Node.js version (minimum 22)
+    # Read required Node.js version from .nvmrc (single source of truth)
+    local required_node_version
+    if [ -f .nvmrc ]; then
+        required_node_version=$(sed 's/^v//; s/\..*//' < .nvmrc)
+    else
+        required_node_version=22
+    fi
+
+    # Check Node.js version
     local node_version
     node_version=$(node --version)
     node_version=${node_version#v}
     local node_major=${node_version%%.*}
 
-    if [ "$node_major" -lt 22 ]; then
-        echo "Error: Node.js $node_version is too old. Minimum required: 22"
+    if [ "$node_major" -lt "$required_node_version" ]; then
+        echo "Error: Node.js $node_version is too old. Minimum required: $required_node_version (see .nvmrc)"
         exit 1
     fi
 

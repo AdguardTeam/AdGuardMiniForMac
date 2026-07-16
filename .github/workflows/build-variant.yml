@@ -1,0 +1,189 @@
+# SPDX-FileCopyrightText: AdGuard Software Limited
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: Build variant
+
+on:
+  workflow_call:
+    inputs:
+      configuration:
+        description: "Build configuration (Release, MAS, etc.)"
+        type: string
+        required: true
+      signing-type:
+        description: "Match type: developer_id, appstore"
+        type: string
+        required: true
+      additional-cert-types:
+        description: "Additional certificate types, comma-separated"
+        type: string
+        default: ""
+      skip-profiles:
+        description: "Skip provisioning profiles"
+        type: boolean
+        default: false
+      app-identifiers:
+        description: "App bundle identifiers, comma-separated"
+        type: string
+        required: true
+      notarize:
+        description: "Whether to notarize the build"
+        type: boolean
+        required: true
+      sentry-release:
+        description: "Release identifier for Sentry"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  resolve-artifact-path:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Resolve artifact path
+    runs-on: ubuntu-latest
+    outputs:
+      path: ${{ steps.resolve.outputs.path }}
+      archive-path: ${{ steps.resolve.outputs.archive-path }}
+    env:
+      CONFIG: ${{ inputs.configuration }}
+      SIGNING_TYPE: ${{ inputs.signing-type }}
+    steps:
+      - id: resolve
+        run: |
+          if [ "${SIGNING_TYPE}" = "appstore" ]; then
+            ext="pkg"
+          else
+            ext="app"
+          fi
+          output_dir="build/${CONFIG}"
+          echo "path=${output_dir}/AdGuard Mini.${ext}" >> "$GITHUB_OUTPUT"
+          echo "archive-path=${output_dir}/AdguardMini.xcarchive" >> "$GITHUB_OUTPUT"
+
+  build:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Build ${{ inputs.configuration }}
+    needs: [resolve-artifact-path]
+    uses: AdGuardSoftwareLimited/actions/.github/workflows/build-macos.yml@master
+    secrets: inherit
+    with:
+      runner-memory-mb: 8192
+      channel: release
+      signing-type: ${{ inputs.signing-type }}
+      additional-cert-types: ${{ inputs.additional-cert-types }}
+      skip-profiles: ${{ inputs.skip-profiles }}
+      app-identifiers: ${{ inputs.app-identifiers }}
+      prepare-script: |
+        export SWIFT_REGISTRY_URL=${{ vars.SWIFT_REGISTRY_URL }}-virtual
+        [ -f .nvmrc ] || { ./configure.sh; exit 0; }
+        NODE_REQUIRED=$(sed 's/^v//; s/\..*//' < .nvmrc)
+        NODE_CURRENT=$(node --version 2>/dev/null | sed 's/^v//; s/\..*//')
+        if [ "${NODE_CURRENT:-0}" -lt "$NODE_REQUIRED" ]; then
+          export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+          \. "$NVM_DIR/nvm.sh"
+          nvm install "$NODE_REQUIRED"
+          nvm use "$NODE_REQUIRED"
+          echo "$(nvm which "$NODE_REQUIRED" | xargs dirname)" >> "$GITHUB_PATH"
+        fi
+        ./configure.sh
+      build-command: |
+        set -euo pipefail
+
+        CONFIG="${{ inputs.configuration }}"
+        PROJECT="AdguardMini/AdguardMini.xcodeproj"
+        SCHEME="AdguardMini"
+        BUILD_DIR="build"
+        OUTPUT_DIR="${BUILD_DIR}/${CONFIG}"
+        DERIVED_DATA_DIR="${BUILD_DIR}/derived_data"
+        ARCHIVE_PATH="${{ needs.resolve-artifact-path.outputs.archive-path }}"
+
+        # ── Constants ─────────────────────────────────────────────────
+        TEAM_ID="TC3Q7MAJXF"
+
+        # ── Export method ─────────────────────────────────────────────
+        EXPORT_METHOD="developer-id"
+        if [ "${{ inputs.signing-type }}" = "appstore" ]; then
+          EXPORT_METHOD="app-store"
+        fi
+
+        EXPORT_OPTS="${RUNNER_TEMP}/export_options.plist"
+
+        mkdir -p "${OUTPUT_DIR}" "$(dirname "${ARCHIVE_PATH}")"
+
+        # ── Build ExportOptions.plist ─────────────────────────────────
+        /usr/libexec/PlistBuddy \
+          -c "Add method string ${EXPORT_METHOD}" \
+          -c "Add signingStyle string manual" \
+          -c "Add teamID string ${TEAM_ID}" \
+          -c "Add manageAppVersionAndBuildNumber bool false" \
+          "${EXPORT_OPTS}"
+
+        echo "=== Export options ==="
+        /usr/libexec/PlistBuddy -c Print "${EXPORT_OPTS}"
+
+        # ── Add provisioning profiles (unless skipped) ────────────────
+        # match appends a dynamic timestamp suffix to profile names; resolve by bundle id.
+        if [ "${{ inputs.skip-profiles }}" != "true" ]; then
+          /usr/libexec/PlistBuddy -c "Add provisioningProfiles dict" "${EXPORT_OPTS}"
+          PP_DIR="${HOME}/Library/Developer/Xcode/UserData/Provisioning Profiles"
+
+          # Decode profiles once into a TSV lookup for bundle id resolution.
+          PP_LOOKUP="${RUNNER_TEMP}/pp_lookup.tsv" && : > "${PP_LOOKUP}"
+          for p in "${PP_DIR}"/*.provisionprofile; do
+            plist=$(security cms -D -i "${p}" 2>/dev/null) || continue
+            appid=$(/usr/libexec/PlistBuddy -c "Print :Entitlements:com.apple.application-identifier" /dev/stdin <<<"${plist}" 2>/dev/null || true)
+            name=$(/usr/libexec/PlistBuddy -c "Print :Name" /dev/stdin <<<"${plist}" 2>/dev/null || true)
+            [ -n "${appid}" ] && [ -n "${name}" ] && printf '%s\t%s\n' "${appid#*.}" "${name}" >> "${PP_LOOKUP}"
+          done
+          IFS=',' read -ra IDS <<< "${{ inputs.app-identifiers }}"
+          for id in "${IDS[@]}"; do
+            id=$(echo "$id" | xargs)
+            name=$(grep -F "${id}"$'\t' "${PP_LOOKUP}" | head -1 | cut -f2 || true)
+            [ -n "${name}" ] && echo "Using profile '${name}' for ${id}" &&
+              /usr/libexec/PlistBuddy -c "Add provisioningProfiles:${id} string ${name}" "${EXPORT_OPTS}"
+          done
+        fi
+
+        # ── Archive ───────────────────────────────────────────────────
+        # Adhoc-sign: real identity requires profiles per target; exportArchive re-signs later.
+        xcodebuild archive \
+          -project "${PROJECT}" \
+          -scheme "${SCHEME}" \
+          -configuration "${CONFIG}" \
+          -archivePath "${ARCHIVE_PATH}" \
+          -derivedDataPath "${DERIVED_DATA_DIR}" \
+          -skipPackagePluginValidation \
+          CODE_SIGN_IDENTITY="-" \
+          CODE_SIGN_STYLE=Manual \
+          DEVELOPMENT_TEAM=""
+
+        # ── Add installer cert to export options ─────────────────────
+        # Required for PKG signing (separate from app signing).
+        if [ -n "${MATCH_KEYCHAIN_NAME:-}" ] && [ -n "${{ inputs.additional-cert-types }}" ]; then
+          INST_NAME=$(security find-identity -v "${MATCH_KEYCHAIN_NAME}" \
+            | grep -E "Mac Developer Installer|Developer ID Installer" \
+            | head -1 | awk -F'"' '{print $2}' || true)
+          if [ -n "${INST_NAME}" ]; then
+            echo "Setting installerSigningCertificate: ${INST_NAME}"
+            /usr/libexec/PlistBuddy -c "Add installerSigningCertificate string ${INST_NAME}" "${EXPORT_OPTS}"
+          fi
+        fi
+
+        # ── Export .app ───────────────────────────────────────────────
+        xcodebuild -exportArchive \
+          -archivePath "${ARCHIVE_PATH}" \
+          -exportPath "${OUTPUT_DIR}" \
+          -exportOptionsPlist "${EXPORT_OPTS}"
+
+        echo "=== Export output ==="
+        ls -laR "${OUTPUT_DIR}" || true
+      artifact-name: AdGuardMini-${{ inputs.configuration }}
+      artifact-path: ${{ needs.resolve-artifact-path.outputs.path }}
+      artifact-archive: true
+      notarize: ${{ inputs.notarize }}
+      sentry-project: adguard-mac-mini
+      sentry-debug-files-path: ${{ needs.resolve-artifact-path.outputs.archive-path }}/dSYMs/
+      release: ${{ inputs.sentry-release }}

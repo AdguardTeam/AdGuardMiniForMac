@@ -35,6 +35,7 @@ path = [
     "**/*.entitlements",
     "**/*.plist",
     "**/.eslintignore",
+    "**/.nvmrc",
     "**/Package.swift",
     "requirements.txt",
     "**/README.md",

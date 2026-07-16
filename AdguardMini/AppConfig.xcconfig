@@ -1,0 +1,36 @@
+// SPDX-FileCopyrightText: AdGuard Software Limited
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+//
+//  AppConfig.xcconfig
+//  AdguardMini
+//
+
+SLASH = /
+
+//============= Bundle Identifiers =============
+
+CONFIG_BASE_PREFIX = com.adguard
+
+CONFIG_BASE_BUNDLE_ID = $(CONFIG_BASE_PREFIX).safari
+
+//=============== Team Settings ================
+
+CONFIG_TEAM = TC3Q7MAJXF
+
+//============= App Configuration ==============
+
+CONFIG_APP_ID = $(CONFIG_BASE_BUNDLE_ID).AdGuard
+
+CONFIG_GROUP = $(CONFIG_TEAM).$(CONFIG_APP_ID)
+
+CONFIG_MAC_GROUP = $(CONFIG_TEAM).$(CONFIG_BASE_PREFIX).mac
+
+//=============== Company Info =================
+
+CONFIG_COMPANY = AdGuard Software Limited
+
+//=============== Sentry ===============
+
+CONFIG_SENTRY_DSN_MAC_MINI = https:$(SLASH)/d297114915cf44a59ceb236c892f4efe@s10.adtidy.org/234

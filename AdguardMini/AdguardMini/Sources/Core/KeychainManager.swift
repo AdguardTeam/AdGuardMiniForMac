@@ -9,11 +9,16 @@
 
 import Foundation
 import AML
+import CryptoKit
 
 // MARK: - Constants
 
 private enum Constants {
-    static let licenseEncrKey = SensitiveBuildConfig.SENS_LICENSE_ENCRYPTION_KEY
+    static let licenseEncrKeyData: Data = {
+        let appId = ProductInfo.applicationId()
+        let hash = SHA256.hash(data: Data(appId.utf8))
+        return Data(hash.prefix(16))
+    }()
 }
 
 extension Keychain {
@@ -85,7 +90,7 @@ final class KeychainManagerImpl: KeychainManager {
         guard let data: Data = Keychain.getValue(for: KeychainKey.Secured.licenseInfo.key)
         else { return nil }
 
-        guard let decrypted = CryptoUtils.aesDecrypt(data: data, key: Constants.licenseEncrKey)
+        guard let decrypted = CryptoUtils.aesDecrypt(data: data, keyData: Constants.licenseEncrKeyData)
         else {
             LogError("Can't decrypt License Info")
             return nil
@@ -103,7 +108,7 @@ final class KeychainManagerImpl: KeychainManager {
         _ = await Task.detached(priority: .userInitiated) {
             do {
                 let data = try NSKeyedArchiver.archivedData(withRootObject: appStatusInfo, requiringSecureCoding: true)
-                if let encrypted = CryptoUtils.aesEncrypt(data: data, key: Constants.licenseEncrKey) {
+                if let encrypted = CryptoUtils.aesEncrypt(data: data, keyData: Constants.licenseEncrKeyData) {
                     Keychain.set(key: KeychainKey.Secured.licenseInfo.key, data: encrypted)
                 } else {
                     LogError("Can't crypt license info data")

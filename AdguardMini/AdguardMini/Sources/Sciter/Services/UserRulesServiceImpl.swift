@@ -83,7 +83,7 @@ extension Sciter {
                     promise(userRules)
                 case .failure(let error):
                     LogError("Can't load data from \(message.path): \(error)")
-                    // TODO: Send error to Sciter
+                    // TODO: AG-56500 Send error to Sciter
                     promise(UserRules())
                 }
             }

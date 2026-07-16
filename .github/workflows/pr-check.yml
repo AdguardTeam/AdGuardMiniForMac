@@ -1,0 +1,117 @@
+# SPDX-FileCopyrightText: AdGuard Software Limited
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: PR Check
+
+on:
+  pull_request:
+    branches: [master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+
+  # ---------------------------------------------------------------------------
+  # Lint
+  # ---------------------------------------------------------------------------
+
+  swiftlint:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: SwiftLint
+    uses: AdGuardSoftwareLimited/actions/.github/workflows/lint-swiftlint.yml@master
+    with:
+      team: mac
+      source-path: AdguardMini
+
+  reuse:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: REUSE Compliance
+    uses: AdGuardSoftwareLimited/actions/.github/workflows/lint-reuse.yml@master
+    with:
+      team: mac
+
+  # ---------------------------------------------------------------------------
+  # Build & Test
+  # ---------------------------------------------------------------------------
+
+  resolve-runner:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Resolve runner
+    runs-on: [team-platform]
+    outputs:
+      image: ${{ steps.kv.outputs.value }}
+    steps:
+      - uses: AdGuardSoftwareLimited/actions/actions/kv-get@master
+        id: kv
+        with:
+          key: build-images/macos
+
+  build-standalone-release:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Build Standalone Release
+    uses: ./.github/workflows/build-variant.yml
+    secrets: inherit
+    with:
+      configuration: Release
+      signing-type: developer_id
+      additional-cert-types: developer_id_installer
+      skip-profiles: true
+      app-identifiers: com.adguard.safari.AdGuard
+      notarize: true
+
+  build-mas:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Build MAS
+    uses: ./.github/workflows/build-variant.yml
+    secrets: inherit
+    with:
+      configuration: MAS
+      signing-type: appstore
+      additional-cert-types: mac_installer_distribution
+      skip-profiles: false
+      app-identifiers: com.adguard.safari.AdGuard,com.adguard.safari.AdGuard.Extension
+      notarize: false
+
+  test:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Tests
+    needs: [resolve-runner]
+    uses: AdGuardSoftwareLimited/actions/.github/workflows/junit-tests.yml@master
+    with:
+      runs-on: >-
+        [
+          "ephemeral",
+          "ephemeral-mac",
+          "${{ needs.resolve-runner.outputs.image }}",
+          "ephemeral-limit-memory-7168",
+          "ephemeral-limit-cpu-4",
+          "ephemeral-limit-disk-gb-20"
+        ]
+      test-command: >-
+        set -o pipefail &&
+        mkdir -p ../sciter-adguard-mini-private/configuration &&
+        printf 'CONFIG_BACKEND_REQUEST_KEY = dummy_request_key\nCONFIG_BACKEND_REQUEST_ENCRYPTION_KEY = dummy_encryption_key\n'
+        > ../sciter-adguard-mini-private/configuration/PrivateConfig.xcconfig &&
+        swift package-registry set --global --scope mac ${{ vars.SWIFT_REGISTRY_URL }}-virtual &&
+        mkdir -p build/test-reports &&
+        xcodebuild test
+        -project AdguardMini/AdguardMini.xcodeproj
+        -scheme AdguardMiniTests
+        -configuration Release
+        -derivedDataPath build/derived_data
+        -skipPackagePluginValidation
+        CODE_SIGNING_ALLOWED=NO
+        2>&1 |
+        xcbeautify --report junit
+        --report-path build/test-reports
+        --junit-report-filename AdguardMiniTests.junit
+      results-path: build/test-reports/AdguardMiniTests.junit
+      artifact-name: test-results
+    secrets: inherit

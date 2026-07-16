@@ -111,13 +111,12 @@ adguard-mini/
 │   └── sciter-js-sdk/                    # Sciter JS SDK (vendored)
 ├── fastlane/                             # Fastlane automation (Ruby)
 │   ├── Updating/                         # Dependency update automation
-│   ├── Building                          # Build lanes
-│   ├── Testing                           # Test lanes
-│   ├── Deploying                         # Deploy lanes
 │   ├── Sciter                            # Sciter UI build lanes
-│   ├── Sparkle                           # Sparkle update signing lanes
-│   ├── Sentry                            # Sentry upload lanes
-│   └── VCSWork                           # Version control operations
+│   ├── Config.rb                         # Build configuration constants
+│   ├── Fastfile                          # Main lane definitions
+│   ├── Matchfile                         # Certificate match configuration
+│   ├── Pluginfile                        # Fastlane plugin dependencies
+│   └── .env.default                      # Default environment settings
 ├── Support/Scripts/                      # Developer utility scripts
 ├── bamboo-specs/                         # CI/CD pipeline definitions
 ├── .windsurf/workflows/                  # AI agent workflow definitions

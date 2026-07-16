@@ -30,8 +30,6 @@ declare const WITH_PINGS: any;
 declare const FULL_LOGS: boolean;
 declare const WEB_BUILD: boolean;
 
-declare const VERSION: any;
-
 declare const MIN_WIDTH: number;
 declare const MIN_HEIGHT: number;
 
