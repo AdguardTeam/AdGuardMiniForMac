@@ -20,6 +20,8 @@ message AppStoreSubscriptionInfo {
 message PromoInfo {
     string title = 1;
     string subtitle = 2;
+    optional string button_text = 3;
+    optional string button_url = 4;
 }
 
 // AppStore subscriptions error

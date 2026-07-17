@@ -132,9 +132,30 @@ public struct PromoInfo: Sendable {
 
   public var subtitle: String = String()
 
+  public var buttonText: String {
+    get {return _buttonText ?? String()}
+    set {_buttonText = newValue}
+  }
+  /// Returns true if `buttonText` has been explicitly set.
+  public var hasButtonText: Bool {return self._buttonText != nil}
+  /// Clears the value of `buttonText`. Subsequent reads from it will return its default value.
+  public mutating func clearButtonText() {self._buttonText = nil}
+
+  public var buttonURL: String {
+    get {return _buttonURL ?? String()}
+    set {_buttonURL = newValue}
+  }
+  /// Returns true if `buttonURL` has been explicitly set.
+  public var hasButtonURL: Bool {return self._buttonURL != nil}
+  /// Clears the value of `buttonURL`. Subsequent reads from it will return its default value.
+  public mutating func clearButtonURL() {self._buttonURL = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
+
+  fileprivate var _buttonText: String? = nil
+  fileprivate var _buttonURL: String? = nil
 }
 
 /// AppStore available subscriptions
@@ -266,7 +287,7 @@ extension AppStoreSubscriptionInfo: SwiftProtobuf.Message, SwiftProtobuf._Messag
 
 extension PromoInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "PromoInfo"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}title\0\u{1}subtitle\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}title\0\u{1}subtitle\0\u{3}button_text\0\u{3}button_url\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -276,24 +297,38 @@ extension PromoInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self.title) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.subtitle) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self._buttonText) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self._buttonURL) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
     if !self.title.isEmpty {
       try visitor.visitSingularStringField(value: self.title, fieldNumber: 1)
     }
     if !self.subtitle.isEmpty {
       try visitor.visitSingularStringField(value: self.subtitle, fieldNumber: 2)
     }
+    try { if let v = self._buttonText {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 3)
+    } }()
+    try { if let v = self._buttonURL {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 4)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: PromoInfo, rhs: PromoInfo) -> Bool {
     if lhs.title != rhs.title {return false}
     if lhs.subtitle != rhs.subtitle {return false}
+    if lhs._buttonText != rhs._buttonText {return false}
+    if lhs._buttonURL != rhs._buttonURL {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

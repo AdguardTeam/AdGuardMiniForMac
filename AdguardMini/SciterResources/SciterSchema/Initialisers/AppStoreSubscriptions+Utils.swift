@@ -16,10 +16,18 @@ extension PromoInfo {
     public init(
         title: String,
         subtitle: String,
+        buttonText: String?,
+        buttonUrl: String?
     ) {
         self.init()
         self.title = title
         self.subtitle = subtitle
+        if let buttonText {
+            self.buttonText = buttonText
+        }
+        if let buttonUrl {
+            self.buttonURL = buttonUrl
+        }
     }
 }
 

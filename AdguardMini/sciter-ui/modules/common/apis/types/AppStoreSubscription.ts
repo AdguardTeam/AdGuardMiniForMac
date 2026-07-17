@@ -163,11 +163,15 @@ export class AppStoreSubscriptionInfo extends pb_1.Message {
     }
 }
 export class PromoInfo extends pb_1.Message {
-    #one_of_decls: number[][] = [];
-    constructor(data?: any[] | {
+    #one_of_decls: number[][] = [[3], [4]];
+    constructor(data?: any[] | ({
         title?: string;
         subtitle?: string;
-    }) {
+    } & (({
+        buttonText?: string;
+    }) | ({
+        buttonUrl?: string;
+    })))) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
         if (!Array.isArray(data) && typeof data == "object") {
@@ -176,6 +180,12 @@ export class PromoInfo extends pb_1.Message {
             }
             if ("subtitle" in data && data.subtitle != undefined) {
                 this.subtitle = data.subtitle;
+            }
+            if ("buttonText" in data && data.buttonText != undefined) {
+                this.buttonText = data.buttonText;
+            }
+            if ("buttonUrl" in data && data.buttonUrl != undefined) {
+                this.buttonUrl = data.buttonUrl;
             }
         }
     }
@@ -191,9 +201,47 @@ export class PromoInfo extends pb_1.Message {
     set subtitle(value: string) {
         pb_1.Message.setField(this, 2, value);
     }
+    get buttonText() {
+        return pb_1.Message.getFieldWithDefault(this, 3, "") as string;
+    }
+    set buttonText(value: string) {
+        pb_1.Message.setOneofField(this, 3, this.#one_of_decls[0], value);
+    }
+    get has_button_text() {
+        return pb_1.Message.getField(this, 3) != null;
+    }
+    get buttonUrl() {
+        return pb_1.Message.getFieldWithDefault(this, 4, "") as string;
+    }
+    set buttonUrl(value: string) {
+        pb_1.Message.setOneofField(this, 4, this.#one_of_decls[1], value);
+    }
+    get has_button_url() {
+        return pb_1.Message.getField(this, 4) != null;
+    }
+    get _buttonText() {
+        const cases: {
+            [index: number]: "none" | "buttonText";
+        } = {
+            0: "none",
+            3: "buttonText"
+        };
+        return cases[pb_1.Message.computeOneofCase(this, [3])];
+    }
+    get _buttonUrl() {
+        const cases: {
+            [index: number]: "none" | "buttonUrl";
+        } = {
+            0: "none",
+            4: "buttonUrl"
+        };
+        return cases[pb_1.Message.computeOneofCase(this, [4])];
+    }
     static fromObject(data: {
         title?: string;
         subtitle?: string;
+        buttonText?: string;
+        buttonUrl?: string;
     }): PromoInfo {
         const message = new PromoInfo({});
         if (data.title != null) {
@@ -202,18 +250,32 @@ export class PromoInfo extends pb_1.Message {
         if (data.subtitle != null) {
             message.subtitle = data.subtitle;
         }
+        if (data.buttonText != null) {
+            message.buttonText = data.buttonText;
+        }
+        if (data.buttonUrl != null) {
+            message.buttonUrl = data.buttonUrl;
+        }
         return message;
     }
     toObject() {
         const data: {
             title?: string;
             subtitle?: string;
+            buttonText?: string;
+            buttonUrl?: string;
         } = {};
         if (this.title != null) {
             data.title = this.title;
         }
         if (this.subtitle != null) {
             data.subtitle = this.subtitle;
+        }
+        if (this.buttonText != null) {
+            data.buttonText = this.buttonText;
+        }
+        if (this.buttonUrl != null) {
+            data.buttonUrl = this.buttonUrl;
         }
         return data;
     }
@@ -225,6 +287,10 @@ export class PromoInfo extends pb_1.Message {
             writer.writeString(1, this.title);
         if (this.subtitle.length)
             writer.writeString(2, this.subtitle);
+        if (this.has_button_text)
+            writer.writeString(3, this.buttonText);
+        if (this.has_button_url)
+            writer.writeString(4, this.buttonUrl);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -239,6 +305,12 @@ export class PromoInfo extends pb_1.Message {
                     break;
                 case 2:
                     message.subtitle = reader.readString();
+                    break;
+                case 3:
+                    message.buttonText = reader.readString();
+                    break;
+                case 4:
+                    message.buttonUrl = reader.readString();
                     break;
                 default: reader.skipField();
             }

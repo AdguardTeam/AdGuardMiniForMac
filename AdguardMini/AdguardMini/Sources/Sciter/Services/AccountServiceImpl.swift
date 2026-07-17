@@ -95,14 +95,18 @@ extension Sciter {
                     do {
                         let info = try await self.backendService.promoInfo()
                         if info.isActual {
+                            LogDebug("Promo info is actual")
                             promoInfo = PromoInfo(
                                 title: info.title,
-                                subtitle: info.label
+                                subtitle: info.label,
+                                buttonText: info.buttonText,
+                                buttonUrl: info.buttonUrl
                             )
                         }
                     } catch {
                         LogError("Error fetching promo info: \(error)")
                     }
+                    LogDebug("Returning subscription info, trial available: \(trialAvailability.isAvailable)")
                     promise(
                         AppStoreSubscriptionsMessage(
                             result: AppStoreSubscriptions(
@@ -121,6 +125,7 @@ extension Sciter {
             #else
             Task {
                 let trialAvailability = await self.licenseStateProvider.getTrialAvailability()
+                LogDebug("Returning subscription info without products (non-MAS), trial available: \(trialAvailability.isAvailable)")
                 promise(
                     AppStoreSubscriptionsMessage(
                         result: AppStoreSubscriptions(
