@@ -15,7 +15,7 @@
 		</dict>
 	</dict>
 	<key>NSHumanReadableDescription</key>
-	<string>Contains Security filters&apos; blocking rules</string>
+	<string>Helps block malicious, phishing, and scam websites</string>
 	<key>CFBundleDisplayName</key>
 	<string>Security</string>
 </dict>

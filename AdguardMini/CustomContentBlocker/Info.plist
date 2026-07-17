@@ -15,7 +15,7 @@
 		</dict>
 	</dict>
 	<key>NSHumanReadableDescription</key>
-	<string>Contains Custom filters&apos; blocking rules</string>
+	<string>Lets AdGuard Mini apply your custom filters</string>
 	<key>CFBundleDisplayName</key>
 	<string>Custom</string>
 </dict>

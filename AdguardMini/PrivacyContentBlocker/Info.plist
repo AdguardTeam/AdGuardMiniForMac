@@ -15,7 +15,7 @@
 		</dict>
 	</dict>
 	<key>NSHumanReadableDescription</key>
-	<string>Contains Privacy filters&apos; blocking rules</string>
+	<string>Helps block trackers and web analytics</string>
 	<key>CFBundleDisplayName</key>
 	<string>Privacy</string>
 </dict>

@@ -15,7 +15,7 @@
 		</dict>
 	</dict>
 	<key>NSHumanReadableDescription</key>
-	<string>Contains Social filters&apos; blocking rules</string>
+	<string>Helps block social media buttons, widgets, scripts, and icons</string>
 	<key>CFBundleDisplayName</key>
 	<string>Social</string>
 </dict>

@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Contains Security filters' blocking rules";
+"NSHumanReadableDescription" = "Helps block malicious, phishing, and scam websites";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Security";

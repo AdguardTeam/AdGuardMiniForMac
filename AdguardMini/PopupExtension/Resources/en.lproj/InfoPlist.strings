@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "This extension performs two important functions: it adds an icon to Safari toolbar which can be used to manage AdGuard settings, and it also applies advanced blocking rules which are not supported by Safari Content Blocking API.";
+"NSHumanReadableDescription" = "Lets you manage AdGuard Mini protection from the Safari toolbar, view stats, and apply advanced blocking rules";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard for Safari";

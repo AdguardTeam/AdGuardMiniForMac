@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Contains Social filters' blocking rules";
+"NSHumanReadableDescription" = "Helps block social media buttons, widgets, scripts, and icons";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Social";

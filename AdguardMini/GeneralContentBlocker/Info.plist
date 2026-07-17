@@ -15,7 +15,7 @@
 		</dict>
 	</dict>
 	<key>NSHumanReadableDescription</key>
-	<string>Contains General filters blocking rules</string>
+	<string>Helps block most ads on websites</string>
 	<key>CFBundleDisplayName</key>
 	<string>General</string>
 </dict>

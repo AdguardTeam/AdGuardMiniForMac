@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Contains rules from filters for blocking trackers and web analytics";
+"NSHumanReadableDescription" = "Helps block trackers and web analytics";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Privacy";
