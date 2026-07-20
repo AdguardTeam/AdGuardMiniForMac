@@ -9,7 +9,7 @@ import { render } from 'preact';
 // eslint-disable-next-line import/no-unresolved
 import 'SciterPolyfills';
 
-import { GetEffectiveThemeRequest } from 'Apis/requests/SettingsService';
+import { GetEffectiveThemeRequest } from 'Apis/requests/ThemeService';
 // Default css styles (reset, colors, dark/light)...
 import 'Common/api';
 import 'Modules/settings/lib/callbacks';

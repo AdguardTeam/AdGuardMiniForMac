@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+import "PrimitivesWrappers.proto";
+import "EffectiveTheme.proto";
+
+/* Shared service for resolving the effective theme across UI modules */
+service ThemeService {
+    /* Get effective theme */
+    rpc GetEffectiveTheme(EmptyValue) returns (EffectiveThemeValue);
+}

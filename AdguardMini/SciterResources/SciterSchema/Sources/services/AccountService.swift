@@ -13,6 +13,10 @@ public protocol AccountServiceProtocol
 	func getLicense (
 						_ message: EmptyValue,
 						_ promise: @escaping (LicenseOrError) -> Void) -> Void
+	/// Return tray-scoped License info
+	func getTrayLicense (
+						_ message: EmptyValue,
+						_ promise: @escaping (TrayLicenseOrError) -> Void) -> Void
 	/// Request to refresh the License
 	func refreshLicense (
 						_ message: EmptyValue,
@@ -83,6 +87,18 @@ open class AccountService: SciterBridge
 			inputType: EmptyValue.self,
 			outputType: LicenseOrError.self,
 			method: cast.getLicense(_:_:),
+			message,
+			promise
+		)
+	}
+
+	/// Wrapper for `GetTrayLicense`
+	@objc func GetTrayLicense(_ message: Data, promise: @escaping (Data) -> Void)
+	{
+		swiftCall(
+			inputType: EmptyValue.self,
+			outputType: TrayLicenseOrError.self,
+			method: cast.getTrayLicense(_:_:),
 			message,
 			promise
 		)

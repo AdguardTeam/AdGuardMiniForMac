@@ -14,9 +14,8 @@ export enum AppStoreSubscriptionsError {
     other_error = 2
 }
 export class AppStoreSubscriptionInfo extends pb_1.Message {
-    #one_of_decls: number[][] = [[4]];
+    #one_of_decls: number[][] = [[3]];
     constructor(data?: any[] | ({
-        subscriptionType?: AppStoreSubscription;
         displayPrice?: string;
         trialDays?: number;
     } & (({
@@ -25,9 +24,6 @@ export class AppStoreSubscriptionInfo extends pb_1.Message {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
         if (!Array.isArray(data) && typeof data == "object") {
-            if ("subscriptionType" in data && data.subscriptionType != undefined) {
-                this.subscriptionType = data.subscriptionType;
-            }
             if ("displayPrice" in data && data.displayPrice != undefined) {
                 this.displayPrice = data.displayPrice;
             }
@@ -39,52 +35,42 @@ export class AppStoreSubscriptionInfo extends pb_1.Message {
             }
         }
     }
-    get subscriptionType() {
-        return pb_1.Message.getFieldWithDefault(this, 1, AppStoreSubscription.monthly) as AppStoreSubscription;
-    }
-    set subscriptionType(value: AppStoreSubscription) {
-        pb_1.Message.setField(this, 1, value);
-    }
     get displayPrice() {
-        return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
+        return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
     }
     set displayPrice(value: string) {
-        pb_1.Message.setField(this, 2, value);
+        pb_1.Message.setField(this, 1, value);
     }
     get trialDays() {
-        return pb_1.Message.getFieldWithDefault(this, 3, 0) as number;
+        return pb_1.Message.getFieldWithDefault(this, 2, 0) as number;
     }
     set trialDays(value: number) {
-        pb_1.Message.setField(this, 3, value);
+        pb_1.Message.setField(this, 2, value);
     }
     get introOfferDisplayPrice() {
-        return pb_1.Message.getFieldWithDefault(this, 4, "") as string;
+        return pb_1.Message.getFieldWithDefault(this, 3, "") as string;
     }
     set introOfferDisplayPrice(value: string) {
-        pb_1.Message.setOneofField(this, 4, this.#one_of_decls[0], value);
+        pb_1.Message.setOneofField(this, 3, this.#one_of_decls[0], value);
     }
     get has_intro_offer_display_price() {
-        return pb_1.Message.getField(this, 4) != null;
+        return pb_1.Message.getField(this, 3) != null;
     }
     get _introOfferDisplayPrice() {
         const cases: {
             [index: number]: "none" | "introOfferDisplayPrice";
         } = {
             0: "none",
-            4: "introOfferDisplayPrice"
+            3: "introOfferDisplayPrice"
         };
-        return cases[pb_1.Message.computeOneofCase(this, [4])];
+        return cases[pb_1.Message.computeOneofCase(this, [3])];
     }
     static fromObject(data: {
-        subscriptionType?: AppStoreSubscription;
         displayPrice?: string;
         trialDays?: number;
         introOfferDisplayPrice?: string;
     }): AppStoreSubscriptionInfo {
         const message = new AppStoreSubscriptionInfo({});
-        if (data.subscriptionType != null) {
-            message.subscriptionType = data.subscriptionType;
-        }
         if (data.displayPrice != null) {
             message.displayPrice = data.displayPrice;
         }
@@ -98,14 +84,10 @@ export class AppStoreSubscriptionInfo extends pb_1.Message {
     }
     toObject() {
         const data: {
-            subscriptionType?: AppStoreSubscription;
             displayPrice?: string;
             trialDays?: number;
             introOfferDisplayPrice?: string;
         } = {};
-        if (this.subscriptionType != null) {
-            data.subscriptionType = this.subscriptionType;
-        }
         if (this.displayPrice != null) {
             data.displayPrice = this.displayPrice;
         }
@@ -121,14 +103,12 @@ export class AppStoreSubscriptionInfo extends pb_1.Message {
     serialize(w: pb_1.BinaryWriter): void;
     serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
         const writer = w || new pb_1.BinaryWriter();
-        if (this.subscriptionType != AppStoreSubscription.monthly)
-            writer.writeEnum(1, this.subscriptionType);
         if (this.displayPrice.length)
-            writer.writeString(2, this.displayPrice);
+            writer.writeString(1, this.displayPrice);
         if (this.trialDays != 0)
-            writer.writeInt32(3, this.trialDays);
+            writer.writeInt32(2, this.trialDays);
         if (this.has_intro_offer_display_price)
-            writer.writeString(4, this.introOfferDisplayPrice);
+            writer.writeString(3, this.introOfferDisplayPrice);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -139,15 +119,12 @@ export class AppStoreSubscriptionInfo extends pb_1.Message {
                 break;
             switch (reader.getFieldNumber()) {
                 case 1:
-                    message.subscriptionType = reader.readEnum();
-                    break;
-                case 2:
                     message.displayPrice = reader.readString();
                     break;
-                case 3:
+                case 2:
                     message.trialDays = reader.readInt32();
                     break;
-                case 4:
+                case 3:
                     message.introOfferDisplayPrice = reader.readString();
                     break;
                 default: reader.skipField();
@@ -325,9 +302,8 @@ export class PromoInfo extends pb_1.Message {
     }
 }
 export class AppStoreSubscriptions extends pb_1.Message {
-    #one_of_decls: number[][] = [[4]];
+    #one_of_decls: number[][] = [[3]];
     constructor(data?: any[] | ({
-        isTrialAvailable?: boolean;
         monthly?: AppStoreSubscriptionInfo;
         annual?: AppStoreSubscriptionInfo;
     } & (({
@@ -336,9 +312,6 @@ export class AppStoreSubscriptions extends pb_1.Message {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
         if (!Array.isArray(data) && typeof data == "object") {
-            if ("isTrialAvailable" in data && data.isTrialAvailable != undefined) {
-                this.isTrialAvailable = data.isTrialAvailable;
-            }
             if ("monthly" in data && data.monthly != undefined) {
                 this.monthly = data.monthly;
             }
@@ -350,58 +323,48 @@ export class AppStoreSubscriptions extends pb_1.Message {
             }
         }
     }
-    get isTrialAvailable() {
-        return pb_1.Message.getFieldWithDefault(this, 1, false) as boolean;
-    }
-    set isTrialAvailable(value: boolean) {
-        pb_1.Message.setField(this, 1, value);
-    }
     get monthly() {
-        return pb_1.Message.getWrapperField(this, AppStoreSubscriptionInfo, 2) as AppStoreSubscriptionInfo;
+        return pb_1.Message.getWrapperField(this, AppStoreSubscriptionInfo, 1) as AppStoreSubscriptionInfo;
     }
     set monthly(value: AppStoreSubscriptionInfo) {
-        pb_1.Message.setWrapperField(this, 2, value);
+        pb_1.Message.setWrapperField(this, 1, value);
     }
     get has_monthly() {
-        return pb_1.Message.getField(this, 2) != null;
+        return pb_1.Message.getField(this, 1) != null;
     }
     get annual() {
-        return pb_1.Message.getWrapperField(this, AppStoreSubscriptionInfo, 3) as AppStoreSubscriptionInfo;
+        return pb_1.Message.getWrapperField(this, AppStoreSubscriptionInfo, 2) as AppStoreSubscriptionInfo;
     }
     set annual(value: AppStoreSubscriptionInfo) {
-        pb_1.Message.setWrapperField(this, 3, value);
+        pb_1.Message.setWrapperField(this, 2, value);
     }
     get has_annual() {
-        return pb_1.Message.getField(this, 3) != null;
+        return pb_1.Message.getField(this, 2) != null;
     }
     get promoInfo() {
-        return pb_1.Message.getWrapperField(this, PromoInfo, 4) as PromoInfo;
+        return pb_1.Message.getWrapperField(this, PromoInfo, 3) as PromoInfo;
     }
     set promoInfo(value: PromoInfo) {
-        pb_1.Message.setOneofWrapperField(this, 4, this.#one_of_decls[0], value);
+        pb_1.Message.setOneofWrapperField(this, 3, this.#one_of_decls[0], value);
     }
     get has_promoInfo() {
-        return pb_1.Message.getField(this, 4) != null;
+        return pb_1.Message.getField(this, 3) != null;
     }
     get _promoInfo() {
         const cases: {
             [index: number]: "none" | "promoInfo";
         } = {
             0: "none",
-            4: "promoInfo"
+            3: "promoInfo"
         };
-        return cases[pb_1.Message.computeOneofCase(this, [4])];
+        return cases[pb_1.Message.computeOneofCase(this, [3])];
     }
     static fromObject(data: {
-        isTrialAvailable?: boolean;
         monthly?: ReturnType<typeof AppStoreSubscriptionInfo.prototype.toObject>;
         annual?: ReturnType<typeof AppStoreSubscriptionInfo.prototype.toObject>;
         promoInfo?: ReturnType<typeof PromoInfo.prototype.toObject>;
     }): AppStoreSubscriptions {
         const message = new AppStoreSubscriptions({});
-        if (data.isTrialAvailable != null) {
-            message.isTrialAvailable = data.isTrialAvailable;
-        }
         if (data.monthly != null) {
             message.monthly = AppStoreSubscriptionInfo.fromObject(data.monthly);
         }
@@ -415,14 +378,10 @@ export class AppStoreSubscriptions extends pb_1.Message {
     }
     toObject() {
         const data: {
-            isTrialAvailable?: boolean;
             monthly?: ReturnType<typeof AppStoreSubscriptionInfo.prototype.toObject>;
             annual?: ReturnType<typeof AppStoreSubscriptionInfo.prototype.toObject>;
             promoInfo?: ReturnType<typeof PromoInfo.prototype.toObject>;
         } = {};
-        if (this.isTrialAvailable != null) {
-            data.isTrialAvailable = this.isTrialAvailable;
-        }
         if (this.monthly != null) {
             data.monthly = this.monthly.toObject();
         }
@@ -438,14 +397,12 @@ export class AppStoreSubscriptions extends pb_1.Message {
     serialize(w: pb_1.BinaryWriter): void;
     serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
         const writer = w || new pb_1.BinaryWriter();
-        if (this.isTrialAvailable != false)
-            writer.writeBool(1, this.isTrialAvailable);
         if (this.has_monthly)
-            writer.writeMessage(2, this.monthly, () => this.monthly.serialize(writer));
+            writer.writeMessage(1, this.monthly, () => this.monthly.serialize(writer));
         if (this.has_annual)
-            writer.writeMessage(3, this.annual, () => this.annual.serialize(writer));
+            writer.writeMessage(2, this.annual, () => this.annual.serialize(writer));
         if (this.has_promoInfo)
-            writer.writeMessage(4, this.promoInfo, () => this.promoInfo.serialize(writer));
+            writer.writeMessage(3, this.promoInfo, () => this.promoInfo.serialize(writer));
         if (!w)
             return writer.getResultBuffer();
     }
@@ -456,15 +413,12 @@ export class AppStoreSubscriptions extends pb_1.Message {
                 break;
             switch (reader.getFieldNumber()) {
                 case 1:
-                    message.isTrialAvailable = reader.readBool();
-                    break;
-                case 2:
                     reader.readMessage(message.monthly, () => message.monthly = AppStoreSubscriptionInfo.deserialize(reader));
                     break;
-                case 3:
+                case 2:
                     reader.readMessage(message.annual, () => message.annual = AppStoreSubscriptionInfo.deserialize(reader));
                     break;
-                case 4:
+                case 3:
                     reader.readMessage(message.promoInfo, () => message.promoInfo = PromoInfo.deserialize(reader));
                     break;
                 default: reader.skipField();

@@ -10,10 +10,9 @@ enum AppStoreSubscription {
 
 // Describes AppStore Subscription
 message AppStoreSubscriptionInfo {
-    AppStoreSubscription subscription_type = 1;
-    string display_price = 2;
-    int32 trial_days = 3;
-    optional string intro_offer_display_price = 4;
+    string display_price = 1;
+    int32 trial_days = 2;
+    optional string intro_offer_display_price = 3;
 }
 
 // Additional promo info
@@ -33,10 +32,9 @@ enum AppStoreSubscriptionsError {
 
 // AppStore available subscriptions
 message AppStoreSubscriptions {
-    bool is_trial_available = 1;
-    AppStoreSubscriptionInfo monthly = 2;
-    AppStoreSubscriptionInfo annual = 3;
-    optional PromoInfo promoInfo = 4;
+    AppStoreSubscriptionInfo monthly = 1;
+    AppStoreSubscriptionInfo annual = 2;
+    optional PromoInfo promoInfo = 3;
 }
 
 // Defines AppStore subscriptions message

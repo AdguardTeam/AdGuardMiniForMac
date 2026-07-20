@@ -4,7 +4,7 @@
 
 import { createContext } from 'preact';
 
-import { GetEffectiveThemeRequest } from 'Apis/requests/OnboardingService';
+import { GetEffectiveThemeRequest } from 'Apis/requests/ThemeService';
 import { Action } from 'Modules/common/utils/EventAction';
 
 import {

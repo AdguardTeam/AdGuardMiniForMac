@@ -5,7 +5,10 @@
 import { LogLevel } from '@adg/sciter-utils-kit';
 import { makeAutoObservable } from 'mobx';
 
-import { ExportLogsRequest, ExportSettingsRequest, ForceRestartOnHardwareAccelerationImportRequest, GetContentBlockersRulesLimitRequest, GetHealthCheckDismissedCardsRequest, GetSafariExtensionsRequest, GetSettingsRequest, GetUserActionLastDirectoryRequest, ImportSettingsConfirmRequest, ImportSettingsRequest, OpenLoginItemsSettingsRequest, ResetSettingsRequest, ResetStatisticsRequest, UpdateAllowTelemetryRequest, UpdateAutoFiltersUpdateRequest, UpdateConsentRequest, UpdateDebugLoggingRequest, UpdateHardwareAccelerationRequest, UpdateHealthCheckDismissedCardsRequest, UpdateLaunchOnStartupRequest, UpdateQuitReactionRequest, UpdateRealTimeFiltersUpdateRequest, UpdateShowInMenuBarRequest, UpdateThemeRequest, UpdateUserActionLastDirectoryRequest, UpdateShowSafariToolbarBadgeRequest } from 'Apis/requests/SettingsService';
+import { UpdateAllowTelemetryRequest, UpdateConsentRequest } from 'Apis/requests/ConsentService';
+import { GetSafariExtensionsRequest } from 'Apis/requests/SafariExtensionsService';
+import { ExportLogsRequest, ExportSettingsRequest, ForceRestartOnHardwareAccelerationImportRequest, GetContentBlockersRulesLimitRequest, GetHealthCheckDismissedCardsRequest, GetSettingsRequest, GetUserActionLastDirectoryRequest, ImportSettingsConfirmRequest, ImportSettingsRequest, ResetSettingsRequest, ResetStatisticsRequest, UpdateAutoFiltersUpdateRequest, UpdateDebugLoggingRequest, UpdateHardwareAccelerationRequest, UpdateHealthCheckDismissedCardsRequest, UpdateLaunchOnStartupRequest, UpdateQuitReactionRequest, UpdateShowInMenuBarRequest, UpdateThemeRequest, UpdateUserActionLastDirectoryRequest, UpdateShowSafariToolbarBadgeRequest } from 'Apis/requests/SettingsService';
+import { OpenLoginItemsSettingsRequest } from 'Apis/requests/SystemService';
 import {
     Settings as SettingsEnt,
     ReleaseVariants,
@@ -288,16 +291,6 @@ export class Settings {
         const newValue = this.updateHelper();
         newValue.autoFiltersUpdate = data;
         window.API.Execute(new UpdateAutoFiltersUpdateRequest({ value: data }));
-        this.commitSettings(newValue);
-    }
-
-    /**
-     * Update realTimeFiltersUpdate setting
-     */
-    public updateRealTimeFiltersUpdate(data: boolean) {
-        const newValue = this.updateHelper();
-        newValue.realTimeFiltersUpdate = data;
-        window.API.Execute(new UpdateRealTimeFiltersUpdateRequest({ value: data }));
         this.commitSettings(newValue);
     }
 

@@ -21,8 +21,6 @@ service SettingsService {
     rpc UpdateDebugLogging(BoolValue) returns (EmptyValue);
     /* Update quit reaction setting */
     rpc UpdateQuitReaction(UpdateQuitReactionMessage) returns (EmptyValue);
-    /* Update RealTimeFiltersUpdate setting */
-    rpc UpdateRealTimeFiltersUpdate(BoolValue) returns (EmptyValue);
     /* Update AutoFiltersUpdate setting */
     rpc UpdateAutoFiltersUpdate(BoolValue) returns (EmptyValue);
     /* Export Settings settings */
@@ -33,52 +31,24 @@ service SettingsService {
     rpc ImportSettingsConfirm(ImportSettingsConfirmation) returns (EmptyValue);
     /* Reset Settings to default settings */
     rpc ResetSettings(EmptyValue) returns (Settings);
-    /* Get Settings settings */
-    rpc GetTraySettings(EmptyValue) returns (GlobalSettings);
-    /* Update Settings settings */
-    rpc UpdateTraySettings(GlobalSettings) returns (EmptyValue);
-    /* Get Safari extension status */
-    rpc GetSafariExtensions(EmptyValue) returns (SafariExtensions);
     /* Get limit on the number of rules for content blockers */
     rpc GetContentBlockersRulesLimit(EmptyValue) returns (Int32Value);
-    /* Open safati preferences */
-    rpc OpenSafariExtensionPreferences(OptionalStringValue) returns (OptionalError);
-    /* Open login items settings */
-    rpc OpenLoginItemsSettings(EmptyValue) returns (EmptyValue);
     /* Export Logs archive */
     rpc ExportLogs(Path) returns (OptionalError);
-    /* Fires event for swift for checking application version, result will be dispatch by TrayCallbackService.OnApplicationVersionStatusResolved */
-    rpc CheckApplicationVersion(EmptyValue) returns (EmptyValue);
-    /* Request to update application */
-    rpc RequestApplicationUpdate(EmptyValue) returns (EmptyValue);
-    /* Update consent agreement */
-    rpc UpdateConsent(UserConsent) returns (EmptyValue);
     /* Send message to Support */
     rpc SendFeedbackMessage(SupportMessage) returns (OptionalError);
-    /* Request open settings page */
-    rpc RequestOpenSettingsPage(StringValue) returns (EmptyValue);
     /* Get user action last directory */
     rpc GetUserActionLastDirectory(EmptyValue) returns (StringValue);
     /* Update user action last directory */
     rpc UpdateUserActionLastDirectory(StringValue) returns (EmptyValue);
-    /* Get system language */
-    rpc GetSystemLanguage(EmptyValue) returns (StringValue);
-    /* Get effective theme */
-    rpc GetEffectiveTheme(EmptyValue) returns (EffectiveThemeValue);
-    /* Update allow telemetry */
-    rpc UpdateAllowTelemetry(BoolValue) returns (EmptyValue);
     /* Update theme setting */
     rpc UpdateTheme(UpdateThemeMessage) returns (EmptyValue);
-    /* Get blocking statistics */
-    rpc GetStatistics(StatisticsRequest) returns (StatisticsResponse);
     /* Reset all statistics */
     rpc ResetStatistics(EmptyValue) returns (EmptyValue);
     /* Update user rules editor window geometry */
     rpc UpdateUserRulesEditorGeometry(WindowGeometry) returns (EmptyValue);
     /* Updates Safari toolbar badge visibility */
     rpc UpdateShowSafariToolbarBadge(BoolValue) returns (EmptyValue);
-    /* Updates Mail Protection toggle */
-    rpc UpdateMailProtection(BoolValue) returns (EmptyValue);
     /* Get dismissed Safari Protection health check cards */
     rpc GetHealthCheckDismissedCards(EmptyValue) returns (StringValueArray);
     /* Update dismissed Safari Protection health check cards */

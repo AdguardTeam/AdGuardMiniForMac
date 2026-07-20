@@ -6,7 +6,8 @@ import noop from 'lodash/noop';
 
 import { RequestSubscribeRequest } from 'Apis/requests/AccountService';
 import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
-import { OpenLoginItemsSettingsRequest, OpenSafariExtensionPreferencesRequest, RequestOpenSettingsPageRequest } from 'Apis/requests/SettingsService';
+import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SafariExtensionsService';
+import { OpenLoginItemsSettingsRequest, RequestOpenSettingsPageRequest } from 'Apis/requests/SystemService';
 import { OptionalStringValue, Subscription } from 'Apis/types';
 import { formatLocalizedNumber } from 'Common/lib/number';
 import { provideTrialDaysParam } from 'Common/utils/translate';

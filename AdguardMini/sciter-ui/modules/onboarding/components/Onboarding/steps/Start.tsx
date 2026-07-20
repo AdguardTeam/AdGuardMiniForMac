@@ -5,7 +5,7 @@
 import { observer } from 'mobx-react-lite';
 import { useState } from 'preact/hooks';
 
-import { UpdateAllowTelemetryRequest } from 'Apis/requests/SettingsService';
+import { UpdateAllowTelemetryRequest } from 'Apis/requests/ConsentService';
 import { getTdsLink, TDS_PARAMS } from 'Modules/common/utils/links';
 import { useOnboardingStore } from 'OnboardingLib/hooks';
 import { OnboardingSteps } from 'OnboardingStore/modules';

@@ -4,7 +4,7 @@
 
 import { makeAutoObservable } from 'mobx';
 
-import { GetAdvancedBlockingRequest, UpdateAdvancedBlockingRequest } from 'Apis/requests/AdvancedBlockingService';
+import { GetAdvancedBlockingRequest, UpdateAdvancedBlockingRequest, UpdateRealTimeFiltersUpdateRequest } from 'Apis/requests/AdvancedBlockingService';
 import { AdvancedBlocking as AdvancedBlockingEnt } from 'Apis/types';
 import { withLast } from 'Common/utils/queue';
 
@@ -87,6 +87,16 @@ export class AdvancedBlocking {
         const newValue = this.updateHelper();
         newValue.adguardExtra = value;
         this.setAdvancedBlocking(newValue);
+        this.commitAdvancedBlocking(newValue);
+    }
+
+    /**
+     * Update realTimeFiltersUpdate setting
+     */
+    public updateRealTimeFiltersUpdate(data: boolean) {
+        const newValue = this.updateHelper();
+        newValue.realTimeFiltersUpdate = data;
+        window.API.Execute(new UpdateRealTimeFiltersUpdateRequest({ value: data }));
         this.commitAdvancedBlocking(newValue);
     }
 }

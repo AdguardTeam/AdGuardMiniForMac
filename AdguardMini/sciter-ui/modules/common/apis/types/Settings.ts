@@ -21,32 +21,6 @@ export enum QuitReaction {
     quit = 2,
     keepRunning = 3
 }
-export enum SafariExtensionType {
-    general = 0,
-    privacy = 1,
-    security = 2,
-    social = 3,
-    other = 4,
-    custom = 5,
-    adguard_for_safari = 6
-}
-export enum SafariExtensionStatus {
-    unknown = 0,
-    ok = 1,
-    loading = 2,
-    disabled = 3,
-    limit_exceeded = 4,
-    converter_error = 5,
-    safari_error = 6
-}
-export enum MailExtensionStatus {
-    unknown = 0,
-    ok = 1,
-    loading = 2,
-    limit_exceeded = 3,
-    converter_error = 4,
-    write_error = 5
-}
 export enum Theme {
     unknown = 0,
     system = 1,
@@ -213,13 +187,12 @@ export class WindowGeometry extends pb_1.Message {
     }
 }
 export class Settings extends pb_1.Message {
-    #one_of_decls: number[][] = [[13]];
+    #one_of_decls: number[][] = [[12]];
     constructor(data?: any[] | ({
         launchOnStartup?: boolean;
         showInMenuBar?: boolean;
         hardwareAcceleration?: boolean;
         autoFiltersUpdate?: boolean;
-        realTimeFiltersUpdate?: boolean;
         quitReaction?: QuitReaction;
         debugLogging?: boolean;
         releaseVariant?: ReleaseVariants;
@@ -229,13 +202,12 @@ export class Settings extends pb_1.Message {
         theme?: Theme;
         showSafariToolbarBadge?: boolean;
         lastUpdateMoreSevenDays?: boolean;
-        mailProtectionEnabled?: boolean;
         loginItemEnabled?: boolean;
     } & (({
         userRulesEditorGeometry?: WindowGeometry;
     })))) {
         super();
-        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [9], this.#one_of_decls);
+        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [8], this.#one_of_decls);
         if (!Array.isArray(data) && typeof data == "object") {
             if ("launchOnStartup" in data && data.launchOnStartup != undefined) {
                 this.launchOnStartup = data.launchOnStartup;
@@ -248,9 +220,6 @@ export class Settings extends pb_1.Message {
             }
             if ("autoFiltersUpdate" in data && data.autoFiltersUpdate != undefined) {
                 this.autoFiltersUpdate = data.autoFiltersUpdate;
-            }
-            if ("realTimeFiltersUpdate" in data && data.realTimeFiltersUpdate != undefined) {
-                this.realTimeFiltersUpdate = data.realTimeFiltersUpdate;
             }
             if ("quitReaction" in data && data.quitReaction != undefined) {
                 this.quitReaction = data.quitReaction;
@@ -282,9 +251,6 @@ export class Settings extends pb_1.Message {
             if ("lastUpdateMoreSevenDays" in data && data.lastUpdateMoreSevenDays != undefined) {
                 this.lastUpdateMoreSevenDays = data.lastUpdateMoreSevenDays;
             }
-            if ("mailProtectionEnabled" in data && data.mailProtectionEnabled != undefined) {
-                this.mailProtectionEnabled = data.mailProtectionEnabled;
-            }
             if ("loginItemEnabled" in data && data.loginItemEnabled != undefined) {
                 this.loginItemEnabled = data.loginItemEnabled;
             }
@@ -314,102 +280,89 @@ export class Settings extends pb_1.Message {
     set autoFiltersUpdate(value: boolean) {
         pb_1.Message.setField(this, 4, value);
     }
-    get realTimeFiltersUpdate() {
-        return pb_1.Message.getFieldWithDefault(this, 5, false) as boolean;
-    }
-    set realTimeFiltersUpdate(value: boolean) {
-        pb_1.Message.setField(this, 5, value);
-    }
     get quitReaction() {
-        return pb_1.Message.getFieldWithDefault(this, 6, QuitReaction.unknown) as QuitReaction;
+        return pb_1.Message.getFieldWithDefault(this, 5, QuitReaction.unknown) as QuitReaction;
     }
     set quitReaction(value: QuitReaction) {
-        pb_1.Message.setField(this, 6, value);
+        pb_1.Message.setField(this, 5, value);
     }
     get debugLogging() {
-        return pb_1.Message.getFieldWithDefault(this, 7, false) as boolean;
+        return pb_1.Message.getFieldWithDefault(this, 6, false) as boolean;
     }
     set debugLogging(value: boolean) {
-        pb_1.Message.setField(this, 7, value);
+        pb_1.Message.setField(this, 6, value);
     }
     get releaseVariant() {
-        return pb_1.Message.getFieldWithDefault(this, 8, ReleaseVariants.unknown) as ReleaseVariants;
+        return pb_1.Message.getFieldWithDefault(this, 7, ReleaseVariants.unknown) as ReleaseVariants;
     }
     set releaseVariant(value: ReleaseVariants) {
-        pb_1.Message.setField(this, 8, value);
+        pb_1.Message.setField(this, 7, value);
     }
     get consentFiltersIds() {
-        return pb_1.Message.getFieldWithDefault(this, 9, []) as number[];
+        return pb_1.Message.getFieldWithDefault(this, 8, []) as number[];
     }
     set consentFiltersIds(value: number[]) {
-        pb_1.Message.setField(this, 9, value);
+        pb_1.Message.setField(this, 8, value);
     }
     get language() {
-        return pb_1.Message.getFieldWithDefault(this, 10, "") as string;
+        return pb_1.Message.getFieldWithDefault(this, 9, "") as string;
     }
     set language(value: string) {
-        pb_1.Message.setField(this, 10, value);
+        pb_1.Message.setField(this, 9, value);
     }
     get allowTelemetry() {
-        return pb_1.Message.getFieldWithDefault(this, 11, false) as boolean;
+        return pb_1.Message.getFieldWithDefault(this, 10, false) as boolean;
     }
     set allowTelemetry(value: boolean) {
-        pb_1.Message.setField(this, 11, value);
+        pb_1.Message.setField(this, 10, value);
     }
     get theme() {
-        return pb_1.Message.getFieldWithDefault(this, 12, Theme.unknown) as Theme;
+        return pb_1.Message.getFieldWithDefault(this, 11, Theme.unknown) as Theme;
     }
     set theme(value: Theme) {
-        pb_1.Message.setField(this, 12, value);
+        pb_1.Message.setField(this, 11, value);
     }
     get userRulesEditorGeometry() {
-        return pb_1.Message.getWrapperField(this, WindowGeometry, 13) as WindowGeometry;
+        return pb_1.Message.getWrapperField(this, WindowGeometry, 12) as WindowGeometry;
     }
     set userRulesEditorGeometry(value: WindowGeometry) {
-        pb_1.Message.setOneofWrapperField(this, 13, this.#one_of_decls[0], value);
+        pb_1.Message.setOneofWrapperField(this, 12, this.#one_of_decls[0], value);
     }
     get has_user_rules_editor_geometry() {
-        return pb_1.Message.getField(this, 13) != null;
+        return pb_1.Message.getField(this, 12) != null;
     }
     get showSafariToolbarBadge() {
-        return pb_1.Message.getFieldWithDefault(this, 14, false) as boolean;
+        return pb_1.Message.getFieldWithDefault(this, 13, false) as boolean;
     }
     set showSafariToolbarBadge(value: boolean) {
-        pb_1.Message.setField(this, 14, value);
+        pb_1.Message.setField(this, 13, value);
     }
     get lastUpdateMoreSevenDays() {
-        return pb_1.Message.getFieldWithDefault(this, 15, false) as boolean;
+        return pb_1.Message.getFieldWithDefault(this, 14, false) as boolean;
     }
     set lastUpdateMoreSevenDays(value: boolean) {
-        pb_1.Message.setField(this, 15, value);
-    }
-    get mailProtectionEnabled() {
-        return pb_1.Message.getFieldWithDefault(this, 16, false) as boolean;
-    }
-    set mailProtectionEnabled(value: boolean) {
-        pb_1.Message.setField(this, 16, value);
+        pb_1.Message.setField(this, 14, value);
     }
     get loginItemEnabled() {
-        return pb_1.Message.getFieldWithDefault(this, 17, false) as boolean;
+        return pb_1.Message.getFieldWithDefault(this, 15, false) as boolean;
     }
     set loginItemEnabled(value: boolean) {
-        pb_1.Message.setField(this, 17, value);
+        pb_1.Message.setField(this, 15, value);
     }
     get _userRulesEditorGeometry() {
         const cases: {
             [index: number]: "none" | "userRulesEditorGeometry";
         } = {
             0: "none",
-            13: "userRulesEditorGeometry"
+            12: "userRulesEditorGeometry"
         };
-        return cases[pb_1.Message.computeOneofCase(this, [13])];
+        return cases[pb_1.Message.computeOneofCase(this, [12])];
     }
     static fromObject(data: {
         launchOnStartup?: boolean;
         showInMenuBar?: boolean;
         hardwareAcceleration?: boolean;
         autoFiltersUpdate?: boolean;
-        realTimeFiltersUpdate?: boolean;
         quitReaction?: QuitReaction;
         debugLogging?: boolean;
         releaseVariant?: ReleaseVariants;
@@ -420,7 +373,6 @@ export class Settings extends pb_1.Message {
         userRulesEditorGeometry?: ReturnType<typeof WindowGeometry.prototype.toObject>;
         showSafariToolbarBadge?: boolean;
         lastUpdateMoreSevenDays?: boolean;
-        mailProtectionEnabled?: boolean;
         loginItemEnabled?: boolean;
     }): Settings {
         const message = new Settings({});
@@ -435,9 +387,6 @@ export class Settings extends pb_1.Message {
         }
         if (data.autoFiltersUpdate != null) {
             message.autoFiltersUpdate = data.autoFiltersUpdate;
-        }
-        if (data.realTimeFiltersUpdate != null) {
-            message.realTimeFiltersUpdate = data.realTimeFiltersUpdate;
         }
         if (data.quitReaction != null) {
             message.quitReaction = data.quitReaction;
@@ -469,9 +418,6 @@ export class Settings extends pb_1.Message {
         if (data.lastUpdateMoreSevenDays != null) {
             message.lastUpdateMoreSevenDays = data.lastUpdateMoreSevenDays;
         }
-        if (data.mailProtectionEnabled != null) {
-            message.mailProtectionEnabled = data.mailProtectionEnabled;
-        }
         if (data.loginItemEnabled != null) {
             message.loginItemEnabled = data.loginItemEnabled;
         }
@@ -483,7 +429,6 @@ export class Settings extends pb_1.Message {
             showInMenuBar?: boolean;
             hardwareAcceleration?: boolean;
             autoFiltersUpdate?: boolean;
-            realTimeFiltersUpdate?: boolean;
             quitReaction?: QuitReaction;
             debugLogging?: boolean;
             releaseVariant?: ReleaseVariants;
@@ -494,7 +439,6 @@ export class Settings extends pb_1.Message {
             userRulesEditorGeometry?: ReturnType<typeof WindowGeometry.prototype.toObject>;
             showSafariToolbarBadge?: boolean;
             lastUpdateMoreSevenDays?: boolean;
-            mailProtectionEnabled?: boolean;
             loginItemEnabled?: boolean;
         } = {};
         if (this.launchOnStartup != null) {
@@ -508,9 +452,6 @@ export class Settings extends pb_1.Message {
         }
         if (this.autoFiltersUpdate != null) {
             data.autoFiltersUpdate = this.autoFiltersUpdate;
-        }
-        if (this.realTimeFiltersUpdate != null) {
-            data.realTimeFiltersUpdate = this.realTimeFiltersUpdate;
         }
         if (this.quitReaction != null) {
             data.quitReaction = this.quitReaction;
@@ -542,9 +483,6 @@ export class Settings extends pb_1.Message {
         if (this.lastUpdateMoreSevenDays != null) {
             data.lastUpdateMoreSevenDays = this.lastUpdateMoreSevenDays;
         }
-        if (this.mailProtectionEnabled != null) {
-            data.mailProtectionEnabled = this.mailProtectionEnabled;
-        }
         if (this.loginItemEnabled != null) {
             data.loginItemEnabled = this.loginItemEnabled;
         }
@@ -562,32 +500,28 @@ export class Settings extends pb_1.Message {
             writer.writeBool(3, this.hardwareAcceleration);
         if (this.autoFiltersUpdate != false)
             writer.writeBool(4, this.autoFiltersUpdate);
-        if (this.realTimeFiltersUpdate != false)
-            writer.writeBool(5, this.realTimeFiltersUpdate);
         if (this.quitReaction != QuitReaction.unknown)
-            writer.writeEnum(6, this.quitReaction);
+            writer.writeEnum(5, this.quitReaction);
         if (this.debugLogging != false)
-            writer.writeBool(7, this.debugLogging);
+            writer.writeBool(6, this.debugLogging);
         if (this.releaseVariant != ReleaseVariants.unknown)
-            writer.writeEnum(8, this.releaseVariant);
+            writer.writeEnum(7, this.releaseVariant);
         if (this.consentFiltersIds.length)
-            writer.writePackedInt32(9, this.consentFiltersIds);
+            writer.writePackedInt32(8, this.consentFiltersIds);
         if (this.language.length)
-            writer.writeString(10, this.language);
+            writer.writeString(9, this.language);
         if (this.allowTelemetry != false)
-            writer.writeBool(11, this.allowTelemetry);
+            writer.writeBool(10, this.allowTelemetry);
         if (this.theme != Theme.unknown)
-            writer.writeEnum(12, this.theme);
+            writer.writeEnum(11, this.theme);
         if (this.has_user_rules_editor_geometry)
-            writer.writeMessage(13, this.userRulesEditorGeometry, () => this.userRulesEditorGeometry.serialize(writer));
+            writer.writeMessage(12, this.userRulesEditorGeometry, () => this.userRulesEditorGeometry.serialize(writer));
         if (this.showSafariToolbarBadge != false)
-            writer.writeBool(14, this.showSafariToolbarBadge);
+            writer.writeBool(13, this.showSafariToolbarBadge);
         if (this.lastUpdateMoreSevenDays != false)
-            writer.writeBool(15, this.lastUpdateMoreSevenDays);
-        if (this.mailProtectionEnabled != false)
-            writer.writeBool(16, this.mailProtectionEnabled);
+            writer.writeBool(14, this.lastUpdateMoreSevenDays);
         if (this.loginItemEnabled != false)
-            writer.writeBool(17, this.loginItemEnabled);
+            writer.writeBool(15, this.loginItemEnabled);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -610,42 +544,36 @@ export class Settings extends pb_1.Message {
                     message.autoFiltersUpdate = reader.readBool();
                     break;
                 case 5:
-                    message.realTimeFiltersUpdate = reader.readBool();
-                    break;
-                case 6:
                     message.quitReaction = reader.readEnum();
                     break;
-                case 7:
+                case 6:
                     message.debugLogging = reader.readBool();
                     break;
-                case 8:
+                case 7:
                     message.releaseVariant = reader.readEnum();
                     break;
-                case 9:
+                case 8:
                     message.consentFiltersIds = reader.readPackedInt32();
                     break;
-                case 10:
+                case 9:
                     message.language = reader.readString();
                     break;
-                case 11:
+                case 10:
                     message.allowTelemetry = reader.readBool();
                     break;
-                case 12:
+                case 11:
                     message.theme = reader.readEnum();
                     break;
-                case 13:
+                case 12:
                     reader.readMessage(message.userRulesEditorGeometry, () => message.userRulesEditorGeometry = WindowGeometry.deserialize(reader));
                     break;
-                case 14:
+                case 13:
                     message.showSafariToolbarBadge = reader.readBool();
                     break;
-                case 15:
+                case 14:
                     message.lastUpdateMoreSevenDays = reader.readBool();
                     break;
-                case 16:
-                    message.mailProtectionEnabled = reader.readBool();
-                    break;
-                case 17:
+                case 15:
                     message.loginItemEnabled = reader.readBool();
                     break;
                 default: reader.skipField();
@@ -1223,715 +1151,6 @@ export class UpdateQuitReactionMessage extends pb_1.Message {
     }
     static deserializeBinary(bytes: Uint8Array): UpdateQuitReactionMessage {
         return UpdateQuitReactionMessage.deserialize(bytes);
-    }
-}
-export class SafariExtensions extends pb_1.Message {
-    #one_of_decls: number[][] = [];
-    constructor(data?: any[] | {
-        general?: SafariExtension;
-        privacy?: SafariExtension;
-        social?: SafariExtension;
-        security?: SafariExtension;
-        other?: SafariExtension;
-        custom?: SafariExtension;
-        adguardForSafari?: SafariExtension;
-    }) {
-        super();
-        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
-        if (!Array.isArray(data) && typeof data == "object") {
-            if ("general" in data && data.general != undefined) {
-                this.general = data.general;
-            }
-            if ("privacy" in data && data.privacy != undefined) {
-                this.privacy = data.privacy;
-            }
-            if ("social" in data && data.social != undefined) {
-                this.social = data.social;
-            }
-            if ("security" in data && data.security != undefined) {
-                this.security = data.security;
-            }
-            if ("other" in data && data.other != undefined) {
-                this.other = data.other;
-            }
-            if ("custom" in data && data.custom != undefined) {
-                this.custom = data.custom;
-            }
-            if ("adguardForSafari" in data && data.adguardForSafari != undefined) {
-                this.adguardForSafari = data.adguardForSafari;
-            }
-        }
-    }
-    get general() {
-        return pb_1.Message.getWrapperField(this, SafariExtension, 1) as SafariExtension;
-    }
-    set general(value: SafariExtension) {
-        pb_1.Message.setWrapperField(this, 1, value);
-    }
-    get has_general() {
-        return pb_1.Message.getField(this, 1) != null;
-    }
-    get privacy() {
-        return pb_1.Message.getWrapperField(this, SafariExtension, 2) as SafariExtension;
-    }
-    set privacy(value: SafariExtension) {
-        pb_1.Message.setWrapperField(this, 2, value);
-    }
-    get has_privacy() {
-        return pb_1.Message.getField(this, 2) != null;
-    }
-    get social() {
-        return pb_1.Message.getWrapperField(this, SafariExtension, 3) as SafariExtension;
-    }
-    set social(value: SafariExtension) {
-        pb_1.Message.setWrapperField(this, 3, value);
-    }
-    get has_social() {
-        return pb_1.Message.getField(this, 3) != null;
-    }
-    get security() {
-        return pb_1.Message.getWrapperField(this, SafariExtension, 4) as SafariExtension;
-    }
-    set security(value: SafariExtension) {
-        pb_1.Message.setWrapperField(this, 4, value);
-    }
-    get has_security() {
-        return pb_1.Message.getField(this, 4) != null;
-    }
-    get other() {
-        return pb_1.Message.getWrapperField(this, SafariExtension, 5) as SafariExtension;
-    }
-    set other(value: SafariExtension) {
-        pb_1.Message.setWrapperField(this, 5, value);
-    }
-    get has_other() {
-        return pb_1.Message.getField(this, 5) != null;
-    }
-    get custom() {
-        return pb_1.Message.getWrapperField(this, SafariExtension, 6) as SafariExtension;
-    }
-    set custom(value: SafariExtension) {
-        pb_1.Message.setWrapperField(this, 6, value);
-    }
-    get has_custom() {
-        return pb_1.Message.getField(this, 6) != null;
-    }
-    get adguardForSafari() {
-        return pb_1.Message.getWrapperField(this, SafariExtension, 7) as SafariExtension;
-    }
-    set adguardForSafari(value: SafariExtension) {
-        pb_1.Message.setWrapperField(this, 7, value);
-    }
-    get has_adguard_for_safari() {
-        return pb_1.Message.getField(this, 7) != null;
-    }
-    static fromObject(data: {
-        general?: ReturnType<typeof SafariExtension.prototype.toObject>;
-        privacy?: ReturnType<typeof SafariExtension.prototype.toObject>;
-        social?: ReturnType<typeof SafariExtension.prototype.toObject>;
-        security?: ReturnType<typeof SafariExtension.prototype.toObject>;
-        other?: ReturnType<typeof SafariExtension.prototype.toObject>;
-        custom?: ReturnType<typeof SafariExtension.prototype.toObject>;
-        adguardForSafari?: ReturnType<typeof SafariExtension.prototype.toObject>;
-    }): SafariExtensions {
-        const message = new SafariExtensions({});
-        if (data.general != null) {
-            message.general = SafariExtension.fromObject(data.general);
-        }
-        if (data.privacy != null) {
-            message.privacy = SafariExtension.fromObject(data.privacy);
-        }
-        if (data.social != null) {
-            message.social = SafariExtension.fromObject(data.social);
-        }
-        if (data.security != null) {
-            message.security = SafariExtension.fromObject(data.security);
-        }
-        if (data.other != null) {
-            message.other = SafariExtension.fromObject(data.other);
-        }
-        if (data.custom != null) {
-            message.custom = SafariExtension.fromObject(data.custom);
-        }
-        if (data.adguardForSafari != null) {
-            message.adguardForSafari = SafariExtension.fromObject(data.adguardForSafari);
-        }
-        return message;
-    }
-    toObject() {
-        const data: {
-            general?: ReturnType<typeof SafariExtension.prototype.toObject>;
-            privacy?: ReturnType<typeof SafariExtension.prototype.toObject>;
-            social?: ReturnType<typeof SafariExtension.prototype.toObject>;
-            security?: ReturnType<typeof SafariExtension.prototype.toObject>;
-            other?: ReturnType<typeof SafariExtension.prototype.toObject>;
-            custom?: ReturnType<typeof SafariExtension.prototype.toObject>;
-            adguardForSafari?: ReturnType<typeof SafariExtension.prototype.toObject>;
-        } = {};
-        if (this.general != null) {
-            data.general = this.general.toObject();
-        }
-        if (this.privacy != null) {
-            data.privacy = this.privacy.toObject();
-        }
-        if (this.social != null) {
-            data.social = this.social.toObject();
-        }
-        if (this.security != null) {
-            data.security = this.security.toObject();
-        }
-        if (this.other != null) {
-            data.other = this.other.toObject();
-        }
-        if (this.custom != null) {
-            data.custom = this.custom.toObject();
-        }
-        if (this.adguardForSafari != null) {
-            data.adguardForSafari = this.adguardForSafari.toObject();
-        }
-        return data;
-    }
-    serialize(): Uint8Array;
-    serialize(w: pb_1.BinaryWriter): void;
-    serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
-        const writer = w || new pb_1.BinaryWriter();
-        if (this.has_general)
-            writer.writeMessage(1, this.general, () => this.general.serialize(writer));
-        if (this.has_privacy)
-            writer.writeMessage(2, this.privacy, () => this.privacy.serialize(writer));
-        if (this.has_social)
-            writer.writeMessage(3, this.social, () => this.social.serialize(writer));
-        if (this.has_security)
-            writer.writeMessage(4, this.security, () => this.security.serialize(writer));
-        if (this.has_other)
-            writer.writeMessage(5, this.other, () => this.other.serialize(writer));
-        if (this.has_custom)
-            writer.writeMessage(6, this.custom, () => this.custom.serialize(writer));
-        if (this.has_adguard_for_safari)
-            writer.writeMessage(7, this.adguardForSafari, () => this.adguardForSafari.serialize(writer));
-        if (!w)
-            return writer.getResultBuffer();
-    }
-    static deserialize(bytes: Uint8Array | pb_1.BinaryReader): SafariExtensions {
-        const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new SafariExtensions();
-        while (reader.nextField()) {
-            if (reader.isEndGroup())
-                break;
-            switch (reader.getFieldNumber()) {
-                case 1:
-                    reader.readMessage(message.general, () => message.general = SafariExtension.deserialize(reader));
-                    break;
-                case 2:
-                    reader.readMessage(message.privacy, () => message.privacy = SafariExtension.deserialize(reader));
-                    break;
-                case 3:
-                    reader.readMessage(message.social, () => message.social = SafariExtension.deserialize(reader));
-                    break;
-                case 4:
-                    reader.readMessage(message.security, () => message.security = SafariExtension.deserialize(reader));
-                    break;
-                case 5:
-                    reader.readMessage(message.other, () => message.other = SafariExtension.deserialize(reader));
-                    break;
-                case 6:
-                    reader.readMessage(message.custom, () => message.custom = SafariExtension.deserialize(reader));
-                    break;
-                case 7:
-                    reader.readMessage(message.adguardForSafari, () => message.adguardForSafari = SafariExtension.deserialize(reader));
-                    break;
-                default: reader.skipField();
-            }
-        }
-        return message;
-    }
-    serializeBinary(): Uint8Array {
-        return this.serialize();
-    }
-    static deserializeBinary(bytes: Uint8Array): SafariExtensions {
-        return SafariExtensions.deserialize(bytes);
-    }
-}
-export class SafariExtension extends pb_1.Message {
-    #one_of_decls: number[][] = [[6]];
-    constructor(data?: any[] | ({
-        id?: string;
-        rulesEnabled?: number;
-        rulesTotal?: number;
-        status?: SafariExtensionStatus;
-        isConsideredEnabled?: boolean;
-    } & (({
-        safariError?: string;
-    })))) {
-        super();
-        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
-        if (!Array.isArray(data) && typeof data == "object") {
-            if ("id" in data && data.id != undefined) {
-                this.id = data.id;
-            }
-            if ("rulesEnabled" in data && data.rulesEnabled != undefined) {
-                this.rulesEnabled = data.rulesEnabled;
-            }
-            if ("rulesTotal" in data && data.rulesTotal != undefined) {
-                this.rulesTotal = data.rulesTotal;
-            }
-            if ("status" in data && data.status != undefined) {
-                this.status = data.status;
-            }
-            if ("safariError" in data && data.safariError != undefined) {
-                this.safariError = data.safariError;
-            }
-            if ("isConsideredEnabled" in data && data.isConsideredEnabled != undefined) {
-                this.isConsideredEnabled = data.isConsideredEnabled;
-            }
-        }
-    }
-    get id() {
-        return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
-    }
-    set id(value: string) {
-        pb_1.Message.setField(this, 1, value);
-    }
-    get rulesEnabled() {
-        return pb_1.Message.getFieldWithDefault(this, 2, 0) as number;
-    }
-    set rulesEnabled(value: number) {
-        pb_1.Message.setField(this, 2, value);
-    }
-    get rulesTotal() {
-        return pb_1.Message.getFieldWithDefault(this, 3, 0) as number;
-    }
-    set rulesTotal(value: number) {
-        pb_1.Message.setField(this, 3, value);
-    }
-    get status() {
-        return pb_1.Message.getFieldWithDefault(this, 4, SafariExtensionStatus.unknown) as SafariExtensionStatus;
-    }
-    set status(value: SafariExtensionStatus) {
-        pb_1.Message.setField(this, 4, value);
-    }
-    get safariError() {
-        return pb_1.Message.getFieldWithDefault(this, 6, "") as string;
-    }
-    set safariError(value: string) {
-        pb_1.Message.setOneofField(this, 6, this.#one_of_decls[0], value);
-    }
-    get has_safari_error() {
-        return pb_1.Message.getField(this, 6) != null;
-    }
-    get isConsideredEnabled() {
-        return pb_1.Message.getFieldWithDefault(this, 7, false) as boolean;
-    }
-    set isConsideredEnabled(value: boolean) {
-        pb_1.Message.setField(this, 7, value);
-    }
-    get _safariError() {
-        const cases: {
-            [index: number]: "none" | "safariError";
-        } = {
-            0: "none",
-            6: "safariError"
-        };
-        return cases[pb_1.Message.computeOneofCase(this, [6])];
-    }
-    static fromObject(data: {
-        id?: string;
-        rulesEnabled?: number;
-        rulesTotal?: number;
-        status?: SafariExtensionStatus;
-        safariError?: string;
-        isConsideredEnabled?: boolean;
-    }): SafariExtension {
-        const message = new SafariExtension({});
-        if (data.id != null) {
-            message.id = data.id;
-        }
-        if (data.rulesEnabled != null) {
-            message.rulesEnabled = data.rulesEnabled;
-        }
-        if (data.rulesTotal != null) {
-            message.rulesTotal = data.rulesTotal;
-        }
-        if (data.status != null) {
-            message.status = data.status;
-        }
-        if (data.safariError != null) {
-            message.safariError = data.safariError;
-        }
-        if (data.isConsideredEnabled != null) {
-            message.isConsideredEnabled = data.isConsideredEnabled;
-        }
-        return message;
-    }
-    toObject() {
-        const data: {
-            id?: string;
-            rulesEnabled?: number;
-            rulesTotal?: number;
-            status?: SafariExtensionStatus;
-            safariError?: string;
-            isConsideredEnabled?: boolean;
-        } = {};
-        if (this.id != null) {
-            data.id = this.id;
-        }
-        if (this.rulesEnabled != null) {
-            data.rulesEnabled = this.rulesEnabled;
-        }
-        if (this.rulesTotal != null) {
-            data.rulesTotal = this.rulesTotal;
-        }
-        if (this.status != null) {
-            data.status = this.status;
-        }
-        if (this.safariError != null) {
-            data.safariError = this.safariError;
-        }
-        if (this.isConsideredEnabled != null) {
-            data.isConsideredEnabled = this.isConsideredEnabled;
-        }
-        return data;
-    }
-    serialize(): Uint8Array;
-    serialize(w: pb_1.BinaryWriter): void;
-    serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
-        const writer = w || new pb_1.BinaryWriter();
-        if (this.id.length)
-            writer.writeString(1, this.id);
-        if (this.rulesEnabled != 0)
-            writer.writeInt32(2, this.rulesEnabled);
-        if (this.rulesTotal != 0)
-            writer.writeInt32(3, this.rulesTotal);
-        if (this.status != SafariExtensionStatus.unknown)
-            writer.writeEnum(4, this.status);
-        if (this.has_safari_error)
-            writer.writeString(6, this.safariError);
-        if (this.isConsideredEnabled != false)
-            writer.writeBool(7, this.isConsideredEnabled);
-        if (!w)
-            return writer.getResultBuffer();
-    }
-    static deserialize(bytes: Uint8Array | pb_1.BinaryReader): SafariExtension {
-        const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new SafariExtension();
-        while (reader.nextField()) {
-            if (reader.isEndGroup())
-                break;
-            switch (reader.getFieldNumber()) {
-                case 1:
-                    message.id = reader.readString();
-                    break;
-                case 2:
-                    message.rulesEnabled = reader.readInt32();
-                    break;
-                case 3:
-                    message.rulesTotal = reader.readInt32();
-                    break;
-                case 4:
-                    message.status = reader.readEnum();
-                    break;
-                case 6:
-                    message.safariError = reader.readString();
-                    break;
-                case 7:
-                    message.isConsideredEnabled = reader.readBool();
-                    break;
-                default: reader.skipField();
-            }
-        }
-        return message;
-    }
-    serializeBinary(): Uint8Array {
-        return this.serialize();
-    }
-    static deserializeBinary(bytes: Uint8Array): SafariExtension {
-        return SafariExtension.deserialize(bytes);
-    }
-}
-export class MailExtension extends pb_1.Message {
-    #one_of_decls: number[][] = [[6]];
-    constructor(data?: any[] | ({
-        id?: string;
-        rulesEnabled?: number;
-        rulesTotal?: number;
-        status?: MailExtensionStatus;
-        isConsideredEnabled?: boolean;
-    } & (({
-        mailError?: string;
-    })))) {
-        super();
-        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
-        if (!Array.isArray(data) && typeof data == "object") {
-            if ("id" in data && data.id != undefined) {
-                this.id = data.id;
-            }
-            if ("rulesEnabled" in data && data.rulesEnabled != undefined) {
-                this.rulesEnabled = data.rulesEnabled;
-            }
-            if ("rulesTotal" in data && data.rulesTotal != undefined) {
-                this.rulesTotal = data.rulesTotal;
-            }
-            if ("status" in data && data.status != undefined) {
-                this.status = data.status;
-            }
-            if ("mailError" in data && data.mailError != undefined) {
-                this.mailError = data.mailError;
-            }
-            if ("isConsideredEnabled" in data && data.isConsideredEnabled != undefined) {
-                this.isConsideredEnabled = data.isConsideredEnabled;
-            }
-        }
-    }
-    get id() {
-        return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
-    }
-    set id(value: string) {
-        pb_1.Message.setField(this, 1, value);
-    }
-    get rulesEnabled() {
-        return pb_1.Message.getFieldWithDefault(this, 2, 0) as number;
-    }
-    set rulesEnabled(value: number) {
-        pb_1.Message.setField(this, 2, value);
-    }
-    get rulesTotal() {
-        return pb_1.Message.getFieldWithDefault(this, 3, 0) as number;
-    }
-    set rulesTotal(value: number) {
-        pb_1.Message.setField(this, 3, value);
-    }
-    get status() {
-        return pb_1.Message.getFieldWithDefault(this, 4, MailExtensionStatus.unknown) as MailExtensionStatus;
-    }
-    set status(value: MailExtensionStatus) {
-        pb_1.Message.setField(this, 4, value);
-    }
-    get mailError() {
-        return pb_1.Message.getFieldWithDefault(this, 6, "") as string;
-    }
-    set mailError(value: string) {
-        pb_1.Message.setOneofField(this, 6, this.#one_of_decls[0], value);
-    }
-    get has_mail_error() {
-        return pb_1.Message.getField(this, 6) != null;
-    }
-    get isConsideredEnabled() {
-        return pb_1.Message.getFieldWithDefault(this, 7, false) as boolean;
-    }
-    set isConsideredEnabled(value: boolean) {
-        pb_1.Message.setField(this, 7, value);
-    }
-    get _mailError() {
-        const cases: {
-            [index: number]: "none" | "mailError";
-        } = {
-            0: "none",
-            6: "mailError"
-        };
-        return cases[pb_1.Message.computeOneofCase(this, [6])];
-    }
-    static fromObject(data: {
-        id?: string;
-        rulesEnabled?: number;
-        rulesTotal?: number;
-        status?: MailExtensionStatus;
-        mailError?: string;
-        isConsideredEnabled?: boolean;
-    }): MailExtension {
-        const message = new MailExtension({});
-        if (data.id != null) {
-            message.id = data.id;
-        }
-        if (data.rulesEnabled != null) {
-            message.rulesEnabled = data.rulesEnabled;
-        }
-        if (data.rulesTotal != null) {
-            message.rulesTotal = data.rulesTotal;
-        }
-        if (data.status != null) {
-            message.status = data.status;
-        }
-        if (data.mailError != null) {
-            message.mailError = data.mailError;
-        }
-        if (data.isConsideredEnabled != null) {
-            message.isConsideredEnabled = data.isConsideredEnabled;
-        }
-        return message;
-    }
-    toObject() {
-        const data: {
-            id?: string;
-            rulesEnabled?: number;
-            rulesTotal?: number;
-            status?: MailExtensionStatus;
-            mailError?: string;
-            isConsideredEnabled?: boolean;
-        } = {};
-        if (this.id != null) {
-            data.id = this.id;
-        }
-        if (this.rulesEnabled != null) {
-            data.rulesEnabled = this.rulesEnabled;
-        }
-        if (this.rulesTotal != null) {
-            data.rulesTotal = this.rulesTotal;
-        }
-        if (this.status != null) {
-            data.status = this.status;
-        }
-        if (this.mailError != null) {
-            data.mailError = this.mailError;
-        }
-        if (this.isConsideredEnabled != null) {
-            data.isConsideredEnabled = this.isConsideredEnabled;
-        }
-        return data;
-    }
-    serialize(): Uint8Array;
-    serialize(w: pb_1.BinaryWriter): void;
-    serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
-        const writer = w || new pb_1.BinaryWriter();
-        if (this.id.length)
-            writer.writeString(1, this.id);
-        if (this.rulesEnabled != 0)
-            writer.writeInt32(2, this.rulesEnabled);
-        if (this.rulesTotal != 0)
-            writer.writeInt32(3, this.rulesTotal);
-        if (this.status != MailExtensionStatus.unknown)
-            writer.writeEnum(4, this.status);
-        if (this.has_mail_error)
-            writer.writeString(6, this.mailError);
-        if (this.isConsideredEnabled != false)
-            writer.writeBool(7, this.isConsideredEnabled);
-        if (!w)
-            return writer.getResultBuffer();
-    }
-    static deserialize(bytes: Uint8Array | pb_1.BinaryReader): MailExtension {
-        const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new MailExtension();
-        while (reader.nextField()) {
-            if (reader.isEndGroup())
-                break;
-            switch (reader.getFieldNumber()) {
-                case 1:
-                    message.id = reader.readString();
-                    break;
-                case 2:
-                    message.rulesEnabled = reader.readInt32();
-                    break;
-                case 3:
-                    message.rulesTotal = reader.readInt32();
-                    break;
-                case 4:
-                    message.status = reader.readEnum();
-                    break;
-                case 6:
-                    message.mailError = reader.readString();
-                    break;
-                case 7:
-                    message.isConsideredEnabled = reader.readBool();
-                    break;
-                default: reader.skipField();
-            }
-        }
-        return message;
-    }
-    serializeBinary(): Uint8Array {
-        return this.serialize();
-    }
-    static deserializeBinary(bytes: Uint8Array): MailExtension {
-        return MailExtension.deserialize(bytes);
-    }
-}
-export class SafariExtensionUpdate extends pb_1.Message {
-    #one_of_decls: number[][] = [];
-    constructor(data?: any[] | {
-        type?: SafariExtensionType;
-        state?: SafariExtension;
-    }) {
-        super();
-        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
-        if (!Array.isArray(data) && typeof data == "object") {
-            if ("type" in data && data.type != undefined) {
-                this.type = data.type;
-            }
-            if ("state" in data && data.state != undefined) {
-                this.state = data.state;
-            }
-        }
-    }
-    get type() {
-        return pb_1.Message.getFieldWithDefault(this, 1, SafariExtensionType.general) as SafariExtensionType;
-    }
-    set type(value: SafariExtensionType) {
-        pb_1.Message.setField(this, 1, value);
-    }
-    get state() {
-        return pb_1.Message.getWrapperField(this, SafariExtension, 2) as SafariExtension;
-    }
-    set state(value: SafariExtension) {
-        pb_1.Message.setWrapperField(this, 2, value);
-    }
-    get has_state() {
-        return pb_1.Message.getField(this, 2) != null;
-    }
-    static fromObject(data: {
-        type?: SafariExtensionType;
-        state?: ReturnType<typeof SafariExtension.prototype.toObject>;
-    }): SafariExtensionUpdate {
-        const message = new SafariExtensionUpdate({});
-        if (data.type != null) {
-            message.type = data.type;
-        }
-        if (data.state != null) {
-            message.state = SafariExtension.fromObject(data.state);
-        }
-        return message;
-    }
-    toObject() {
-        const data: {
-            type?: SafariExtensionType;
-            state?: ReturnType<typeof SafariExtension.prototype.toObject>;
-        } = {};
-        if (this.type != null) {
-            data.type = this.type;
-        }
-        if (this.state != null) {
-            data.state = this.state.toObject();
-        }
-        return data;
-    }
-    serialize(): Uint8Array;
-    serialize(w: pb_1.BinaryWriter): void;
-    serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
-        const writer = w || new pb_1.BinaryWriter();
-        if (this.type != SafariExtensionType.general)
-            writer.writeEnum(1, this.type);
-        if (this.has_state)
-            writer.writeMessage(2, this.state, () => this.state.serialize(writer));
-        if (!w)
-            return writer.getResultBuffer();
-    }
-    static deserialize(bytes: Uint8Array | pb_1.BinaryReader): SafariExtensionUpdate {
-        const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new SafariExtensionUpdate();
-        while (reader.nextField()) {
-            if (reader.isEndGroup())
-                break;
-            switch (reader.getFieldNumber()) {
-                case 1:
-                    message.type = reader.readEnum();
-                    break;
-                case 2:
-                    reader.readMessage(message.state, () => message.state = SafariExtension.deserialize(reader));
-                    break;
-                default: reader.skipField();
-            }
-        }
-        return message;
-    }
-    serializeBinary(): Uint8Array {
-        return this.serialize();
-    }
-    static deserializeBinary(bytes: Uint8Array): SafariExtensionUpdate {
-        return SafariExtensionUpdate.deserialize(bytes);
     }
 }
 export class UpdateThemeMessage extends pb_1.Message {

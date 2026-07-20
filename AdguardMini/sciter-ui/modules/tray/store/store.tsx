@@ -4,7 +4,7 @@
 
 import { createContext } from 'preact';
 
-import { GetEffectiveThemeRequest } from 'Apis/requests/TrayService';
+import { GetEffectiveThemeRequest } from 'Apis/requests/ThemeService';
 import { NotificationsQueue } from 'Common/stores/NotificationsQueue';
 import { Action } from 'Modules/common/utils/EventAction';
 

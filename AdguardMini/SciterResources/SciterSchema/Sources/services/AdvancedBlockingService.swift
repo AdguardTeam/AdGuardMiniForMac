@@ -17,6 +17,10 @@ public protocol AdvancedBlockingServiceProtocol
 	func updateAdvancedBlocking (
 						_ message: AdvancedBlocking,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void
+	/// Update RealTimeFiltersUpdate setting
+	func updateRealTimeFiltersUpdate (
+						_ message: BoolValue,
+						_ promise: @escaping (EmptyValue) -> Void) -> Void
 }
 
 // MARK: Protobuf Bridge definition
@@ -47,6 +51,18 @@ open class AdvancedBlockingService: SciterBridge
 			inputType: AdvancedBlocking.self,
 			outputType: EmptyValue.self,
 			method: cast.updateAdvancedBlocking(_:_:),
+			message,
+			promise
+		)
+	}
+
+	/// Wrapper for `UpdateRealTimeFiltersUpdate`
+	@objc func UpdateRealTimeFiltersUpdate(_ message: Data, promise: @escaping (Data) -> Void)
+	{
+		swiftCall(
+			inputType: BoolValue.self,
+			outputType: EmptyValue.self,
+			method: cast.updateRealTimeFiltersUpdate(_:_:),
 			message,
 			promise
 		)

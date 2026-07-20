@@ -106,8 +106,6 @@ public struct StatisticsResponse: Sendable {
   /// Clears the value of `statistics`. Subsequent reads from it will return its default value.
   public mutating func clearStatistics() {self._statistics = nil}
 
-  public var period: StatisticsPeriod = .day
-
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -188,7 +186,7 @@ extension BlockerStatistics: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
 
 extension StatisticsResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "StatisticsResponse"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}statistics\0\u{1}period\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}statistics\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -197,7 +195,6 @@ extension StatisticsResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularMessageField(value: &self._statistics) }()
-      case 2: try { try decoder.decodeSingularEnumField(value: &self.period) }()
       default: break
       }
     }
@@ -211,15 +208,11 @@ extension StatisticsResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     try { if let v = self._statistics {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
     } }()
-    if self.period != .day {
-      try visitor.visitSingularEnumField(value: self.period, fieldNumber: 2)
-    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: StatisticsResponse, rhs: StatisticsResponse) -> Bool {
     if lhs._statistics != rhs._statistics {return false}
-    if lhs.period != rhs.period {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

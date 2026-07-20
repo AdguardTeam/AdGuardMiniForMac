@@ -142,164 +142,6 @@ public enum QuitReaction: SwiftProtobuf.Enum, Swift.CaseIterable {
 
 }
 
-public enum SafariExtensionType: SwiftProtobuf.Enum, Swift.CaseIterable {
-  public typealias RawValue = Int
-  case general // = 0
-  case privacy // = 1
-  case security // = 2
-  case social // = 3
-  case other // = 4
-  case custom // = 5
-  case adguardForSafari // = 6
-  case UNRECOGNIZED(Int)
-
-  public init() {
-    self = .general
-  }
-
-  public init?(rawValue: Int) {
-    switch rawValue {
-    case 0: self = .general
-    case 1: self = .privacy
-    case 2: self = .security
-    case 3: self = .social
-    case 4: self = .other
-    case 5: self = .custom
-    case 6: self = .adguardForSafari
-    default: self = .UNRECOGNIZED(rawValue)
-    }
-  }
-
-  public var rawValue: Int {
-    switch self {
-    case .general: return 0
-    case .privacy: return 1
-    case .security: return 2
-    case .social: return 3
-    case .other: return 4
-    case .custom: return 5
-    case .adguardForSafari: return 6
-    case .UNRECOGNIZED(let i): return i
-    }
-  }
-
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static let allCases: [SafariExtensionType] = [
-    .general,
-    .privacy,
-    .security,
-    .social,
-    .other,
-    .custom,
-    .adguardForSafari,
-  ]
-
-}
-
-public enum SafariExtensionStatus: SwiftProtobuf.Enum, Swift.CaseIterable {
-  public typealias RawValue = Int
-  case unknown // = 0
-  case ok // = 1
-  case loading // = 2
-  case disabled // = 3
-  case limitExceeded // = 4
-  case converterError // = 5
-  case safariError // = 6
-  case UNRECOGNIZED(Int)
-
-  public init() {
-    self = .unknown
-  }
-
-  public init?(rawValue: Int) {
-    switch rawValue {
-    case 0: self = .unknown
-    case 1: self = .ok
-    case 2: self = .loading
-    case 3: self = .disabled
-    case 4: self = .limitExceeded
-    case 5: self = .converterError
-    case 6: self = .safariError
-    default: self = .UNRECOGNIZED(rawValue)
-    }
-  }
-
-  public var rawValue: Int {
-    switch self {
-    case .unknown: return 0
-    case .ok: return 1
-    case .loading: return 2
-    case .disabled: return 3
-    case .limitExceeded: return 4
-    case .converterError: return 5
-    case .safariError: return 6
-    case .UNRECOGNIZED(let i): return i
-    }
-  }
-
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static let allCases: [SafariExtensionStatus] = [
-    .unknown,
-    .ok,
-    .loading,
-    .disabled,
-    .limitExceeded,
-    .converterError,
-    .safariError,
-  ]
-
-}
-
-public enum MailExtensionStatus: SwiftProtobuf.Enum, Swift.CaseIterable {
-  public typealias RawValue = Int
-  case unknown // = 0
-  case ok // = 1
-  case loading // = 2
-  case limitExceeded // = 3
-  case converterError // = 4
-  case writeError // = 5
-  case UNRECOGNIZED(Int)
-
-  public init() {
-    self = .unknown
-  }
-
-  public init?(rawValue: Int) {
-    switch rawValue {
-    case 0: self = .unknown
-    case 1: self = .ok
-    case 2: self = .loading
-    case 3: self = .limitExceeded
-    case 4: self = .converterError
-    case 5: self = .writeError
-    default: self = .UNRECOGNIZED(rawValue)
-    }
-  }
-
-  public var rawValue: Int {
-    switch self {
-    case .unknown: return 0
-    case .ok: return 1
-    case .loading: return 2
-    case .limitExceeded: return 3
-    case .converterError: return 4
-    case .writeError: return 5
-    case .UNRECOGNIZED(let i): return i
-    }
-  }
-
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static let allCases: [MailExtensionStatus] = [
-    .unknown,
-    .ok,
-    .loading,
-    .limitExceeded,
-    .converterError,
-    .writeError,
-  ]
-
-}
-
 public enum Theme: SwiftProtobuf.Enum, Swift.CaseIterable {
   public typealias RawValue = Int
   case unknown // = 0
@@ -389,11 +231,6 @@ public struct Settings: @unchecked Sendable {
     set {_uniqueStorage()._autoFiltersUpdate = newValue}
   }
 
-  public var realTimeFiltersUpdate: Bool {
-    get {return _storage._realTimeFiltersUpdate}
-    set {_uniqueStorage()._realTimeFiltersUpdate = newValue}
-  }
-
   public var quitReaction: QuitReaction {
     get {return _storage._quitReaction}
     set {_uniqueStorage()._quitReaction = newValue}
@@ -446,11 +283,6 @@ public struct Settings: @unchecked Sendable {
   public var lastUpdateMoreSevenDays: Bool {
     get {return _storage._lastUpdateMoreSevenDays}
     set {_uniqueStorage()._lastUpdateMoreSevenDays = newValue}
-  }
-
-  public var mailProtectionEnabled: Bool {
-    get {return _storage._mailProtectionEnabled}
-    set {_uniqueStorage()._mailProtectionEnabled = newValue}
   }
 
   public var loginItemEnabled: Bool {
@@ -545,166 +377,6 @@ public struct UpdateQuitReactionMessage: Sendable {
   public init() {}
 }
 
-public struct SafariExtensions: @unchecked Sendable {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  public var general: SafariExtension {
-    get {return _storage._general ?? SafariExtension()}
-    set {_uniqueStorage()._general = newValue}
-  }
-  /// Returns true if `general` has been explicitly set.
-  public var hasGeneral: Bool {return _storage._general != nil}
-  /// Clears the value of `general`. Subsequent reads from it will return its default value.
-  public mutating func clearGeneral() {_uniqueStorage()._general = nil}
-
-  public var privacy: SafariExtension {
-    get {return _storage._privacy ?? SafariExtension()}
-    set {_uniqueStorage()._privacy = newValue}
-  }
-  /// Returns true if `privacy` has been explicitly set.
-  public var hasPrivacy: Bool {return _storage._privacy != nil}
-  /// Clears the value of `privacy`. Subsequent reads from it will return its default value.
-  public mutating func clearPrivacy() {_uniqueStorage()._privacy = nil}
-
-  public var social: SafariExtension {
-    get {return _storage._social ?? SafariExtension()}
-    set {_uniqueStorage()._social = newValue}
-  }
-  /// Returns true if `social` has been explicitly set.
-  public var hasSocial: Bool {return _storage._social != nil}
-  /// Clears the value of `social`. Subsequent reads from it will return its default value.
-  public mutating func clearSocial() {_uniqueStorage()._social = nil}
-
-  public var security: SafariExtension {
-    get {return _storage._security ?? SafariExtension()}
-    set {_uniqueStorage()._security = newValue}
-  }
-  /// Returns true if `security` has been explicitly set.
-  public var hasSecurity: Bool {return _storage._security != nil}
-  /// Clears the value of `security`. Subsequent reads from it will return its default value.
-  public mutating func clearSecurity() {_uniqueStorage()._security = nil}
-
-  public var other: SafariExtension {
-    get {return _storage._other ?? SafariExtension()}
-    set {_uniqueStorage()._other = newValue}
-  }
-  /// Returns true if `other` has been explicitly set.
-  public var hasOther: Bool {return _storage._other != nil}
-  /// Clears the value of `other`. Subsequent reads from it will return its default value.
-  public mutating func clearOther() {_uniqueStorage()._other = nil}
-
-  public var custom: SafariExtension {
-    get {return _storage._custom ?? SafariExtension()}
-    set {_uniqueStorage()._custom = newValue}
-  }
-  /// Returns true if `custom` has been explicitly set.
-  public var hasCustom: Bool {return _storage._custom != nil}
-  /// Clears the value of `custom`. Subsequent reads from it will return its default value.
-  public mutating func clearCustom() {_uniqueStorage()._custom = nil}
-
-  public var adguardForSafari: SafariExtension {
-    get {return _storage._adguardForSafari ?? SafariExtension()}
-    set {_uniqueStorage()._adguardForSafari = newValue}
-  }
-  /// Returns true if `adguardForSafari` has been explicitly set.
-  public var hasAdguardForSafari: Bool {return _storage._adguardForSafari != nil}
-  /// Clears the value of `adguardForSafari`. Subsequent reads from it will return its default value.
-  public mutating func clearAdguardForSafari() {_uniqueStorage()._adguardForSafari = nil}
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-
-  fileprivate var _storage = _StorageClass.defaultInstance
-}
-
-public struct SafariExtension: Sendable {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  public var id: String = String()
-
-  public var rulesEnabled: Int32 = 0
-
-  public var rulesTotal: Int32 = 0
-
-  public var status: SafariExtensionStatus = .unknown
-
-  public var safariError: String {
-    get {return _safariError ?? String()}
-    set {_safariError = newValue}
-  }
-  /// Returns true if `safariError` has been explicitly set.
-  public var hasSafariError: Bool {return self._safariError != nil}
-  /// Clears the value of `safariError`. Subsequent reads from it will return its default value.
-  public mutating func clearSafariError() {self._safariError = nil}
-
-  public var isConsideredEnabled: Bool = false
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-
-  fileprivate var _safariError: String? = nil
-}
-
-public struct MailExtension: Sendable {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  public var id: String = String()
-
-  public var rulesEnabled: Int32 = 0
-
-  public var rulesTotal: Int32 = 0
-
-  public var status: MailExtensionStatus = .unknown
-
-  public var mailError: String {
-    get {return _mailError ?? String()}
-    set {_mailError = newValue}
-  }
-  /// Returns true if `mailError` has been explicitly set.
-  public var hasMailError: Bool {return self._mailError != nil}
-  /// Clears the value of `mailError`. Subsequent reads from it will return its default value.
-  public mutating func clearMailError() {self._mailError = nil}
-
-  public var isConsideredEnabled: Bool = false
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-
-  fileprivate var _mailError: String? = nil
-}
-
-public struct SafariExtensionUpdate: Sendable {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  public var type: SafariExtensionType = .general
-
-  public var state: SafariExtension {
-    get {return _state ?? SafariExtension()}
-    set {_state = newValue}
-  }
-  /// Returns true if `state` has been explicitly set.
-  public var hasState: Bool {return self._state != nil}
-  /// Clears the value of `state`. Subsequent reads from it will return its default value.
-  public mutating func clearState() {self._state = nil}
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-
-  fileprivate var _state: SafariExtension? = nil
-}
-
 public struct UpdateThemeMessage: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -729,18 +401,6 @@ extension ImportMode: SwiftProtobuf._ProtoNameProviding {
 
 extension QuitReaction: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0QuitReaction_unknown\0\u{1}QuitReaction_ask\0\u{1}QuitReaction_quit\0\u{1}QuitReaction_keepRunning\0")
-}
-
-extension SafariExtensionType: SwiftProtobuf._ProtoNameProviding {
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0SafariExtensionType_general\0\u{1}SafariExtensionType_privacy\0\u{1}SafariExtensionType_security\0\u{1}SafariExtensionType_social\0\u{1}SafariExtensionType_other\0\u{1}SafariExtensionType_custom\0\u{1}SafariExtensionType_adguard_for_safari\0")
-}
-
-extension SafariExtensionStatus: SwiftProtobuf._ProtoNameProviding {
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0SafariExtensionStatus_unknown\0\u{1}SafariExtensionStatus_ok\0\u{1}SafariExtensionStatus_loading\0\u{1}SafariExtensionStatus_disabled\0\u{1}SafariExtensionStatus_limit_exceeded\0\u{1}SafariExtensionStatus_converter_error\0\u{1}SafariExtensionStatus_safari_error\0")
-}
-
-extension MailExtensionStatus: SwiftProtobuf._ProtoNameProviding {
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0MailExtensionStatus_unknown\0\u{1}MailExtensionStatus_ok\0\u{1}MailExtensionStatus_loading\0\u{1}MailExtensionStatus_limit_exceeded\0\u{1}MailExtensionStatus_converter_error\0\u{1}MailExtensionStatus_write_error\0")
 }
 
 extension Theme: SwiftProtobuf._ProtoNameProviding {
@@ -799,14 +459,13 @@ extension WindowGeometry: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
 
 extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "Settings"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{3}real_time_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0\u{3}user_rules_editor_geometry\0\u{3}show_safari_toolbar_badge\0\u{3}last_update_more_seven_days\0\u{3}mail_protection_enabled\0\u{3}login_item_enabled\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0\u{3}user_rules_editor_geometry\0\u{3}show_safari_toolbar_badge\0\u{3}last_update_more_seven_days\0\u{3}login_item_enabled\0")
 
   fileprivate class _StorageClass {
     var _launchOnStartup: Bool = false
     var _showInMenuBar: Bool = false
     var _hardwareAcceleration: Bool = false
     var _autoFiltersUpdate: Bool = false
-    var _realTimeFiltersUpdate: Bool = false
     var _quitReaction: QuitReaction = .unknown
     var _debugLogging: Bool = false
     var _releaseVariant: ReleaseVariants = .unknown
@@ -817,7 +476,6 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     var _userRulesEditorGeometry: WindowGeometry? = nil
     var _showSafariToolbarBadge: Bool = false
     var _lastUpdateMoreSevenDays: Bool = false
-    var _mailProtectionEnabled: Bool = false
     var _loginItemEnabled: Bool = false
 
       // This property is used as the initial default value for new instances of the type.
@@ -833,7 +491,6 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       _showInMenuBar = source._showInMenuBar
       _hardwareAcceleration = source._hardwareAcceleration
       _autoFiltersUpdate = source._autoFiltersUpdate
-      _realTimeFiltersUpdate = source._realTimeFiltersUpdate
       _quitReaction = source._quitReaction
       _debugLogging = source._debugLogging
       _releaseVariant = source._releaseVariant
@@ -844,7 +501,6 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       _userRulesEditorGeometry = source._userRulesEditorGeometry
       _showSafariToolbarBadge = source._showSafariToolbarBadge
       _lastUpdateMoreSevenDays = source._lastUpdateMoreSevenDays
-      _mailProtectionEnabled = source._mailProtectionEnabled
       _loginItemEnabled = source._loginItemEnabled
     }
   }
@@ -868,19 +524,17 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         case 2: try { try decoder.decodeSingularBoolField(value: &_storage._showInMenuBar) }()
         case 3: try { try decoder.decodeSingularBoolField(value: &_storage._hardwareAcceleration) }()
         case 4: try { try decoder.decodeSingularBoolField(value: &_storage._autoFiltersUpdate) }()
-        case 5: try { try decoder.decodeSingularBoolField(value: &_storage._realTimeFiltersUpdate) }()
-        case 6: try { try decoder.decodeSingularEnumField(value: &_storage._quitReaction) }()
-        case 7: try { try decoder.decodeSingularBoolField(value: &_storage._debugLogging) }()
-        case 8: try { try decoder.decodeSingularEnumField(value: &_storage._releaseVariant) }()
-        case 9: try { try decoder.decodeRepeatedInt32Field(value: &_storage._consentFiltersIds) }()
-        case 10: try { try decoder.decodeSingularStringField(value: &_storage._language) }()
-        case 11: try { try decoder.decodeSingularBoolField(value: &_storage._allowTelemetry) }()
-        case 12: try { try decoder.decodeSingularEnumField(value: &_storage._theme) }()
-        case 13: try { try decoder.decodeSingularMessageField(value: &_storage._userRulesEditorGeometry) }()
-        case 14: try { try decoder.decodeSingularBoolField(value: &_storage._showSafariToolbarBadge) }()
-        case 15: try { try decoder.decodeSingularBoolField(value: &_storage._lastUpdateMoreSevenDays) }()
-        case 16: try { try decoder.decodeSingularBoolField(value: &_storage._mailProtectionEnabled) }()
-        case 17: try { try decoder.decodeSingularBoolField(value: &_storage._loginItemEnabled) }()
+        case 5: try { try decoder.decodeSingularEnumField(value: &_storage._quitReaction) }()
+        case 6: try { try decoder.decodeSingularBoolField(value: &_storage._debugLogging) }()
+        case 7: try { try decoder.decodeSingularEnumField(value: &_storage._releaseVariant) }()
+        case 8: try { try decoder.decodeRepeatedInt32Field(value: &_storage._consentFiltersIds) }()
+        case 9: try { try decoder.decodeSingularStringField(value: &_storage._language) }()
+        case 10: try { try decoder.decodeSingularBoolField(value: &_storage._allowTelemetry) }()
+        case 11: try { try decoder.decodeSingularEnumField(value: &_storage._theme) }()
+        case 12: try { try decoder.decodeSingularMessageField(value: &_storage._userRulesEditorGeometry) }()
+        case 13: try { try decoder.decodeSingularBoolField(value: &_storage._showSafariToolbarBadge) }()
+        case 14: try { try decoder.decodeSingularBoolField(value: &_storage._lastUpdateMoreSevenDays) }()
+        case 15: try { try decoder.decodeSingularBoolField(value: &_storage._loginItemEnabled) }()
         default: break
         }
       }
@@ -905,44 +559,38 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       if _storage._autoFiltersUpdate != false {
         try visitor.visitSingularBoolField(value: _storage._autoFiltersUpdate, fieldNumber: 4)
       }
-      if _storage._realTimeFiltersUpdate != false {
-        try visitor.visitSingularBoolField(value: _storage._realTimeFiltersUpdate, fieldNumber: 5)
-      }
       if _storage._quitReaction != .unknown {
-        try visitor.visitSingularEnumField(value: _storage._quitReaction, fieldNumber: 6)
+        try visitor.visitSingularEnumField(value: _storage._quitReaction, fieldNumber: 5)
       }
       if _storage._debugLogging != false {
-        try visitor.visitSingularBoolField(value: _storage._debugLogging, fieldNumber: 7)
+        try visitor.visitSingularBoolField(value: _storage._debugLogging, fieldNumber: 6)
       }
       if _storage._releaseVariant != .unknown {
-        try visitor.visitSingularEnumField(value: _storage._releaseVariant, fieldNumber: 8)
+        try visitor.visitSingularEnumField(value: _storage._releaseVariant, fieldNumber: 7)
       }
       if !_storage._consentFiltersIds.isEmpty {
-        try visitor.visitPackedInt32Field(value: _storage._consentFiltersIds, fieldNumber: 9)
+        try visitor.visitPackedInt32Field(value: _storage._consentFiltersIds, fieldNumber: 8)
       }
       if !_storage._language.isEmpty {
-        try visitor.visitSingularStringField(value: _storage._language, fieldNumber: 10)
+        try visitor.visitSingularStringField(value: _storage._language, fieldNumber: 9)
       }
       if _storage._allowTelemetry != false {
-        try visitor.visitSingularBoolField(value: _storage._allowTelemetry, fieldNumber: 11)
+        try visitor.visitSingularBoolField(value: _storage._allowTelemetry, fieldNumber: 10)
       }
       if _storage._theme != .unknown {
-        try visitor.visitSingularEnumField(value: _storage._theme, fieldNumber: 12)
+        try visitor.visitSingularEnumField(value: _storage._theme, fieldNumber: 11)
       }
       try { if let v = _storage._userRulesEditorGeometry {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 13)
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 12)
       } }()
       if _storage._showSafariToolbarBadge != false {
-        try visitor.visitSingularBoolField(value: _storage._showSafariToolbarBadge, fieldNumber: 14)
+        try visitor.visitSingularBoolField(value: _storage._showSafariToolbarBadge, fieldNumber: 13)
       }
       if _storage._lastUpdateMoreSevenDays != false {
-        try visitor.visitSingularBoolField(value: _storage._lastUpdateMoreSevenDays, fieldNumber: 15)
-      }
-      if _storage._mailProtectionEnabled != false {
-        try visitor.visitSingularBoolField(value: _storage._mailProtectionEnabled, fieldNumber: 16)
+        try visitor.visitSingularBoolField(value: _storage._lastUpdateMoreSevenDays, fieldNumber: 14)
       }
       if _storage._loginItemEnabled != false {
-        try visitor.visitSingularBoolField(value: _storage._loginItemEnabled, fieldNumber: 17)
+        try visitor.visitSingularBoolField(value: _storage._loginItemEnabled, fieldNumber: 15)
       }
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -957,7 +605,6 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         if _storage._showInMenuBar != rhs_storage._showInMenuBar {return false}
         if _storage._hardwareAcceleration != rhs_storage._hardwareAcceleration {return false}
         if _storage._autoFiltersUpdate != rhs_storage._autoFiltersUpdate {return false}
-        if _storage._realTimeFiltersUpdate != rhs_storage._realTimeFiltersUpdate {return false}
         if _storage._quitReaction != rhs_storage._quitReaction {return false}
         if _storage._debugLogging != rhs_storage._debugLogging {return false}
         if _storage._releaseVariant != rhs_storage._releaseVariant {return false}
@@ -968,7 +615,6 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         if _storage._userRulesEditorGeometry != rhs_storage._userRulesEditorGeometry {return false}
         if _storage._showSafariToolbarBadge != rhs_storage._showSafariToolbarBadge {return false}
         if _storage._lastUpdateMoreSevenDays != rhs_storage._lastUpdateMoreSevenDays {return false}
-        if _storage._mailProtectionEnabled != rhs_storage._mailProtectionEnabled {return false}
         if _storage._loginItemEnabled != rhs_storage._loginItemEnabled {return false}
         return true
       }
@@ -1174,275 +820,6 @@ extension UpdateQuitReactionMessage: SwiftProtobuf.Message, SwiftProtobuf._Messa
 
   public static func ==(lhs: UpdateQuitReactionMessage, rhs: UpdateQuitReactionMessage) -> Bool {
     if lhs.reaction != rhs.reaction {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension SafariExtensions: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = "SafariExtensions"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}general\0\u{1}privacy\0\u{1}social\0\u{1}security\0\u{1}other\0\u{1}custom\0\u{3}adguard_for_safari\0")
-
-  fileprivate class _StorageClass {
-    var _general: SafariExtension? = nil
-    var _privacy: SafariExtension? = nil
-    var _social: SafariExtension? = nil
-    var _security: SafariExtension? = nil
-    var _other: SafariExtension? = nil
-    var _custom: SafariExtension? = nil
-    var _adguardForSafari: SafariExtension? = nil
-
-      // This property is used as the initial default value for new instances of the type.
-      // The type itself is protecting the reference to its storage via CoW semantics.
-      // This will force a copy to be made of this reference when the first mutation occurs;
-      // hence, it is safe to mark this as `nonisolated(unsafe)`.
-      static nonisolated(unsafe) let defaultInstance = _StorageClass()
-
-    private init() {}
-
-    init(copying source: _StorageClass) {
-      _general = source._general
-      _privacy = source._privacy
-      _social = source._social
-      _security = source._security
-      _other = source._other
-      _custom = source._custom
-      _adguardForSafari = source._adguardForSafari
-    }
-  }
-
-  fileprivate mutating func _uniqueStorage() -> _StorageClass {
-    if !isKnownUniquelyReferenced(&_storage) {
-      _storage = _StorageClass(copying: _storage)
-    }
-    return _storage
-  }
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    _ = _uniqueStorage()
-    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
-      while let fieldNumber = try decoder.nextFieldNumber() {
-        // The use of inline closures is to circumvent an issue where the compiler
-        // allocates stack space for every case branch when no optimizations are
-        // enabled. https://github.com/apple/swift-protobuf/issues/1034
-        switch fieldNumber {
-        case 1: try { try decoder.decodeSingularMessageField(value: &_storage._general) }()
-        case 2: try { try decoder.decodeSingularMessageField(value: &_storage._privacy) }()
-        case 3: try { try decoder.decodeSingularMessageField(value: &_storage._social) }()
-        case 4: try { try decoder.decodeSingularMessageField(value: &_storage._security) }()
-        case 5: try { try decoder.decodeSingularMessageField(value: &_storage._other) }()
-        case 6: try { try decoder.decodeSingularMessageField(value: &_storage._custom) }()
-        case 7: try { try decoder.decodeSingularMessageField(value: &_storage._adguardForSafari) }()
-        default: break
-        }
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every if/case branch local when no optimizations
-      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-      // https://github.com/apple/swift-protobuf/issues/1182
-      try { if let v = _storage._general {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-      } }()
-      try { if let v = _storage._privacy {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-      } }()
-      try { if let v = _storage._social {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-      } }()
-      try { if let v = _storage._security {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
-      } }()
-      try { if let v = _storage._other {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
-      } }()
-      try { if let v = _storage._custom {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
-      } }()
-      try { if let v = _storage._adguardForSafari {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
-      } }()
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: SafariExtensions, rhs: SafariExtensions) -> Bool {
-    if lhs._storage !== rhs._storage {
-      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
-        let _storage = _args.0
-        let rhs_storage = _args.1
-        if _storage._general != rhs_storage._general {return false}
-        if _storage._privacy != rhs_storage._privacy {return false}
-        if _storage._social != rhs_storage._social {return false}
-        if _storage._security != rhs_storage._security {return false}
-        if _storage._other != rhs_storage._other {return false}
-        if _storage._custom != rhs_storage._custom {return false}
-        if _storage._adguardForSafari != rhs_storage._adguardForSafari {return false}
-        return true
-      }
-      if !storagesAreEqual {return false}
-    }
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension SafariExtension: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = "SafariExtension"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}id\0\u{3}rules_enabled\0\u{3}rules_total\0\u{1}status\0\u{4}\u{2}safari_error\0\u{3}is_considered_enabled\0")
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
-      case 2: try { try decoder.decodeSingularInt32Field(value: &self.rulesEnabled) }()
-      case 3: try { try decoder.decodeSingularInt32Field(value: &self.rulesTotal) }()
-      case 4: try { try decoder.decodeSingularEnumField(value: &self.status) }()
-      case 6: try { try decoder.decodeSingularStringField(value: &self._safariError) }()
-      case 7: try { try decoder.decodeSingularBoolField(value: &self.isConsideredEnabled) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    if !self.id.isEmpty {
-      try visitor.visitSingularStringField(value: self.id, fieldNumber: 1)
-    }
-    if self.rulesEnabled != 0 {
-      try visitor.visitSingularInt32Field(value: self.rulesEnabled, fieldNumber: 2)
-    }
-    if self.rulesTotal != 0 {
-      try visitor.visitSingularInt32Field(value: self.rulesTotal, fieldNumber: 3)
-    }
-    if self.status != .unknown {
-      try visitor.visitSingularEnumField(value: self.status, fieldNumber: 4)
-    }
-    try { if let v = self._safariError {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 6)
-    } }()
-    if self.isConsideredEnabled != false {
-      try visitor.visitSingularBoolField(value: self.isConsideredEnabled, fieldNumber: 7)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: SafariExtension, rhs: SafariExtension) -> Bool {
-    if lhs.id != rhs.id {return false}
-    if lhs.rulesEnabled != rhs.rulesEnabled {return false}
-    if lhs.rulesTotal != rhs.rulesTotal {return false}
-    if lhs.status != rhs.status {return false}
-    if lhs._safariError != rhs._safariError {return false}
-    if lhs.isConsideredEnabled != rhs.isConsideredEnabled {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension MailExtension: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = "MailExtension"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}id\0\u{3}rules_enabled\0\u{3}rules_total\0\u{1}status\0\u{4}\u{2}mail_error\0\u{3}is_considered_enabled\0")
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
-      case 2: try { try decoder.decodeSingularInt32Field(value: &self.rulesEnabled) }()
-      case 3: try { try decoder.decodeSingularInt32Field(value: &self.rulesTotal) }()
-      case 4: try { try decoder.decodeSingularEnumField(value: &self.status) }()
-      case 6: try { try decoder.decodeSingularStringField(value: &self._mailError) }()
-      case 7: try { try decoder.decodeSingularBoolField(value: &self.isConsideredEnabled) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    if !self.id.isEmpty {
-      try visitor.visitSingularStringField(value: self.id, fieldNumber: 1)
-    }
-    if self.rulesEnabled != 0 {
-      try visitor.visitSingularInt32Field(value: self.rulesEnabled, fieldNumber: 2)
-    }
-    if self.rulesTotal != 0 {
-      try visitor.visitSingularInt32Field(value: self.rulesTotal, fieldNumber: 3)
-    }
-    if self.status != .unknown {
-      try visitor.visitSingularEnumField(value: self.status, fieldNumber: 4)
-    }
-    try { if let v = self._mailError {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 6)
-    } }()
-    if self.isConsideredEnabled != false {
-      try visitor.visitSingularBoolField(value: self.isConsideredEnabled, fieldNumber: 7)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: MailExtension, rhs: MailExtension) -> Bool {
-    if lhs.id != rhs.id {return false}
-    if lhs.rulesEnabled != rhs.rulesEnabled {return false}
-    if lhs.rulesTotal != rhs.rulesTotal {return false}
-    if lhs.status != rhs.status {return false}
-    if lhs._mailError != rhs._mailError {return false}
-    if lhs.isConsideredEnabled != rhs.isConsideredEnabled {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension SafariExtensionUpdate: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = "SafariExtensionUpdate"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}type\0\u{1}state\0")
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularEnumField(value: &self.type) }()
-      case 2: try { try decoder.decodeSingularMessageField(value: &self._state) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    if self.type != .general {
-      try visitor.visitSingularEnumField(value: self.type, fieldNumber: 1)
-    }
-    try { if let v = self._state {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    } }()
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: SafariExtensionUpdate, rhs: SafariExtensionUpdate) -> Bool {
-    if lhs.type != rhs.type {return false}
-    if lhs._state != rhs._state {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

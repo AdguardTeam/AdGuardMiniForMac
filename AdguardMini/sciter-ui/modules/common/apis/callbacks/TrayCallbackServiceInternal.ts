@@ -1,7 +1,7 @@
 /* This code was generated automatically by proto-parser tool version 1 */
 import { store } from 'TrayStore';
 import { ITrayCallbackServiceInternal } from './TrayCallbackService';
-import { BoolValue, EmptyValue, FiltersStatus, SafariExtensionUpdate, LicenseOrError, EffectiveThemeValue, StringValue } from '../types'
+import { BoolValue, EmptyValue, FiltersStatus, SafariExtensionUpdate, TrayLicenseOrError, EffectiveThemeValue, StringValue } from '../types'
 import { TrayRoute } from 'TrayStore/modules/TrayRouter';
 import { TrayPage } from 'Modules/tray/store/modules';
 
@@ -15,7 +15,7 @@ export class TrayCallbackServiceInternal implements ITrayCallbackServiceInternal
             // Recover data for DOM-mutating callbacks gated while the tray
             // window is hidden (license, app version). Mirrors the fresh-data
             // set fetched on tray init.
-            store.settings.getLicense();
+            store.settings.getTrayLicense();
             store.settings.checkApplicationVersion();
             store.telemetry.setPage(TrayPage.TrayMenu);
             store.telemetry.trackPageView();
@@ -63,8 +63,8 @@ export class TrayCallbackServiceInternal implements ITrayCallbackServiceInternal
         return new EmptyValue();
     }
 
-    /* Fires when license state updated */
-    async OnLicenseUpdate(param: LicenseOrError): Promise<EmptyValue> {
+    /* Fires when license state updated. Push carries the tray-scoped view */
+    async OnLicenseUpdate(param: TrayLicenseOrError): Promise<EmptyValue> {
         store.settings.setLicense(param);
         store.settings.getAdvancedBlocking();
         return new EmptyValue();

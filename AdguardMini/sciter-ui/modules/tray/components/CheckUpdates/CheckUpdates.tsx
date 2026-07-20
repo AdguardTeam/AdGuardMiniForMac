@@ -5,7 +5,7 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect } from 'preact/hooks';
 
-import { RequestApplicationUpdateRequest } from 'Apis/requests/SettingsService';
+import { RequestApplicationUpdateRequest } from 'Apis/requests/AppUpdateService';
 import { ReleaseVariants } from 'Apis/types';
 import { ADGUARD_MINI_TITLE } from 'Common/utils/consts';
 import { resolveLastFiltersUpdateTimestamp } from 'Modules/tray/components/CheckUpdates/resolveLastFiltersUpdateTimestamp';

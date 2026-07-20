@@ -5,12 +5,15 @@
 import { LogLevel } from '@adg/sciter-utils-kit';
 import { makeAutoObservable } from 'mobx';
 
-import { GetLicenseRequest, GetTrialAvailableDaysRequest } from 'Apis/requests/AccountService';
+import { GetTrayLicenseRequest, GetTrialAvailableDaysRequest } from 'Apis/requests/AccountService';
 import { GetAdvancedBlockingRequest } from 'Apis/requests/AdvancedBlockingService';
+import { CheckApplicationVersionRequest } from 'Apis/requests/AppUpdateService';
 import { GetFiltersMetadataRequest, RequestFiltersUpdateRequest } from 'Apis/requests/FiltersService';
 import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
-import { CheckApplicationVersionRequest, GetSafariExtensionsRequest, GetStatisticsRequest, GetTraySettingsRequest, RequestOpenSettingsPageRequest, UpdateTraySettingsRequest } from 'Apis/requests/SettingsService';
-import { GlobalSettings, LicenseOrError, LicenseStatus, ReleaseVariants, StatisticsPeriod, StatisticsResponse, FiltersStatus } from 'Apis/types';
+import { GetSafariExtensionsRequest } from 'Apis/requests/SafariExtensionsService';
+import { RequestOpenSettingsPageRequest } from 'Apis/requests/SystemService';
+import { GetStatisticsRequest, GetTraySettingsRequest, UpdateTraySettingsRequest } from 'Apis/requests/TraySettingsService';
+import { GlobalSettings, TrayLicenseOrError, LicenseStatus, ReleaseVariants, StatisticsPeriod, StatisticsResponse, FiltersStatus } from 'Apis/types';
 import { SafariExtensionsStore } from 'Common/stores/SafariExtensionsStore';
 import { updateLanguage } from 'Intl';
 
@@ -69,7 +72,7 @@ export class SettingsStore {
     /**
      * User License
      */
-    public license = new LicenseOrError({ error: true });
+    public license = new TrayLicenseOrError({ error: true });
 
     /**
      * Bool describes if login item is enabled, undefined for pending
@@ -160,7 +163,7 @@ export class SettingsStore {
         makeAutoObservable(this, { rootStore: false }, { autoBind: true });
         this.getSettings();
         this.getStatistics();
-        this.getLicense();
+        this.getTrayLicense();
         this.getSafariExtensions();
         this.getTrialAvailability();
         this.getAdvancedBlocking();
@@ -381,15 +384,15 @@ export class SettingsStore {
     /**
      * Receive user current license
      */
-    public async getLicense() {
-        const resp = await window.API.Execute(new GetLicenseRequest());
+    public async getTrayLicense() {
+        const resp = await window.API.Execute(new GetTrayLicenseRequest());
         this.setLicense(resp);
     }
 
     /**
      * Local setter for license
      */
-    public setLicense(license: LicenseOrError) {
+    public setLicense(license: TrayLicenseOrError) {
         this.license = license;
     }
 

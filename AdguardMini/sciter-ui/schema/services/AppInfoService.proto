@@ -7,6 +7,4 @@ import "AppInfo.proto";
 service AppInfoService {
     /* Get About app info  */
     rpc GetAbout(EmptyValue) returns (AppInfo);
-    /* Request to update the app */
-    rpc UpdateApp(EmptyValue) returns (EmptyValue);
 }

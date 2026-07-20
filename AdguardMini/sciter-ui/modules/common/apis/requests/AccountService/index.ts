@@ -1,6 +1,7 @@
 export * from './EnterActivationCodeRequest';
 export * from './GetLicenseRequest';
 export * from './GetSubscriptionsInfoRequest';
+export * from './GetTrayLicenseRequest';
 export * from './GetTrialAvailableDaysRequest';
 export * from './RefreshLicenseRequest';
 export * from './RequestActivateRequest';

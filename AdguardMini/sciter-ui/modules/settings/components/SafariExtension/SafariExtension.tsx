@@ -4,7 +4,7 @@
 
 import { observer } from 'mobx-react-lite';
 
-import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SettingsService';
+import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SafariExtensionsService';
 import { SafariExtensionStatus } from 'Apis/types';
 import { TDS_PARAMS, getTdsLink } from 'Common/utils/links';
 import { useSettingsStore } from 'SettingsLib/hooks';

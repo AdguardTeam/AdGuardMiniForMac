@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { Fragment } from 'preact/jsx-runtime';
 
 import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
-import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SettingsService';
+import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SafariExtensionsService';
 import { OptionalStringValue } from 'Apis/types';
 import { getCountableEntityStatuses } from 'Common/utils/utils';
 import theme from 'Theme';

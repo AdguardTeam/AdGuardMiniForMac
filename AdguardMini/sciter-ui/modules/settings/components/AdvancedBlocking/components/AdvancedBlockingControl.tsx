@@ -24,7 +24,9 @@ export function AdvancedBlockingControlComponent() {
     const { advancedBlocking, account, telemetry, settings } = useSettingsStore();
     const {
         adguardExtra,
+        realTimeFiltersUpdate,
     } = advancedBlocking.advancedBlocking;
+
     const { isLicenseOrTrialActive } = account;
 
     const isFree = !isLicenseOrTrialActive;
@@ -45,14 +47,14 @@ export function AdvancedBlockingControlComponent() {
     };
 
     // B variant settings
-    const { settings: { autoFiltersUpdate, realTimeFiltersUpdate } } = settings;
+    const { settings: { autoFiltersUpdate } } = settings;
     const onUpdateRealTimeFilters = (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.RealTimeAbTest);
         if (isFree) {
             account.showPaywall();
             return;
         }
-        settings.updateRealTimeFiltersUpdate(value);
+        advancedBlocking.updateRealTimeFiltersUpdate(value);
     };
 
     const onUpdateAutoFilters = (value: boolean) => {

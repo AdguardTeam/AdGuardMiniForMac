@@ -4,7 +4,7 @@
 
 import { useCallback, useEffect, useRef } from 'preact/hooks';
 
-import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SettingsService';
+import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SafariExtensionsService';
 import { OptionalStringValue } from 'Apis/types';
 import { getCountableEntityStatuses } from 'Modules/common/utils/utils';
 import { useSettingsStore } from 'SettingsLib/hooks';

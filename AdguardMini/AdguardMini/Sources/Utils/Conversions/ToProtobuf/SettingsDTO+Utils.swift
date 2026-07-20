@@ -35,7 +35,6 @@ extension SettingsDTO {
             showInMenuBar:           self.showInMenuBar,
             hardwareAcceleration:    self.hardwareAcceleration,
             autoFiltersUpdate:       self.autoFiltersUpdate,
-            realTimeFiltersUpdate:   self.realTimeFiltersUpdate,
             debugLogging:            self.debugLogging,
             quitReaction:            self.quitReaction.toProto(),
             theme:                   self.theme.toProto(),
@@ -45,7 +44,6 @@ extension SettingsDTO {
             allowTelemetry:          allowTelemetry,
             showSafariToolbarBadge:  self.showSafariToolbarBadge,
             lastUpdateMoreSevenDays: lastUpdateMoreSevenDays,
-            mailProtectionEnabled:   self.mailProtection,
             loginItemEnabled:        loginItemEnabled
         )
     }

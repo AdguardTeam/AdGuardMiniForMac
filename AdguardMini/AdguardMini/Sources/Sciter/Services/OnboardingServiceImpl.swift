@@ -52,11 +52,8 @@ extension Sciter {
             }
         }
 
-        func getEffectiveTheme(_ message: EmptyValue, _ promise: @escaping (EffectiveThemeValue) -> Void) {
-            Task { @MainActor in
-                let theme = self.userSettingsManager.theme
-                promise(.resolve(theme))
-            }
+        func getSystemLanguage(_ message: EmptyValue, _ promise: @escaping (StringValue) -> Void) {
+            promise(StringValue(Locales.navigatorLang))
         }
     }
 }

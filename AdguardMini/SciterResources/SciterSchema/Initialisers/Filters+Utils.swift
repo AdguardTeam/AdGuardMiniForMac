@@ -11,11 +11,10 @@ import Foundation
 import BaseSciterSchema
 
 extension Filters {
-    public init(filters: [Filter] = [], preferredLocales: [String] = [], customFilters: [Filter] = [], languageSpecific: Bool = false) {
+    public init(filters: [Filter] = [], customFilters: [Filter] = [], languageSpecific: Bool = false) {
         self.init()
         self.filters = filters
         self.customFilters = customFilters
-        self.preferredLocales = preferredLocales
         self.languageSpecific = languageSpecific
     }
 }

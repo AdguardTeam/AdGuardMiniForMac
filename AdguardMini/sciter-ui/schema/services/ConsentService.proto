@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+import "PrimitivesWrappers.proto";
+import "Settings.proto";
+
+/* Shared service for telemetry and user consent across UI modules */
+service ConsentService {
+    /* Update allow telemetry */
+    rpc UpdateAllowTelemetry(BoolValue) returns (EmptyValue);
+    /* Update consent agreement */
+    rpc UpdateConsent(UserConsent) returns (EmptyValue);
+}

@@ -35,15 +35,11 @@ extension PromoInfo {
 
 extension AppStoreSubscriptionInfo {
     public init(
-        subscriptionType: AppStoreSubscription = .monthly,
         displayPrice: String = "",
-        trialDays: Int32 = 0,
         introOfferDisplayPrice: String? = nil
     ) {
         self.init()
-        self.subscriptionType = subscriptionType
         self.displayPrice = displayPrice
-        self.trialDays = trialDays
         if let introOfferDisplayPrice {
             self.introOfferDisplayPrice = introOfferDisplayPrice
         }
@@ -54,13 +50,11 @@ extension AppStoreSubscriptionInfo {
 
 extension AppStoreSubscriptions {
     public init(
-        isTrialAvailable: Bool = true,
         monthly: AppStoreSubscriptionInfo,
         annual: AppStoreSubscriptionInfo,
         promoInfo: PromoInfo? = nil
     ) {
         self.init()
-        self.isTrialAvailable = isTrialAvailable
         self.monthly = monthly
         self.annual = annual
         if let promoInfo {

@@ -44,11 +44,6 @@ extension Sciter {
             }
         }
 
-        func openSafariSettings(_ message: EmptyValue, _ promise: @escaping (EmptyValue) -> Void) {
-            LogError("Not implemented")
-            promise(EmptyValue())
-        }
-
         func showInFinder(_ message: Path, _ promise: @escaping (EmptyValue) -> Void) {
             NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: message.path)])
             promise(EmptyValue())

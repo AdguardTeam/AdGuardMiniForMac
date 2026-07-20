@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+import "PrimitivesWrappers.proto";
+import "SafariExtension.proto";
+
+/* Shared service for Safari extension status and preferences across UI modules */
+service SafariExtensionsService {
+    /* Get Safari extension status */
+    rpc GetSafariExtensions(EmptyValue) returns (SafariExtensions);
+    /* Open Safari preferences */
+    rpc OpenSafariExtensionPreferences(OptionalStringValue) returns (OptionalError);
+}

@@ -14,3 +14,4 @@ export * from './Subscription';
 export * from './Statistics';
 export * from './AppStoreSubscription';
 export * from './Filters';
+export * from './SafariExtension';

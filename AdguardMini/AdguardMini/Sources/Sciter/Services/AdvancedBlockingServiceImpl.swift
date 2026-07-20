@@ -24,12 +24,20 @@ extension Sciter {
 
         func getAdvancedBlocking(_ message: SciterSchema.EmptyValue,
                                  _ promise: @escaping (SciterSchema.AdvancedBlocking) -> Void) {
-            promise(self.userSettingsService.advancedBlockingState.toProto())
+            promise(self.userSettingsService.advancedBlockingState.toProto(
+                realTimeFiltersUpdate: self.userSettingsService.realTimeFiltersUpdate
+            ))
         }
 
         func updateAdvancedBlocking(_ message: SciterSchema.AdvancedBlocking,
                                     _ promise: @escaping (SciterSchema.EmptyValue) -> Void) {
             self.userSettingsService.advancedBlockingState = message.toDTO()
+            promise(EmptyValue())
+        }
+
+        func updateRealTimeFiltersUpdate(_ message: BoolValue,
+                                         _ promise: @escaping (EmptyValue) -> Void) {
+            self.userSettingsService.setRealTimeFiltersUpdate(message.value)
             promise(EmptyValue())
         }
     }

@@ -25,12 +25,24 @@ extension AppStatusInfo {
                 totalDevices: Int32(self.licenseMaxComputersCount ?? 0),
                 status: self.licenseStatus.toProto(),
                 type: self.licenseType?.toProto() ?? .unknown,
-                subscriptionStatus: self.subscriptionStatus?.status.toProto() ?? .unknown,
                 applicationKeyOwner: self.applicationKeyOwner ?? "",
                 licenseLifetime: self.licenseLifetime ?? false,
                 licenseTrial: self.licenseTrial ?? false,
                 appStoreSubscription: self.isAppStoreSubscription,
                 canReset: canReset
+            )
+        )
+    }
+}
+
+extension AppStatusInfo {
+    /// Builds a tray-scoped license proto exposing only the fields the tray reads.
+    func toTrayProto() -> TrayLicenseOrError {
+        TrayLicenseOrError(
+            license: TrayLicense(
+                status: self.licenseStatus.toProto(),
+                applicationKeyOwner: self.applicationKeyOwner ?? "",
+                appStoreSubscription: self.isAppStoreSubscription
             )
         )
     }
@@ -64,17 +76,6 @@ extension AppStatusInfo.LicenseType {
         case .personal: .personal
         case .premium:  .premium
         case .standard: .standard
-        }
-    }
-}
-
-extension AppStatusInfo.SubscriptionStatusDetail.Status {
-    func toProto() -> SciterSchema.SubscriptionStatus {
-        switch self {
-        case .active:  .active
-        case .deleted: .deleted
-        case .pastDue: .pastDue
-        case .paused:  .paused
         }
     }
 }

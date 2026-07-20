@@ -13,10 +13,6 @@ public protocol AppInfoServiceProtocol
 	func getAbout (
 						_ message: EmptyValue,
 						_ promise: @escaping (AppInfo) -> Void) -> Void
-	/// Request to update the app
-	func updateApp (
-						_ message: EmptyValue,
-						_ promise: @escaping (EmptyValue) -> Void) -> Void
 }
 
 // MARK: Protobuf Bridge definition
@@ -35,18 +31,6 @@ open class AppInfoService: SciterBridge
 			inputType: EmptyValue.self,
 			outputType: AppInfo.self,
 			method: cast.getAbout(_:_:),
-			message,
-			promise
-		)
-	}
-
-	/// Wrapper for `UpdateApp`
-	@objc func UpdateApp(_ message: Data, promise: @escaping (Data) -> Void)
-	{
-		swiftCall(
-			inputType: EmptyValue.self,
-			outputType: EmptyValue.self,
-			method: cast.updateApp(_:_:),
 			message,
 			promise
 		)

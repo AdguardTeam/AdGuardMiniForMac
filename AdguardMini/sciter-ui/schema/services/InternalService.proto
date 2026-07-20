@@ -6,8 +6,6 @@ import "PrimitivesWrappers.proto";
 service InternalService {
     /* Opens settings window of Adguard window */
     rpc OpenSettingsWindow(EmptyValue) returns (EmptyValue);
-    /* Opens settings window of Safari */
-    rpc OpenSafariSettings(EmptyValue) returns (EmptyValue);
     /* Activates the Finder, and opens one window selecting the specified file */
     rpc ShowInFinder(Path) returns (EmptyValue);
     /* Opens report page in default browser */

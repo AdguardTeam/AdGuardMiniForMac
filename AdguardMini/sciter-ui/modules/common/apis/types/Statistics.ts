@@ -172,16 +172,12 @@ export class StatisticsResponse extends pb_1.Message {
     #one_of_decls: number[][] = [];
     constructor(data?: any[] | {
         statistics?: BlockerStatistics;
-        period?: StatisticsPeriod;
     }) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
         if (!Array.isArray(data) && typeof data == "object") {
             if ("statistics" in data && data.statistics != undefined) {
                 this.statistics = data.statistics;
-            }
-            if ("period" in data && data.period != undefined) {
-                this.period = data.period;
             }
         }
     }
@@ -194,35 +190,21 @@ export class StatisticsResponse extends pb_1.Message {
     get has_statistics() {
         return pb_1.Message.getField(this, 1) != null;
     }
-    get period() {
-        return pb_1.Message.getFieldWithDefault(this, 2, StatisticsPeriod.day) as StatisticsPeriod;
-    }
-    set period(value: StatisticsPeriod) {
-        pb_1.Message.setField(this, 2, value);
-    }
     static fromObject(data: {
         statistics?: ReturnType<typeof BlockerStatistics.prototype.toObject>;
-        period?: StatisticsPeriod;
     }): StatisticsResponse {
         const message = new StatisticsResponse({});
         if (data.statistics != null) {
             message.statistics = BlockerStatistics.fromObject(data.statistics);
-        }
-        if (data.period != null) {
-            message.period = data.period;
         }
         return message;
     }
     toObject() {
         const data: {
             statistics?: ReturnType<typeof BlockerStatistics.prototype.toObject>;
-            period?: StatisticsPeriod;
         } = {};
         if (this.statistics != null) {
             data.statistics = this.statistics.toObject();
-        }
-        if (this.period != null) {
-            data.period = this.period;
         }
         return data;
     }
@@ -232,8 +214,6 @@ export class StatisticsResponse extends pb_1.Message {
         const writer = w || new pb_1.BinaryWriter();
         if (this.has_statistics)
             writer.writeMessage(1, this.statistics, () => this.statistics.serialize(writer));
-        if (this.period != StatisticsPeriod.day)
-            writer.writeEnum(2, this.period);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -245,9 +225,6 @@ export class StatisticsResponse extends pb_1.Message {
             switch (reader.getFieldNumber()) {
                 case 1:
                     reader.readMessage(message.statistics, () => message.statistics = BlockerStatistics.deserialize(reader));
-                    break;
-                case 2:
-                    message.period = reader.readEnum();
                     break;
                 default: reader.skipField();
             }

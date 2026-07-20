@@ -7,6 +7,8 @@ import "License.proto";
 service AccountService {
     /* Return License info */
     rpc GetLicense(EmptyValue) returns (LicenseOrError);
+    /* Return tray-scoped License info */
+    rpc GetTrayLicense(EmptyValue) returns (TrayLicenseOrError);
     /* Request to refresh the License */
     rpc RefreshLicense(EmptyValue) returns (OptionalError);
     /* Return available subscriptions info */

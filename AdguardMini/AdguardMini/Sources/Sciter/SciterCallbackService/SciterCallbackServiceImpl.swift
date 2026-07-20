@@ -158,16 +158,21 @@ final class SciterCallbackServiceImpl: RestartableServiceBase, SciterCallbackSer
         let license: AppStatusInfo? = self.eventBus.parseNotification(notification)
 
         self.runOnMainActorIfStarted { `self` in
+            // The settings window receives the full License message.
+            // The tray receives a tray-scoped view exposing only the fields it reads.
             let protoLicense: LicenseOrError
+            let trayProtoLicense: TrayLicenseOrError
             if let license {
                 let canReset = await self.licenseStateProvider.canReset(for: license)
                 protoLicense = license.toProto(canReset: canReset)
+                trayProtoLicense = license.toTrayProto()
             } else {
                 protoLicense = .licenseError
+                trayProtoLicense = .licenseError
             }
 
             self.deliverToSettings(self.accountCallbacks) { $0.onLicenseUpdate(protoLicense) }
-            self.deliverToTray(self.trayCallbacks) { $0.onLicenseUpdate(protoLicense) }
+            self.deliverToTray(self.trayCallbacks) { $0.onLicenseUpdate(trayProtoLicense) }
         }
     }
 

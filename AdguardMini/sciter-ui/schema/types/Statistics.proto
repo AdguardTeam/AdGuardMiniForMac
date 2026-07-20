@@ -21,5 +21,4 @@ message BlockerStatistics {
 
 message StatisticsResponse {
     BlockerStatistics statistics = 1;
-    StatisticsPeriod period = 2;
 }

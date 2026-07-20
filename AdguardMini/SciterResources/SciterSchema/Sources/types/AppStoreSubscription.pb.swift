@@ -100,8 +100,6 @@ public struct AppStoreSubscriptionInfo: Sendable {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var subscriptionType: AppStoreSubscription = .monthly
-
   public var displayPrice: String = String()
 
   public var trialDays: Int32 = 0
@@ -163,8 +161,6 @@ public struct AppStoreSubscriptions: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
-
-  public var isTrialAvailable: Bool = false
 
   public var monthly: AppStoreSubscriptionInfo {
     get {return _monthly ?? AppStoreSubscriptionInfo()}
@@ -238,7 +234,7 @@ extension AppStoreSubscriptionsError: SwiftProtobuf._ProtoNameProviding {
 
 extension AppStoreSubscriptionInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "AppStoreSubscriptionInfo"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}subscription_type\0\u{3}display_price\0\u{3}trial_days\0\u{3}intro_offer_display_price\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}display_price\0\u{3}trial_days\0\u{3}intro_offer_display_price\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -246,10 +242,9 @@ extension AppStoreSubscriptionInfo: SwiftProtobuf.Message, SwiftProtobuf._Messag
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularEnumField(value: &self.subscriptionType) }()
-      case 2: try { try decoder.decodeSingularStringField(value: &self.displayPrice) }()
-      case 3: try { try decoder.decodeSingularInt32Field(value: &self.trialDays) }()
-      case 4: try { try decoder.decodeSingularStringField(value: &self._introOfferDisplayPrice) }()
+      case 1: try { try decoder.decodeSingularStringField(value: &self.displayPrice) }()
+      case 2: try { try decoder.decodeSingularInt32Field(value: &self.trialDays) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self._introOfferDisplayPrice) }()
       default: break
       }
     }
@@ -260,23 +255,19 @@ extension AppStoreSubscriptionInfo: SwiftProtobuf.Message, SwiftProtobuf._Messag
     // allocates stack space for every if/case branch local when no optimizations
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
-    if self.subscriptionType != .monthly {
-      try visitor.visitSingularEnumField(value: self.subscriptionType, fieldNumber: 1)
-    }
     if !self.displayPrice.isEmpty {
-      try visitor.visitSingularStringField(value: self.displayPrice, fieldNumber: 2)
+      try visitor.visitSingularStringField(value: self.displayPrice, fieldNumber: 1)
     }
     if self.trialDays != 0 {
-      try visitor.visitSingularInt32Field(value: self.trialDays, fieldNumber: 3)
+      try visitor.visitSingularInt32Field(value: self.trialDays, fieldNumber: 2)
     }
     try { if let v = self._introOfferDisplayPrice {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 4)
+      try visitor.visitSingularStringField(value: v, fieldNumber: 3)
     } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: AppStoreSubscriptionInfo, rhs: AppStoreSubscriptionInfo) -> Bool {
-    if lhs.subscriptionType != rhs.subscriptionType {return false}
     if lhs.displayPrice != rhs.displayPrice {return false}
     if lhs.trialDays != rhs.trialDays {return false}
     if lhs._introOfferDisplayPrice != rhs._introOfferDisplayPrice {return false}
@@ -336,7 +327,7 @@ extension PromoInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
 
 extension AppStoreSubscriptions: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "AppStoreSubscriptions"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}is_trial_available\0\u{1}monthly\0\u{1}annual\0\u{1}promoInfo\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}monthly\0\u{1}annual\0\u{1}promoInfo\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -344,10 +335,9 @@ extension AppStoreSubscriptions: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularBoolField(value: &self.isTrialAvailable) }()
-      case 2: try { try decoder.decodeSingularMessageField(value: &self._monthly) }()
-      case 3: try { try decoder.decodeSingularMessageField(value: &self._annual) }()
-      case 4: try { try decoder.decodeSingularMessageField(value: &self._promoInfo) }()
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._monthly) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._annual) }()
+      case 3: try { try decoder.decodeSingularMessageField(value: &self._promoInfo) }()
       default: break
       }
     }
@@ -358,23 +348,19 @@ extension AppStoreSubscriptions: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     // allocates stack space for every if/case branch local when no optimizations
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
-    if self.isTrialAvailable != false {
-      try visitor.visitSingularBoolField(value: self.isTrialAvailable, fieldNumber: 1)
-    }
     try { if let v = self._monthly {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
     } }()
     try { if let v = self._annual {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
     } }()
     try { if let v = self._promoInfo {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
     } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: AppStoreSubscriptions, rhs: AppStoreSubscriptions) -> Bool {
-    if lhs.isTrialAvailable != rhs.isTrialAvailable {return false}
     if lhs._monthly != rhs._monthly {return false}
     if lhs._annual != rhs._annual {return false}
     if lhs._promoInfo != rhs._promoInfo {return false}

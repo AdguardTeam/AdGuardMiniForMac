@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { UpdateAllowTelemetryRequest } from 'Apis/requests/SettingsService';
+import { UpdateAllowTelemetryRequest } from 'Apis/requests/ConsentService';
 
 import { PrimaryAndSecondaryButtons } from './PrimaryAndSecondaryButtons/PrimaryAndSecondaryButtons';
 

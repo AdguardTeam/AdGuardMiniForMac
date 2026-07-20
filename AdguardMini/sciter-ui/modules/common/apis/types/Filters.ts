@@ -9,18 +9,14 @@ export class Filters extends pb_1.Message {
     #one_of_decls: number[][] = [];
     constructor(data?: any[] | {
         filters?: Filter[];
-        preferredLocales?: string[];
         customFilters?: Filter[];
         languageSpecific?: boolean;
     }) {
         super();
-        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [1, 2, 3], this.#one_of_decls);
+        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [1, 2], this.#one_of_decls);
         if (!Array.isArray(data) && typeof data == "object") {
             if ("filters" in data && data.filters != undefined) {
                 this.filters = data.filters;
-            }
-            if ("preferredLocales" in data && data.preferredLocales != undefined) {
-                this.preferredLocales = data.preferredLocales;
             }
             if ("customFilters" in data && data.customFilters != undefined) {
                 this.customFilters = data.customFilters;
@@ -36,36 +32,26 @@ export class Filters extends pb_1.Message {
     set filters(value: Filter[]) {
         pb_1.Message.setRepeatedWrapperField(this, 1, value);
     }
-    get preferredLocales() {
-        return pb_1.Message.getFieldWithDefault(this, 2, []) as string[];
-    }
-    set preferredLocales(value: string[]) {
-        pb_1.Message.setField(this, 2, value);
-    }
     get customFilters() {
-        return pb_1.Message.getRepeatedWrapperField(this, Filter, 3) as Filter[];
+        return pb_1.Message.getRepeatedWrapperField(this, Filter, 2) as Filter[];
     }
     set customFilters(value: Filter[]) {
-        pb_1.Message.setRepeatedWrapperField(this, 3, value);
+        pb_1.Message.setRepeatedWrapperField(this, 2, value);
     }
     get languageSpecific() {
-        return pb_1.Message.getFieldWithDefault(this, 4, false) as boolean;
+        return pb_1.Message.getFieldWithDefault(this, 3, false) as boolean;
     }
     set languageSpecific(value: boolean) {
-        pb_1.Message.setField(this, 4, value);
+        pb_1.Message.setField(this, 3, value);
     }
     static fromObject(data: {
         filters?: ReturnType<typeof Filter.prototype.toObject>[];
-        preferredLocales?: string[];
         customFilters?: ReturnType<typeof Filter.prototype.toObject>[];
         languageSpecific?: boolean;
     }): Filters {
         const message = new Filters({});
         if (data.filters != null) {
             message.filters = data.filters.map(item => Filter.fromObject(item));
-        }
-        if (data.preferredLocales != null) {
-            message.preferredLocales = data.preferredLocales;
         }
         if (data.customFilters != null) {
             message.customFilters = data.customFilters.map(item => Filter.fromObject(item));
@@ -78,15 +64,11 @@ export class Filters extends pb_1.Message {
     toObject() {
         const data: {
             filters?: ReturnType<typeof Filter.prototype.toObject>[];
-            preferredLocales?: string[];
             customFilters?: ReturnType<typeof Filter.prototype.toObject>[];
             languageSpecific?: boolean;
         } = {};
         if (this.filters != null) {
             data.filters = this.filters.map((item: Filter) => item.toObject());
-        }
-        if (this.preferredLocales != null) {
-            data.preferredLocales = this.preferredLocales;
         }
         if (this.customFilters != null) {
             data.customFilters = this.customFilters.map((item: Filter) => item.toObject());
@@ -102,12 +84,10 @@ export class Filters extends pb_1.Message {
         const writer = w || new pb_1.BinaryWriter();
         if (this.filters.length)
             writer.writeRepeatedMessage(1, this.filters, (item: Filter) => item.serialize(writer));
-        if (this.preferredLocales.length)
-            writer.writeRepeatedString(2, this.preferredLocales);
         if (this.customFilters.length)
-            writer.writeRepeatedMessage(3, this.customFilters, (item: Filter) => item.serialize(writer));
+            writer.writeRepeatedMessage(2, this.customFilters, (item: Filter) => item.serialize(writer));
         if (this.languageSpecific != false)
-            writer.writeBool(4, this.languageSpecific);
+            writer.writeBool(3, this.languageSpecific);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -121,12 +101,9 @@ export class Filters extends pb_1.Message {
                     reader.readMessage(message.filters, () => pb_1.Message.addToRepeatedWrapperField(message, 1, Filter.deserialize(reader), Filter));
                     break;
                 case 2:
-                    pb_1.Message.addToRepeatedField(message, 2, reader.readString());
+                    reader.readMessage(message.customFilters, () => pb_1.Message.addToRepeatedWrapperField(message, 2, Filter.deserialize(reader), Filter));
                     break;
                 case 3:
-                    reader.readMessage(message.customFilters, () => pb_1.Message.addToRepeatedWrapperField(message, 3, Filter.deserialize(reader), Filter));
-                    break;
-                case 4:
                     message.languageSpecific = reader.readBool();
                     break;
                 default: reader.skipField();

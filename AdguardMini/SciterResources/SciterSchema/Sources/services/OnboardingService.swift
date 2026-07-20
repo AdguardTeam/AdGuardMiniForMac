@@ -13,10 +13,10 @@ public protocol OnboardingServiceProtocol
 	func onboardingDidComplete (
 						_ message: EmptyValue,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void
-	/// Get effective theme
-	func getEffectiveTheme (
+	/// Get system language
+	func getSystemLanguage (
 						_ message: EmptyValue,
-						_ promise: @escaping (EffectiveThemeValue) -> Void) -> Void
+						_ promise: @escaping (StringValue) -> Void) -> Void
 }
 
 // MARK: Protobuf Bridge definition
@@ -40,13 +40,13 @@ open class OnboardingService: SciterBridge
 		)
 	}
 
-	/// Wrapper for `GetEffectiveTheme`
-	@objc func GetEffectiveTheme(_ message: Data, promise: @escaping (Data) -> Void)
+	/// Wrapper for `GetSystemLanguage`
+	@objc func GetSystemLanguage(_ message: Data, promise: @escaping (Data) -> Void)
 	{
 		swiftCall(
 			inputType: EmptyValue.self,
-			outputType: EffectiveThemeValue.self,
-			method: cast.getEffectiveTheme(_:_:),
+			outputType: StringValue.self,
+			method: cast.getSystemLanguage(_:_:),
 			message,
 			promise
 		)

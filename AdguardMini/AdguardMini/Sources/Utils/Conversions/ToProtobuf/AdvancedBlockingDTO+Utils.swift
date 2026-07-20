@@ -11,10 +11,12 @@ import Foundation
 import SciterSchema
 
 extension AdvancedBlockingDTO {
-    func toProto() -> AdvancedBlocking {
+    func toProto(realTimeFiltersUpdate: Bool) -> AdvancedBlocking {
         AdvancedBlocking(
             advancedRules: self.advancedRules,
-            adguardExtra: self.adguardExtra
+            adguardExtra: self.adguardExtra,
+            mailProtectionEnabled: false,
+            realTimeFiltersUpdate: realTimeFiltersUpdate
         )
     }
 }

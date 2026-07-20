@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+option optimize_for = CODE_SIZE;
+
+message SafariExtensions {
+    SafariExtension general = 1;
+    SafariExtension privacy = 2;
+    SafariExtension social = 3;
+    SafariExtension security = 4;
+    SafariExtension other = 5;
+    SafariExtension custom = 6;
+    SafariExtension adguard_for_safari = 7;
+}
+
+message SafariExtension {
+    string id = 1;
+    int32 rules_enabled = 2;
+    int32 rules_total = 3;
+    SafariExtensionStatus status = 4;
+    bool is_considered_enabled = 6;
+}
+
+message MailExtension {
+    string id = 1;
+    int32 rules_enabled = 2;
+    int32 rules_total = 3;
+    MailExtensionStatus status = 4;
+    bool is_considered_enabled = 7;
+}
+
+message SafariExtensionUpdate {
+    SafariExtensionType type = 1;
+    SafariExtension state = 2;
+}
+
+enum SafariExtensionType {
+    SafariExtensionType_general = 0;
+    SafariExtensionType_privacy = 1;
+    SafariExtensionType_security = 2;
+    SafariExtensionType_social = 3;
+    SafariExtensionType_other = 4;
+    SafariExtensionType_custom = 5;
+    SafariExtensionType_adguard_for_safari = 6;
+}
+
+enum SafariExtensionStatus {
+    SafariExtensionStatus_unknown = 0;
+    SafariExtensionStatus_ok = 1;
+    SafariExtensionStatus_loading = 2;
+    SafariExtensionStatus_disabled = 3;
+    SafariExtensionStatus_limit_exceeded = 4;
+    SafariExtensionStatus_converter_error = 5;
+    SafariExtensionStatus_safari_error = 6;
+}
+
+enum MailExtensionStatus {
+    MailExtensionStatus_unknown = 0;
+    MailExtensionStatus_ok = 1;
+    MailExtensionStatus_loading = 2;
+    MailExtensionStatus_limit_exceeded = 3;
+    MailExtensionStatus_converter_error = 4;
+    MailExtensionStatus_write_error = 5;
+}

@@ -1,5 +1,5 @@
 /* This code was generated automatically by proto-parser tool version 1 */
-import { BoolValue, EmptyValue, FiltersStatus, SafariExtensionUpdate, LicenseOrError, EffectiveThemeValue, StringValue } from '../types'
+import { BoolValue, EmptyValue, FiltersStatus, SafariExtensionUpdate, TrayLicenseOrError, EffectiveThemeValue, StringValue } from '../types'
 
 /* Service handles settings lists- public part for external platform calls with methods for ArrayBuffer */
 export interface ITrayCallbackService {
@@ -13,7 +13,8 @@ export interface ITrayCallbackService {
 	OnFilterStatusResolved(param: ArrayBuffer): Promise<EmptyValue>;
 	/* Fires when one of extensions updated */
 	OnSafariExtensionUpdate(param: ArrayBuffer): Promise<EmptyValue>;
-	/* Fires when license state updated */
+	/* Fires when license state updated. Tray-scoped: carries only the fields the tray
+	 * reads */
 	OnLicenseUpdate(param: ArrayBuffer): Promise<EmptyValue>;
 	/* Fires when effective theme changed */
 	OnEffectiveThemeChanged(param: ArrayBuffer): Promise<EmptyValue>;
@@ -33,8 +34,9 @@ export interface ITrayCallbackServiceInternal {
 	OnFilterStatusResolved(param: FiltersStatus): Promise<EmptyValue>;
 	/* Fires when one of extensions updated*/
 	OnSafariExtensionUpdate(param: SafariExtensionUpdate): Promise<EmptyValue>;
-	/* Fires when license state updated*/
-	OnLicenseUpdate(param: LicenseOrError): Promise<EmptyValue>;
+	/* Fires when license state updated. Tray-scoped: carries only the fields the tray
+	 * reads*/
+	OnLicenseUpdate(param: TrayLicenseOrError): Promise<EmptyValue>;
 	/* Fires when effective theme changed*/
 	OnEffectiveThemeChanged(param: EffectiveThemeValue): Promise<EmptyValue>;
 	/* Fires when tray should open specific page*/
@@ -130,13 +132,14 @@ export class TrayCallbackService implements ITrayCallbackService {
 		return new EmptyValue();
 	};
 	/**
-	 * Fires when license state updated
+	 * Fires when license state updated. Tray-scoped: carries only the fields the tray
+	 * reads
 	 * @param ArrayBuffer param
 	 * @returns EmptyValue param
 	 */
 	OnLicenseUpdate = async (param: ArrayBuffer): Promise<EmptyValue> => {
 		const bytes = new Uint8Array(param);
-		const arg = LicenseOrError.deserializeBinary(bytes);
+		const arg = TrayLicenseOrError.deserializeBinary(bytes);
 
 		if (!arg) {
 			throw new Error(`Empty parameter in TrayCallbackService.OnLicenseUpdate: ${ param }`);

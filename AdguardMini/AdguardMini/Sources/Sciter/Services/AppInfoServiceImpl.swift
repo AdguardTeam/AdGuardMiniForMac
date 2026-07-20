@@ -49,10 +49,5 @@ extension Sciter {
             )
             promise(data)
         }
-
-        func updateApp(_ message: SciterSchema.EmptyValue, _ promise: @escaping (SciterSchema.EmptyValue) -> Void) {
-            self.appUpdater.checkForUpdate(silentCheck: false)
-            promise(EmptyValue())
-        }
     }
 }

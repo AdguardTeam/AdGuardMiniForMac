@@ -27,8 +27,9 @@ public class TrayCallbackService: SwiftBridge
 	@discardableResult public func onSafariExtensionUpdate (_ message: SafariExtensionUpdate) -> EmptyValue {
 		return self.sciterCall(message, function: "TrayCallbackService.OnSafariExtensionUpdate")
 	}
-	/// Fires when license state updated
-	@discardableResult public func onLicenseUpdate (_ message: LicenseOrError) -> EmptyValue {
+	/// Fires when license state updated. Tray-scoped: carries only the fields the tray
+	/// reads
+	@discardableResult public func onLicenseUpdate (_ message: TrayLicenseOrError) -> EmptyValue {
 		return self.sciterCall(message, function: "TrayCallbackService.OnLicenseUpdate")
 	}
 	/// Fires when effective theme changed

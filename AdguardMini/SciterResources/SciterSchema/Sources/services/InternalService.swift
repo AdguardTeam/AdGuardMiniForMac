@@ -13,10 +13,6 @@ public protocol InternalServiceProtocol
 	func openSettingsWindow (
 						_ message: EmptyValue,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void
-	/// Opens settings window of Safari
-	func openSafariSettings (
-						_ message: EmptyValue,
-						_ promise: @escaping (EmptyValue) -> Void) -> Void
 	/// Activates the Finder, and opens one window selecting the specified file
 	func showInFinder (
 						_ message: Path,
@@ -43,18 +39,6 @@ open class InternalService: SciterBridge
 			inputType: EmptyValue.self,
 			outputType: EmptyValue.self,
 			method: cast.openSettingsWindow(_:_:),
-			message,
-			promise
-		)
-	}
-
-	/// Wrapper for `OpenSafariSettings`
-	@objc func OpenSafariSettings(_ message: Data, promise: @escaping (Data) -> Void)
-	{
-		swiftCall(
-			inputType: EmptyValue.self,
-			outputType: EmptyValue.self,
-			method: cast.openSafariSettings(_:_:),
 			message,
 			promise
 		)

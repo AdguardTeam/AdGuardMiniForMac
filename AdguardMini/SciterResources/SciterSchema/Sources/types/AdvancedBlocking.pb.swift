@@ -30,6 +30,10 @@ public struct AdvancedBlocking: Sendable {
 
   public var adguardExtra: Bool = false
 
+  public var mailProtectionEnabled: Bool = false
+
+  public var realTimeFiltersUpdate: Bool = false
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -39,7 +43,7 @@ public struct AdvancedBlocking: Sendable {
 
 extension AdvancedBlocking: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "AdvancedBlocking"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}advanced_rules\0\u{3}adguard_extra\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}advanced_rules\0\u{3}adguard_extra\0\u{3}mail_protection_enabled\0\u{3}real_time_filters_update\0\u{b}system_wide\0\u{c}\u{5}\u{1}")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -49,6 +53,8 @@ extension AdvancedBlocking: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularBoolField(value: &self.advancedRules) }()
       case 2: try { try decoder.decodeSingularBoolField(value: &self.adguardExtra) }()
+      case 3: try { try decoder.decodeSingularBoolField(value: &self.mailProtectionEnabled) }()
+      case 4: try { try decoder.decodeSingularBoolField(value: &self.realTimeFiltersUpdate) }()
       default: break
       }
     }
@@ -61,12 +67,20 @@ extension AdvancedBlocking: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     if self.adguardExtra != false {
       try visitor.visitSingularBoolField(value: self.adguardExtra, fieldNumber: 2)
     }
+    if self.mailProtectionEnabled != false {
+      try visitor.visitSingularBoolField(value: self.mailProtectionEnabled, fieldNumber: 3)
+    }
+    if self.realTimeFiltersUpdate != false {
+      try visitor.visitSingularBoolField(value: self.realTimeFiltersUpdate, fieldNumber: 4)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: AdvancedBlocking, rhs: AdvancedBlocking) -> Bool {
     if lhs.advancedRules != rhs.advancedRules {return false}
     if lhs.adguardExtra != rhs.adguardExtra {return false}
+    if lhs.mailProtectionEnabled != rhs.mailProtectionEnabled {return false}
+    if lhs.realTimeFiltersUpdate != rhs.realTimeFiltersUpdate {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

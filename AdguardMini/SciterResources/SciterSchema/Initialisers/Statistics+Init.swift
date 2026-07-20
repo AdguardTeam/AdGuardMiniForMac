@@ -20,9 +20,8 @@ extension BlockerStatistics {
 // MARK: - StatisticsResponse
 
 extension StatisticsResponse {
-    public init(statistics: BlockerStatistics, period: StatisticsPeriod) {
+    public init(statistics: BlockerStatistics) {
         self.init()
         self.statistics = statistics
-        self.period = period
     }
 }

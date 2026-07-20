@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+import "PrimitivesWrappers.proto";
+
+/* Shared service for application version checks and update requests */
+service AppUpdateService {
+    /* Fires an event for Swift to check the application version; result will be dispatched by TrayCallbackService.OnApplicationVersionStatusResolved */
+    rpc CheckApplicationVersion(EmptyValue) returns (EmptyValue);
+    /* Request to update application */
+    rpc RequestApplicationUpdate(EmptyValue) returns (EmptyValue);
+}

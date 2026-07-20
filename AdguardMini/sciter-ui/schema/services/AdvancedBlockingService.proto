@@ -9,4 +9,6 @@ service AdvancedBlockingService {
     rpc GetAdvancedBlocking(EmptyValue) returns (AdvancedBlocking);
     /* Update AdvancedBlocking */
     rpc UpdateAdvancedBlocking(AdvancedBlocking) returns (EmptyValue);
+    /* Update RealTimeFiltersUpdate setting */
+    rpc UpdateRealTimeFiltersUpdate(BoolValue) returns (EmptyValue);
 }

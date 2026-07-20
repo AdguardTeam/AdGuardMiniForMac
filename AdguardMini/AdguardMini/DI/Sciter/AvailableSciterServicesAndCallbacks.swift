@@ -19,7 +19,12 @@ protocol AppInfoServiceDependent: SciterServiceDependent {}
 protocol FiltersServiceDependent: SciterServiceDependent {}
 protocol UserRulesServiceDependent: SciterServiceDependent {}
 protocol OnboardingServiceDependent: SciterServiceDependent {}
-protocol TrayServiceDependent: SciterServiceDependent {}
+protocol ThemeServiceDependent: SciterServiceDependent {}
+protocol SafariExtensionsServiceDependent: SciterServiceDependent {}
+protocol ConsentServiceDependent: SciterServiceDependent {}
+protocol AppUpdateServiceDependent: SciterServiceDependent {}
+protocol SystemServiceDependent: SciterServiceDependent {}
+protocol TraySettingsServiceDependent: SciterServiceDependent {}
 protocol TelemetrySciterServiceDependent: SciterServiceDependent {}
 
 // MARK: - Callbacks

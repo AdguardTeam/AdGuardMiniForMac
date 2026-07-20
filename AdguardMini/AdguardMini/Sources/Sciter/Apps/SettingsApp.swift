@@ -13,6 +13,11 @@ import SciterSchema
 
 extension SettingsApp: InternalServiceDependent,
                        SettingsServiceDependent,
+                       ThemeServiceDependent,
+                       SafariExtensionsServiceDependent,
+                       ConsentServiceDependent,
+                       AppUpdateServiceDependent,
+                       SystemServiceDependent,
                        AccountServiceDependent,
                        AdvancedBlockingServiceDependent,
                        AppInfoServiceDependent,

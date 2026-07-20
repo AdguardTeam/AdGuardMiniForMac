@@ -28,7 +28,11 @@ private enum Constants {
 // MARK: - TrayApp
 
 extension TrayApp: InternalServiceDependent,
-                   SettingsServiceDependent,
+                   SafariExtensionsServiceDependent,
+                   ConsentServiceDependent,
+                   AppUpdateServiceDependent,
+                   SystemServiceDependent,
+                   TraySettingsServiceDependent,
                    FiltersServiceDependent,
                    TrayCallbackServiceDependent,
                    AccountServiceDependent,
@@ -37,7 +41,7 @@ extension TrayApp: InternalServiceDependent,
                    StatusBarItemControllerDependent,
                    UserSettingsManagerDependent,
                    TelemetrySciterServiceDependent,
-                   TrayServiceDependent {}
+                   ThemeServiceDependent {}
 
 #if MAS
 extension TrayApp: AppStoreRateUsDependent {}

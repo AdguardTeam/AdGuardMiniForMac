@@ -13,10 +13,14 @@ import BaseSciterSchema
 extension AdvancedBlocking {
     public init(
         advancedRules: Bool = false,
-        adguardExtra: Bool = false
+        adguardExtra: Bool = false,
+        mailProtectionEnabled: Bool = false,
+        realTimeFiltersUpdate: Bool = false,
     ) {
         self.init()
         self.advancedRules = advancedRules
         self.adguardExtra = adguardExtra
+        self.mailProtectionEnabled = mailProtectionEnabled
+        self.realTimeFiltersUpdate = realTimeFiltersUpdate
     }
 }

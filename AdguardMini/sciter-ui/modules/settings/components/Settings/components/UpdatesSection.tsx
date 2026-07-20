@@ -19,9 +19,10 @@ import s from '../Settings.module.pcss';
 export function UpdatesSectionComponent() {
     const {
         settings,
+        advancedBlocking,
+        advancedBlocking: { advancedBlocking: { realTimeFiltersUpdate } },
         settings: { settings: {
             autoFiltersUpdate,
-            realTimeFiltersUpdate,
         } },
         telemetry,
         account,
@@ -39,7 +40,7 @@ export function UpdatesSectionComponent() {
             account.showPaywall();
             return;
         }
-        settings.updateRealTimeFiltersUpdate(value);
+        advancedBlocking.updateRealTimeFiltersUpdate(value);
         telemetry.trackEvent(SettingsEvent.RealTimeUpdatesClick);
     };
 

@@ -9,6 +9,8 @@ export class AdvancedBlocking extends pb_1.Message {
     constructor(data?: any[] | {
         advancedRules?: boolean;
         adguardExtra?: boolean;
+        mailProtectionEnabled?: boolean;
+        realTimeFiltersUpdate?: boolean;
     }) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
@@ -18,6 +20,12 @@ export class AdvancedBlocking extends pb_1.Message {
             }
             if ("adguardExtra" in data && data.adguardExtra != undefined) {
                 this.adguardExtra = data.adguardExtra;
+            }
+            if ("mailProtectionEnabled" in data && data.mailProtectionEnabled != undefined) {
+                this.mailProtectionEnabled = data.mailProtectionEnabled;
+            }
+            if ("realTimeFiltersUpdate" in data && data.realTimeFiltersUpdate != undefined) {
+                this.realTimeFiltersUpdate = data.realTimeFiltersUpdate;
             }
         }
     }
@@ -33,9 +41,23 @@ export class AdvancedBlocking extends pb_1.Message {
     set adguardExtra(value: boolean) {
         pb_1.Message.setField(this, 2, value);
     }
+    get mailProtectionEnabled() {
+        return pb_1.Message.getFieldWithDefault(this, 3, false) as boolean;
+    }
+    set mailProtectionEnabled(value: boolean) {
+        pb_1.Message.setField(this, 3, value);
+    }
+    get realTimeFiltersUpdate() {
+        return pb_1.Message.getFieldWithDefault(this, 4, false) as boolean;
+    }
+    set realTimeFiltersUpdate(value: boolean) {
+        pb_1.Message.setField(this, 4, value);
+    }
     static fromObject(data: {
         advancedRules?: boolean;
         adguardExtra?: boolean;
+        mailProtectionEnabled?: boolean;
+        realTimeFiltersUpdate?: boolean;
     }): AdvancedBlocking {
         const message = new AdvancedBlocking({});
         if (data.advancedRules != null) {
@@ -44,18 +66,32 @@ export class AdvancedBlocking extends pb_1.Message {
         if (data.adguardExtra != null) {
             message.adguardExtra = data.adguardExtra;
         }
+        if (data.mailProtectionEnabled != null) {
+            message.mailProtectionEnabled = data.mailProtectionEnabled;
+        }
+        if (data.realTimeFiltersUpdate != null) {
+            message.realTimeFiltersUpdate = data.realTimeFiltersUpdate;
+        }
         return message;
     }
     toObject() {
         const data: {
             advancedRules?: boolean;
             adguardExtra?: boolean;
+            mailProtectionEnabled?: boolean;
+            realTimeFiltersUpdate?: boolean;
         } = {};
         if (this.advancedRules != null) {
             data.advancedRules = this.advancedRules;
         }
         if (this.adguardExtra != null) {
             data.adguardExtra = this.adguardExtra;
+        }
+        if (this.mailProtectionEnabled != null) {
+            data.mailProtectionEnabled = this.mailProtectionEnabled;
+        }
+        if (this.realTimeFiltersUpdate != null) {
+            data.realTimeFiltersUpdate = this.realTimeFiltersUpdate;
         }
         return data;
     }
@@ -67,6 +103,10 @@ export class AdvancedBlocking extends pb_1.Message {
             writer.writeBool(1, this.advancedRules);
         if (this.adguardExtra != false)
             writer.writeBool(2, this.adguardExtra);
+        if (this.mailProtectionEnabled != false)
+            writer.writeBool(3, this.mailProtectionEnabled);
+        if (this.realTimeFiltersUpdate != false)
+            writer.writeBool(4, this.realTimeFiltersUpdate);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -81,6 +121,12 @@ export class AdvancedBlocking extends pb_1.Message {
                     break;
                 case 2:
                     message.adguardExtra = reader.readBool();
+                    break;
+                case 3:
+                    message.mailProtectionEnabled = reader.readBool();
+                    break;
+                case 4:
+                    message.realTimeFiltersUpdate = reader.readBool();
                     break;
                 default: reader.skipField();
             }

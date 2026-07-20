@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+import "PrimitivesWrappers.proto";
+
+/* Shared service for cross-module system and navigation actions */
+service SystemService {
+    /* Request open settings page */
+    rpc RequestOpenSettingsPage(StringValue) returns (EmptyValue);
+    /* Open login items settings */
+    rpc OpenLoginItemsSettings(EmptyValue) returns (EmptyValue);
+}

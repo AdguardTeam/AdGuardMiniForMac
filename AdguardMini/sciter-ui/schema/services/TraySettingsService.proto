@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+import "PrimitivesWrappers.proto";
+import "Settings.proto";
+import "Statistics.proto";
+
+/* Tray-window-only service for tray settings and statistics */
+service TraySettingsService {
+    /* Get tray-specific settings */
+    rpc GetTraySettings(EmptyValue) returns (GlobalSettings);
+    /* Update tray-specific settings */
+    rpc UpdateTraySettings(GlobalSettings) returns (EmptyValue);
+    /* Get blocking statistics */
+    rpc GetStatistics(StatisticsRequest) returns (StatisticsResponse);
+}

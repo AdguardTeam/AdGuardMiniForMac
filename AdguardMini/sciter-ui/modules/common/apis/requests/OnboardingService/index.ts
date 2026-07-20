@@ -1,2 +1,2 @@
-export * from './GetEffectiveThemeRequest';
+export * from './GetSystemLanguageRequest';
 export * from './OnboardingDidCompleteRequest';

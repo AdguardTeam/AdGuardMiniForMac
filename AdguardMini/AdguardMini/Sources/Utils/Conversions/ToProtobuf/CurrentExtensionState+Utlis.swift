@@ -23,7 +23,6 @@ extension CurrentExtensionState {
             rulesEnabled: Int32(self.state.rulesInfo.safariRulesCount),
             rulesTotal: Int32(self.state.rulesInfo.sourceSafariCompatibleRulesCount),
             status: self.status.toProto(),
-            safariError: self.state.error?.message,
             isConsideredEnabled: self.status.isConsideredEnabled
         )
     }

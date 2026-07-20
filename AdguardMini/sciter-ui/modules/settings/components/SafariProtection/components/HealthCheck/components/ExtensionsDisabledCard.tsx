@@ -4,7 +4,7 @@
 
 import { observer } from 'mobx-react-lite';
 
-import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SettingsService';
+import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SafariExtensionsService';
 import { OptionalStringValue } from 'Apis/types';
 import { Text } from 'Modules/common/components';
 

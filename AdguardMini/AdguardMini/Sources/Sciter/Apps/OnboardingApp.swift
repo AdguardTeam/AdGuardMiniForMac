@@ -14,7 +14,9 @@ final class OnboardingApp: SciterApp,
                            InternalServiceDependent,
                            OnboardingServiceDependent,
                            FiltersServiceDependent,
-                           SettingsServiceDependent,
+                           ThemeServiceDependent,
+                           SafariExtensionsServiceDependent,
+                           ConsentServiceDependent,
                            TelemetrySciterServiceDependent,
                            OnboardingCallbackServiceDependent {
     override init(

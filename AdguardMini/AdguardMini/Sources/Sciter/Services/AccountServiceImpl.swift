@@ -72,6 +72,13 @@ extension Sciter {
             }
         }
 
+        func getTrayLicense(_ message: EmptyValue, _ promise: @escaping (TrayLicenseOrError) -> Void) {
+            Task {
+                let licenseInfo = await self.backendService.getStoredAppStatusInfo()
+                promise(licenseInfo?.toTrayProto() ?? .licenseError)
+            }
+        }
+
         func refreshLicense(_ message: EmptyValue, _ promise: @escaping (OptionalError) -> Void) {
             Task {
                 do {
@@ -90,7 +97,6 @@ extension Sciter {
             Task {
                 do {
                     let products = try await self.appStoreInteractor.getAvailableSubscriptions()
-                    let trialAvailability = self.licenseStateProvider.getTrialAvailability(from: products)
                     var promoInfo: SciterSchema.PromoInfo?
                     do {
                         let info = try await self.backendService.promoInfo()
@@ -106,11 +112,9 @@ extension Sciter {
                     } catch {
                         LogError("Error fetching promo info: \(error)")
                     }
-                    LogDebug("Returning subscription info, trial available: \(trialAvailability.isAvailable)")
                     promise(
                         AppStoreSubscriptionsMessage(
                             result: AppStoreSubscriptions(
-                                isTrialAvailable: trialAvailability.isAvailable,
                                 monthly: self.getSubscriptionInfo(.monthly, products: products),
                                 annual: self.getSubscriptionInfo(.annual, products: products),
                                 promoInfo: promoInfo
@@ -124,12 +128,9 @@ extension Sciter {
             }
             #else
             Task {
-                let trialAvailability = await self.licenseStateProvider.getTrialAvailability()
-                LogDebug("Returning subscription info without products (non-MAS), trial available: \(trialAvailability.isAvailable)")
                 promise(
                     AppStoreSubscriptionsMessage(
                         result: AppStoreSubscriptions(
-                            isTrialAvailable: trialAvailability.isAvailable,
                             monthly: .init(),
                             annual: .init()
                         )

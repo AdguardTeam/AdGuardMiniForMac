@@ -16,8 +16,8 @@ service TrayCallbackService {
     rpc OnFilterStatusResolved(FiltersStatus) returns (EmptyValue);
     /* Fires when one of extensions updated */
     rpc OnSafariExtensionUpdate(SafariExtensionUpdate) returns (EmptyValue);
-    /* Fires when license state updated */
-    rpc OnLicenseUpdate(LicenseOrError) returns (EmptyValue);
+    /* Fires when license state updated. Tray-scoped: carries only the fields the tray reads */
+    rpc OnLicenseUpdate(TrayLicenseOrError) returns (EmptyValue);
     /* Fires when effective theme changed */
     rpc OnEffectiveThemeChanged(EffectiveThemeValue) returns (EmptyValue);
     /* Fires when tray should open specific page */

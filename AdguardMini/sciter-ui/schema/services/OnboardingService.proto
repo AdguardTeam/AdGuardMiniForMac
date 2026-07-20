@@ -1,12 +1,11 @@
 syntax = "proto3";
 
 import "PrimitivesWrappers.proto";
-import "EffectiveTheme.proto";
 
 /* Service that handles client-platform communication */
 service OnboardingService {
     /* Notifies that onboarding did complete. */
     rpc OnboardingDidComplete(EmptyValue) returns (EmptyValue);
-    /* Get effective theme */
-    rpc GetEffectiveTheme(EmptyValue) returns (EffectiveThemeValue);
+    /* Get system language */
+    rpc GetSystemLanguage(EmptyValue) returns (StringValue);
 }

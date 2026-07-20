@@ -18,7 +18,6 @@ extension License {
         totalDevices: Int32 = 0,
         status: LicenseStatus = .unknown,
         type: LicenseType = .unknown,
-        subscriptionStatus: SubscriptionStatus = .unknown,
         applicationKeyOwner: String = "",
         licenseLifetime: Bool = false,
         licenseTrial: Bool = false,
@@ -33,7 +32,6 @@ extension License {
         self.totalDevices = totalDevices
         self.status = status
         self.type = type
-        self.subscriptionStatus = subscriptionStatus
         self.applicationKeyOwner = applicationKeyOwner
         self.licenseLifetime = licenseLifetime
         self.licenseTrial = licenseTrial

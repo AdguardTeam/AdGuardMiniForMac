@@ -13,30 +13,18 @@ import Foundation
 import SciterSchema
 import AML
 import SciterSwift
-import AppKit
-import SafariServices
-import ServiceManagement
 import ContentBlockerConverter
 
 private enum Constants {
-    static var loginItemUrl: URL {
-        URL(string: "x-apple.systempreferences:com.apple.LoginItems-Settings.extension")!
-    }
-
     static let noUpdatesThreshold: TimeInterval = 7.days
 }
 
 extension Sciter.SettingsServiceImpl:
     ImportExportServiceDependent,
-    EventBusDependent,
-    SafariExtensionStatusManagerDependent,
     UserSettingsServiceDependent,
-    SafariExtensionStateServiceDependent,
-    ProtectionServiceDependent,
     SupportDependent,
     AppResetServiceDependent,
     SystemInfoManagerDependent,
-    AppUpdaterDependent,
     StatisticsServiceDependent,
     SciterAppControllerDependent,
     AppLifecycleServiceDependent,
@@ -48,15 +36,10 @@ extension Sciter {
     final class SettingsServiceImpl: SettingsService.ServiceType {
         var importExportService: ImportExportService!
         var userSettingsService: UserSettingsService!
-        var safariExtensionStatusManager: SafariExtensionStatusManager!
-        var safariExtensionStateService: SafariExtensionStateService!
-        var protectionService: ProtectionService!
         var support: Support!
         var appResetService: AppResetService!
         var systemInfoManager: SystemInfoManager!
-        var appUpdater: AppUpdater!
         var statisticsService: StatisticsService!
-        var eventBus: EventBus!
         var sciterAppController: SciterAppsController!
         var appLifecycleService: AppLifecycleService!
         var appMetadata: AppMetadata!
@@ -66,24 +49,6 @@ extension Sciter {
         override init() {
             super.init()
             self.setupServices()
-        }
-
-        func openLoginItemsSettings(_ message: EmptyValue, _ promise: @escaping (EmptyValue) -> Void) {
-            if #available(macOS 13.0, *) {
-                SMAppService.openSystemSettingsLoginItems()
-            } else {
-                NSWorkspace.shared.open(Constants.loginItemUrl)
-            }
-            promise(EmptyValue())
-        }
-
-        func getSafariExtensions(_ message: EmptyValue,
-                                 _ promise: @escaping (SafariExtensions) -> Void) {
-            Task {
-                let safariExtensions = await self.safariExtensionStateService.getAllExtensionsStatus()
-                let safariExtProto = safariExtensions.toProto()
-                promise(safariExtProto)
-            }
         }
 
         func getContentBlockersRulesLimit(_ message: EmptyValue, _ promise: @escaping (Int32Value) -> Void) {
@@ -123,12 +88,6 @@ extension Sciter {
             promise(EmptyValue())
         }
 
-        func updateRealTimeFiltersUpdate(_ message: BoolValue,
-                                         _ promise: @escaping (EmptyValue) -> Void) {
-            self.userSettingsService.setRealTimeFiltersUpdate(message.value)
-            promise(EmptyValue())
-        }
-
         func updateAutoFiltersUpdate(_ message: BoolValue,
                                      _ promise: @escaping (EmptyValue) -> Void) {
             self.userSettingsService.setAutoFiltersUpdate(message.value)
@@ -138,12 +97,6 @@ extension Sciter {
         func updateShowSafariToolbarBadge(_ message: BoolValue,
                                           _ promise: @escaping (EmptyValue) -> Void) {
             self.userSettingsService.showSafariToolbarBadge = message.value
-            promise(EmptyValue())
-        }
-
-        func updateMailProtection(_ message: BoolValue,
-                                  _ promise: @escaping (EmptyValue) -> Void) {
-            self.userSettingsService.setMailProtection(message.value)
             promise(EmptyValue())
         }
 
@@ -225,66 +178,6 @@ extension Sciter {
             }
         }
 
-        func getTraySettings(_ message: EmptyValue,
-                             _ promise: @escaping (GlobalSettings) -> Void) {
-            Task {
-                var traySettings = GlobalSettings(
-                    enabled: self.protectionService.isProtectionEnabled,
-                    newVersionAvailable: self.appUpdater.isNewVersionAvailable,
-                    releaseVariant: ProductInfo.releaseVariant.toProto(),
-                    language: Locales.navigatorLang,
-                    debugLogging: self.userSettingsService.settings.debugLogging,
-                    allowTelemetry: self.userSettingsService.allowTelemetry,
-                    theme: self.userSettingsService.theme.toProto(),
-                    lastFiltersUpdateTimestampMs: Int64(
-                        max(0, self.userSettingsService.lastFiltersUpdateTime.timeIntervalSince1970 * 1000)
-                    ),
-                    loginItemEnabled: !self.healthCheckAttentionProvider.hasLoginItemDisabled()
-                )
-                traySettings.hiddenStories = self.userSettingsService.hiddenStories
-                promise(traySettings)
-            }
-        }
-
-        func updateTraySettings(_ message: GlobalSettings,
-                                _ promise: @escaping (EmptyValue) -> Void) {
-            Task {
-                await self.protectionService.setProtectionStatus(isEnabled: message.enabled)
-                self.userSettingsService.hiddenStories = message.hiddenStories
-                promise(EmptyValue())
-            }
-        }
-
-        func openSafariExtensionPreferences(_ message: OptionalStringValue,
-                                            _ promise: @escaping (OptionalError) -> Void) {
-            Task {
-                let identifier = if message.hasValue, !message.value.isEmpty {
-                    message.value
-                } else {
-                    await self.safariExtensionStatusManager.firstDisabledExtensionId
-                }
-
-                var extensionId = SafariBlockerType.general.bundleId
-                if let identifier {
-                    extensionId = identifier
-                } else {
-                    // Very important message
-                    // swiftlint:disable:next line_length
-                    LogError("Attempting to open settings in a situation where no extension ID is specified and all extensions are active.")
-                    assertionFailure("Unexpected nil identifier for Safari Extension")
-                }
-
-                do {
-                    try await SFSafariApplication.showPreferencesForExtension(withIdentifier: extensionId)
-                    promise(OptionalError(hasError: false))
-                } catch {
-                    let message = "Failed to open safari preferences: \(error)"
-                    promise(OptionalError(hasError: true, message: message))
-                    LogError(message)
-                }
-            }
-        }
-
         func exportLogs(_ message: Path, _ promise: @escaping (OptionalError) -> Void) {
             Task {
                 let url = URL(fileURLWithPath: message.path)
@@ -306,36 +199,6 @@ extension Sciter {
 
         func updateQuitReaction(_ message: UpdateQuitReactionMessage, _ promise: @escaping (EmptyValue) -> Void) {
             self.userSettingsService.quitReaction = message.reaction.toQuitReaction()
-            promise(EmptyValue())
-        }
-
-        func checkApplicationVersion(_ message: EmptyValue, _ promise: @escaping (EmptyValue) -> Void) {
-            // TODO: AG-32350
-            // Here we should launch the check of version
-            // Result should be provided in TrayCallbackService via OnApplicationVersionStatusResolved
-            self.appUpdater.checkForUpdate(silentCheck: true)
-            promise(EmptyValue())
-        }
-
-        func requestApplicationUpdate(_ message: EmptyValue, _ promise: @escaping (EmptyValue) -> Void) {
-            // TODO: AG-32350
-            // Here user request for update of application, we should handle, depending on distribution variant, open app store, or download it
-            self.appUpdater.checkForUpdate(silentCheck: false)
-            promise(EmptyValue())
-        }
-
-        func updateConsent(_ message: UserConsent, _ promise: @escaping (EmptyValue) -> Void) {
-            self.userSettingsService.userConsent = message.filtersIds.map(Int.init)
-            promise(EmptyValue())
-        }
-
-        func requestOpenSettingsPage(_ message: StringValue, _ promise: @escaping (EmptyValue) -> Void) {
-            if message.value == "tray_updates" {
-                self.sciterAppController.showApp(.tray)
-                self.eventBus.post(event: .trayPageRequested, userInfo: "updates")
-            } else {
-                self.eventBus.post(event: .settingsPageRequested, userInfo: message.value)
-            }
             promise(EmptyValue())
         }
 
@@ -363,39 +226,11 @@ extension Sciter {
             self.userSettingsService.userActionLastDirectory = message.value
         }
 
-        func getSystemLanguage(_ message: EmptyValue, _ promise: @escaping (StringValue) -> Void) {
-            promise(StringValue(Locales.navigatorLang))
-        }
-
-        func getEffectiveTheme(_ message: EmptyValue, _ promise: @escaping (EffectiveThemeValue) -> Void) {
-            Task { @MainActor in
-                let theme = self.userSettingsService.theme
-                promise(.resolve(theme))
-            }
-        }
-
         func updateTheme(_ message: UpdateThemeMessage, _ promise: @escaping (EmptyValue) -> Void) {
             Task {
                 self.userSettingsService.setTheme(message.theme.toTheme())
                 promise(EmptyValue())
             }
-        }
-
-        func updateAllowTelemetry(_ message: BoolValue, _ promise: @escaping (EmptyValue) -> Void) {
-            self.userSettingsService.allowTelemetry = message.value
-            promise(EmptyValue())
-        }
-
-        func getStatistics(_ message: StatisticsRequest, _ promise: @escaping (StatisticsResponse) -> Void) {
-            let period = message.period.toDomain()
-
-            let adsBlocked = self.statisticsService.getAdsBlockedTotal(for: period)
-            let privacyBlocked = self.statisticsService.getStatistics(for: period, blockerType: .privacy)
-
-            let stats = BlockerStatistics(adsBlocked: adsBlocked, privacyBlocked: privacyBlocked)
-
-            let response = StatisticsResponse(statistics: stats, period: message.period)
-            promise(response)
         }
 
         func resetStatistics(_ message: EmptyValue, _ promise: @escaping (EmptyValue) -> Void) {
@@ -407,19 +242,6 @@ extension Sciter {
                                            _ promise: @escaping (EmptyValue) -> Void) {
             self.userSettingsService.userRulesEditorGeometry = message.toWindowGeometryDTO()
             promise(EmptyValue())
-        }
-    }
-}
-
-private extension SciterSchema.StatisticsPeriod {
-    func toDomain() -> StatisticsPeriod {
-        switch self {
-        case .day: return .day
-        case .week: return .week
-        case .month: return .month
-        case .year: return .year
-        case .all: return .all
-        case .UNRECOGNIZED: return .all
         }
     }
 }

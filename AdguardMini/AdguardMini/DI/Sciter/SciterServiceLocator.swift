@@ -30,6 +30,9 @@ private extension SciterServiceLocator {
         self.injectCallbacks(in: client)
     }
 
+    // Flat registry of conditional `add(service:)` calls, one per UI module.
+    // Splitting it would harm readability more than it helps.
+    // swiftlint:disable:next cyclomatic_complexity
     private func injectServices(in client: SciterServiceDependent) {
         if client is InternalServiceDependent { client.app.add(service: self.internalService) }
         if client is SettingsServiceDependent { client.app.add(service: self.settingsService) }
@@ -39,7 +42,12 @@ private extension SciterServiceLocator {
         if client is FiltersServiceDependent { client.app.add(service: self.filtersService) }
         if client is UserRulesServiceDependent { client.app.add(service: self.userRulesService) }
         if client is OnboardingServiceDependent { client.app.add(service: self.onboardingService) }
-        if client is TrayServiceDependent { client.app.add(service: self.trayService) }
+        if client is ThemeServiceDependent { client.app.add(service: self.themeService) }
+        if client is SafariExtensionsServiceDependent { client.app.add(service: self.safariExtensionsService) }
+        if client is ConsentServiceDependent { client.app.add(service: self.consentService) }
+        if client is AppUpdateServiceDependent { client.app.add(service: self.appUpdateService) }
+        if client is SystemServiceDependent { client.app.add(service: self.systemService) }
+        if client is TraySettingsServiceDependent { client.app.add(service: self.traySettingsService) }
         if client is TelemetrySciterServiceDependent { client.app.add(service: self.telemetryService) }
     }
 
@@ -64,7 +72,12 @@ private final class SciterServiceLocator {
     private lazy var filtersService: FiltersService.ServiceType = Sciter.FiltersServiceImpl()
     private lazy var userRulesService: UserRulesService.ServiceType = Sciter.UserRulesServiceImpl()
     private lazy var onboardingService: OnboardingService.ServiceType = Sciter.OnboardingServiceImpl()
-    private lazy var trayService: TrayService.ServiceType = Sciter.TrayServiceImpl()
+    private lazy var themeService: ThemeService.ServiceType = Sciter.ThemeServiceImpl()
+    private lazy var safariExtensionsService: SafariExtensionsService.ServiceType = Sciter.SafariExtensionsServiceImpl()
+    private lazy var consentService: ConsentService.ServiceType = Sciter.ConsentServiceImpl()
+    private lazy var appUpdateService: AppUpdateService.ServiceType = Sciter.AppUpdateServiceImpl()
+    private lazy var systemService: SystemService.ServiceType = Sciter.SystemServiceImpl()
+    private lazy var traySettingsService: TraySettingsService.ServiceType = Sciter.TraySettingsServiceImpl()
     private lazy var telemetryService: TelemetryService.ServiceType = Sciter.TelemetryServiceImpl()
 
     private lazy var trayCallbackService: TrayCallbackService = TrayCallbackService()

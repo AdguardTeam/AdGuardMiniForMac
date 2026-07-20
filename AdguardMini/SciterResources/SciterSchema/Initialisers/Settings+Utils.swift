@@ -16,7 +16,6 @@ extension Settings {
         showInMenuBar: Bool = false,
         hardwareAcceleration: Bool = false,
         autoFiltersUpdate: Bool = false,
-        realTimeFiltersUpdate: Bool = false,
         debugLogging: Bool = false,
         quitReaction: QuitReaction = .ask,
         theme: Theme,
@@ -26,7 +25,6 @@ extension Settings {
         allowTelemetry: Bool = false,
         showSafariToolbarBadge: Bool = false,
         lastUpdateMoreSevenDays: Bool = false,
-        mailProtectionEnabled: Bool = false,
         loginItemEnabled: Bool = false,
     ) {
         self.init()
@@ -34,7 +32,6 @@ extension Settings {
         self.showInMenuBar = showInMenuBar
         self.hardwareAcceleration = hardwareAcceleration
         self.autoFiltersUpdate = autoFiltersUpdate
-        self.realTimeFiltersUpdate = realTimeFiltersUpdate
         self.debugLogging = debugLogging
         self.quitReaction = quitReaction
         self.theme = theme
@@ -44,7 +41,6 @@ extension Settings {
         self.allowTelemetry = allowTelemetry
         self.showSafariToolbarBadge = showSafariToolbarBadge
         self.lastUpdateMoreSevenDays = lastUpdateMoreSevenDays
-        self.mailProtectionEnabled = mailProtectionEnabled
         self.loginItemEnabled = loginItemEnabled
     }
 }

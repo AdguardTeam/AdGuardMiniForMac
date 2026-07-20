@@ -16,16 +16,16 @@ protocol UserSettingsService: AnyObject {
     var firstRun: Bool { get }
 
     // MARK: Properties without side effects
-    var languageSpecific:        Bool { get set }
-    var lastFiltersUpdateTime:   Date { get set }
-    var quitReaction:            QuitReaction { get set }
-    var userConsent:             [Int] { get set }
-    var userActionLastDirectory: String { get set }
-    var allowTelemetry:          Bool { get set }
-    var userRulesEditorGeometry: WindowGeometryDTO? { get set }
-    var showSafariToolbarBadge:  Bool { get set }
+    var languageSpecific:          Bool { get set }
+    var lastFiltersUpdateTime:     Date { get set }
+    var quitReaction:              QuitReaction { get set }
+    var userConsent:               [Int] { get set }
+    var userActionLastDirectory:   String { get set }
+    var allowTelemetry:            Bool { get set }
+    var userRulesEditorGeometry:   WindowGeometryDTO? { get set }
+    var showSafariToolbarBadge:    Bool { get set }
     var dismissedHealthCheckCards: [String] { get set }
-    var hiddenStories:           [String] { get set }
+    var hiddenStories:             [String] { get set }
 
     // MARK: Properties with side effects
 

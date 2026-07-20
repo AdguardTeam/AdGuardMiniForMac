@@ -16,7 +16,6 @@ extension SafariExtension {
         rulesEnabled: Int32 = 0,
         rulesTotal: Int32 = 0,
         status: SafariExtensionStatus = .disabled,
-        safariError: String? = nil,
         isConsideredEnabled: Bool = false
     ) {
         self.init()
@@ -24,9 +23,6 @@ extension SafariExtension {
         self.rulesEnabled = rulesEnabled
         self.rulesTotal = rulesTotal
         self.status = status
-        if let safariError {
-            self.safariError = safariError
-        }
         self.isConsideredEnabled = isConsideredEnabled
     }
 }
