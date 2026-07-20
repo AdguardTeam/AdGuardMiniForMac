@@ -13,7 +13,6 @@ extension ABTests.ActiveExperiment {
     func toProto() -> ActiveABTest {
         switch self {
         case .__placeholder__:         .unknown
-        case .ag51019AdvancedSettings: .ag51019AdvancedSettings
         }
     }
 }

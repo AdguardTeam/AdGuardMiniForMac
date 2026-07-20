@@ -39,7 +39,6 @@ message ABTest {
 
 enum ActiveABTest {
     ActiveABTest_unknown = 0;
-    ActiveABTest_AG_51019_advanced_settings = 1;
 }
 
 enum ABTestOption {

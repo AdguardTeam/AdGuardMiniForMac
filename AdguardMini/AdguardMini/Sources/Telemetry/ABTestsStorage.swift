@@ -203,10 +203,10 @@ extension ABTests {
     /// Each experiment is mapped to a specific slot (exp1, exp2, exp3) which determines
     /// its lifecycle and allows for slot reuse when experiments are retired.
     enum ActiveExperiment: String, CaseIterable, CustomStringConvertible, CustomDebugStringConvertible {
-        /// This case exists only to keep the enum non-empty.
-        /// Do not use it for real experiments.
-        case __placeholder__         = "__placeholder__"
-        case ag51019AdvancedSettings = "AG-51019-advanced-settings"
+        // This case exists only to keep the enum non-empty.
+        // Do not use it for real experiments.
+        // swiftlint:disable:next redundant_string_enum_value
+        case __placeholder__ = "__placeholder__"
 
         static let realCases: [ActiveExperiment] = Self.allCases.filter { $0 != .__placeholder__ }
 
@@ -217,7 +217,6 @@ extension ABTests {
         var slot: Experiment {
             switch self {
             case .__placeholder__:         .__placeholder__
-            case .ag51019AdvancedSettings: .exp1
             }
         }
 

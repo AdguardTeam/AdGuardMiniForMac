@@ -9,8 +9,8 @@ import SciterSwift
 /// YOU MUST IMPLEMENT THIS PROTOCOL USING CLASS WITH TYPE `AppUpdateService.ServiceType` IN SEPARATE SOURCE FILE
 public protocol AppUpdateServiceProtocol
 {
-	// Fires an event for Swift to check the application version; the result will be dispatched
-	/// by TrayCallbackService.OnApplicationVersionStatusResolved
+	/// Fires an event for Swift to check the application version; result will be
+	/// dispatched by TrayCallbackService.OnApplicationVersionStatusResolved
 	func checkApplicationVersion (
 						_ message: EmptyValue,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void

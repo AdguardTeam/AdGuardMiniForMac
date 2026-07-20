@@ -4,15 +4,15 @@
 
 import { observer } from 'mobx-react-lite';
 
-import { ABTestOption, ActiveABTest } from 'Apis/types';
-import { useABTest, useNotificationSomethingWentWrongText, useSettingsStore } from 'SettingsLib/hooks';
+import { useNotificationSomethingWentWrongText, useSettingsStore } from 'SettingsLib/hooks';
 import { RouteName, SettingsEvent } from 'SettingsStore/modules';
 import theme from 'Theme';
 import { Text } from 'UILib';
 
-import { AdvancedRulesSwitch } from '../../AdvancedBlocking/components/AdvancedRulesSwitch';
 import { SettingsItemSwitch } from '../../SettingsItem';
 import s from '../SafariProtection.module.pcss';
+
+import { AdvancedRulesSwitch } from './AdvancedRulesSwitch';
 
 /**
  * Ad blocking section for Safari protection
@@ -42,8 +42,6 @@ function AdBlockingSectionComponent() {
         return filters.updateLanguageSpecific(value);
     };
 
-    const isTest = useABTest(ActiveABTest.AG_51019_advanced_settings) === ABTestOption.option_b;
-
     return (
         <div className={s.SafariProtection_block}>
             <Text className={cx(s.SafariProtection_block_title, theme.layout.content)} type="h5">{translate('safari.protection.part.ad.blocking')}</Text>
@@ -70,7 +68,7 @@ function AdBlockingSectionComponent() {
                 trackEventOnRouteChange={SettingsEvent.LanguageAdBlockingSettingsClick}
                 value={filters.languageSpecific}
             />
-            {isTest && <AdvancedRulesSwitch />}
+            <AdvancedRulesSwitch />
         </div>
     );
 }

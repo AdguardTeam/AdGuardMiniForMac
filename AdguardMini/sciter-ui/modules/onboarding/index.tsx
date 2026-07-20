@@ -13,7 +13,6 @@ import { GetEffectiveThemeRequest } from 'Apis/requests/ThemeService';
 // Should be imported before any other module to avoid errors in other modules
 import 'Common/api';
 import 'Modules/onboarding/lib/callbacks';
-
 // Default css styles (reset, colors, dark/light)...
 import 'Theme/default';
 import { applyInitialTheme } from 'Utils/colorThemes';

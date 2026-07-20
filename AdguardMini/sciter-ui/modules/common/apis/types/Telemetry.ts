@@ -5,8 +5,7 @@
  * git: https://github.com/thesayyn/protoc-gen-ts */
 import * as pb_1 from "google-protobuf";
 export enum ActiveABTest {
-    unknown = 0,
-    AG_51019_advanced_settings = 1
+    unknown = 0
 }
 export enum ABTestOption {
     unknown = 0,

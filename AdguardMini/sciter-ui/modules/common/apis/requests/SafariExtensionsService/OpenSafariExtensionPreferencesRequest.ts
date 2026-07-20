@@ -4,7 +4,7 @@ import { PlatformRequest } from '@adg/sciter-utils-kit';
 import { OptionalError as ReturnValue, OptionalStringValue as RequestMessage } from '../../types'
 
 /**
- * Open safati preferences
+ * Open Safari preferences
  */
 export class OpenSafariExtensionPreferencesRequest extends PlatformRequest<ReturnValue, RequestMessage> {
     /**

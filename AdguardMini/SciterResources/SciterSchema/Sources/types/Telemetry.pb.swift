@@ -23,7 +23,6 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 public enum ActiveABTest: SwiftProtobuf.Enum, Swift.CaseIterable {
   public typealias RawValue = Int
   case unknown // = 0
-  case ag51019AdvancedSettings // = 1
   case UNRECOGNIZED(Int)
 
   public init() {
@@ -33,7 +32,6 @@ public enum ActiveABTest: SwiftProtobuf.Enum, Swift.CaseIterable {
   public init?(rawValue: Int) {
     switch rawValue {
     case 0: self = .unknown
-    case 1: self = .ag51019AdvancedSettings
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -41,7 +39,6 @@ public enum ActiveABTest: SwiftProtobuf.Enum, Swift.CaseIterable {
   public var rawValue: Int {
     switch self {
     case .unknown: return 0
-    case .ag51019AdvancedSettings: return 1
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -49,7 +46,6 @@ public enum ActiveABTest: SwiftProtobuf.Enum, Swift.CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
   public static let allCases: [ActiveABTest] = [
     .unknown,
-    .ag51019AdvancedSettings,
   ]
 
 }
@@ -220,7 +216,7 @@ public struct ABTest: Sendable {
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension ActiveABTest: SwiftProtobuf._ProtoNameProviding {
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0ActiveABTest_unknown\0\u{1}ActiveABTest_AG_51019_advanced_settings\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0ActiveABTest_unknown\0")
 }
 
 extension ABTestOption: SwiftProtobuf._ProtoNameProviding {

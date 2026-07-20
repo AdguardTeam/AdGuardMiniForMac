@@ -10,7 +10,6 @@ import { isDarkColorTheme } from 'Utils/colorThemes';
 import dark from './images/extensions-dark.png';
 import light from './images/extensions-light.png';
 import { Template } from './Template';
-
 import s from './Template.module.pcss';
 
 import type { TemplateProps } from './Template';

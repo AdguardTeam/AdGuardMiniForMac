@@ -52,7 +52,6 @@ export enum SettingsEvent {
     CustomFiltersClick = 'custom_filters_click',
     AdvancedRulesClick = 'advanced_rules_click',
     AdguardExtraClick = 'adguard_extra_click',
-    TryForFreeExtraClick = 'try_for_free_extra_click',
     RuleSyntaxClick = 'rule_syntax_click',
     UpdateFiltersAutoClick = 'update_filters_auto_click',
     RealTimeUpdatesClick = 'real_time_updates_click',

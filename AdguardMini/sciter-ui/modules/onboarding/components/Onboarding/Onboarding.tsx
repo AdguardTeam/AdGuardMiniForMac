@@ -20,7 +20,7 @@ function OnboardingComponent() {
 
     const { currentStep } = steps;
 
-   useTheme((theme) => {
+    useTheme((theme) => {
         // AG-51217: defer theme change to next animation frame so Sciter's
         // `drop_styles` reaches all elements (including translator-rendered).
         applyThemeAttribute(theme);

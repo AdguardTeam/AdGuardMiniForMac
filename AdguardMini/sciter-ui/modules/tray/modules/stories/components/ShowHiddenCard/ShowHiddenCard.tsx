@@ -4,6 +4,7 @@
 
 import { observer } from 'mobx-react-lite';
 import { useCallback } from 'preact/hooks';
+
 import { Text, Icon } from 'UILib';
 
 import s from './ShowHiddenCard.module.pcss';
@@ -13,7 +14,7 @@ import s from './ShowHiddenCard.module.pcss';
  */
 export type ShowHiddenCardProps = {
     /** Callback invoked when the user clicks the card to restore hidden stories. */
-    onShowHidden: () => void;
+    onShowHidden(): void;
 };
 
 /**

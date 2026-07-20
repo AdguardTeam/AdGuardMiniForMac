@@ -6,8 +6,8 @@ import { observer } from 'mobx-react-lite';
 import { useState } from 'preact/hooks';
 
 import { RequestRenewRequest } from 'Apis/requests/AccountService';
-import { Subscription, ABTestOption, ActiveABTest } from 'Apis/types';
-import { useABTest, useSettingsStore, useTheme } from 'SettingsLib/hooks';
+import { Subscription } from 'Apis/types';
+import { useSettingsStore, useTheme } from 'SettingsLib/hooks';
 import { RouteName, SettingsEvent } from 'SettingsStore/modules';
 import { Logo, Layout, Text, Button } from 'UILib';
 import { isDarkColorTheme } from 'Utils/colorThemes';
@@ -59,8 +59,6 @@ function MenuComponent() {
         setIsDarkTheme(isDarkColorTheme(theme));
     });
 
-    const isTest = useABTest(ActiveABTest.AG_51019_advanced_settings) === ABTestOption.option_b;
-
     return (
         <Layout className={s.Menu} type="settingsMenu">
             <Logo className={s.Menu_logo} isDarkTheme={isDarkTheme} />
@@ -74,7 +72,7 @@ function MenuComponent() {
                 <MenuItem
                     icon="advanced"
                     route={RouteName.advanced_blocking}
-                    title={isTest ? translate('menu.advanced.blocking.AG_51019_advanced_settings') : translate('menu.advanced.blocking')}
+                    title={translate('menu.advanced.blocking.AG_51019_advanced_settings')}
                 />
                 <div className={s.Menu_menuItems_delimiter}>
                     <Text type="t3">{translate('menu.delimiter.custom')}</Text>

@@ -4,8 +4,8 @@ import { PlatformRequest } from '@adg/sciter-utils-kit';
 import { EmptyValue as ReturnValue, EmptyValue as RequestMessage, EmptyValue as EmptyMessageImpl } from '../../types'
 
 /**
- * Fires event for swift for checking application version, result will be dispatch
- * by TrayCallbackService.OnApplicationVersionStatusResolved
+ * Fires an event for Swift to check the application version; result will be
+ * dispatched by TrayCallbackService.OnApplicationVersionStatusResolved
  */
 export class CheckApplicationVersionRequest extends PlatformRequest<ReturnValue, RequestMessage> {
     /**

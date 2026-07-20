@@ -4,9 +4,8 @@
 
 import { observer } from 'mobx-react-lite';
 
-import { ABTestOption, ActiveABTest } from 'Apis/types';
 import { SettingsEvent } from 'Modules/settings/store/modules';
-import { useABTest, usePayedFuncsTitle, useSettingsStore } from 'SettingsLib/hooks';
+import { usePayedFuncsTitle, useSettingsStore } from 'SettingsLib/hooks';
 import theme from 'Theme';
 import { Text } from 'UILib';
 
@@ -15,7 +14,6 @@ import { SettingsItemSwitch } from '../../SettingsItem';
 import { AdguardExtraSwitch } from './AdguardExtraSwitch';
 import s from './AdvancedBlockingControl.module.pcss';
 import { AdvancedBlockingTitle } from './AdvancedBlockingTitle';
-import { AdvancedRulesSwitch } from './AdvancedRulesSwitch';
 
 /**
  * Advanced blocking main component
@@ -31,14 +29,9 @@ export function AdvancedBlockingControlComponent() {
 
     const isFree = !isLicenseOrTrialActive;
 
-    const test = useABTest(ActiveABTest.AG_51019_advanced_settings);
-    const isBVariant = test === ABTestOption.option_b;
-
-    const payedFuncsTitle = usePayedFuncsTitle(
-        isBVariant ? SettingsEvent.TryForFreeAbTest : SettingsEvent.TryForFreeExtraClick,
-    );
+    const payedFuncsTitle = usePayedFuncsTitle(SettingsEvent.TryForFreeAbTest);
     const onAdguardExtraChange = (value: boolean) => {
-        telemetry.trackEvent(isBVariant ? SettingsEvent.ExtraAbTest : SettingsEvent.AdguardExtraClick);
+        telemetry.trackEvent(SettingsEvent.ExtraAbTest);
         if (isFree) {
             account.showPaywall();
             return;
@@ -64,50 +57,43 @@ export function AdvancedBlockingControlComponent() {
 
     return (
         <>
-            <AdvancedBlockingTitle tryContent={payedFuncsTitle && isBVariant ? (
+            <AdvancedBlockingTitle tryContent={payedFuncsTitle ? (
                 <div className={s.AdvancedBlockingControl_payedTitle}>{payedFuncsTitle}</div>
             ) : undefined}
             />
-            {!isBVariant && (
-                <AdvancedRulesSwitch />
-            )}
             <AdguardExtraSwitch
-                additionalText={isBVariant ? undefined : payedFuncsTitle}
-                isTest={isBVariant}
                 muted={!isLicenseOrTrialActive}
                 orangeIcon={isFree}
                 value={isLicenseOrTrialActive ? adguardExtra : false}
                 onChange={onAdguardExtraChange}
             />
-            {isBVariant && (
-                <SettingsItemSwitch
-                    additionalText={(!autoFiltersUpdate && (
-                        <Text className={theme.color.orange} type="t2">
-                            {translate('settings.real.time.filter.updates.enable.update.filters', {
-                                b: (text: string) => (
-                                    <span
-                                        className={theme.button.underline}
-                                        id="real-time-updates-link"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            onUpdateAutoFilters(true);
-                                        }}
-                                    >
-                                        {text}
-                                    </span>
-                                ),
-                            })}
-                        </Text>
-                    ))}
-                    description={translate('settings.real.time.filter.updates.desc')}
-                    icon="update"
-                    iconColor={isFree ? 'orange' : undefined}
-                    muted={payedFuncsTitle !== undefined || !autoFiltersUpdate}
-                    setValue={onUpdateRealTimeFilters}
-                    title={translate('settings.real.time.filter.updates.AG_51019_advanced_settings')}
-                    value={realTimeFiltersUpdate}
-                />
-            )}
+            <SettingsItemSwitch
+                additionalText={(!autoFiltersUpdate && (
+                    <Text className={theme.color.orange} type="t2">
+                        {translate('settings.real.time.filter.updates.enable.update.filters', {
+                            b: (text: string) => (
+                                <span
+                                    className={theme.button.underline}
+                                    id="real-time-updates-link"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onUpdateAutoFilters(true);
+                                    }}
+                                >
+                                    {text}
+                                </span>
+                            ),
+                        })}
+                    </Text>
+                ))}
+                description={translate('settings.real.time.filter.updates.desc')}
+                icon="update"
+                iconColor={isFree ? 'orange' : undefined}
+                muted={payedFuncsTitle !== undefined || !autoFiltersUpdate}
+                setValue={onUpdateRealTimeFilters}
+                title={translate('settings.real.time.filter.updates.AG_51019_advanced_settings')}
+                value={realTimeFiltersUpdate}
+            />
         </>
     );
 }
