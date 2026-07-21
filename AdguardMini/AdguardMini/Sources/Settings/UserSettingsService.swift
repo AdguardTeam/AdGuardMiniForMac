@@ -24,6 +24,7 @@ protocol UserSettingsService: AnyObject {
     var allowTelemetry:            Bool { get set }
     var userRulesEditorGeometry:   WindowGeometryDTO? { get set }
     var showSafariToolbarBadge:    Bool { get set }
+    var urlFilterProtectionLevel:  URLFilterProtectionLevel { get set }
     var dismissedHealthCheckCards: [String] { get set }
     var hiddenStories:             [String] { get set }
 
@@ -57,6 +58,7 @@ final class UserSettingsServiceImpl {
     private let userSettingsManager: UserSettingsManager
     private let appSettingUpdateHandler: AppSettingUpdateHandler
     private let sharedSettingsStorage: SharedSettingsStorage
+    private let sharedKeychainStorage: SharedKeychainStorage
     private let eventBus: EventBus
     private let mailFiltersUpdater: MailFiltersUpdater
 
@@ -77,6 +79,7 @@ final class UserSettingsServiceImpl {
         userSettingsManager: UserSettingsManager,
         appSettingUpdateHandler: AppSettingUpdateHandler,
         sharedSettingsStorage: SharedSettingsStorage,
+        sharedKeychainStorage: SharedKeychainStorage,
         eventBus: EventBus,
         mailFiltersUpdater: MailFiltersUpdater
     ) {
@@ -84,6 +87,7 @@ final class UserSettingsServiceImpl {
         self.userSettingsManager = userSettingsManager
         self.appSettingUpdateHandler = appSettingUpdateHandler
         self.sharedSettingsStorage = sharedSettingsStorage
+        self.sharedKeychainStorage = sharedKeychainStorage
         self.eventBus = eventBus
         self.mailFiltersUpdater = mailFiltersUpdater
 
@@ -140,6 +144,11 @@ extension UserSettingsServiceImpl: UserSettingsService {
     var showSafariToolbarBadge: Bool {
         get { self.sharedSettingsStorage.showSafariToolbarBadge }
         set { self.sharedSettingsStorage.showSafariToolbarBadge = newValue }
+    }
+
+    var urlFilterProtectionLevel: URLFilterProtectionLevel {
+        get { self.sharedKeychainStorage.urlFilterProtectionLevel }
+        set { self.sharedKeychainStorage.urlFilterProtectionLevel = newValue }
     }
 
     var dismissedHealthCheckCards: [String] {
@@ -253,31 +262,36 @@ extension UserSettingsServiceImpl: UserSettingsService {
         self.appSettingUpdateHandler.handleDebugLoggingUpdates(old, value)
     }
 
+    /// Dispatches to the appropriate handler based on license availability.
     @objc func handlePaidStatusChange(notification: Notification) {
-        // Regenerate the mail ruleset on EVERY Premium status change.
-        // Every exit path is covered, including the nil-license fallback path.
-        // `defer` ensures the updater fires on all exits.
         defer { self.mailFiltersUpdater.updateMailFilters() }
 
         let license: AppStatusInfo? = self.eventBus.parseNotification(notification)
 
-        guard let license else {
-            LogWarn("License is nil, treating as free version (backend error fallback)")
-            self.appSettingUpdateHandler.handleRealTimeFiltersUpdateUpdates(
-                self.realTimeFiltersUpdate,
-                false
-            )
-            self.userSettingsManager.adguardExtra = false
-            return
-        }
-
-        if !license.isPaid {
-            self.setRealTimeFiltersUpdate(false)
-            self.userSettingsManager.adguardExtra = false
+        if let license {
+            applyPremiumState(license.isPaid)
         } else {
-            self.setRealTimeFiltersUpdate(true)
-            self.userSettingsManager.adguardExtra = true
+            LogWarn("License is nil, treating as free version (backend error fallback)")
+            applyFallbackState()
         }
+    }
+
+    /// Applies premium (paid) or non-premium state derived from a valid license.
+    /// Updates storage and notifies downstream handlers.
+    private func applyPremiumState(_ isPaid: Bool) {
+        self.setRealTimeFiltersUpdate(isPaid)
+        self.userSettingsManager.adguardExtra = isPaid
+    }
+
+    /// Applies fallback state when the license is unavailable (e.g. backend error).
+    /// Does NOT persist the real-time-filters-update preference — only notifies the handler
+    /// with the current stored value so the system can react without mutating user intent.
+    private func applyFallbackState() {
+        self.appSettingUpdateHandler.handleRealTimeFiltersUpdateUpdates(
+            self.realTimeFiltersUpdate,
+            false
+        )
+        self.userSettingsManager.adguardExtra = false
     }
 
     func setHardwareAcceleration(_ value: Bool) {

@@ -9,7 +9,7 @@
 
 import Foundation
 
-final class AppStatusInfo: NSObject, NSSecureCoding {
+final class AppStatusInfo: NSObject, NSSecureCoding, @unchecked Sendable {
     static var supportsSecureCoding: Bool { true }
 
     /// Application status.

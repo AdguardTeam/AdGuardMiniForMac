@@ -17,6 +17,9 @@ import ContentBlockerConverter
 
 private enum Constants {
     static let noUpdatesThreshold: TimeInterval = 7.days
+    // UID 501 is macOS's default UID for the first admin account created during initial setup.
+    // Non-501 users indicate managed or multi-account scenarios.
+    static let isNon501User: Bool = getuid() != 501
 }
 
 extension Sciter.SettingsServiceImpl:
@@ -131,6 +134,7 @@ extension Sciter {
             if let geometry = self.userSettingsService.userRulesEditorGeometry {
                 settings.userRulesEditorGeometry = geometry.toProto()
             }
+            settings.non501User = Constants.isNon501User
             promise(settings)
         }
 

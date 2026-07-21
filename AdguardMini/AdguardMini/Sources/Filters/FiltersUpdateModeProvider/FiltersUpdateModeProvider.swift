@@ -28,7 +28,7 @@ final class FiltersUpdateModeProviderImpl: FiltersUpdateModeProvider {
     // MARK: Public properties
 
     var currentMode: FiltersUpdateMode {
-        let isLicenseActive = keychain.getAppStatusInfo()?.isPaid ?? false
+        let isLicenseActive = keychain.getAppStatusInfoSync()?.isPaid ?? false
         return FiltersUpdateMode.compute(
             realTime: self.storage.realTimeFiltersUpdate,
             auto: self.storage.autoFiltersUpdate,

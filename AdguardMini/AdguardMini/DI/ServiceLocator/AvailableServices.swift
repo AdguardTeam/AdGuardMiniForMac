@@ -18,6 +18,7 @@ protocol AppResetServiceDependent: ServiceDependent { var appResetService: AppRe
 
 protocol LoginItemServiceDependent: ServiceDependent { var loginItemService: LoginItemService! { get set } }
 protocol SafariApiHandlerDependent: ServiceDependent { var safariApiHandler: SafariApiHandler! { get set } }
+protocol URLFilterServiceDependent: ServiceDependent { var urlFilterService: URLFilterService! { get set } }
 protocol TelemetryServiceDependent: ServiceDependent { var telemetryService: Telemetry.Service! { get set }}
 
 protocol FiltersSupervisorDependent: ServiceDependent { var filtersSupervisor: FiltersSupervisor! { get set } }
@@ -35,6 +36,10 @@ protocol LicenseStateProviderDependent: ServiceDependent { var licenseStateProvi
 
 protocol AppActivationObserverDependent:  ServiceDependent {
     var appActivationObserver: AppActivationObserver! { get set }
+}
+
+protocol URLFilterStateAssemblerDependent: ServiceDependent {
+    var urlFilterStateAssembler: URLFilterStateAssembler! { get set }
 }
 
 protocol SciterCallbackServiceDependent:  ServiceDependent {

@@ -43,6 +43,7 @@ extension ServiceLocator {
         (client as? TelemetryServiceDependent)?.telemetryService = self.telemetryService
         (client as? SafariApiHandlerDependent)?.safariApiHandler = self.safariApiHandler
         (client as? LoginItemServiceDependent)?.loginItemService = self.loginItemService
+        (client as? URLFilterServiceDependent)?.urlFilterService = self.urlFilterService
         (client as? FiltersSupervisorDependent)?.filtersSupervisor = self.filtersSupervisor
         (client as? MailFiltersUpdaterDependent)?.mailFiltersUpdater = self.mailFiltersUpdater
         (client as? SystemInfoManagerDependent)?.systemInfoManager = self.coreDIContainer.systemInfoManager
@@ -56,6 +57,7 @@ extension ServiceLocator {
         (client as? SciterAppControllerDependent)?.sciterAppController = self.sciterAppController
         (client as? LicenseStateProviderDependent)?.licenseStateProvider = self.licenseStateProvider
         (client as? AppActivationObserverDependent)?.appActivationObserver = self.appActivationObserver
+        (client as? URLFilterStateAssemblerDependent)?.urlFilterStateAssembler = self.urlFilterStateAssembler
         (client as? SciterCallbackServiceDependent)?.sciterCallbackService = self.sciterCallbackService
         (client as? SciterOnboardingCallbackServiceDependent)?
             .sciterOnboardingCallbackService = self.sciterOnboardingCallbackService
@@ -286,6 +288,27 @@ private final class ServiceLocator {
 
     private lazy var eventBus: EventBus = EventBusImpl()
 
+    private lazy var urlFilterService: URLFilterService = {
+        if #available(macOS 26, *) {
+            return URLFilterServiceLiveImpl(
+                eventBus: self.eventBus,
+                sharedKeychainStorage: SharedKeychainStorageImpl()
+            )
+        }
+        return URLFilterServiceNoOp()
+    }()
+
+    private lazy var urlFilterStateAssembler: URLFilterStateAssembler = {
+        URLFilterStateAssembler(
+            urlFilterService: self.urlFilterService,
+            // Labeled parameter makes the role of the closure explicit.
+            // swiftlint:disable:next trailing_closure
+            protectionLevelProvider: { [userSettingsService = self.userSettingsService] in
+                userSettingsService.urlFilterProtectionLevel
+            }
+        )
+    }()
+
     private lazy var telemetryService: Telemetry.Service = Telemetry.ServiceImpl(
         network: self.coreDIContainer.networkManager,
         settings: self.userSettingsManager,
@@ -375,6 +398,7 @@ private final class ServiceLocator {
             userSettingsManager: self.userSettingsManager,
             appSettingUpdateHandler: self.appSettingUpdateHandler,
             sharedSettingsStorage: SharedDIContainer.shared.sharedSettingsStorage,
+            sharedKeychainStorage: SharedKeychainStorageImpl(),
             eventBus: self.eventBus,
             mailFiltersUpdater: self.mailFiltersUpdater
         )
@@ -401,6 +425,7 @@ private final class ServiceLocator {
             trayCallbacksGetter: self.sciterAppLocator.trayApp.app.callback(TrayCallbackService.self),
             userRulesCallbacksGetter: self.sciterAppLocator.settingsApp.app.callback(UserRulesCallbackService.self),
             filtersCallbacksGetter: self.sciterAppLocator.settingsApp.app.callback(FiltersCallbackService.self),
+            urlFilterStateAssembler: self.urlFilterStateAssembler,
             licenseStateProvider: self.licenseStateProvider,
             isSettingsHidden: { [sciterAppLocator] in
                 sciterAppLocator.settingsApp.isAppHidden()

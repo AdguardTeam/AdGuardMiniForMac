@@ -46,6 +46,9 @@ enum Event: String {
     case settingsWindowOpened = "SettingsWindowOpened"
 
     case appStoreTransactionUpdated = "AppStoreTransactionUpdated"
+
+    case urlFilterStatusChanged        = "URLFilterStatusChanged"
+    case urlFilterConfigurationChanged = "URLFilterConfigurationChanged"
 }
 
 private extension Notification.Name {

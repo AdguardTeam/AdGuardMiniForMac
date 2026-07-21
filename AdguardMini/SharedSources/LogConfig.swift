@@ -15,7 +15,7 @@ private enum Constants {
 }
 
 enum LogConfig {
-    private static let fileService: FileStorageProtocol = LogStorage()
+    nonisolated(unsafe) private static let fileService: FileStorageProtocol = LogStorage()
 
     static let groupLogfilePath: String = {
         Self.fileService.buildUrl(relativePath: Constants.groupLogfilePathName, with: "log").path

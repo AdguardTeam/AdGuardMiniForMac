@@ -10,6 +10,8 @@
 	<false/>
 	<key>telemetryId</key>
 	<string>__KEY_ONLY</string>
+	<key>appDataVersion</key>
+	<string>__KEY_ONLY</string>
 	<key>showInMenuBar</key>
 	<true/>
 	<key>hardwareAcceleration</key>
@@ -61,8 +63,6 @@
 	<key>didAttemptLegacyMigration</key>
 	<string>__KEY_ONLY</string>
 	<key>abTests</key>
-	<string>__KEY_ONLY</string>
-	<key>migrationVersion</key>
 	<string>__KEY_ONLY</string>
 	<key>userRulesEditorGeometry</key>
 	<string>__KEY_ONLY</string>

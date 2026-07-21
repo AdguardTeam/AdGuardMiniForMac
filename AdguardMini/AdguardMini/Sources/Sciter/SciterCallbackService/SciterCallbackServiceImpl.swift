@@ -41,6 +41,8 @@ final class SciterCallbackServiceImpl: RestartableServiceBase, SciterCallbackSer
         self.filtersCallbacksGetter()
     }
 
+    private let urlFilterStateAssembler: URLFilterStateAssembler
+
     private let licenseStateProvider: LicenseStateProvider
     private let eventBus: EventBus
 
@@ -57,6 +59,7 @@ final class SciterCallbackServiceImpl: RestartableServiceBase, SciterCallbackSer
         trayCallbacksGetter: @autoclosure @escaping () -> TrayCallbackService,
         userRulesCallbacksGetter: @autoclosure @escaping () -> UserRulesCallbackService,
         filtersCallbacksGetter: @autoclosure @escaping () -> FiltersCallbackService,
+        urlFilterStateAssembler: URLFilterStateAssembler,
         licenseStateProvider: LicenseStateProvider,
         isSettingsHidden: @MainActor @escaping () -> Bool,
         isTrayHidden: @MainActor @escaping () -> Bool,
@@ -67,6 +70,7 @@ final class SciterCallbackServiceImpl: RestartableServiceBase, SciterCallbackSer
         self.trayCallbacksGetter = trayCallbacksGetter
         self.userRulesCallbacksGetter = userRulesCallbacksGetter
         self.filtersCallbacksGetter = filtersCallbacksGetter
+        self.urlFilterStateAssembler = urlFilterStateAssembler
 
         self.eventBus = eventBus
         self.licenseStateProvider = licenseStateProvider
@@ -110,6 +114,9 @@ final class SciterCallbackServiceImpl: RestartableServiceBase, SciterCallbackSer
         )
 
         self.subscribe(selector: #selector(self.onSettingsWindowOpened), event: .settingsWindowOpened)
+
+        self.subscribe(selector: #selector(self.onURLFilterStateChanged), event: .urlFilterStatusChanged)
+        self.subscribe(selector: #selector(self.onURLFilterStateChanged), event: .urlFilterConfigurationChanged)
 
         LogDebug("Initialized")
     }
@@ -289,6 +296,13 @@ final class SciterCallbackServiceImpl: RestartableServiceBase, SciterCallbackSer
     @objc func onSettingsWindowOpened(_: Notification) {
         self.runAsyncIfStarted { [weak self] in
             self?.settingsCallbacks.onSettingsWindowOpened(EmptyValue())
+        }
+    }
+
+    @objc func onURLFilterStateChanged() {
+        self.runOnMainActorIfStarted { `self` in
+            let state = await self.urlFilterStateAssembler.makeState()
+            // TODO: AG-56329 Send callback
         }
     }
 

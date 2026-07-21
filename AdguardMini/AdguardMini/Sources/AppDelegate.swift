@@ -29,7 +29,8 @@ extension AppDelegate:
     ProtectionServiceDependent,
     UserSettingsManagerDependent,
     SentryHelperDependent,
-    LegacyMigrationServiceDependent {}
+    LegacyMigrationServiceDependent,
+    URLFilterServiceDependent {}
 
 #if MAS
 extension AppDelegate: AppStoreRateUsDependent {}
@@ -52,6 +53,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     var userSettingsManager: UserSettingsManager!
     var legacyMigrationService: LegacyMigrationService!
     var sentryHelper: SentryHelper!
+    var urlFilterService: URLFilterService!
 
     #if MAS
     var appStoreRateUs: AppStoreRateUs!
@@ -210,6 +212,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
 
             await self.backendService.bootstrap()
+            await self.urlFilterService.start()
 
             await self.startAppStep1()
         }
@@ -227,16 +230,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self.userSettingsManager.realTimeFiltersUpdate = true
         }
 
-        if let currentBuild = Int(BuildConfig.AG_BUILD) {
-            await BuildMigration.run(
-                storage: BuildMigrationStorageImpl(),
-                currentBuild: currentBuild,
-                firstRun: self.userSettingsManager.firstRun
-            )
-        } else {
-            LogError("\(BuildMigration.tag) Invalid AG_BUILD: \(BuildConfig.AG_BUILD)")
-            assertionFailure("AG_BUILD must be a valid integer")
-        }
+        await VersionedMigration.run(
+            storage: VersionedMigrationStorageImpl(),
+            firstRun: self.userSettingsManager.firstRun
+        )
 
         await self.telemetryService.startSession()
 

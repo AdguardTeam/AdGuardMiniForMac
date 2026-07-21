@@ -12,8 +12,6 @@
 
 #include "./CommonConfig.xcconfig"
 
-AG_APP_ID[config=Debug] = $(AG_APP_ID).debug
-
 ADGUARD_UPDATE_BASE_URL = https:$(SLASH)/static.adtidy.org/macmini
 ADGUARD_APP_CAST_URL = $(ADGUARD_UPDATE_BASE_URL)/$(AG_CHANNEL)/adguard-mini-appcast.xml
 

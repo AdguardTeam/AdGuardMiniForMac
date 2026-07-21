@@ -7,3 +7,4 @@
 /node_modules
 .eslintcache
 dist
+rollup.config-*.mjs

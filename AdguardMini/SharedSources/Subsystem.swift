@@ -19,6 +19,8 @@ enum Subsystem: CaseIterable {
     case helper
     /// Mail content blocker subsystem name.
     case mailBlocker
+    /// URL Filter Network Extension subsystem name.
+    case urlFilterExtension
 
     var name: String {
         switch self {
@@ -30,6 +32,8 @@ enum Subsystem: CaseIterable {
             BuildConfig.AG_HELPER_ID
         case .mailBlocker:
             BuildConfig.AG_MAIL_EXTENSION_BUNDLEID
+        case .urlFilterExtension:
+            BuildConfig.AG_NETWORK_EXTENSION_BUNDLEID
         }
     }
 

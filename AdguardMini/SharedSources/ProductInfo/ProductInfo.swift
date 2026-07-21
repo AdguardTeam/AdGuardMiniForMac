@@ -42,7 +42,7 @@ enum ProductInfo {
     ///
     /// - Note: The ID is stable across application launches on the same system.
     static func applicationId() -> String {
-        let storedAppId: String? = Keychain.getValue(for: KeychainKey.Base.applicationId.key)
+        let storedAppId: String? = Keychain.getValueShared(for: KeychainKey.Base.applicationId.key)
         let appId = storedAppId ?? self.generateApplicationId()
         if storedAppId.isNil {
             Self.overrideApplicationId(appId)
@@ -55,7 +55,7 @@ enum ProductInfo {
     }
 
     static func overrideApplicationId(_ appId: String) {
-        Keychain.set(key: .applicationId, value: appId)
+        Keychain.setShared(key: .applicationId, value: appId)
     }
 
     /// Generates a unique application identifier based on system information.

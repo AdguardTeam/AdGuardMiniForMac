@@ -44,7 +44,7 @@ protocol KeychainManager: AnyObject {
     var userActionLastDirectory: String { get set }
 
     func getAppStatusInfo() async -> AppStatusInfo?
-    func getAppStatusInfo() -> AppStatusInfo?
+    func getAppStatusInfoSync() -> AppStatusInfo?
     func setAppStatusInfo(_ appStatusInfo: AppStatusInfo) async
 
     func delete(key: KeychainKey.Base) async
@@ -80,14 +80,11 @@ final class KeychainManagerImpl: KeychainManager {
     }
 
     func getAppStatusInfo() async -> AppStatusInfo? {
-        await Task(priority: .userInitiated) {
-            self.getAppStatusInfo()
-        }
-        .value
+        self.getAppStatusInfoSync()
     }
 
-    func getAppStatusInfo() -> AppStatusInfo? {
-        guard let data: Data = Keychain.getValue(for: KeychainKey.Secured.licenseInfo.key)
+    func getAppStatusInfoSync() -> AppStatusInfo? {
+        guard let data: Data = Keychain.getValueShared(for: KeychainKey.Secured.licenseInfo.key)
         else { return nil }
 
         guard let decrypted = CryptoUtils.aesDecrypt(data: data, keyData: Constants.licenseEncrKeyData)
@@ -109,7 +106,7 @@ final class KeychainManagerImpl: KeychainManager {
             do {
                 let data = try NSKeyedArchiver.archivedData(withRootObject: appStatusInfo, requiringSecureCoding: true)
                 if let encrypted = CryptoUtils.aesEncrypt(data: data, keyData: Constants.licenseEncrKeyData) {
-                    Keychain.set(key: KeychainKey.Secured.licenseInfo.key, data: encrypted)
+                    Keychain.setShared(key: KeychainKey.Secured.licenseInfo.key, data: encrypted)
                 } else {
                     LogError("Can't crypt license info data")
                 }
@@ -125,6 +122,8 @@ final class KeychainManagerImpl: KeychainManager {
     }
 
     func delete(key: KeychainKey.Secured) async {
+        // Delete from both shared and non-shared keychain for safety
+        Keychain.deleteShared(for: key.key)
         await Keychain.delete(key: key)
     }
 

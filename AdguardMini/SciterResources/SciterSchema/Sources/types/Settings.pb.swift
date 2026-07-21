@@ -231,6 +231,11 @@ public struct Settings: @unchecked Sendable {
     set {_uniqueStorage()._autoFiltersUpdate = newValue}
   }
 
+  public var realTimeFiltersUpdate: Bool {
+    get {return _storage._realTimeFiltersUpdate}
+    set {_uniqueStorage()._realTimeFiltersUpdate = newValue}
+  }
+
   public var quitReaction: QuitReaction {
     get {return _storage._quitReaction}
     set {_uniqueStorage()._quitReaction = newValue}
@@ -285,9 +290,19 @@ public struct Settings: @unchecked Sendable {
     set {_uniqueStorage()._lastUpdateMoreSevenDays = newValue}
   }
 
+  public var mailProtectionEnabled: Bool {
+    get {return _storage._mailProtectionEnabled}
+    set {_uniqueStorage()._mailProtectionEnabled = newValue}
+  }
+
   public var loginItemEnabled: Bool {
     get {return _storage._loginItemEnabled}
     set {_uniqueStorage()._loginItemEnabled = newValue}
+  }
+
+  public var non501User: Bool {
+    get {return _storage._non501User}
+    set {_uniqueStorage()._non501User = newValue}
   }
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -459,13 +474,14 @@ extension WindowGeometry: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
 
 extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "Settings"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0\u{3}user_rules_editor_geometry\0\u{3}show_safari_toolbar_badge\0\u{3}last_update_more_seven_days\0\u{3}login_item_enabled\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{3}real_time_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0\u{3}user_rules_editor_geometry\0\u{3}show_safari_toolbar_badge\0\u{3}last_update_more_seven_days\0\u{3}mail_protection_enabled\0\u{3}login_item_enabled\0\u{3}non_501_user\0")
 
   fileprivate class _StorageClass {
     var _launchOnStartup: Bool = false
     var _showInMenuBar: Bool = false
     var _hardwareAcceleration: Bool = false
     var _autoFiltersUpdate: Bool = false
+    var _realTimeFiltersUpdate: Bool = false
     var _quitReaction: QuitReaction = .unknown
     var _debugLogging: Bool = false
     var _releaseVariant: ReleaseVariants = .unknown
@@ -476,7 +492,9 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     var _userRulesEditorGeometry: WindowGeometry? = nil
     var _showSafariToolbarBadge: Bool = false
     var _lastUpdateMoreSevenDays: Bool = false
+    var _mailProtectionEnabled: Bool = false
     var _loginItemEnabled: Bool = false
+    var _non501User: Bool = false
 
       // This property is used as the initial default value for new instances of the type.
       // The type itself is protecting the reference to its storage via CoW semantics.
@@ -491,6 +509,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       _showInMenuBar = source._showInMenuBar
       _hardwareAcceleration = source._hardwareAcceleration
       _autoFiltersUpdate = source._autoFiltersUpdate
+      _realTimeFiltersUpdate = source._realTimeFiltersUpdate
       _quitReaction = source._quitReaction
       _debugLogging = source._debugLogging
       _releaseVariant = source._releaseVariant
@@ -501,7 +520,9 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       _userRulesEditorGeometry = source._userRulesEditorGeometry
       _showSafariToolbarBadge = source._showSafariToolbarBadge
       _lastUpdateMoreSevenDays = source._lastUpdateMoreSevenDays
+      _mailProtectionEnabled = source._mailProtectionEnabled
       _loginItemEnabled = source._loginItemEnabled
+      _non501User = source._non501User
     }
   }
 
@@ -524,17 +545,20 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         case 2: try { try decoder.decodeSingularBoolField(value: &_storage._showInMenuBar) }()
         case 3: try { try decoder.decodeSingularBoolField(value: &_storage._hardwareAcceleration) }()
         case 4: try { try decoder.decodeSingularBoolField(value: &_storage._autoFiltersUpdate) }()
-        case 5: try { try decoder.decodeSingularEnumField(value: &_storage._quitReaction) }()
-        case 6: try { try decoder.decodeSingularBoolField(value: &_storage._debugLogging) }()
-        case 7: try { try decoder.decodeSingularEnumField(value: &_storage._releaseVariant) }()
-        case 8: try { try decoder.decodeRepeatedInt32Field(value: &_storage._consentFiltersIds) }()
-        case 9: try { try decoder.decodeSingularStringField(value: &_storage._language) }()
-        case 10: try { try decoder.decodeSingularBoolField(value: &_storage._allowTelemetry) }()
-        case 11: try { try decoder.decodeSingularEnumField(value: &_storage._theme) }()
-        case 12: try { try decoder.decodeSingularMessageField(value: &_storage._userRulesEditorGeometry) }()
-        case 13: try { try decoder.decodeSingularBoolField(value: &_storage._showSafariToolbarBadge) }()
-        case 14: try { try decoder.decodeSingularBoolField(value: &_storage._lastUpdateMoreSevenDays) }()
-        case 15: try { try decoder.decodeSingularBoolField(value: &_storage._loginItemEnabled) }()
+        case 5: try { try decoder.decodeSingularBoolField(value: &_storage._realTimeFiltersUpdate) }()
+        case 6: try { try decoder.decodeSingularEnumField(value: &_storage._quitReaction) }()
+        case 7: try { try decoder.decodeSingularBoolField(value: &_storage._debugLogging) }()
+        case 8: try { try decoder.decodeSingularEnumField(value: &_storage._releaseVariant) }()
+        case 9: try { try decoder.decodeRepeatedInt32Field(value: &_storage._consentFiltersIds) }()
+        case 10: try { try decoder.decodeSingularStringField(value: &_storage._language) }()
+        case 11: try { try decoder.decodeSingularBoolField(value: &_storage._allowTelemetry) }()
+        case 12: try { try decoder.decodeSingularEnumField(value: &_storage._theme) }()
+        case 13: try { try decoder.decodeSingularMessageField(value: &_storage._userRulesEditorGeometry) }()
+        case 14: try { try decoder.decodeSingularBoolField(value: &_storage._showSafariToolbarBadge) }()
+        case 15: try { try decoder.decodeSingularBoolField(value: &_storage._lastUpdateMoreSevenDays) }()
+        case 16: try { try decoder.decodeSingularBoolField(value: &_storage._mailProtectionEnabled) }()
+        case 17: try { try decoder.decodeSingularBoolField(value: &_storage._loginItemEnabled) }()
+        case 18: try { try decoder.decodeSingularBoolField(value: &_storage._non501User) }()
         default: break
         }
       }
@@ -559,38 +583,47 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       if _storage._autoFiltersUpdate != false {
         try visitor.visitSingularBoolField(value: _storage._autoFiltersUpdate, fieldNumber: 4)
       }
+      if _storage._realTimeFiltersUpdate != false {
+        try visitor.visitSingularBoolField(value: _storage._realTimeFiltersUpdate, fieldNumber: 5)
+      }
       if _storage._quitReaction != .unknown {
-        try visitor.visitSingularEnumField(value: _storage._quitReaction, fieldNumber: 5)
+        try visitor.visitSingularEnumField(value: _storage._quitReaction, fieldNumber: 6)
       }
       if _storage._debugLogging != false {
-        try visitor.visitSingularBoolField(value: _storage._debugLogging, fieldNumber: 6)
+        try visitor.visitSingularBoolField(value: _storage._debugLogging, fieldNumber: 7)
       }
       if _storage._releaseVariant != .unknown {
-        try visitor.visitSingularEnumField(value: _storage._releaseVariant, fieldNumber: 7)
+        try visitor.visitSingularEnumField(value: _storage._releaseVariant, fieldNumber: 8)
       }
       if !_storage._consentFiltersIds.isEmpty {
-        try visitor.visitPackedInt32Field(value: _storage._consentFiltersIds, fieldNumber: 8)
+        try visitor.visitPackedInt32Field(value: _storage._consentFiltersIds, fieldNumber: 9)
       }
       if !_storage._language.isEmpty {
-        try visitor.visitSingularStringField(value: _storage._language, fieldNumber: 9)
+        try visitor.visitSingularStringField(value: _storage._language, fieldNumber: 10)
       }
       if _storage._allowTelemetry != false {
-        try visitor.visitSingularBoolField(value: _storage._allowTelemetry, fieldNumber: 10)
+        try visitor.visitSingularBoolField(value: _storage._allowTelemetry, fieldNumber: 11)
       }
       if _storage._theme != .unknown {
-        try visitor.visitSingularEnumField(value: _storage._theme, fieldNumber: 11)
+        try visitor.visitSingularEnumField(value: _storage._theme, fieldNumber: 12)
       }
       try { if let v = _storage._userRulesEditorGeometry {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 12)
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 13)
       } }()
       if _storage._showSafariToolbarBadge != false {
-        try visitor.visitSingularBoolField(value: _storage._showSafariToolbarBadge, fieldNumber: 13)
+        try visitor.visitSingularBoolField(value: _storage._showSafariToolbarBadge, fieldNumber: 14)
       }
       if _storage._lastUpdateMoreSevenDays != false {
-        try visitor.visitSingularBoolField(value: _storage._lastUpdateMoreSevenDays, fieldNumber: 14)
+        try visitor.visitSingularBoolField(value: _storage._lastUpdateMoreSevenDays, fieldNumber: 15)
+      }
+      if _storage._mailProtectionEnabled != false {
+        try visitor.visitSingularBoolField(value: _storage._mailProtectionEnabled, fieldNumber: 16)
       }
       if _storage._loginItemEnabled != false {
-        try visitor.visitSingularBoolField(value: _storage._loginItemEnabled, fieldNumber: 15)
+        try visitor.visitSingularBoolField(value: _storage._loginItemEnabled, fieldNumber: 17)
+      }
+      if _storage._non501User != false {
+        try visitor.visitSingularBoolField(value: _storage._non501User, fieldNumber: 18)
       }
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -605,6 +638,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         if _storage._showInMenuBar != rhs_storage._showInMenuBar {return false}
         if _storage._hardwareAcceleration != rhs_storage._hardwareAcceleration {return false}
         if _storage._autoFiltersUpdate != rhs_storage._autoFiltersUpdate {return false}
+        if _storage._realTimeFiltersUpdate != rhs_storage._realTimeFiltersUpdate {return false}
         if _storage._quitReaction != rhs_storage._quitReaction {return false}
         if _storage._debugLogging != rhs_storage._debugLogging {return false}
         if _storage._releaseVariant != rhs_storage._releaseVariant {return false}
@@ -615,7 +649,9 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         if _storage._userRulesEditorGeometry != rhs_storage._userRulesEditorGeometry {return false}
         if _storage._showSafariToolbarBadge != rhs_storage._showSafariToolbarBadge {return false}
         if _storage._lastUpdateMoreSevenDays != rhs_storage._lastUpdateMoreSevenDays {return false}
+        if _storage._mailProtectionEnabled != rhs_storage._mailProtectionEnabled {return false}
         if _storage._loginItemEnabled != rhs_storage._loginItemEnabled {return false}
+        if _storage._non501User != rhs_storage._non501User {return false}
         return true
       }
       if !storagesAreEqual {return false}

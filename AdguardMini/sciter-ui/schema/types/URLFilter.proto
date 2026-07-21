@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+option optimize_for = CODE_SIZE;
+
+/* Derived, user-facing URL filter status. */
+enum URLFilterStatus {
+    URLFilterStatus_unknown = 0;
+    URLFilterStatus_disabled = 1;
+    URLFilterStatus_invalid = 2;
+    URLFilterStatus_stopped = 3;
+    URLFilterStatus_starting = 4;
+    URLFilterStatus_running = 5;
+    URLFilterStatus_stopping = 6;
+}
+
+/* Protection level applied to the URL filter. */
+enum URLFilterProtectionLevel {
+    URLFilterProtectionLevel_essential = 0;
+    URLFilterProtectionLevel_safe = 1;
+    URLFilterProtectionLevel_family = 2;
+}
+
+/* UI-facing subset of the URL filter configuration.
+   Intentionally excludes the PIR server URL, issuer URL, and token. */
+message URLFilterConfiguration {
+    bool enabled = 1;
+    URLFilterProtectionLevel protection_level = 2;
+}
+
+/* Read-only URL filter metadata. */
+message URLFilterInfo {
+    optional uint32 rules_count = 1;
+    optional int64 last_update = 2;
+    bool is_installing = 3;
+}
+
+/* Aggregate URL filter state exchanged with the UI. */
+message URLFilterState {
+    URLFilterStatus status = 1;
+    URLFilterConfiguration configuration = 2;
+    URLFilterInfo info = 3;
+    optional string error_message = 4;
+}
+
+/* Single-value wrapper for setting the protection level. */
+message URLFilterProtectionLevelValue {
+    URLFilterProtectionLevel value = 1;
+}

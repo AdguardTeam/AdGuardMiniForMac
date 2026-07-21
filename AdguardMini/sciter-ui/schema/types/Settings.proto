@@ -17,17 +17,20 @@ message Settings {
     bool show_in_menu_bar = 2;
     bool hardware_acceleration = 3;
     bool auto_filters_update = 4;
-    QuitReaction quitReaction = 5;
-    bool debug_logging = 6;
-    ReleaseVariants release_variant = 7;
-    repeated int32 consent_filters_ids = 8;
-    string language = 9;
-    bool allow_telemetry = 10;
-    Theme theme = 11;
-    optional WindowGeometry user_rules_editor_geometry = 12;
-    bool show_safari_toolbar_badge = 13;
-    bool last_update_more_seven_days = 14;
-    bool login_item_enabled = 15;
+    bool real_time_filters_update = 5;
+    QuitReaction quitReaction = 6;
+    bool debug_logging = 7;
+    ReleaseVariants release_variant = 8;
+    repeated int32 consent_filters_ids = 9;
+    string language = 10;
+    bool allow_telemetry = 11;
+    Theme theme = 12;
+    optional WindowGeometry user_rules_editor_geometry = 13;
+    bool show_safari_toolbar_badge = 14;
+    bool last_update_more_seven_days = 15;
+    bool mail_protection_enabled = 16;
+    bool login_item_enabled = 17;
+    bool non_501_user = 18;
 }
 
 message UserConsent {

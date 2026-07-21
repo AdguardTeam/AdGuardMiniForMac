@@ -62,8 +62,8 @@ jobs:
       configuration: Release
       signing-type: developer_id
       additional-cert-types: developer_id_installer
-      skip-profiles: true
-      app-identifiers: com.adguard.safari.AdGuard
+      skip-profiles: false
+      app-identifiers: com.adguard.safari.AdGuard,com.adguard.safari.AdGuard.Extension,com.adguard.safari.AdGuard.URLFilterExtension
       notarize: true
 
   build-mas:
@@ -76,7 +76,7 @@ jobs:
       signing-type: appstore
       additional-cert-types: mac_installer_distribution
       skip-profiles: false
-      app-identifiers: com.adguard.safari.AdGuard,com.adguard.safari.AdGuard.Extension
+      app-identifiers: com.adguard.safari.AdGuard,com.adguard.safari.AdGuard.Extension,com.adguard.safari.AdGuard.URLFilterExtension
       notarize: false
 
   test:

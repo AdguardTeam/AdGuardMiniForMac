@@ -187,12 +187,13 @@ export class WindowGeometry extends pb_1.Message {
     }
 }
 export class Settings extends pb_1.Message {
-    #one_of_decls: number[][] = [[12]];
+    #one_of_decls: number[][] = [[13]];
     constructor(data?: any[] | ({
         launchOnStartup?: boolean;
         showInMenuBar?: boolean;
         hardwareAcceleration?: boolean;
         autoFiltersUpdate?: boolean;
+        realTimeFiltersUpdate?: boolean;
         quitReaction?: QuitReaction;
         debugLogging?: boolean;
         releaseVariant?: ReleaseVariants;
@@ -202,12 +203,14 @@ export class Settings extends pb_1.Message {
         theme?: Theme;
         showSafariToolbarBadge?: boolean;
         lastUpdateMoreSevenDays?: boolean;
+        mailProtectionEnabled?: boolean;
         loginItemEnabled?: boolean;
+        non501User?: boolean;
     } & (({
         userRulesEditorGeometry?: WindowGeometry;
     })))) {
         super();
-        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [8], this.#one_of_decls);
+        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [9], this.#one_of_decls);
         if (!Array.isArray(data) && typeof data == "object") {
             if ("launchOnStartup" in data && data.launchOnStartup != undefined) {
                 this.launchOnStartup = data.launchOnStartup;
@@ -220,6 +223,9 @@ export class Settings extends pb_1.Message {
             }
             if ("autoFiltersUpdate" in data && data.autoFiltersUpdate != undefined) {
                 this.autoFiltersUpdate = data.autoFiltersUpdate;
+            }
+            if ("realTimeFiltersUpdate" in data && data.realTimeFiltersUpdate != undefined) {
+                this.realTimeFiltersUpdate = data.realTimeFiltersUpdate;
             }
             if ("quitReaction" in data && data.quitReaction != undefined) {
                 this.quitReaction = data.quitReaction;
@@ -251,8 +257,14 @@ export class Settings extends pb_1.Message {
             if ("lastUpdateMoreSevenDays" in data && data.lastUpdateMoreSevenDays != undefined) {
                 this.lastUpdateMoreSevenDays = data.lastUpdateMoreSevenDays;
             }
+            if ("mailProtectionEnabled" in data && data.mailProtectionEnabled != undefined) {
+                this.mailProtectionEnabled = data.mailProtectionEnabled;
+            }
             if ("loginItemEnabled" in data && data.loginItemEnabled != undefined) {
                 this.loginItemEnabled = data.loginItemEnabled;
+            }
+            if ("non501User" in data && data.non501User != undefined) {
+                this.non501User = data.non501User;
             }
         }
     }
@@ -280,89 +292,108 @@ export class Settings extends pb_1.Message {
     set autoFiltersUpdate(value: boolean) {
         pb_1.Message.setField(this, 4, value);
     }
-    get quitReaction() {
-        return pb_1.Message.getFieldWithDefault(this, 5, QuitReaction.unknown) as QuitReaction;
+    get realTimeFiltersUpdate() {
+        return pb_1.Message.getFieldWithDefault(this, 5, false) as boolean;
     }
-    set quitReaction(value: QuitReaction) {
+    set realTimeFiltersUpdate(value: boolean) {
         pb_1.Message.setField(this, 5, value);
     }
-    get debugLogging() {
-        return pb_1.Message.getFieldWithDefault(this, 6, false) as boolean;
+    get quitReaction() {
+        return pb_1.Message.getFieldWithDefault(this, 6, QuitReaction.unknown) as QuitReaction;
     }
-    set debugLogging(value: boolean) {
+    set quitReaction(value: QuitReaction) {
         pb_1.Message.setField(this, 6, value);
     }
-    get releaseVariant() {
-        return pb_1.Message.getFieldWithDefault(this, 7, ReleaseVariants.unknown) as ReleaseVariants;
+    get debugLogging() {
+        return pb_1.Message.getFieldWithDefault(this, 7, false) as boolean;
     }
-    set releaseVariant(value: ReleaseVariants) {
+    set debugLogging(value: boolean) {
         pb_1.Message.setField(this, 7, value);
     }
-    get consentFiltersIds() {
-        return pb_1.Message.getFieldWithDefault(this, 8, []) as number[];
+    get releaseVariant() {
+        return pb_1.Message.getFieldWithDefault(this, 8, ReleaseVariants.unknown) as ReleaseVariants;
     }
-    set consentFiltersIds(value: number[]) {
+    set releaseVariant(value: ReleaseVariants) {
         pb_1.Message.setField(this, 8, value);
     }
-    get language() {
-        return pb_1.Message.getFieldWithDefault(this, 9, "") as string;
+    get consentFiltersIds() {
+        return pb_1.Message.getFieldWithDefault(this, 9, []) as number[];
     }
-    set language(value: string) {
+    set consentFiltersIds(value: number[]) {
         pb_1.Message.setField(this, 9, value);
     }
-    get allowTelemetry() {
-        return pb_1.Message.getFieldWithDefault(this, 10, false) as boolean;
+    get language() {
+        return pb_1.Message.getFieldWithDefault(this, 10, "") as string;
     }
-    set allowTelemetry(value: boolean) {
+    set language(value: string) {
         pb_1.Message.setField(this, 10, value);
     }
-    get theme() {
-        return pb_1.Message.getFieldWithDefault(this, 11, Theme.unknown) as Theme;
+    get allowTelemetry() {
+        return pb_1.Message.getFieldWithDefault(this, 11, false) as boolean;
     }
-    set theme(value: Theme) {
+    set allowTelemetry(value: boolean) {
         pb_1.Message.setField(this, 11, value);
     }
+    get theme() {
+        return pb_1.Message.getFieldWithDefault(this, 12, Theme.unknown) as Theme;
+    }
+    set theme(value: Theme) {
+        pb_1.Message.setField(this, 12, value);
+    }
     get userRulesEditorGeometry() {
-        return pb_1.Message.getWrapperField(this, WindowGeometry, 12) as WindowGeometry;
+        return pb_1.Message.getWrapperField(this, WindowGeometry, 13) as WindowGeometry;
     }
     set userRulesEditorGeometry(value: WindowGeometry) {
-        pb_1.Message.setOneofWrapperField(this, 12, this.#one_of_decls[0], value);
+        pb_1.Message.setOneofWrapperField(this, 13, this.#one_of_decls[0], value);
     }
     get has_user_rules_editor_geometry() {
-        return pb_1.Message.getField(this, 12) != null;
+        return pb_1.Message.getField(this, 13) != null;
     }
     get showSafariToolbarBadge() {
-        return pb_1.Message.getFieldWithDefault(this, 13, false) as boolean;
-    }
-    set showSafariToolbarBadge(value: boolean) {
-        pb_1.Message.setField(this, 13, value);
-    }
-    get lastUpdateMoreSevenDays() {
         return pb_1.Message.getFieldWithDefault(this, 14, false) as boolean;
     }
-    set lastUpdateMoreSevenDays(value: boolean) {
+    set showSafariToolbarBadge(value: boolean) {
         pb_1.Message.setField(this, 14, value);
     }
-    get loginItemEnabled() {
+    get lastUpdateMoreSevenDays() {
         return pb_1.Message.getFieldWithDefault(this, 15, false) as boolean;
     }
-    set loginItemEnabled(value: boolean) {
+    set lastUpdateMoreSevenDays(value: boolean) {
         pb_1.Message.setField(this, 15, value);
+    }
+    get mailProtectionEnabled() {
+        return pb_1.Message.getFieldWithDefault(this, 16, false) as boolean;
+    }
+    set mailProtectionEnabled(value: boolean) {
+        pb_1.Message.setField(this, 16, value);
+    }
+    get loginItemEnabled() {
+        return pb_1.Message.getFieldWithDefault(this, 17, false) as boolean;
+    }
+    set loginItemEnabled(value: boolean) {
+        pb_1.Message.setField(this, 17, value);
+    }
+    get non501User() {
+        return pb_1.Message.getFieldWithDefault(this, 18, false) as boolean;
+    }
+    set non501User(value: boolean) {
+        pb_1.Message.setField(this, 18, value);
     }
     get _userRulesEditorGeometry() {
         const cases: {
             [index: number]: "none" | "userRulesEditorGeometry";
         } = {
             0: "none",
-            12: "userRulesEditorGeometry"
+            13: "userRulesEditorGeometry"
         };
-        return cases[pb_1.Message.computeOneofCase(this, [12])];
+        return cases[pb_1.Message.computeOneofCase(this, [13])];
     }
     static fromObject(data: {
         launchOnStartup?: boolean;
         showInMenuBar?: boolean;
         hardwareAcceleration?: boolean;
         autoFiltersUpdate?: boolean;
+        realTimeFiltersUpdate?: boolean;
         quitReaction?: QuitReaction;
         debugLogging?: boolean;
         releaseVariant?: ReleaseVariants;
@@ -373,7 +404,9 @@ export class Settings extends pb_1.Message {
         userRulesEditorGeometry?: ReturnType<typeof WindowGeometry.prototype.toObject>;
         showSafariToolbarBadge?: boolean;
         lastUpdateMoreSevenDays?: boolean;
+        mailProtectionEnabled?: boolean;
         loginItemEnabled?: boolean;
+        non501User?: boolean;
     }): Settings {
         const message = new Settings({});
         if (data.launchOnStartup != null) {
@@ -387,6 +420,9 @@ export class Settings extends pb_1.Message {
         }
         if (data.autoFiltersUpdate != null) {
             message.autoFiltersUpdate = data.autoFiltersUpdate;
+        }
+        if (data.realTimeFiltersUpdate != null) {
+            message.realTimeFiltersUpdate = data.realTimeFiltersUpdate;
         }
         if (data.quitReaction != null) {
             message.quitReaction = data.quitReaction;
@@ -418,8 +454,14 @@ export class Settings extends pb_1.Message {
         if (data.lastUpdateMoreSevenDays != null) {
             message.lastUpdateMoreSevenDays = data.lastUpdateMoreSevenDays;
         }
+        if (data.mailProtectionEnabled != null) {
+            message.mailProtectionEnabled = data.mailProtectionEnabled;
+        }
         if (data.loginItemEnabled != null) {
             message.loginItemEnabled = data.loginItemEnabled;
+        }
+        if (data.non501User != null) {
+            message.non501User = data.non501User;
         }
         return message;
     }
@@ -429,6 +471,7 @@ export class Settings extends pb_1.Message {
             showInMenuBar?: boolean;
             hardwareAcceleration?: boolean;
             autoFiltersUpdate?: boolean;
+            realTimeFiltersUpdate?: boolean;
             quitReaction?: QuitReaction;
             debugLogging?: boolean;
             releaseVariant?: ReleaseVariants;
@@ -439,7 +482,9 @@ export class Settings extends pb_1.Message {
             userRulesEditorGeometry?: ReturnType<typeof WindowGeometry.prototype.toObject>;
             showSafariToolbarBadge?: boolean;
             lastUpdateMoreSevenDays?: boolean;
+            mailProtectionEnabled?: boolean;
             loginItemEnabled?: boolean;
+            non501User?: boolean;
         } = {};
         if (this.launchOnStartup != null) {
             data.launchOnStartup = this.launchOnStartup;
@@ -452,6 +497,9 @@ export class Settings extends pb_1.Message {
         }
         if (this.autoFiltersUpdate != null) {
             data.autoFiltersUpdate = this.autoFiltersUpdate;
+        }
+        if (this.realTimeFiltersUpdate != null) {
+            data.realTimeFiltersUpdate = this.realTimeFiltersUpdate;
         }
         if (this.quitReaction != null) {
             data.quitReaction = this.quitReaction;
@@ -483,8 +531,14 @@ export class Settings extends pb_1.Message {
         if (this.lastUpdateMoreSevenDays != null) {
             data.lastUpdateMoreSevenDays = this.lastUpdateMoreSevenDays;
         }
+        if (this.mailProtectionEnabled != null) {
+            data.mailProtectionEnabled = this.mailProtectionEnabled;
+        }
         if (this.loginItemEnabled != null) {
             data.loginItemEnabled = this.loginItemEnabled;
+        }
+        if (this.non501User != null) {
+            data.non501User = this.non501User;
         }
         return data;
     }
@@ -500,28 +554,34 @@ export class Settings extends pb_1.Message {
             writer.writeBool(3, this.hardwareAcceleration);
         if (this.autoFiltersUpdate != false)
             writer.writeBool(4, this.autoFiltersUpdate);
+        if (this.realTimeFiltersUpdate != false)
+            writer.writeBool(5, this.realTimeFiltersUpdate);
         if (this.quitReaction != QuitReaction.unknown)
-            writer.writeEnum(5, this.quitReaction);
+            writer.writeEnum(6, this.quitReaction);
         if (this.debugLogging != false)
-            writer.writeBool(6, this.debugLogging);
+            writer.writeBool(7, this.debugLogging);
         if (this.releaseVariant != ReleaseVariants.unknown)
-            writer.writeEnum(7, this.releaseVariant);
+            writer.writeEnum(8, this.releaseVariant);
         if (this.consentFiltersIds.length)
-            writer.writePackedInt32(8, this.consentFiltersIds);
+            writer.writePackedInt32(9, this.consentFiltersIds);
         if (this.language.length)
-            writer.writeString(9, this.language);
+            writer.writeString(10, this.language);
         if (this.allowTelemetry != false)
-            writer.writeBool(10, this.allowTelemetry);
+            writer.writeBool(11, this.allowTelemetry);
         if (this.theme != Theme.unknown)
-            writer.writeEnum(11, this.theme);
+            writer.writeEnum(12, this.theme);
         if (this.has_user_rules_editor_geometry)
-            writer.writeMessage(12, this.userRulesEditorGeometry, () => this.userRulesEditorGeometry.serialize(writer));
+            writer.writeMessage(13, this.userRulesEditorGeometry, () => this.userRulesEditorGeometry.serialize(writer));
         if (this.showSafariToolbarBadge != false)
-            writer.writeBool(13, this.showSafariToolbarBadge);
+            writer.writeBool(14, this.showSafariToolbarBadge);
         if (this.lastUpdateMoreSevenDays != false)
-            writer.writeBool(14, this.lastUpdateMoreSevenDays);
+            writer.writeBool(15, this.lastUpdateMoreSevenDays);
+        if (this.mailProtectionEnabled != false)
+            writer.writeBool(16, this.mailProtectionEnabled);
         if (this.loginItemEnabled != false)
-            writer.writeBool(15, this.loginItemEnabled);
+            writer.writeBool(17, this.loginItemEnabled);
+        if (this.non501User != false)
+            writer.writeBool(18, this.non501User);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -544,37 +604,46 @@ export class Settings extends pb_1.Message {
                     message.autoFiltersUpdate = reader.readBool();
                     break;
                 case 5:
-                    message.quitReaction = reader.readEnum();
+                    message.realTimeFiltersUpdate = reader.readBool();
                     break;
                 case 6:
-                    message.debugLogging = reader.readBool();
+                    message.quitReaction = reader.readEnum();
                     break;
                 case 7:
-                    message.releaseVariant = reader.readEnum();
+                    message.debugLogging = reader.readBool();
                     break;
                 case 8:
-                    message.consentFiltersIds = reader.readPackedInt32();
+                    message.releaseVariant = reader.readEnum();
                     break;
                 case 9:
-                    message.language = reader.readString();
+                    message.consentFiltersIds = reader.readPackedInt32();
                     break;
                 case 10:
-                    message.allowTelemetry = reader.readBool();
+                    message.language = reader.readString();
                     break;
                 case 11:
-                    message.theme = reader.readEnum();
+                    message.allowTelemetry = reader.readBool();
                     break;
                 case 12:
-                    reader.readMessage(message.userRulesEditorGeometry, () => message.userRulesEditorGeometry = WindowGeometry.deserialize(reader));
+                    message.theme = reader.readEnum();
                     break;
                 case 13:
-                    message.showSafariToolbarBadge = reader.readBool();
+                    reader.readMessage(message.userRulesEditorGeometry, () => message.userRulesEditorGeometry = WindowGeometry.deserialize(reader));
                     break;
                 case 14:
-                    message.lastUpdateMoreSevenDays = reader.readBool();
+                    message.showSafariToolbarBadge = reader.readBool();
                     break;
                 case 15:
+                    message.lastUpdateMoreSevenDays = reader.readBool();
+                    break;
+                case 16:
+                    message.mailProtectionEnabled = reader.readBool();
+                    break;
+                case 17:
                     message.loginItemEnabled = reader.readBool();
+                    break;
+                case 18:
+                    message.non501User = reader.readBool();
                     break;
                 default: reader.skipField();
             }
