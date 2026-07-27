@@ -117,7 +117,12 @@ function PerksOfTheFullVersionComponent({
         },
         {
             title: translate('license.perks.advanced.ad.blocking'),
-            firstCase: ComparisonCase.partly,
+            firstCase: ComparisonCase.no,
+            secondCase: ComparisonCase.yes,
+        },
+        {
+            title: translate('license.perks.system.wide'),
+            firstCase: ComparisonCase.no,
             secondCase: ComparisonCase.yes,
         },
         {
