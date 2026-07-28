@@ -28,6 +28,7 @@ message Settings {
     optional WindowGeometry user_rules_editor_geometry = 13;
     bool show_safari_toolbar_badge = 14;
     bool last_update_more_seven_days = 15;
+    bool login_item_enabled = 16;
 }
 
 message UserConsent {
@@ -65,6 +66,7 @@ message GlobalSettings {
     bool allow_telemetry = 8;
     Theme theme = 9;
     int64 last_filters_update_timestamp_ms = 10;
+    bool login_item_enabled = 11;
 }
 
 message UpdateQuitReactionMessage {

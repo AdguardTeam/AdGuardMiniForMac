@@ -9,18 +9,29 @@ import 'SciterPolyfills';
 import { render } from 'preact';
 import { instantiateLogger } from '@adg/sciter-utils-kit';
 
+import { GetEffectiveThemeRequest } from 'Apis/requests/TrayService';
 // Default css styles (reset, colors, dark/light)...
-import 'Theme/default';
 import 'Common/api';
 import 'Modules/tray/lib/callbacks';
+import 'Theme/default';
+import { applyInitialTheme } from 'Utils/colorThemes';
 
 import { App } from './components/App';
+
+import type { EffectiveTheme } from 'Apis/types';
 
 window.log = instantiateLogger(FULL_LOGS);
 
 // eslint-disable-next-line
 // @ts-ignore
-document.ready = () => {
+document.ready = async () => {
+    // Fetch and apply the user's theme BEFORE render so Preact-created
+    // elements are styled with the correct theme on first paint (AG-56246).
+    const getEffectiveTheme = async (): Promise<EffectiveTheme> => {
+        const { value } = await window.API.Execute(new GetEffectiveThemeRequest());
+        return value;
+    };
+    await applyInitialTheme(getEffectiveTheme);
     const node = document.getElementById('app')!;
     render(<App />, node);
 };

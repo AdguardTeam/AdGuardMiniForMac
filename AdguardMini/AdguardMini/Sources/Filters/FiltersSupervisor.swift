@@ -115,6 +115,13 @@ final class FiltersSupervisorImpl: RestartableServiceBase {
     private let userSettingsService: UserSettingsService
     private let eventBus: EventBus
 
+    /// Lock that serializes all access to `isFiltersUpdateInProgress`.
+    private let lock = UnfairLock()
+
+    /// Tracks whether any FLM update is currently running.
+    /// Used to skip redundant update requests
+    private var isFiltersUpdateInProgress = false
+
     var filtersSpecialIds: FLMConstants
 
     init(
@@ -184,15 +191,26 @@ final class FiltersSupervisorImpl: RestartableServiceBase {
         self.filtersManager.setFilters(filterIdsToEnable, enabled: true)
     }
 
+    /// Installs index filters that are not yet installed.
+    /// New filters appear in the index after a metadata pull but are not
+    /// installed by default, which would hide them from the UI.
+    /// - Returns: Full filter list on first install, empty array otherwise.
+    @discardableResult
     private func installIndexFilters() -> [FilterInfo] {
         let finfos = self.filtersManager.getAllFilters()
-        guard finfos.first(where: { $0.isInstalled }).isNil
-        else { return [] }
+        let isFirstInstall = finfos.first { $0.isInstalled }.isNil
 
-        let filterIdsToInstall = finfos.map(\.filterId)
-        self.filtersManager.setIndexFilters(filterIdsToInstall, installed: true)
+        // Custom filters have their own installation lifecycle and are skipped.
+        let filterIdsToInstall = finfos
+            .filter { !$0.isCustom && !$0.isInstalled }
+            .map(\.filterId)
 
-        return finfos
+        if !filterIdsToInstall.isEmpty {
+            LogInfo("\(LogTag.flm) Installing index filters: \(filterIdsToInstall)")
+            self.filtersManager.setIndexFilters(filterIdsToInstall, installed: true)
+        }
+
+        return isFirstInstall ? finfos : []
     }
 
     private func updateSafariFiltersOnSuccess(_ isSuccess: Bool = true) {
@@ -292,6 +310,9 @@ extension FiltersSupervisorImpl: FiltersSupervisor {
 
 extension FiltersSupervisorImpl: FLMFatalErrorDelegate {
     func onFatalError(_ flm: FLMProtocol) {
+        locked(self.lock) {
+            self.isFiltersUpdateInProgress = false
+        }
         LogError("Fatal error occurred in FLM. See logs above")
         self.eventBus.post(event: .flmFatalError, userInfo: nil)
     }
@@ -518,6 +539,15 @@ extension FiltersSupervisorImpl: FlmApi.UserRules {
 
 extension FiltersSupervisorImpl: FlmApi.Update {
     func filtersForceUpdate() {
+        let shouldStart = locked(self.lock) {
+            guard !self.isFiltersUpdateInProgress else { return false }
+            self.isFiltersUpdateInProgress = true
+            return true
+        }
+        guard shouldStart else {
+            LogInfo("\(LogTag.flm) filtersForceUpdate skipped — update already in progress")
+            return
+        }
         LogInfo("\(LogTag.flm) filtersForceUpdate start")
         self.filtersManager.update(ignoringFiltersExpiration: true, pullMetadata: false)
         LogInfo("\(LogTag.flm) filtersForceUpdate dispatched")
@@ -530,6 +560,12 @@ extension FiltersSupervisorImpl {
     func reset() async {
         let isStartedNow = self.isStarted
         self.stop()
+
+        // The DB is about to be wiped and the service restarted.
+        // Any in-flight update state is meaningless, so clear the flag.
+        locked(self.lock) {
+            self.isFiltersUpdateInProgress = false
+        }
 
         do {
             let dbPath = self.filtersManager.dbPath.deletingLastPathComponent
@@ -551,10 +587,17 @@ extension FiltersSupervisorImpl: FLMDelegate {}
 
 extension FiltersSupervisorImpl: FLMUpdateDelegate {
     func willStartFiltersUpdate() {
+        locked(self.lock) {
+            self.isFiltersUpdateInProgress = true
+        }
         self.eventBus.post(event: .filtersUpdateStarted, userInfo: nil)
     }
 
     func didUpdateFilters(_ result: Result<FiltersUpdateResult, Error>) {
+        locked(self.lock) {
+            self.isFiltersUpdateInProgress = false
+        }
+
         switch result {
         case .success(let updated):
             self.userSettingsService.lastFiltersUpdateTime = Date()
@@ -578,6 +621,12 @@ extension FiltersSupervisorImpl: FLMUpdateDelegate {
 
         LogInfo("\(LogTag.flm) didPullMetadata success")
         Task {
+            // Pulled metadata may contain filters that are new to the index.
+            // Install them so their rules get downloaded and counted.
+            await self.asyncly {
+                _ = self.installIndexFilters()
+            }
+
             let newIndex = await self.getFiltersIndex()
             self.eventBus.post(event: .filtersMetadataUpdated, userInfo: newIndex)
         }

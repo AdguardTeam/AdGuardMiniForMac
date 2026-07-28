@@ -90,6 +90,7 @@ function AppStoreVersionActionsComponent() {
                     className={cx(
                         subscriptionPricesAvailable && theme.button.greenSubmit,
                         s.Paywall_actions_button,
+                        s.Paywall_actions_submit,
                     )}
                     disabled={!subscriptionPricesAvailable}
                     type={subscriptionPricesAvailable ? 'submit' : 'outlined'}

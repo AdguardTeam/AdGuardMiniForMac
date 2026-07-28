@@ -35,6 +35,9 @@ enum HealthCheckDismissId: String {
 /// Respects dismiss state for dismissible cards (P5–P7).
 protocol HealthCheckAttentionProvider {
     func hasAttention() async -> Bool
+
+    /// Returns `true` when the login item / background helper is NOT enabled.
+    func hasLoginItemDisabled() -> Bool
 }
 
 // MARK: - HealthCheckAttentionProviderImpl
@@ -89,19 +92,19 @@ final class HealthCheckAttentionProviderImpl: HealthCheckAttentionProvider {
         // P6 & P7
         return await self.hasFilterIssues(dismissedCards: dismissedCards)
     }
-}
 
-// MARK: - Individual Health Checks
+    // MARK: - Individual Health Checks
+
+    /// P2: Login item not enabled (background helper for XPC and launch at login).
+    func hasLoginItemDisabled() -> Bool {
+        self.loginItemManager.checkHelperStatus() != .enabled
+    }
+}
 
 private extension HealthCheckAttentionProviderImpl {
     /// P1: Not all Safari extensions are enabled.
     func hasExtensionsDisabled() async -> Bool {
         await !self.safariExtensionStatusManager.isAllExtensionsEnabled
-    }
-
-    /// P2: Login item not enabled (background helper for XPC and launch at login).
-    func hasLoginItemDisabled() -> Bool {
-        self.loginItemManager.checkHelperStatus() != .enabled
     }
 
     /// P3: Extensions in error state (unknown, converterError, safariError).

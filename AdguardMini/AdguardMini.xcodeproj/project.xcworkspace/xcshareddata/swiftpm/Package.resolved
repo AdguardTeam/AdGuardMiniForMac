@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "ssh://git@bit.int.agrd.dev:7999/adguard-mac/sp-sciter-sdk.git",
       "state" : {
-        "branch" : "mac/6.0.3.18-rev-14-main-thread",
-        "revision" : "9164d59f5d2d0463eef6bd106d98f1c382b914ae"
+        "branch" : "mac/6.0.3.18-rev-17-main-thread",
+        "revision" : "f2a178588abaa8a1d07449f307de8e2c5eed5784"
       }
     },
     {

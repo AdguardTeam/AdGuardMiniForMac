@@ -44,6 +44,13 @@ final class SciterCallbackServiceImpl: RestartableServiceBase, SciterCallbackSer
     private let licenseStateProvider: LicenseStateProvider
     private let eventBus: EventBus
 
+    /// Whether the settings Sciter window is hidden. Main-actor only.
+    /// Hidden windows skip idle (see `deliverToSettings`).
+    private let isSettingsHidden: @MainActor () -> Bool
+
+    /// Whether the tray Sciter window is hidden; mirrors `isSettingsHidden`.
+    private let isTrayHidden: @MainActor () -> Bool
+
     init(
         settingsCallbacksGetter: @autoclosure @escaping () -> SettingsCallbackService,
         accountCallbacksGetter: @autoclosure @escaping () -> AccountCallbackService,
@@ -51,6 +58,8 @@ final class SciterCallbackServiceImpl: RestartableServiceBase, SciterCallbackSer
         userRulesCallbacksGetter: @autoclosure @escaping () -> UserRulesCallbackService,
         filtersCallbacksGetter: @autoclosure @escaping () -> FiltersCallbackService,
         licenseStateProvider: LicenseStateProvider,
+        isSettingsHidden: @MainActor @escaping () -> Bool,
+        isTrayHidden: @MainActor @escaping () -> Bool,
         eventBus: EventBus
     ) {
         self.settingsCallbacksGetter = settingsCallbacksGetter
@@ -61,6 +70,8 @@ final class SciterCallbackServiceImpl: RestartableServiceBase, SciterCallbackSer
 
         self.eventBus = eventBus
         self.licenseStateProvider = licenseStateProvider
+        self.isSettingsHidden = isSettingsHidden
+        self.isTrayHidden = isTrayHidden
 
         super.init()
 
@@ -124,90 +135,98 @@ final class SciterCallbackServiceImpl: RestartableServiceBase, SciterCallbackSer
             return
         }
 
-        self.runAsyncIfStarted { [weak self] in
-            self?.settingsCallbacks.onSafariExtensionUpdate(update.toProto())
-            self?.trayCallbacks.onSafariExtensionUpdate(update.toProto())
+        self.runOnMainActorIfStarted { `self` in
+            let proto: SafariExtensionUpdate = update.toProto()
+            self.deliverToSettings(self.settingsCallbacks) { $0.onSafariExtensionUpdate(proto) }
+            self.deliverToTray(self.trayCallbacks) { $0.onSafariExtensionUpdate(proto) }
         }
     }
 
     @objc func onLoginItemStateChange(notification: Notification) {
-        if let isEnabled: Bool = self.eventBus.parseNotification(notification) {
-            self.runAsyncIfStarted { [weak self] in
-                self?.settingsCallbacks.onLoginItemStateChange(BoolValue(isEnabled))
-                self?.trayCallbacks.onLoginItemStateChange(BoolValue(isEnabled))
-            }
+        guard let isEnabled: Bool = self.eventBus.parseNotification(notification) else {
+            return
+        }
+
+        let value = BoolValue(isEnabled)
+        self.runOnMainActorIfStarted { `self` in
+            self.deliverToSettings(self.settingsCallbacks) { $0.onLoginItemStateChange(value) }
+            self.deliverToTray(self.trayCallbacks) { $0.onLoginItemStateChange(value) }
         }
     }
 
     @objc func onLicenseInfoUpdated(notification: Notification) {
         let license: AppStatusInfo? = self.eventBus.parseNotification(notification)
-        self.runAsyncIfStarted { [weak self] in
-            Task { [weak self] in
-                guard let self else { return }
 
-                let protoLicense: LicenseOrError
-                if let license {
-                    let canReset = await licenseStateProvider.canReset(for: license)
-                    protoLicense = license.toProto(canReset: canReset)
-                } else {
-                    protoLicense = .licenseError
-                }
-
-                self.accountCallbacks.onLicenseUpdate(protoLicense)
-                self.trayCallbacks.onLicenseUpdate(protoLicense)
+        self.runOnMainActorIfStarted { `self` in
+            let protoLicense: LicenseOrError
+            if let license {
+                let canReset = await self.licenseStateProvider.canReset(for: license)
+                protoLicense = license.toProto(canReset: canReset)
+            } else {
+                protoLicense = .licenseError
             }
+
+            self.deliverToSettings(self.accountCallbacks) { $0.onLicenseUpdate(protoLicense) }
+            self.deliverToTray(self.trayCallbacks) { $0.onLicenseUpdate(protoLicense) }
         }
     }
 
     @objc func onImportStateChange(notification: Notification) {
-        if let status: ImportStatusDTO = self.eventBus.parseNotification(notification) {
-            self.runAsyncIfStarted { [weak self] in
-                self?.settingsCallbacks.onImportStateChange(status.toProto())
-            }
+        guard let status: ImportStatusDTO = self.eventBus.parseNotification(notification) else {
+            return
+        }
+
+        self.runOnMainActorIfStarted { `self` in
+            self.deliverToSettings(self.settingsCallbacks) { $0.onImportStateChange(status.toProto()) }
         }
     }
 
     @objc func onUserFilterChange(notification: Notification) {
-        if let userRules: [FilterRule] = self.eventBus.parseNotification(notification) {
-            self.runAsyncIfStarted { [weak self] in
-                self?.userRulesCallbacks.onUserFilterChange(
-                    UserRulesCallbackState(rules: userRules.toProto())
-                )
+        guard let userRules: [FilterRule] = self.eventBus.parseNotification(notification) else {
+            return
+        }
+
+        self.runOnMainActorIfStarted { `self` in
+            self.deliverToSettings(self.userRulesCallbacks) {
+                $0.onUserFilterChange(UserRulesCallbackState(rules: userRules.toProto()))
             }
         }
     }
 
     @objc func onFilterStatusResolved(notification: Notification) {
-        if let result: FiltersUpdateResult? = self.eventBus.parseNotification(notification) {
-            self.runAsyncIfStarted { [weak self] in
-                if let result {
-                    self?.trayCallbacks.onFilterStatusResolved(result.toProto())
-                } else {
-                    self?.trayCallbacks.onFilterStatusResolved(FiltersStatus(status: [], error: true))
-                }
-            }
+        guard let result: FiltersUpdateResult? = self.eventBus.parseNotification(notification) else {
+            return
+        }
+
+        self.runOnMainActorIfStarted { `self` in
+            let proto = result?.toProto() ?? FiltersStatus(status: [], error: true)
+            self.deliverToTray(self.trayCallbacks) { $0.onFilterStatusResolved(proto) }
         }
     }
 
     @objc func onFiltersUpdate() {
-        self.runAsyncIfStarted { [weak self] in
-            self?.filtersCallbacks.onFiltersUpdate(EmptyValue())
+        self.runOnMainActorIfStarted { `self` in
+            self.deliverToSettings(self.filtersCallbacks) { $0.onFiltersUpdate(EmptyValue()) }
         }
     }
 
     @objc func onFiltersMetaUpdated(notification: Notification) {
-        if let filterIndex: FiltersIndex = self.eventBus.parseNotification(notification) {
-            self.runAsyncIfStarted { [weak self] in
-                self?.filtersCallbacks.onFiltersIndexUpdate(filterIndex.toProto())
-            }
+        guard let filterIndex: FiltersIndex = self.eventBus.parseNotification(notification) else {
+            return
+        }
+
+        self.runOnMainActorIfStarted { `self` in
+            self.deliverToSettings(self.filtersCallbacks) { $0.onFiltersIndexUpdate(filterIndex.toProto()) }
         }
     }
 
     @objc func onCustomFilterSubscriptionUrlReceived(notification: Notification) {
-        if let url: String = self.eventBus.parseNotification(notification) {
-            self.runAsyncIfStarted { [weak self] in
-                self?.filtersCallbacks.onCustomFiltersSubscribe(StringValue(url))
-            }
+        guard let url: String = self.eventBus.parseNotification(notification) else {
+            return
+        }
+
+        self.runOnMainActorIfStarted { `self` in
+            self.deliverToSettings(self.filtersCallbacks) { $0.onCustomFiltersSubscribe(StringValue(url)) }
         }
     }
 
@@ -228,31 +247,37 @@ final class SciterCallbackServiceImpl: RestartableServiceBase, SciterCallbackSer
     }
 
     @objc func onApplicationVersionStatusResolved(notification: Notification) {
-        if let available: Bool = self.eventBus.parseNotification(notification) {
-            self.runAsyncIfStarted { [weak self] in
-                self?.trayCallbacks.onApplicationVersionStatusResolved(BoolValue(available))
-                self?.settingsCallbacks.onApplicationVersionStatusResolved(BoolValue(available))
-            }
+        guard let available: Bool = self.eventBus.parseNotification(notification) else {
+            return
+        }
+
+        let value = BoolValue(available)
+        self.runOnMainActorIfStarted { `self` in
+            self.deliverToTray(self.trayCallbacks) { $0.onApplicationVersionStatusResolved(value) }
+            self.deliverToSettings(self.settingsCallbacks) { $0.onApplicationVersionStatusResolved(value) }
         }
     }
 
     @objc func onHardwareAccelerationChanged(notification: Notification) {
-        if let value: Bool = self.eventBus.parseNotification(notification) {
-            self.runAsyncIfStarted { [weak self] in
-                self?.settingsCallbacks.onHardwareAccelerationChange(BoolValue(value))
-            }
+        guard let value: Bool = self.eventBus.parseNotification(notification) else {
+            return
+        }
+
+        self.runOnMainActorIfStarted { `self` in
+            self.deliverToSettings(self.settingsCallbacks) { $0.onHardwareAccelerationChange(BoolValue(value)) }
         }
     }
 
     @objc func onEffectiveThemeChanged(notification: Notification) {
-        if let incomingTheme: Theme = self.eventBus.parseNotification(notification) {
-            self.runAsyncIfStarted { [weak self] in
-                Task {
-                    let theme = await MainActor.run { EffectiveThemeValue.resolve(incomingTheme) }
-                    self?.trayCallbacks.onEffectiveThemeChanged(theme)
-                    self?.settingsCallbacks.onEffectiveThemeChanged(theme)
-                }
-            }
+        guard let incomingTheme: Theme = self.eventBus.parseNotification(notification) else {
+            return
+        }
+
+        self.runOnMainActorIfStarted { `self` in
+            // `EffectiveThemeValue.resolve` is `@MainActor`; this runs on the main actor.
+            let theme = EffectiveThemeValue.resolve(incomingTheme)
+            self.deliverToTray(self.trayCallbacks) { $0.onEffectiveThemeChanged(theme) }
+            self.deliverToSettings(self.settingsCallbacks) { $0.onEffectiveThemeChanged(theme) }
         }
     }
 
@@ -270,6 +295,39 @@ final class SciterCallbackServiceImpl: RestartableServiceBase, SciterCallbackSer
         Task {
             completion()
         }
+    }
+
+    /// Like `runAsyncIfStarted`, but on the main actor.
+    /// The target window's visibility is checked before DOM-mutating delivery (`AG-56368`).
+    /// Captures `self` weakly and passes a strong reference to `action`.
+    /// Supports `async` actions; see `deliverToSettings` / `deliverToTray`.
+    private func runOnMainActorIfStarted(_ action: @MainActor @escaping (SciterCallbackServiceImpl) async -> Void) {
+        guard self.isStarted else {
+            LogDebug("Service not started, ignoring")
+            return
+        }
+
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            await action(self)
+        }
+    }
+
+    /// Delivers `delivery(service)` to the settings window only when visible.
+    /// Hidden Sciter windows skip idle, so queued DOM work crashes on show (`AG-56368`).
+    /// Recovered on show via `SettingsCallbackServiceInternal.OnWindowDidBecomeMain`.
+    @MainActor
+    private func deliverToSettings<T>(_ service: T, _ delivery: (T) -> Void) {
+        guard !self.isSettingsHidden() else { return }
+        delivery(service)
+    }
+
+    /// Tray-window counterpart of `deliverToSettings` (`AG-56368`).
+    /// Recovered on show via `TrayCallbackServiceInternal.OnTrayWindowVisibilityChange`.
+    @MainActor
+    private func deliverToTray<T>(_ service: T, _ delivery: (T) -> Void) {
+        guard !self.isTrayHidden() else { return }
+        delivery(service)
     }
 
     private func subscribe(selector: Selector, event: Event) {

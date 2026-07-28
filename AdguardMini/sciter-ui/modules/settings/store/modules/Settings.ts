@@ -84,6 +84,13 @@ export class Settings {
     }
 
     /**
+     * Updates settings
+     */
+    private commitSettings(data: SettingsEnt) {
+        this.setSettings(new SettingsEnt(data));
+    }
+
+    /**
      * Setter for login item state
      */
     public setLoginItem(state: boolean) {
@@ -388,19 +395,13 @@ export class Settings {
     }
 
     /**
-     * Updates settings
-     */
-    private commitSettings(data: SettingsEnt) {
-        this.setSettings(new SettingsEnt(data));
-    }
-
-    /**
      * private setter
      */
     public setSettings(data: SettingsEnt) {
         this.settings = data;
         updateLanguage(data.language);
         log.setLogLevel(data.debugLogging ? LogLevel.DBG : LogLevel.ERR);
+        this.loginItemEnabled = data.loginItemEnabled;
 
         if (data.has_user_rules_editor_geometry) {
             const geo = data.userRulesEditorGeometry;

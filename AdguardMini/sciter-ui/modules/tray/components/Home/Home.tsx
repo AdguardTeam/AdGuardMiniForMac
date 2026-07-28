@@ -15,7 +15,7 @@ import theme from 'Theme';
 import { useTheme, useTrayStore } from 'TrayLib/hooks';
 import { TrayEvent, TrayRoute } from 'TrayStore/modules';
 import { Loader, Logo, Button, Text, Switch } from 'UILib';
-import { isDarkColorTheme } from 'Utils/colorThemes';
+import { applyThemeAttribute, isDarkColorTheme } from 'Utils/colorThemes';
 
 import { StoryNavigation } from '../../modules/stories/classes';
 import { StoriesLayer, StoryCard } from '../../modules/stories/components';
@@ -226,17 +226,12 @@ function HomeComponent() {
         });
     }, [closeStories]);
 
-    const rafRef = useRef<number | null>(null);
     useTheme((th) => {
-        // We have to change theme attribute in next frame to fix bug with no rerender from sciter
-        // This probably happens because sciter doesn't see changes in theme attribute
-        // TODO: AG-51217 remove this when sciter will be fixed
-        if (rafRef.current != null) {
-            cancelAnimationFrame(rafRef.current);
-        }
-        rafRef.current = requestAnimationFrame(() => {
-            document.documentElement.setAttribute('theme', th);
-        });
+        // AG-51217: Sciter does not reliably restyle elements when the theme
+        // attribute is changed synchronously during layout effects. The
+        // `applyThemeAttribute` helper defers the change to the next
+        // animation frame so that `drop_styles` reaches all elements.
+        applyThemeAttribute(th);
         setIsDarkTheme(isDarkColorTheme(th));
     });
 
@@ -263,6 +258,7 @@ function HomeComponent() {
                 link: (text: string) => {
                     return (
                         <div
+                            className={s.Home_link}
                             onClick={() => {
                                 telemetry.trackEvent(TrayEvent.FixItClick);
                                 openSafariPreferences();
@@ -277,7 +273,7 @@ function HomeComponent() {
 
         if (allExtensionsDisabled) {
             return translate('tray.home.title.protection.extensions.all.disabled', {
-                link: (text: string) => (<div onClick={openSafariPreferences}>{text}</div>),
+                link: (text: string) => (<div className={s.Home_link} onClick={openSafariPreferences}>{text}</div>),
             });
         }
     };

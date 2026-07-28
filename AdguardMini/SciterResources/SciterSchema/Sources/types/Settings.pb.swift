@@ -398,6 +398,11 @@ public struct Settings: @unchecked Sendable {
     set {_uniqueStorage()._lastUpdateMoreSevenDays = newValue}
   }
 
+  public var loginItemEnabled: Bool {
+    get {return _storage._loginItemEnabled}
+    set {_uniqueStorage()._loginItemEnabled = newValue}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -463,6 +468,8 @@ public struct GlobalSettings: Sendable {
   public var theme: Theme = .unknown
 
   public var lastFiltersUpdateTimestampMs: Int64 = 0
+
+  public var loginItemEnabled: Bool = false
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -700,7 +707,7 @@ extension WindowGeometry: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
 
 extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "Settings"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{3}real_time_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0\u{3}user_rules_editor_geometry\0\u{3}show_safari_toolbar_badge\0\u{3}last_update_more_seven_days\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{3}real_time_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0\u{3}user_rules_editor_geometry\0\u{3}show_safari_toolbar_badge\0\u{3}last_update_more_seven_days\0\u{3}login_item_enabled\0")
 
   fileprivate class _StorageClass {
     var _launchOnStartup: Bool = false
@@ -718,6 +725,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     var _userRulesEditorGeometry: WindowGeometry? = nil
     var _showSafariToolbarBadge: Bool = false
     var _lastUpdateMoreSevenDays: Bool = false
+    var _loginItemEnabled: Bool = false
 
       // This property is used as the initial default value for new instances of the type.
       // The type itself is protecting the reference to its storage via CoW semantics.
@@ -743,6 +751,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       _userRulesEditorGeometry = source._userRulesEditorGeometry
       _showSafariToolbarBadge = source._showSafariToolbarBadge
       _lastUpdateMoreSevenDays = source._lastUpdateMoreSevenDays
+      _loginItemEnabled = source._loginItemEnabled
     }
   }
 
@@ -776,6 +785,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         case 13: try { try decoder.decodeSingularMessageField(value: &_storage._userRulesEditorGeometry) }()
         case 14: try { try decoder.decodeSingularBoolField(value: &_storage._showSafariToolbarBadge) }()
         case 15: try { try decoder.decodeSingularBoolField(value: &_storage._lastUpdateMoreSevenDays) }()
+        case 16: try { try decoder.decodeSingularBoolField(value: &_storage._loginItemEnabled) }()
         default: break
         }
       }
@@ -833,6 +843,9 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       if _storage._lastUpdateMoreSevenDays != false {
         try visitor.visitSingularBoolField(value: _storage._lastUpdateMoreSevenDays, fieldNumber: 15)
       }
+      if _storage._loginItemEnabled != false {
+        try visitor.visitSingularBoolField(value: _storage._loginItemEnabled, fieldNumber: 16)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -857,6 +870,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         if _storage._userRulesEditorGeometry != rhs_storage._userRulesEditorGeometry {return false}
         if _storage._showSafariToolbarBadge != rhs_storage._showSafariToolbarBadge {return false}
         if _storage._lastUpdateMoreSevenDays != rhs_storage._lastUpdateMoreSevenDays {return false}
+        if _storage._loginItemEnabled != rhs_storage._loginItemEnabled {return false}
         return true
       }
       if !storagesAreEqual {return false}
@@ -963,7 +977,7 @@ extension ImportStatus: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
 
 extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "GlobalSettings"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}enabled\0\u{2}\u{2}newVersionAvailable\0\u{1}releaseVariant\0\u{1}language\0\u{3}debug_logging\0\u{4}\u{2}allow_telemetry\0\u{1}theme\0\u{3}last_filters_update_timestamp_ms\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}enabled\0\u{2}\u{2}newVersionAvailable\0\u{1}releaseVariant\0\u{1}language\0\u{3}debug_logging\0\u{4}\u{2}allow_telemetry\0\u{1}theme\0\u{3}last_filters_update_timestamp_ms\0\u{3}login_item_enabled\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -979,6 +993,7 @@ extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       case 8: try { try decoder.decodeSingularBoolField(value: &self.allowTelemetry) }()
       case 9: try { try decoder.decodeSingularEnumField(value: &self.theme) }()
       case 10: try { try decoder.decodeSingularInt64Field(value: &self.lastFiltersUpdateTimestampMs) }()
+      case 11: try { try decoder.decodeSingularBoolField(value: &self.loginItemEnabled) }()
       default: break
       }
     }
@@ -1009,6 +1024,9 @@ extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if self.lastFiltersUpdateTimestampMs != 0 {
       try visitor.visitSingularInt64Field(value: self.lastFiltersUpdateTimestampMs, fieldNumber: 10)
     }
+    if self.loginItemEnabled != false {
+      try visitor.visitSingularBoolField(value: self.loginItemEnabled, fieldNumber: 11)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -1021,6 +1039,7 @@ extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if lhs.allowTelemetry != rhs.allowTelemetry {return false}
     if lhs.theme != rhs.theme {return false}
     if lhs.lastFiltersUpdateTimestampMs != rhs.lastFiltersUpdateTimestampMs {return false}
+    if lhs.loginItemEnabled != rhs.loginItemEnabled {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

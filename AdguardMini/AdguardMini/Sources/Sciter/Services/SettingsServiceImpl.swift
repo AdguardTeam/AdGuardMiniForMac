@@ -40,7 +40,8 @@ extension Sciter.SettingsServiceImpl:
     StatisticsServiceDependent,
     SciterAppControllerDependent,
     AppLifecycleServiceDependent,
-    AppMetadataDependent {}
+    AppMetadataDependent,
+    HealthCheckAttentionProviderDependent {}
 
 extension Sciter {
     final class SettingsServiceImpl: SettingsService.ServiceType {
@@ -58,6 +59,7 @@ extension Sciter {
         var sciterAppController: SciterAppsController!
         var appLifecycleService: AppLifecycleService!
         var appMetadata: AppMetadata!
+        var healthCheckAttentionProvider: HealthCheckAttentionProvider!
 
         override init() {
             super.init()
@@ -161,7 +163,8 @@ extension Sciter {
                 releaseVariant: ProductInfo.releaseVariant,
                 language: Locales.navigatorLang,
                 allowTelemetry: self.userSettingsService.allowTelemetry,
-                lastUpdateMoreSevenDays: timeSinceLastFiltersUpdate > Constants.noUpdatesThreshold
+                lastUpdateMoreSevenDays: timeSinceLastFiltersUpdate > Constants.noUpdatesThreshold,
+                loginItemEnabled: !self.healthCheckAttentionProvider.hasLoginItemDisabled()
             )
 
             if let geometry = self.userSettingsService.userRulesEditorGeometry {
@@ -207,7 +210,8 @@ extension Sciter {
                         releaseVariant: ProductInfo.releaseVariant,
                         language: Locales.navigatorLang,
                         allowTelemetry: self.userSettingsService.allowTelemetry,
-                        lastUpdateMoreSevenDays: false
+                        lastUpdateMoreSevenDays: false,
+                        loginItemEnabled: !self.healthCheckAttentionProvider.hasLoginItemDisabled()
                     )
                 )
             }
@@ -227,6 +231,7 @@ extension Sciter {
                     lastFiltersUpdateTimestampMs: Int64(
                         max(0, self.userSettingsService.lastFiltersUpdateTime.timeIntervalSince1970 * 1000)
                     ),
+                    loginItemEnabled: !self.healthCheckAttentionProvider.hasLoginItemDisabled()
                 )
                 promise(traySettings)
             }

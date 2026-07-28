@@ -44,3 +44,15 @@ input[type="number"] {
 p, h1, h2, h3, h4, h5, h6 {
     overflow-wrap: break-word;
 }
+/*
+    7. Translator-generated inline elements (b, i, strong, s, tt) must inherit
+    the text color from their parent. Sciter applies its built-in default color
+    for these elements with a delay, so without this rule they render with the
+    initial (black) color on the first paint and only pick up the themed color
+    after a re-layout (for example, on click or navigation). This affects
+    localized strings that use markup, such as the health check cards and the
+    login item modal descriptions.
+*/
+b, i, strong, s, tt {
+    color: inherit;
+}

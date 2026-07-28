@@ -59,6 +59,10 @@ protocol SafariExtensionStatusManagerDependent: ServiceDependent {
     var safariExtensionStatusManager: SafariExtensionStatusManager! { get set }
 }
 
+protocol HealthCheckAttentionProviderDependent: ServiceDependent {
+    var healthCheckAttentionProvider: HealthCheckAttentionProvider! { get set }
+}
+
 protocol UrlSchemesProcessorDependent: ServiceDependent {
     var urlSchemesProcessorInjector: (() -> UrlSchemesProcessor)! { get set }
     var urlSchemesProcessor: UrlSchemesProcessor { get }

@@ -13,15 +13,16 @@ import {
     NotificationsQueueType,
     NotificationsQueueVariant,
 } from 'SettingsStore/modules/NotificationsQueue';
+import { applyThemeAttribute } from 'Utils/colorThemes';
 
 import { ActivationFlowStatusController } from '../ActivationFlow';
+import { EnableExtensionsController } from '../EnableExtensionsController';
 import { ErrorBoundary } from '../ErrorBoundary';
 import { MigrationFiltersConsentController } from '../MigrationFiltersConsentController';
 import { NotificationsRenderer } from '../NotificationsRenderer';
 import { PaywallController } from '../Paywall';
 import { Router } from '../Router';
 import { Tooltip } from '../Tooltip';
-import { EnableExtensionsController } from '../EnableExtensionsController';
 
 import './App.pcss';
 import {
@@ -60,7 +61,9 @@ function AppComponent() {
     }, []);
 
     useTheme((theme) => {
-        document.documentElement.setAttribute('theme', theme);
+        // AG-51217: defer theme change to next animation frame so Sciter's
+        // `drop_styles` reaches all elements (including translator-rendered).
+        applyThemeAttribute(theme);
         settingsStore.setColorTheme(theme);
     });
 
@@ -68,7 +71,7 @@ function AppComponent() {
         if (!settings.loginItemEnabled && currentPath !== RouteName.safari_protection) {
             notification.notify({
                 notificationContext: NotificationContext.ctaButton,
-                message: translate('login.item.modal.desc'),
+                message: translate('login.item.modal.desc', { b: (text: string) => <b className="loginItem">{text}</b> }),
                 type: NotificationsQueueType.warning,
                 iconType: NotificationsQueueIconType.error,
                 variant: NotificationsQueueVariant.textOnly,

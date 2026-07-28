@@ -10,6 +10,22 @@ import { SafariExtensionUpdate, EmptyValue, BoolValue, ImportStatus, ImportMode,
 const debouncedGroupedFilters = debounce(() => {
     store.filters.getFiltersGroupedByExtension();
 }, 100)
+
+/**
+ * Timestamp (ms) of the last heavy-data recovery run in `OnWindowDidBecomeMain`.
+ * That handler fires on every focus, but Swift only skips DOM-mutating callback
+ * delivery while the settings window is hidden (occluded). Full re-fetch is
+ * therefore only needed after the window was actually hidden — which, in the
+ * crash scenario, lasts far longer than a normal focus change. Gating the heavy
+ * re-fetches behind a time gap keeps rapid focus switches from each triggering
+ * a full data refresh, while a genuine hidden→visible transition (app
+ * backgrounded, device slept) reliably recovers. See `AG-56368`.
+ */
+let lastSettingsDataRecoveryMs = 0;
+
+/** Minimum gap before the heavy recovery re-fetches run again. */
+const SETTINGS_RECOVERY_GAP_MS = 60 * 1000;
+
 /* Service handles settings lists  */
 export class SettingsCallbackServiceInternal  implements ISettingsCallbackServiceInternal {
 async OnSafariExtensionUpdate(param: SafariExtensionUpdate): Promise<EmptyValue> {
@@ -65,6 +81,25 @@ async OnSafariExtensionUpdate(param: SafariExtensionUpdate): Promise<EmptyValue>
     async OnWindowDidBecomeMain(param: EmptyValue) {
         store.settings.getSafariExtensions();
         store.settings.getSettings();
+        // Re-fetch user rules on open. Their change callback is skipped while
+        // the settings window is hidden (AG-56368); refresh to avoid stale rules.
+        store.userRules.getUserRules();
+        // Recover data for the other DOM-mutating callbacks gated while hidden
+        // (license, filters, advanced blocking, app/version). Mirrors
+        // `SettingsStore.init`. Throttled by `SETTINGS_RECOVERY_GAP_MS`: this
+        // handler runs on every focus, but the heavy refresh is only needed
+        // after the window was actually hidden (occluded), not on each focus.
+        if (Date.now() - lastSettingsDataRecoveryMs > SETTINGS_RECOVERY_GAP_MS) {
+            lastSettingsDataRecoveryMs = Date.now();
+            store.account.getLicense();
+            store.filters.getFilters();
+            store.filters.getEnabledFilters();
+            store.filters.getFiltersIndex();
+            store.filters.getFiltersGroupedByExtension();
+            store.advancedBlocking.getAdvancedBlocking();
+            store.appInfo.getAppInfo();
+            store.appInfo.checkApplicationVersion();
+        }
         // On first open status will change from 'notShown' to 'show', needed label will be shown only once on opening
         store.ui.tryShowProblemLabel();
         return new EmptyValue();

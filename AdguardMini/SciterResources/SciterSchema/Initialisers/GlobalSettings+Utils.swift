@@ -19,7 +19,8 @@ extension GlobalSettings {
         debugLogging: Bool = false,
         allowTelemetry: Bool = false,
         theme: Theme,
-        lastFiltersUpdateTimestampMs: Int64 = 0
+        lastFiltersUpdateTimestampMs: Int64 = 0,
+        loginItemEnabled: Bool = false
     ) {
         self.init()
         self.enabled = enabled
@@ -30,5 +31,6 @@ extension GlobalSettings {
         self.allowTelemetry = allowTelemetry
         self.theme = theme
         self.lastFiltersUpdateTimestampMs = lastFiltersUpdateTimestampMs
+        self.loginItemEnabled = loginItemEnabled
     }
 }

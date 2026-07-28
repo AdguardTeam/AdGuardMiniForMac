@@ -66,6 +66,8 @@ extension ServiceLocator {
             .safariExtensionStateService = self.safariExtensionStateService
         (client as? SafariExtensionStatusManagerDependent)?
             .safariExtensionStatusManager = self.safariExtensionStatusManager
+        (client as? HealthCheckAttentionProviderDependent)?
+            .healthCheckAttentionProvider = self.healthCheckAttentionProvider
 
         #if MAS
         (client as? AppStoreRateUsDependent)?.appStoreRateUs = self.appStoreRateUs
@@ -369,6 +371,12 @@ private final class ServiceLocator {
             userRulesCallbacksGetter: self.sciterAppLocator.settingsApp.app.callback(UserRulesCallbackService.self),
             filtersCallbacksGetter: self.sciterAppLocator.settingsApp.app.callback(FiltersCallbackService.self),
             licenseStateProvider: self.licenseStateProvider,
+            isSettingsHidden: { [sciterAppLocator] in
+                sciterAppLocator.settingsApp.isAppHidden()
+            },
+            isTrayHidden: { [sciterAppLocator] in
+                sciterAppLocator.trayApp.isAppHidden()
+            },
             eventBus: self.eventBus
         )
     }()

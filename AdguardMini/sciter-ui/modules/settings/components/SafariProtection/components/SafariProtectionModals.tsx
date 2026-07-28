@@ -58,6 +58,7 @@ export function SafariProtectionModalsComponent({
                 <Modal
                     cancel={false}
                     description={translate('login.item.modal.desc')}
+                    size="large"
                     submitAction={openLoginItemsSettings}
                     submitClassName={theme.button.greenSubmit}
                     submitText={translate('login.item.open.settings')}
