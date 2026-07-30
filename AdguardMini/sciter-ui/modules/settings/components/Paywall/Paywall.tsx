@@ -112,7 +112,7 @@ function PaywallComponent() {
                     onClick={() => account.closePaywall()}
                 />
                 {showOffer && !isRightSide && (
-                    <>
+                    <div className={s.Paywall_offer_wrapper}>
                         <div className={s.Paywall_offer}>
                             <Text
                                 className={s.Paywall_offer_text}
@@ -129,10 +129,12 @@ function PaywallComponent() {
                                 {offer.subtitle}
                             </Text>
                         </div>
-                        <svg className={s.Paywall_offer_line} fill="none" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1.20703 0.5L18.707 18V0.5H1.20703Z" fill="var(--fills-notifications-orange-default)" stroke="var(--stroke-icons-attention-icon-default)" />
-                        </svg>
-                    </>
+                        <div className={s.Paywall_offer_line}>
+                            <svg fill="none" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1.20703 0.5L18.707 18V0.5H1.20703Z" fill="var(--fills-notifications-orange-default)" stroke="var(--stroke-icons-attention-icon-default)" />
+                            </svg>
+                        </div>
+                    </div>
                 )}
                 <div className={cx(
                     s.Paywall_container,

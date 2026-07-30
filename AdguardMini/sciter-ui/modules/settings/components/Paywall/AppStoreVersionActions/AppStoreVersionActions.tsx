@@ -67,9 +67,9 @@ function AppStoreVersionActionsComponent() {
     let sendTelemetryOnClick = () => {
         telemetry.layersRelay.trackEvent(SettingsEvent.SubscribeSellingScreenClick);
     };
-    let buttonTitle = translate('settings.paywall.subscribe');
 
-    if (trialAvailableDays > 0) {
+    let buttonTitle = translate('settings.paywall.subscribe');
+    if (trialAvailableDays > 0 && !appStoreSubscriptions?.result?.promoInfo) {
         buttonTitle = translate.plural('settings.paywall.try.for.free', trialAvailableDays, provideTrialDaysParam(trialAvailableDays));
         sendTelemetryOnClick = () => {
             telemetry.layersRelay.trackEvent(SettingsEvent.Try14SellingScreenClick);
@@ -113,19 +113,22 @@ function AppStoreVersionActionsComponent() {
                     <Text lineHeight="none" type="t1">
                         {buttonTitle}
                     </Text>
-                    {trialAvailableDays > 0 && appStoreSubscriptions?.result && (
-                        <Text lineHeight="none" type="t3">
-                            {currentSelectedPlan === AppStoreSubscription.annual
-                                ? translate('settings.paywall.trial.then.yearly', {
-                                    currencyAndPrice: appStoreSubscriptions.result.annual?.introOfferDisplayPrice
-                                        || appStoreSubscriptions.result.annual?.displayPrice,
-                                })
-                                : translate('settings.paywall.trial.then.monthly', {
-                                    currencyAndPrice: appStoreSubscriptions.result.monthly?.introOfferDisplayPrice
-                                        || appStoreSubscriptions.result.monthly?.displayPrice,
-                                })}
-                        </Text>
-                    )}
+                    {!appStoreSubscriptions?.result?.promoInfo
+                        && trialAvailableDays > 0
+                        && appStoreSubscriptions?.result
+                        && (
+                            <Text lineHeight="none" type="t3">
+                                {currentSelectedPlan === AppStoreSubscription.annual
+                                    ? translate('settings.paywall.trial.then.yearly', {
+                                        currencyAndPrice: appStoreSubscriptions.result.annual?.introOfferDisplayPrice
+                                            || appStoreSubscriptions.result.annual?.displayPrice,
+                                    })
+                                    : translate('settings.paywall.trial.then.monthly', {
+                                        currencyAndPrice: appStoreSubscriptions.result.monthly?.introOfferDisplayPrice
+                                            || appStoreSubscriptions.result.monthly?.displayPrice,
+                                    })}
+                            </Text>
+                        )}
                 </Button>
             )}
         </div>

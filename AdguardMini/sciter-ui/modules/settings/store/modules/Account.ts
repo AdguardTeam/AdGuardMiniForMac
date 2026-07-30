@@ -392,6 +392,7 @@ export class Account {
      * Receive app store subscriptions info
      */
     public async getSubscriptionsInfo() {
+        await this.getTrialAvailability();
         const result = await window.API.Execute(new GetSubscriptionsInfoRequest());
 
         this.setSubscriptionsInfo(result);

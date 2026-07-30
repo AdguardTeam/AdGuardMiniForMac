@@ -137,7 +137,14 @@ function PerksOfTheFullVersionComponent({
         },
     ];
 
-    const { trialAvailableDays, isTrialActive, isLicenseExpired, isAppStoreSubscription, isFreeware } = account;
+    const {
+        trialAvailableDays,
+        isTrialActive,
+        isLicenseExpired,
+        isAppStoreSubscription,
+        isFreeware,
+        appStoreSubscriptions,
+    } = account;
 
     const renderTitle = () => {
         return (
@@ -170,7 +177,7 @@ function PerksOfTheFullVersionComponent({
     const renderButton = () => {
         const renderLabel = () => {
             if (isMASReleaseVariant) {
-                if (trialAvailableDays > 0 && !isTrialActive) {
+                if (trialAvailableDays > 0 && !isTrialActive && !appStoreSubscriptions?.result?.promoInfo) {
                     return translate.plural('license.try.for.free', trialAvailableDays, provideTrialDaysParam(trialAvailableDays));
                 }
 

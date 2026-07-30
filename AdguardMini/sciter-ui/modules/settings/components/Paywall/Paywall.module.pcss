@@ -100,6 +100,13 @@ html:theme(light) {
         max-width: 370px;
     }
 
+    &_offer_wrapper {
+        position: absolute;
+        top: 52px;
+        left: 430px;
+        flow: vertical;
+    }
+
     &_offer {
         border-radius: 6px;
         border: 1px solid var(--stroke-icons-attention-icon-default);
@@ -107,18 +114,14 @@ html:theme(light) {
         padding: 10px 12px;
         color: var(--text-main-text-main-default);
 
-        position: absolute;
-        top: 52px;
-        left: 437px;
-
         &_text {
             margin-bottom: 4px;
         }
 
         &_line {
-            position: absolute;
-            left: 555px;
-            top: 115px;
+            width: 20px;
+            margin-left: *;
+            margin-right: 10px;
         }
     }
 

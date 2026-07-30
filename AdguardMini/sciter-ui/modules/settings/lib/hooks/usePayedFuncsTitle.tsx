@@ -25,7 +25,7 @@ export function usePayedFuncsTitle(
     textClassName?: string,
 ) {
     const { account, settings, telemetry } = useSettingsStore();
-    const { isLicenseOrTrialActive, trialAvailableDays } = account;
+    const { isLicenseOrTrialActive, trialAvailableDays, appStoreSubscriptions } = account;
     const { isMASReleaseVariant } = settings;
 
     const renderShowPaywallBtn = (text: string) => (
@@ -48,7 +48,7 @@ export function usePayedFuncsTitle(
     const renderDescription = () => {
         const params = { btn: renderShowPaywallBtn };
 
-        if (trialAvailableDays > 0) {
+        if (!(isMASReleaseVariant && appStoreSubscriptions?.result?.promoInfo) && trialAvailableDays > 0) {
             return translate('advanced.blocking.extra.try', params);
         }
 
