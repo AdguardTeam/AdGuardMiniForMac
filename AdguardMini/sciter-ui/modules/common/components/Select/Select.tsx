@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { KEYBOARD_CODES } from '@adg/sciter-utils-kit';
-import { useRef, useEffect } from 'preact/hooks';
+import { KEYBOARD_CODES, useClickOutside } from '@adg/sciter-utils-kit';
+import { useRef, useEffect, useState, useCallback } from 'preact/hooks';
 
 import { Text, Icon } from 'UILib';
 
@@ -37,6 +37,9 @@ export function Select<T,>({
     label,
 }: SelectProps<T>) {
     const ref = useRef<HTMLSelectElement>(null);
+    const [isOpen, setIsOpen] = useState(false);
+    const closeDropdown = useCallback(() => setIsOpen(false), []);
+    useClickOutside(ref, closeDropdown);
     useEffect(() => {
         const handleChange = (e: Event) => {
             if (typeof currentValue === 'number') {
@@ -44,6 +47,7 @@ export function Select<T,>({
             } else {
                 onChange((e.target as HTMLSelectElement).value as unknown as T);
             }
+            setIsOpen(false);
         };
         const selectElement = ref.current;
         if (selectElement) {
@@ -84,9 +88,10 @@ export function Select<T,>({
                 </label>
             )}
             <div
-                className={cx('select_wrapper', className)}
+                className={cx('select_wrapper', isOpen && 'select_wrapper__active', className)}
                 onClick={(e) => {
                     e.stopPropagation();
+                    setIsOpen(!isOpen);
                     ref.current?.click();
                 }}
             >
@@ -98,6 +103,7 @@ export function Select<T,>({
                     value={String(currentValue)}
                     onClick={(e) => {
                         e.stopPropagation();
+                        setIsOpen(!isOpen);
                     }}
                     onKeyDown={(e) => {
                         if (e.code === KEYBOARD_CODES.enter && ref.current) {

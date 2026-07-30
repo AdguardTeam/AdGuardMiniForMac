@@ -8,10 +8,14 @@
     border-radius: 8px;
     flow: horizontal;
     cursor: pointer;
-    border: 1px solid var(--stroke-inputs-active-input-stroke-default);
+    border: 1px solid var(--stroke-inputs-inactive-input-stroke-default);
     background-color: var(--fills-inputs-input-background-default);
     box-sizing: content-box;
     padding: 12px var(--m-s);
+
+    &__active {
+        border-color: var(--stroke-inputs-active-input-stroke-default);
+    }
 }
 
 .select_check {
