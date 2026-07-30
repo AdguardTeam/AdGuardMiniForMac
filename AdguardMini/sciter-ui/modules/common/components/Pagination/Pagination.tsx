@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { isString } from '@adg/sciter-utils-kit';
-import { useMemo } from 'preact/hooks';
 
 import { Icon } from 'UILib';
 
@@ -54,28 +53,26 @@ export function Pagination({
 }: PaginationProps) {
     const isFirstPage = currentPage === 1;
     const isLastPage = currentPage === pageCount;
-    const pagination = useMemo(
-        () => generatePagination(currentPage, pageCount, 7),
-        [currentPage, pageCount],
-    );
+    const pagination = generatePagination(currentPage, pageCount, 7);
 
     return (
-        <ul className={cx(s.Pagination, className)}>
+        <ul key={currentPage} className={cx(s.Pagination, className)}>
             <PaginationItem
+                key="arrow-left"
                 disabled={isFirstPage}
                 isArrow
                 onClick={isFirstPage ? undefined : () => onChangePage(currentPage - 1)}
             >
                 <Icon className={s.Pagination_arrowLeft} icon="arrow_left" small />
             </PaginationItem>
-            {pagination.map((paginationItem: string | number) => {
+            {pagination.map((paginationItem: string | number, index: number) => {
                 const active = paginationItem === currentPage;
                 const isEllipsis = isString(paginationItem);
                 const handleClick = (isEllipsis || active) ? undefined : () => onChangePage(paginationItem);
 
                 return (
                     <PaginationItem
-                        key={paginationItem}
+                        key={index}
                         active={active}
                         isEllipsis={isEllipsis}
                         onClick={handleClick}
@@ -85,6 +82,7 @@ export function Pagination({
                 );
             })}
             <PaginationItem
+                key="arrow-right"
                 disabled={isLastPage}
                 isArrow
                 onClick={isLastPage ? undefined : () => onChangePage(currentPage + 1)}
