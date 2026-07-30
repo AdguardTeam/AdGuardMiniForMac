@@ -21,6 +21,26 @@ public protocol AdvancedBlockingServiceProtocol
 	func updateRealTimeFiltersUpdate (
 						_ message: BoolValue,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void
+	/// Get URLFilter state
+	func getURLFilterState (
+						_ message: EmptyValue,
+						_ promise: @escaping (URLFilterState) -> Void) -> Void
+	/// Mark URLFilter installation as requested
+	func markURLFilterInstallRequested (
+						_ message: EmptyValue,
+						_ promise: @escaping (EmptyValue) -> Void) -> Void
+	/// Reset URLFilter prefilter cache
+	func resetURLFilterCache (
+						_ message: EmptyValue,
+						_ promise: @escaping (EmptyValue) -> Void) -> Void
+	/// Remove URLFilter configuration
+	func removeURLFilter (
+						_ message: EmptyValue,
+						_ promise: @escaping (EmptyValue) -> Void) -> Void
+	/// Update URLFilter configuration
+	func updateURLFilterConfiguration (
+						_ message: URLFilterConfiguration,
+						_ promise: @escaping (EmptyValue) -> Void) -> Void
 }
 
 // MARK: Protobuf Bridge definition
@@ -63,6 +83,66 @@ open class AdvancedBlockingService: SciterBridge
 			inputType: BoolValue.self,
 			outputType: EmptyValue.self,
 			method: cast.updateRealTimeFiltersUpdate(_:_:),
+			message,
+			promise
+		)
+	}
+
+	/// Wrapper for `GetURLFilterState`
+	@objc func GetURLFilterState(_ message: Data, promise: @escaping (Data) -> Void)
+	{
+		swiftCall(
+			inputType: EmptyValue.self,
+			outputType: URLFilterState.self,
+			method: cast.getURLFilterState(_:_:),
+			message,
+			promise
+		)
+	}
+
+	/// Wrapper for `MarkURLFilterInstallRequested`
+	@objc func MarkURLFilterInstallRequested(_ message: Data, promise: @escaping (Data) -> Void)
+	{
+		swiftCall(
+			inputType: EmptyValue.self,
+			outputType: EmptyValue.self,
+			method: cast.markURLFilterInstallRequested(_:_:),
+			message,
+			promise
+		)
+	}
+
+	/// Wrapper for `ResetURLFilterCache`
+	@objc func ResetURLFilterCache(_ message: Data, promise: @escaping (Data) -> Void)
+	{
+		swiftCall(
+			inputType: EmptyValue.self,
+			outputType: EmptyValue.self,
+			method: cast.resetURLFilterCache(_:_:),
+			message,
+			promise
+		)
+	}
+
+	/// Wrapper for `RemoveURLFilter`
+	@objc func RemoveURLFilter(_ message: Data, promise: @escaping (Data) -> Void)
+	{
+		swiftCall(
+			inputType: EmptyValue.self,
+			outputType: EmptyValue.self,
+			method: cast.removeURLFilter(_:_:),
+			message,
+			promise
+		)
+	}
+
+	/// Wrapper for `UpdateURLFilterConfiguration`
+	@objc func UpdateURLFilterConfiguration(_ message: Data, promise: @escaping (Data) -> Void)
+	{
+		swiftCall(
+			inputType: URLFilterConfiguration.self,
+			outputType: EmptyValue.self,
+			method: cast.updateURLFilterConfiguration(_:_:),
 			message,
 			promise
 		)

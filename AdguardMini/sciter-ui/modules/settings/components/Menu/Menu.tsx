@@ -19,7 +19,10 @@ import s from './Menu.module.pcss';
  * Main menu in settings app
  */
 function MenuComponent() {
-    const { account, settings, telemetry } = useSettingsStore();
+    const { account, settings, telemetry, advancedBlocking } = useSettingsStore();
+    const {
+        isNew: isSystemWideProtectionNew,
+    } = advancedBlocking.urlFilterState.configuration;
 
     const {
         isFreeware,
@@ -71,8 +74,9 @@ function MenuComponent() {
                 />
                 <MenuItem
                     icon="advanced"
+                    isNew={isSystemWideProtectionNew}
                     route={RouteName.advanced_blocking}
-                    title={translate('menu.advanced.blocking.AG_51019_advanced_settings')}
+                    title={translate('menu.advanced.blocking.title')}
                 />
                 <div className={s.Menu_menuItems_delimiter}>
                     <Text type="t3">{translate('menu.delimiter.custom')}</Text>

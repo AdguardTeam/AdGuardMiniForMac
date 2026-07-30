@@ -22,6 +22,7 @@ import { SafariProtection } from '../SafariProtection';
 import { Settings } from '../Settings';
 import { Support } from '../Support';
 import { SupportContact } from '../SupportContact';
+import { SystemWideProtection } from '../SystemWideProtection';
 import { Theme } from '../Theme';
 import { UserRule } from '../UserRule';
 import { UserRules } from '../UserRules';
@@ -79,6 +80,9 @@ function RouterComponent() {
             break;
         case RouteName.migration:
             component = <Migration />;
+            break;
+        case RouteName.system_wide_protection:
+            component = <SystemWideProtection />;
             break;
     }
 

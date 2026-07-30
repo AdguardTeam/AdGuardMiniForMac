@@ -11,6 +11,7 @@ import { AdBlockingSection } from './AdBlockingSection';
 import { AnnoyanceSection } from './AnnoyanceSection';
 import { HealthCheck } from './HealthCheck';
 import { OtherSection } from './OtherSection';
+import { Promo } from './Promo';
 import { SafariProtectionModals } from './SafariProtectionModals';
 import { SafariProtectionTitle } from './SafariProtectionTitle';
 import { TrackingSection } from './TrackingSection';
@@ -34,6 +35,7 @@ function SafariProtectionControlComponent() {
     return (
         <>
             <SafariProtectionTitle />
+            <Promo />
             <HealthCheck setShowConsent={setShowConsentFilterIds} />
             <AdBlockingSection />
             <TrackingSection />

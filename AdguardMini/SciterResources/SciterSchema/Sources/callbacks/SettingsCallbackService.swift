@@ -43,4 +43,8 @@ public class SettingsCallbackService: SwiftBridge
 	@discardableResult public func onSettingsWindowOpened (_ message: EmptyValue) -> EmptyValue {
 		return self.sciterCall(message, function: "SettingsCallbackService.OnSettingsWindowOpened")
 	}
+	/// Fires when URL filter state changed
+	@discardableResult public func onURLFilterStateChanged (_ message: URLFilterState) -> EmptyValue {
+		return self.sciterCall(message, function: "SettingsCallbackService.OnURLFilterStateChanged")
+	}
 }

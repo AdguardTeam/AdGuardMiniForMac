@@ -30,7 +30,7 @@ function AnnoyanceBlockingDisabledCardComponent({ setShowConsent }: AnnoyanceBlo
         safariProtection,
     } = useSettingsStore();
     const {
-        dissmissedHealthCheckCards,
+        dismissedHealthCheckCards,
         settings: { consentFiltersIds },
     } = settings;
     const { filtersIndex } = filters;
@@ -75,7 +75,7 @@ function AnnoyanceBlockingDisabledCardComponent({ setShowConsent }: AnnoyanceBlo
             )}
             title={translate('safari.protection.health.annoyance')}
             onClose={() => settings.updateHealthCheckDismissedCards([
-                ...dissmissedHealthCheckCards,
+                ...dismissedHealthCheckCards,
                 HealthCheckDismissId.AnnoyanceBlockingDisabled,
             ])}
         />

@@ -17,6 +17,7 @@ export type MenuItemProps = {
     route: RouteName;
     activeRoutes?: RouteName[];
     title: string;
+    isNew?: boolean;
 };
 
 /**
@@ -27,6 +28,7 @@ function MenuItemComponent({
     route,
     activeRoutes,
     title,
+    isNew,
 }: MenuItemProps) {
     const { router } = useSettingsStore();
     const { currentPath } = router;
@@ -38,6 +40,7 @@ function MenuItemComponent({
         >
             <Icon className={s.MenuItem_icon} icon={icon} />
             <Text className={s.MenuItem_text} lineHeight="none" semibold={active} type="t2">{title}</Text>
+            {isNew && <Icon className={s.MenuItem_iconNew} icon="bullet" />}
         </div>
     );
 }

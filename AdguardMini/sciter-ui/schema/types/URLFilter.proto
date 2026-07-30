@@ -25,6 +25,8 @@ enum URLFilterProtectionLevel {
 message URLFilterConfiguration {
     bool enabled = 1;
     URLFilterProtectionLevel protection_level = 2;
+    bool isNew = 3;
+    bool isPageNew = 4;
 }
 
 /* Read-only URL filter metadata. */

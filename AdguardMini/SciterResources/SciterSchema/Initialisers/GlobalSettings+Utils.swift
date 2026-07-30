@@ -21,7 +21,8 @@ extension GlobalSettings {
         theme: Theme,
         lastFiltersUpdateTimestampMs: Int64 = 0,
         hiddenStories: [String] = [],
-        loginItemEnabled: Bool = false
+        loginItemEnabled: Bool = false,
+        lastUpdateMoreSevenDays: Bool = false
     ) {
         self.init()
         self.enabled = enabled
@@ -34,5 +35,6 @@ extension GlobalSettings {
         self.lastFiltersUpdateTimestampMs = lastFiltersUpdateTimestampMs
         self.hiddenStories = hiddenStories
         self.loginItemEnabled = loginItemEnabled
+        self.lastUpdateMoreSevenDays = lastUpdateMoreSevenDays
     }
 }

@@ -1,234 +1,154 @@
 // SPDX-FileCopyrightText: AdGuard Software Limited
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
+import { makeObservable, computed, action } from 'mobx';
 
-import { makeAutoObservable, computed } from 'mobx';
+import { SafariProtectionData } from 'Common/stores/SafariProtectionData';
 
-import type { SettingsStore } from 'SettingsStore';
+import type { Filters } from './Filters';
 
 /**
- * SafariProtection store. Because settings in safari protection page depends on enable/disabled filters
- * all platform data received from Filters store, and action update also filter.
- * This store is excusably use enabled filters ids and filtersMap, that split filters to groups.
+ * Settings-only Safari Protection store.
+ *
+ * Extends the shared read-only {@link SafariProtectionData} with
+ * Settings-only mutation methods (`updateBlockAds`,
+ * `updateBlockSearchAds`, `updateBlockTrackers`, etc.) that toggle
+ * filter state on the platform via the full {@link Filters} store's
+ * `switchFiltersState` method.
  */
-export class SafariProtection {
-    public rootStore: SettingsStore;
-
+export class SafariProtection extends SafariProtectionData {
     /**
-     * Get all enabled filters Ids
+     * The full Filters store (cast from `SafariProtectionData.filters`
+     * for mutation-method access to `switchFiltersState`). Safe because
+     * `SafariProtection` is only constructed by `SettingsStore`, which
+     * always passes a full `Filters` instance.
      */
-    public get enabledFilters() {
-        return Array.from(this.rootStore.filters.enabledFilters);
-    }
-
-    /**
-     * Value for block ads
-     */
-    public get blockAds() {
-        const { recommendedFiltersByGroups, filtersIndex } = this.rootStore.filters;
-        const definedGroups = filtersIndex.definedGroups || {};
-        return !!recommendedFiltersByGroups[definedGroups.adBlocking]?.every(
-            (id) => this.enabledFilters.includes(id),
-        );
-    }
-
-    /**
-     * Value for search ads
-     */
-    public get blockSearchAds() {
-        const { filtersIndex } = this.rootStore.filters;
-        return !this.enabledFilters.includes(filtersIndex.unblockSearchAdsFilterId);
-    }
-
-    /**
-     * Value for language specific
-     */
-    public get languageSpecific() {
-        const { recommendedFiltersByGroups, filtersIndex } = this.rootStore.filters;
-        const definedGroups = filtersIndex.definedGroups || {};
-        return !!recommendedFiltersByGroups[definedGroups.languageSpecific]?.find(
-            (id) => this.enabledFilters.includes(id),
-        );
-    }
-
-    /**
-     * Value for block trackers
-     */
-    public get blockTrackers() {
-        const { recommendedFiltersByGroups, filtersIndex } = this.rootStore.filters;
-        const definedGroups = filtersIndex.definedGroups || {};
-        return !!recommendedFiltersByGroups[definedGroups.privacy]?.every(
-            (id) => this.enabledFilters.includes(id),
-        );
-    }
-
-    /**
-     * Value for block social buttons
-     */
-    public get blockSocialButtons() {
-        const { recommendedFiltersByGroups, filtersIndex } = this.rootStore.filters;
-        const definedGroups = filtersIndex.definedGroups || {};
-        return !!recommendedFiltersByGroups[definedGroups.socialWidgets]?.every(
-            (id) => this.enabledFilters.includes(id),
-        );
-    }
-
-    /**
-     * Value for block cookie notice
-     */
-    public get blockCookieNotice() {
-        const { filtersIndex } = this.rootStore.filters;
-        return this.enabledFilters.includes(filtersIndex.cookieNoticeFilterId);
-    }
-
-    /**
-     * Value for block pop ups
-     */
-    public get blockPopups() {
-        const { filtersIndex } = this.rootStore.filters;
-        return this.enabledFilters.includes(filtersIndex.popUpsFilterId);
-    }
-
-    /**
-     * Value for block widgets
-     */
-    public get blockWidgets() {
-        const { filtersIndex } = this.rootStore.filters;
-        return this.enabledFilters.includes(filtersIndex.widgetsFilterId);
-    }
-
-    /**
-     * Value for block other annoyance
-     */
-    public get blockOtherAnnoyance() {
-        const { filtersIndex } = this.rootStore.filters;
-        return this.enabledFilters.includes(filtersIndex.otherAnnoyanceFilterId);
-    }
-
-    /**
-     * Enabled custom filters count
-     */
-    public get enabledCustomFiltersCount() {
-        const { filters: { customFilters } } = this.rootStore.filters;
-        const enabledCustomFilters = customFilters.filter(({ enabled }) => enabled);
-        return enabledCustomFilters.length;
+    public get filtersStore(): Filters {
+        return this.filters as Filters;
     }
 
     /**
      * Ctor
      *
-     * @param rootStore
+     * @param filters Full Filters store instance (extends `FiltersData`).
      */
-    public constructor(rootStore: SettingsStore) {
-        this.rootStore = rootStore;
-        makeAutoObservable(this, {
-            rootStore: false,
-            enabledFilters: computed,
-            blockAds: computed,
-            blockSearchAds: computed,
-            languageSpecific: computed,
-            blockTrackers: computed,
-            blockSocialButtons: computed,
-            blockCookieNotice: computed,
-            blockPopups: computed,
-            blockWidgets: computed,
-            blockOtherAnnoyance: computed,
-        }, { autoBind: true });
+    public constructor(filters: Filters) {
+        super(filters);
+        makeObservable(this, {
+            filtersStore: computed,
+            updateBlockAds: action,
+            updateBlockSearchAds: action,
+            updateBlockTrackers: action,
+            updateBlockSocialButtons: action,
+            updateBlockCookieNotice: action,
+            updateBlockPopups: action,
+            updateBlockWidgets: action,
+            updateBlockOther: action,
+        });
     }
 
     /**
-     * Update blockAds in safari protection
+     * Update blockAds in safari protection.
+     *
+     * @param value Whether ad-blocking should be enabled.
      */
     public async updateBlockAds(value: boolean) {
-        const { recommendedFiltersByGroups, filtersIndex } = this.rootStore.filters;
+        const { recommendedFiltersByGroups, filtersIndex } = this.filters;
         const definedGroups = filtersIndex.definedGroups || {};
-        return this.rootStore.filters.switchFiltersState(
+        return this.filtersStore.switchFiltersState(
             recommendedFiltersByGroups[definedGroups.adBlocking],
             value,
         );
     }
 
     /**
-     * Update blockSearchAds in safari protection
+     * Update blockSearchAds in safari protection.
+     *
+     * @param value Whether search-ad blocking should be enabled.
      */
     public async updateBlockSearchAds(value: boolean) {
-        const { filtersIndex } = this.rootStore.filters;
-        return this.rootStore.filters.switchFiltersState(
+        const { filtersIndex } = this.filters;
+        return this.filtersStore.switchFiltersState(
             [filtersIndex.unblockSearchAdsFilterId],
             !value,
         );
     }
 
     /**
-     * Update blockTrackers in safari protection
+     * Update blockTrackers in safari protection.
+     *
+     * @param value Whether tracker blocking should be enabled.
      */
     public async updateBlockTrackers(value: boolean) {
-        const { recommendedFiltersByGroups, filtersIndex } = this.rootStore.filters;
+        const { recommendedFiltersByGroups, filtersIndex } = this.filters;
         const definedGroups = filtersIndex.definedGroups || {};
-        return this.rootStore.filters.switchFiltersState(
+        return this.filtersStore.switchFiltersState(
             recommendedFiltersByGroups[definedGroups.privacy],
             value,
         );
     }
 
     /**
-     * Update blockSocialButtons in safari protection
+     * Update blockSocialButtons in safari protection.
+     *
+     * @param value Whether social-widget blocking should be enabled.
      */
     public async updateBlockSocialButtons(value: boolean) {
-        const { recommendedFiltersByGroups, filtersIndex } = this.rootStore.filters;
+        const { recommendedFiltersByGroups, filtersIndex } = this.filters;
         const definedGroups = filtersIndex.definedGroups || {};
-        return this.rootStore.filters.switchFiltersState(
+        return this.filtersStore.switchFiltersState(
             recommendedFiltersByGroups[definedGroups.socialWidgets],
             value,
         );
     }
 
     /**
-     * Update blockCookieNotice in safari protection
+     * Update blockCookieNotice in safari protection.
+     *
+     * @param value Whether cookie-notice blocking should be enabled.
      */
     public async updateBlockCookieNotice(value: boolean) {
-        const { filtersIndex } = this.rootStore.filters;
-        return this.rootStore.filters.switchFiltersState(
+        const { filtersIndex } = this.filters;
+        return this.filtersStore.switchFiltersState(
             [filtersIndex.cookieNoticeFilterId],
             value,
         );
     }
 
     /**
-     * Update blockPopups in safari protection
+     * Update blockPopups in safari protection.
+     *
+     * @param value Whether popup blocking should be enabled.
      */
     public async updateBlockPopups(value: boolean) {
-        const { filtersIndex } = this.rootStore.filters;
-        return this.rootStore.filters.switchFiltersState(
+        const { filtersIndex } = this.filters;
+        return this.filtersStore.switchFiltersState(
             [filtersIndex.popUpsFilterId],
             value,
         );
     }
 
     /**
-     * Update blockWidgets in safari protection
+     * Update blockWidgets in safari protection.
+     *
+     * @param value Whether widget blocking should be enabled.
      */
     public async updateBlockWidgets(value: boolean) {
-        const { filtersIndex } = this.rootStore.filters;
-        return this.rootStore.filters.switchFiltersState(
+        const { filtersIndex } = this.filters;
+        return this.filtersStore.switchFiltersState(
             [filtersIndex.widgetsFilterId],
             value,
         );
     }
 
     /**
-     * Resets safari protection
-     */
-    public resetSafariProtection() {
-        // todo: add to swift
-    }
-
-    /**
-     * Update blockOther in safari protection
+     * Update blockOther in safari protection.
+     *
+     * @param value Whether other-annoyance blocking should be enabled.
      */
     public async updateBlockOther(value: boolean) {
-        const { filtersIndex } = this.rootStore.filters;
-        return this.rootStore.filters.switchFiltersState(
+        const { filtersIndex } = this.filters;
+        return this.filtersStore.switchFiltersState(
             [filtersIndex.otherAnnoyanceFilterId],
             value,
         );

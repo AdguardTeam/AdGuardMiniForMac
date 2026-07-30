@@ -16,6 +16,7 @@ type RadioProps = {
     className?: string;
     labelClassName?: string;
     disabled?: boolean;
+    muted?: boolean;
     id?: string;
     name?: string;
     onClick?(e: JSX.TargetedMouseEvent<HTMLElement>): void;
@@ -30,6 +31,7 @@ export function Radio({
     className,
     labelClassName,
     disabled,
+    muted,
     id,
     name,
     onClick,
@@ -52,7 +54,7 @@ export function Radio({
                 name={name}
                 type="radio"
             />
-            <Icon className={s.Radio_handler} icon={checked ? 'radioChecked' : 'radioUnchecked'} />
+            <Icon className={cx(s.Radio_handler, checked && !muted && s.Radio_handler__checked)} icon={checked ? 'radioChecked' : 'radioUnchecked'} />
             {children && (
                 <div className={cx(s.Radio_label, disabled && s.Radio_label__disabled, labelClassName)}>
                     {children}

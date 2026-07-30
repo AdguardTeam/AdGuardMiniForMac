@@ -5,7 +5,7 @@ import { NotificationContext, NotificationsQueueType, NotificationsQueueIconType
 import { getNotificationSettingsImportFailedText } from 'SettingsLib/utils/translate';
 
 import { ISettingsCallbackServiceInternal } from './SettingsCallbackService';;
-import { SafariExtensionUpdate, EmptyValue, BoolValue, ImportStatus, ImportMode, StringValue, EffectiveThemeValue } from '../types'
+import { SafariExtensionUpdate, EmptyValue, BoolValue, ImportStatus, ImportMode, StringValue, EffectiveThemeValue, URLFilterState } from '../types'
 
 const debouncedGroupedFilters = debounce(() => {
     store.filters.getFiltersGroupedByExtension();
@@ -125,6 +125,21 @@ async OnSafariExtensionUpdate(param: SafariExtensionUpdate): Promise<EmptyValue>
     /* Fires when settings window is opened */
     async OnSettingsWindowOpened(param: EmptyValue): Promise<EmptyValue> {
         store.ui.setShowSafariExtensionsEnableScreen(true);
+        return new EmptyValue();
+    }
+
+    /* Fires when URL filter state changed */
+    async OnURLFilterStateChanged(param: URLFilterState): Promise<EmptyValue> {
+        store.advancedBlocking.setURLFilterState(param);
+        if (param.errorMessage) {
+            store.notification.notify({
+                message: param.errorMessage,
+                notificationContext: NotificationContext.info,
+                type: NotificationsQueueType.warning,
+                iconType: NotificationsQueueIconType.error,
+                closeable: true,
+            }, true);
+        }
         return new EmptyValue();
     }
 }

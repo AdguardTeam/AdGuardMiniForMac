@@ -4,8 +4,21 @@
 
 import { makeAutoObservable } from 'mobx';
 
-import { GetAdvancedBlockingRequest, UpdateAdvancedBlockingRequest, UpdateRealTimeFiltersUpdateRequest } from 'Apis/requests/AdvancedBlockingService';
-import { AdvancedBlocking as AdvancedBlockingEnt } from 'Apis/types';
+import {
+    GetAdvancedBlockingRequest,
+    GetURLFilterStateRequest,
+    MarkURLFilterInstallRequestedRequest,
+    UpdateAdvancedBlockingRequest,
+    UpdateRealTimeFiltersUpdateRequest,
+    UpdateURLFilterConfigurationRequest,
+    ResetURLFilterCacheRequest,
+    RemoveURLFilterRequest,
+} from 'Apis/requests/AdvancedBlockingService';
+import {
+    AdvancedBlocking as AdvancedBlockingEnt,
+    URLFilterConfiguration,
+    URLFilterState,
+} from 'Apis/types';
 import { withLast } from 'Common/utils/queue';
 
 import type { EmptyValue } from 'Apis/types';
@@ -31,6 +44,17 @@ export class AdvancedBlocking {
      * Advanced blocking settings
      */
     public advancedBlocking = new AdvancedBlockingEnt();
+
+    /**
+     * URL filter state for system-wide protection settings.
+     */
+    public urlFilterState = new URLFilterState({
+        configuration: new URLFilterConfiguration({
+            enabled: false,
+            isNew: false,
+            isPageNew: false,
+        }),
+    });
 
     /**
      * Ctor
@@ -62,11 +86,26 @@ export class AdvancedBlocking {
     }
 
     /**
+     * URL filter state setter
+     */
+    public setURLFilterState(data: URLFilterState) {
+        this.urlFilterState = data;
+    }
+
+    /**
      * Get AdvancedBlocking from swift
      */
     public async getAdvancedBlocking() {
         const resp = await window.API.Execute(new GetAdvancedBlockingRequest());
         this.setAdvancedBlocking(resp);
+    }
+
+    /**
+     * Get URL filter state from swift
+     */
+    public async getURLFilterState() {
+        const resp = await window.API.Execute(new GetURLFilterStateRequest());
+        this.setURLFilterState(resp);
     }
 
     /**
@@ -98,5 +137,89 @@ export class AdvancedBlocking {
         newValue.realTimeFiltersUpdate = data;
         window.API.Execute(new UpdateRealTimeFiltersUpdateRequest({ value: data }));
         this.commitAdvancedBlocking(newValue);
+    }
+
+    /**
+     * Update SystemWideProtection setting
+     */
+    public updateSystemWideProtection(value: URLFilterConfiguration) {
+        const newConfiguration = new URLFilterConfiguration({
+            enabled: value.enabled,
+            isNew: value.isNew,
+            isPageNew: value.isPageNew,
+            protectionLevel: value.protectionLevel,
+        });
+
+        this.setURLFilterState(new URLFilterState({
+            status: this.urlFilterState.status,
+            configuration: newConfiguration,
+            info: this.urlFilterState.info,
+            errorMessage: this.urlFilterState.errorMessage,
+        }));
+
+        window.API.Execute(new UpdateURLFilterConfigurationRequest(newConfiguration));
+    }
+
+    /**
+     * Marks URL filter install process as requested.
+     */
+    public markURLFilterInstallRequested() {
+        window.API.Execute(new MarkURLFilterInstallRequestedRequest());
+    }
+
+    /**
+     * Resets URL filter prefilter cache.
+     */
+    public resetURLFilterCache() {
+        window.API.Execute(new ResetURLFilterCacheRequest());
+    }
+
+    /**
+     * Removes URL filter configuration.
+     */
+    public removeURLFilter() {
+        window.API.Execute(new RemoveURLFilterRequest());
+    }
+
+    /**
+     * Marks system-wide protection card as seen.
+     */
+    public markSystemWideProtectionAsSeen() {
+        const newConfiguration = new URLFilterConfiguration({
+            enabled: this.urlFilterState.configuration.enabled,
+            isNew: false,
+            isPageNew: this.urlFilterState.configuration.isPageNew,
+            protectionLevel: this.urlFilterState.configuration.protectionLevel,
+        });
+
+        this.setURLFilterState(new URLFilterState({
+            status: this.urlFilterState.status,
+            configuration: newConfiguration,
+            info: this.urlFilterState.info,
+            errorMessage: this.urlFilterState.errorMessage,
+        }));
+
+        window.API.Execute(new UpdateURLFilterConfigurationRequest(newConfiguration));
+    }
+
+    /**
+     * Marks system-wide protection page as seen.
+     */
+    public markSystemWideProtectionPageAsSeen() {
+        const newConfiguration = new URLFilterConfiguration({
+            enabled: this.urlFilterState.configuration.enabled,
+            isNew: this.urlFilterState.configuration.isNew,
+            isPageNew: false,
+            protectionLevel: this.urlFilterState.configuration.protectionLevel,
+        });
+
+        this.setURLFilterState(new URLFilterState({
+            status: this.urlFilterState.status,
+            configuration: newConfiguration,
+            info: this.urlFilterState.info,
+            errorMessage: this.urlFilterState.errorMessage,
+        }));
+
+        window.API.Execute(new UpdateURLFilterConfigurationRequest(newConfiguration));
     }
 }

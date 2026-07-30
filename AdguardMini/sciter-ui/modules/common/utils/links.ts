@@ -40,6 +40,7 @@ enum TDS_PARAMS {
     trustpilot = 'trustpilot',
     ag_mini_mac_release_blogpost = 'ag_mini_mac_release_blogpost',
     report_bug = 'report_bug',
+    system_wide_protection = 'system_wide_protection',
 }
 
 /**

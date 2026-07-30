@@ -17,6 +17,13 @@ export class TrayCallbackServiceInternal implements ITrayCallbackServiceInternal
             // set fetched on tray init.
             store.settings.getTrayLicense();
             store.settings.checkApplicationVersion();
+            store.settings.getAdvancedBlocking();
+            store.settings.getURLFilterState();
+            // Refresh filters data on every tray open. The platform delivers
+            // filters-update callbacks exclusively to the Settings window, so
+            // this visibility-triggered fetch is the sole update path for the
+            // Tray's health-check stories.
+            store.refreshFiltersData();
             store.telemetry.setPage(TrayPage.TrayMenu);
             store.telemetry.trackPageView();
         } else {
@@ -31,8 +38,6 @@ export class TrayCallbackServiceInternal implements ITrayCallbackServiceInternal
                 store.router.changePath(TrayRoute.home);
             }
         }
-
-        store.settings.getAdvancedBlocking();
         store.trayWindowVisibilityChanged.invoke(param.value);
 
         return new EmptyValue();
@@ -67,6 +72,7 @@ export class TrayCallbackServiceInternal implements ITrayCallbackServiceInternal
     async OnLicenseUpdate(param: TrayLicenseOrError): Promise<EmptyValue> {
         store.settings.setLicense(param);
         store.settings.getAdvancedBlocking();
+        store.settings.getURLFilterState();
         return new EmptyValue();
     }
 

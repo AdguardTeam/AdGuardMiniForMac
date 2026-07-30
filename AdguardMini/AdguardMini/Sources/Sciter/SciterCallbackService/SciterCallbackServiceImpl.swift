@@ -302,7 +302,7 @@ final class SciterCallbackServiceImpl: RestartableServiceBase, SciterCallbackSer
     @objc func onURLFilterStateChanged() {
         self.runOnMainActorIfStarted { `self` in
             let state = await self.urlFilterStateAssembler.makeState()
-            // TODO: AG-56329 Send callback
+            self.deliverToSettings(self.settingsCallbacks) { $0.onURLFilterStateChanged(state.toProto()) }
         }
     }
 

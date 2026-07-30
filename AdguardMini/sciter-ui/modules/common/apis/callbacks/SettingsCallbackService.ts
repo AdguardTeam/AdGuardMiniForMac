@@ -1,5 +1,5 @@
 /* This code was generated automatically by proto-parser tool version 1 */
-import { SafariExtensionUpdate, EmptyValue, BoolValue, ImportStatus, StringValue, EffectiveThemeValue } from '../types'
+import { SafariExtensionUpdate, EmptyValue, BoolValue, ImportStatus, StringValue, EffectiveThemeValue, URLFilterState } from '../types'
 
 /* Service handles settings lists- public part for external platform calls with methods for ArrayBuffer */
 export interface ISettingsCallbackService {
@@ -21,6 +21,8 @@ export interface ISettingsCallbackService {
 	OnEffectiveThemeChanged(param: ArrayBuffer): Promise<EmptyValue>;
 	/* Settings window was requested to open from tray */
 	OnSettingsWindowOpened(param: ArrayBuffer): Promise<EmptyValue>;
+	/* Fires when URL filter state changed */
+	OnURLFilterStateChanged(param: ArrayBuffer): Promise<EmptyValue>;
 }
 
 /* Service handles settings lists- private part for operations with unmarshalled params */
@@ -43,6 +45,8 @@ export interface ISettingsCallbackServiceInternal {
 	OnEffectiveThemeChanged(param: EffectiveThemeValue): Promise<EmptyValue>;
 	/* Settings window was requested to open from tray*/
 	OnSettingsWindowOpened(param: EmptyValue): Promise<EmptyValue>;
+	/* Fires when URL filter state changed*/
+	OnURLFilterStateChanged(param: URLFilterState): Promise<EmptyValue>;
 }
 
 /* Service handles settings lists */
@@ -195,6 +199,22 @@ export class SettingsCallbackService implements ISettingsCallbackService {
 		}
 		log.dbg('Callback data', 'SettingsCallbackService.OnSettingsWindowOpened', arg.toObject());
 		await this.settingsCallbackServiceInternal.OnSettingsWindowOpened(arg);
+		return new EmptyValue();
+	};
+	/**
+	 * Fires when URL filter state changed
+	 * @param ArrayBuffer param
+	 * @returns EmptyValue param
+	 */
+	OnURLFilterStateChanged = async (param: ArrayBuffer): Promise<EmptyValue> => {
+		const bytes = new Uint8Array(param);
+		const arg = URLFilterState.deserializeBinary(bytes);
+
+		if (!arg) {
+			throw new Error(`Empty parameter in SettingsCallbackService.OnURLFilterStateChanged: ${ param }`);
+		}
+		log.dbg('Callback data', 'SettingsCallbackService.OnURLFilterStateChanged', arg.toObject());
+		await this.settingsCallbackServiceInternal.OnURLFilterStateChanged(arg);
 		return new EmptyValue();
 	};
 }

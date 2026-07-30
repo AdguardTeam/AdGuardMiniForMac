@@ -41,8 +41,6 @@ const openSafariPreferences = () => {
  * Story IDs that cannot be hidden (required stories)
  */
 const NON_HIDEABLE_STORY_IDS = new Set([
-    'extensions',
-    'loginItem',
     'statistics',
     'statisticsPrivacy',
 ]);
@@ -57,7 +55,7 @@ function HomeComponent() {
 
     const stories = useStoriesConfig();
     const { hiddenStories } = settings;
-    const [selectedStoryId, setSelectedStoryId] = useState<StoryId | null>(null);
+    const [selectedStoryId, setSelectedStoryId] = useState<{ id: StoryId; initialFrame?: number } | null>(null);
     // Snapshot of Home cards order used during story-session navigation.
     const [storiesNavigationOrder, setStoriesNavigationOrder] = useState<StoryId[]>([]);
     const [storyEntryMode, setStoryEntryMode] = useState<'first' | 'last'>('first');
@@ -71,7 +69,7 @@ function HomeComponent() {
         : stories.map(({ storyConfig }) => storyConfig.id);
 
     const currentStoryIndex = selectedStoryId !== null
-        ? orderedStoryIds.findIndex((storyId) => storyId === selectedStoryId)
+        ? orderedStoryIds.findIndex((storyId) => storyId === selectedStoryId.id)
         : -1;
 
     // Finds previous/next story using the captured order, skipping stories no longer present.
@@ -98,7 +96,7 @@ function HomeComponent() {
     const openStory = useCallback((storyId: StoryId) => {
         setStoriesNavigationOrder(stories.map(({ storyConfig }) => storyConfig.id));
         setStoryEntryMode('first');
-        setSelectedStoryId(storyId);
+        setSelectedStoryId({ id: storyId });
     }, [stories]);
 
     const moveToNextStory = useCallback(() => {
@@ -112,7 +110,7 @@ function HomeComponent() {
         }
 
         setStoryEntryMode('first');
-        setSelectedStoryId(nextStoryId);
+        setSelectedStoryId({ id: nextStoryId });
     }, [getAdjacentStoryId]);
 
     const moveToPreviousStory = useCallback(() => {
@@ -123,7 +121,7 @@ function HomeComponent() {
         }
 
         setStoryEntryMode('last');
-        setSelectedStoryId(previousStoryId);
+        setSelectedStoryId({ id: previousStoryId });
     }, [getAdjacentStoryId]);
 
     const closeStories = useCallback(() => {
@@ -290,10 +288,10 @@ function HomeComponent() {
     };
 
     const currentStoryConfig = selectedStoryId !== null
-        ? storiesById.get(selectedStoryId)
+        ? storiesById.get(selectedStoryId.id)
         : undefined;
     const currentStory = currentStoryConfig
-        ? new StoryNavigation(currentStoryConfig)
+        ? new StoryNavigation(currentStoryConfig, selectedStoryId!.initialFrame)
         : undefined;
 
     if (currentStory && storyEntryMode === 'last') {
@@ -313,6 +311,7 @@ function HomeComponent() {
                             closeStories={closeStories}
                             hasPreviousStory={getAdjacentStoryId(-1) !== null}
                             isMASReleaseVariant={settings.isMASReleaseVariant}
+                            minFrameIndex={selectedStoryId!.initialFrame}
                             moveToNextStory={moveToNextStory}
                             moveToPreviousStory={moveToPreviousStory}
                             story={currentStory!}
@@ -408,7 +407,19 @@ function HomeComponent() {
                                         storyId={props.storyConfig.id}
                                         onHide={NON_HIDEABLE_STORY_IDS.has(props.storyConfig.id)
                                             ? undefined
-                                            : () => settings.setHiddenStory(props.storyConfig.id)}
+                                            : () => {
+                                                if (props.storyHideFrameId !== undefined) {
+                                                    setStoriesNavigationOrder(stories.map(({
+                                                        storyConfig,
+                                                    }) => storyConfig.id));
+                                                    setSelectedStoryId({
+                                                        id: props.storyConfig.id,
+                                                        initialFrame: props.storyHideFrameId,
+                                                    });
+                                                } else {
+                                                    settings.setHiddenStory(props.storyConfig.id);
+                                                }
+                                            }}
                                     />
                                 ))}
                                 {hiddenStories.size > 0 && (

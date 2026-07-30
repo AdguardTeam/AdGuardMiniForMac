@@ -23,6 +23,8 @@ export class URLFilterConfiguration extends pb_1.Message {
     constructor(data?: any[] | {
         enabled?: boolean;
         protectionLevel?: URLFilterProtectionLevel;
+        isNew?: boolean;
+        isPageNew?: boolean;
     }) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
@@ -32,6 +34,12 @@ export class URLFilterConfiguration extends pb_1.Message {
             }
             if ("protectionLevel" in data && data.protectionLevel != undefined) {
                 this.protectionLevel = data.protectionLevel;
+            }
+            if ("isNew" in data && data.isNew != undefined) {
+                this.isNew = data.isNew;
+            }
+            if ("isPageNew" in data && data.isPageNew != undefined) {
+                this.isPageNew = data.isPageNew;
             }
         }
     }
@@ -47,9 +55,23 @@ export class URLFilterConfiguration extends pb_1.Message {
     set protectionLevel(value: URLFilterProtectionLevel) {
         pb_1.Message.setField(this, 2, value);
     }
+    get isNew() {
+        return pb_1.Message.getFieldWithDefault(this, 3, false) as boolean;
+    }
+    set isNew(value: boolean) {
+        pb_1.Message.setField(this, 3, value);
+    }
+    get isPageNew() {
+        return pb_1.Message.getFieldWithDefault(this, 4, false) as boolean;
+    }
+    set isPageNew(value: boolean) {
+        pb_1.Message.setField(this, 4, value);
+    }
     static fromObject(data: {
         enabled?: boolean;
         protectionLevel?: URLFilterProtectionLevel;
+        isNew?: boolean;
+        isPageNew?: boolean;
     }): URLFilterConfiguration {
         const message = new URLFilterConfiguration({});
         if (data.enabled != null) {
@@ -58,18 +80,32 @@ export class URLFilterConfiguration extends pb_1.Message {
         if (data.protectionLevel != null) {
             message.protectionLevel = data.protectionLevel;
         }
+        if (data.isNew != null) {
+            message.isNew = data.isNew;
+        }
+        if (data.isPageNew != null) {
+            message.isPageNew = data.isPageNew;
+        }
         return message;
     }
     toObject() {
         const data: {
             enabled?: boolean;
             protectionLevel?: URLFilterProtectionLevel;
+            isNew?: boolean;
+            isPageNew?: boolean;
         } = {};
         if (this.enabled != null) {
             data.enabled = this.enabled;
         }
         if (this.protectionLevel != null) {
             data.protectionLevel = this.protectionLevel;
+        }
+        if (this.isNew != null) {
+            data.isNew = this.isNew;
+        }
+        if (this.isPageNew != null) {
+            data.isPageNew = this.isPageNew;
         }
         return data;
     }
@@ -81,6 +117,10 @@ export class URLFilterConfiguration extends pb_1.Message {
             writer.writeBool(1, this.enabled);
         if (this.protectionLevel != URLFilterProtectionLevel.essential)
             writer.writeEnum(2, this.protectionLevel);
+        if (this.isNew != false)
+            writer.writeBool(3, this.isNew);
+        if (this.isPageNew != false)
+            writer.writeBool(4, this.isPageNew);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -95,6 +135,12 @@ export class URLFilterConfiguration extends pb_1.Message {
                     break;
                 case 2:
                     message.protectionLevel = reader.readEnum();
+                    break;
+                case 3:
+                    message.isNew = reader.readBool();
+                    break;
+                case 4:
+                    message.isPageNew = reader.readBool();
                     break;
                 default: reader.skipField();
             }

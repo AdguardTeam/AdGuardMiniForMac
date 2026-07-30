@@ -6,6 +6,10 @@
 	<string>__KEY_ONLY</string>
 	<key>adguardExtra</key>
 	<false/>
+	<key>urlFilterIsNew</key>
+	<true/>
+	<key>urlFilterIsPageNew</key>
+	<true/>
 	<key>allowTelemetry</key>
 	<false/>
 	<key>telemetryId</key>
@@ -67,6 +71,8 @@
 	<key>userRulesEditorGeometry</key>
 	<string>__KEY_ONLY</string>
 	<key>dismissedHealthCheckCards</key>
+	<string>__KEY_ONLY</string>
+	<key>dismissedPromoCards</key>
 	<string>__KEY_ONLY</string>
 	<key>hiddenStories</key>
 	<array/>

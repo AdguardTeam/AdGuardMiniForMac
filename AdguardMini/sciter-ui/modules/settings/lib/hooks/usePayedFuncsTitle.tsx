@@ -18,8 +18,12 @@ import type { SettingsEvent } from 'Modules/settings/store/modules';
  * No trial available, MAS version: "Subscribe" action;
  *
  * @param trackTelemetryEvent - The telemetry event to track when the paywall is shown
+ * @param textClassName - Optional class name for the text element
  */
-export function usePayedFuncsTitle(trackTelemetryEvent?: SettingsEvent) {
+export function usePayedFuncsTitle(
+    trackTelemetryEvent?: SettingsEvent,
+    textClassName?: string,
+) {
     const { account, settings, telemetry } = useSettingsStore();
     const { isLicenseOrTrialActive, trialAvailableDays } = account;
     const { isMASReleaseVariant } = settings;
@@ -35,7 +39,7 @@ export function usePayedFuncsTitle(trackTelemetryEvent?: SettingsEvent) {
                 account.showPaywall();
             }}
         >
-            <Text className={theme.color.orange} type="t2">
+            <Text className={cx(theme.color.orange, textClassName)} type="t2">
                 {text}
             </Text>
         </Button>
@@ -56,7 +60,7 @@ export function usePayedFuncsTitle(trackTelemetryEvent?: SettingsEvent) {
     };
 
     return !isLicenseOrTrialActive ? (
-        <Text className={theme.color.orange} type="t2">
+        <Text className={cx(theme.color.orange, textClassName)} type="t2">
             {renderDescription()}
         </Text>
     ) : undefined;

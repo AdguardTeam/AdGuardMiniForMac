@@ -24,6 +24,10 @@ struct URLFilterUIState: Equatable {
     var enabled: Bool
     /// Selected protection level.
     var protectionLevel: URLFilterProtectionLevel
+    /// Whether the settings card is still marked as new.
+    var isNew: Bool
+    /// Whether the settings page is still marked as new.
+    var isPageNew: Bool
     /// Read-only metadata.
     var info: URLFilterInfo
     /// Error text derived from ``status``, if any.

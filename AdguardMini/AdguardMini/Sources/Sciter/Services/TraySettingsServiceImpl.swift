@@ -11,6 +11,10 @@ import Foundation
 import SciterSchema
 import AML
 
+private enum Constants {
+    static let noUpdatesThreshold: TimeInterval = 7.days
+}
+
 extension Sciter.TraySettingsServiceImpl:
     ProtectionServiceDependent,
     AppUpdaterDependent,
@@ -34,6 +38,10 @@ extension Sciter {
         func getTraySettings(_ message: EmptyValue,
                              _ promise: @escaping (GlobalSettings) -> Void) {
             Task {
+                let timeSinceLastFiltersUpdate = max(
+                    0,
+                    Date.now.timeIntervalSince(self.userSettingsService.lastFiltersUpdateTime)
+                )
                 var traySettings = GlobalSettings(
                     enabled: self.protectionService.isProtectionEnabled,
                     newVersionAvailable: self.appUpdater.isNewVersionAvailable,
@@ -45,7 +53,8 @@ extension Sciter {
                     lastFiltersUpdateTimestampMs: Int64(
                         max(0, self.userSettingsService.lastFiltersUpdateTime.timeIntervalSince1970 * 1000)
                     ),
-                    loginItemEnabled: !self.healthCheckAttentionProvider.hasLoginItemDisabled()
+                    loginItemEnabled: !self.healthCheckAttentionProvider.hasLoginItemDisabled(),
+                    lastUpdateMoreSevenDays: timeSinceLastFiltersUpdate > Constants.noUpdatesThreshold,
                 )
                 traySettings.hiddenStories = self.userSettingsService.hiddenStories
                 promise(traySettings)

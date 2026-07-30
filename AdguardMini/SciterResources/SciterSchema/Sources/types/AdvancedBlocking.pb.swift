@@ -43,7 +43,7 @@ public struct AdvancedBlocking: Sendable {
 
 extension AdvancedBlocking: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "AdvancedBlocking"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}advanced_rules\0\u{3}adguard_extra\0\u{3}mail_protection_enabled\0\u{3}real_time_filters_update\0\u{b}system_wide\0\u{c}\u{5}\u{1}")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}advanced_rules\0\u{3}adguard_extra\0\u{3}mail_protection_enabled\0\u{3}real_time_filters_update\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

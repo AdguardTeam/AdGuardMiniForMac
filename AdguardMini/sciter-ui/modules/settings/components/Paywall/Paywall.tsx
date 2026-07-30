@@ -45,6 +45,10 @@ function PaywallComponent() {
             icon: 'quality',
         },
         {
+            label: translate('settings.paywall.advantage.2'),
+            icon: 'apps',
+        },
+        {
             label: translate('settings.paywall.advantage.3'),
             icon: 'update',
         },
@@ -163,7 +167,7 @@ function PaywallComponent() {
                                 />
                                 <Text
                                     lineHeight="none"
-                                    type="t1"
+                                    type="t2"
                                 >
                                     {label}
                                 </Text>
@@ -179,7 +183,7 @@ function PaywallComponent() {
 
                     <div className={s.Paywall_footer}>
                         <Button
-                            className={cx(s.Paywall_footer_btn, tx.button.textButton)}
+                            className={cx(s.Paywall_footer_btn)}
                             type="text"
                             onClick={() => setShowAlreadyPurchasedFlowModal(true)}
                         >
@@ -191,7 +195,7 @@ function PaywallComponent() {
                             <>
                                 <div className={s.Paywall_footer_link}>
                                     <ExternalLink
-                                        className={cx(s.Paywall_footer_btn, tx.button.textButton)}
+                                        className={cx(s.Paywall_footer_btn)}
                                         href={getTdsLink(TDS_PARAMS.eula, RouteName.license)}
                                         textType="t2"
                                         noLineHeight
@@ -202,7 +206,7 @@ function PaywallComponent() {
                                 </div>
                                 <div className={s.Paywall_footer_link}>
                                     <ExternalLink
-                                        className={cx(s.Paywall_footer_btn, tx.button.textButton)}
+                                        className={cx(s.Paywall_footer_btn)}
                                         href={getTdsLink(TDS_PARAMS.privacy, RouteName.license)}
                                         textType="t2"
                                         noLineHeight

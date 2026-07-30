@@ -23,6 +23,7 @@ export enum RouteName {
     quit_reaction = 'quit_reaction',
     migration = 'migration',
     theme = 'theme',
+    system_wide_protection = 'system_wide_protection',
 }
 
 /**

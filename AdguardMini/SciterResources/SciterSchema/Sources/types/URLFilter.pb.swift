@@ -125,6 +125,10 @@ public struct URLFilterConfiguration: Sendable {
 
   public var protectionLevel: URLFilterProtectionLevel = .essential
 
+  public var isNew: Bool = false
+
+  public var isPageNew: Bool = false
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -233,7 +237,7 @@ extension URLFilterProtectionLevel: SwiftProtobuf._ProtoNameProviding {
 
 extension URLFilterConfiguration: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "URLFilterConfiguration"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}enabled\0\u{3}protection_level\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}enabled\0\u{3}protection_level\0\u{1}isNew\0\u{1}isPageNew\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -243,6 +247,8 @@ extension URLFilterConfiguration: SwiftProtobuf.Message, SwiftProtobuf._MessageI
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularBoolField(value: &self.enabled) }()
       case 2: try { try decoder.decodeSingularEnumField(value: &self.protectionLevel) }()
+      case 3: try { try decoder.decodeSingularBoolField(value: &self.isNew) }()
+      case 4: try { try decoder.decodeSingularBoolField(value: &self.isPageNew) }()
       default: break
       }
     }
@@ -255,12 +261,20 @@ extension URLFilterConfiguration: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     if self.protectionLevel != .essential {
       try visitor.visitSingularEnumField(value: self.protectionLevel, fieldNumber: 2)
     }
+    if self.isNew != false {
+      try visitor.visitSingularBoolField(value: self.isNew, fieldNumber: 3)
+    }
+    if self.isPageNew != false {
+      try visitor.visitSingularBoolField(value: self.isPageNew, fieldNumber: 4)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: URLFilterConfiguration, rhs: URLFilterConfiguration) -> Bool {
     if lhs.enabled != rhs.enabled {return false}
     if lhs.protectionLevel != rhs.protectionLevel {return false}
+    if lhs.isNew != rhs.isNew {return false}
+    if lhs.isPageNew != rhs.isPageNew {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

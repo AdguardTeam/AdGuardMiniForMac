@@ -17,10 +17,9 @@ type AdvancedBlockingTitleProps = {
 export function AdvancedBlockingTitleComponent({ tryContent }: AdvancedBlockingTitleProps) {
     return (
         <SettingsTitle
-            description={translate('advanced.blocking.desc.AG_51019_advanced_settings')}
-            title={translate('menu.advanced.blocking.AG_51019_advanced_settings')}
+            description={translate('advanced.blocking.desc')}
+            title={translate('menu.advanced.blocking.title')}
             maxTopPadding
-            newLabel
         >
             {tryContent}
         </SettingsTitle>

@@ -7,7 +7,7 @@ import noop from 'lodash/noop';
 import { RequestSubscribeRequest } from 'Apis/requests/AccountService';
 import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
 import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SafariExtensionsService';
-import { OpenLoginItemsSettingsRequest, RequestOpenSettingsPageRequest } from 'Apis/requests/SystemService';
+import { RequestOpenSettingsPageRequest } from 'Apis/requests/SystemService';
 import { OptionalStringValue, Subscription } from 'Apis/types';
 import { formatLocalizedNumber } from 'Common/lib/number';
 import { provideTrialDaysParam } from 'Common/utils/translate';
@@ -20,6 +20,15 @@ import { useTrayStore } from 'TrayLib/hooks';
 import { ExternalLink, Text } from 'UILib';
 
 import { telemetryStoryFrameButtonsWrapper } from '../../components';
+import { PrimaryAndSecondaryButtons } from '../../components/PrimaryAndSecondaryButtons/PrimaryAndSecondaryButtons';
+import {
+    HEALTH_CHECK_DEFAULT_STORY_ID,
+    isHealthCheckDefaultStoryEligible,
+} from '../../utils/healthCheckDefaultStory';
+import {
+    HEALTH_CHECK_WARNING_STORY_ID,
+    isHealthCheckWarningStoryEligible,
+} from '../../utils/healthCheckWarningStory';
 
 import s from './StoriesConfig.module.pcss';
 
@@ -27,10 +36,6 @@ import type { IStoryFrame, StoryFrameImage, StoryInfo } from '../../model';
 
 const openSafariPref = () => {
     window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
-};
-
-const openLoginItemsSettings = () => {
-    window.API.Execute(new OpenLoginItemsSettingsRequest());
 };
 
 /**
@@ -43,7 +48,7 @@ const STORIES_TDS_LINK_FROM = 'storyConstructor';
  * Implements logic for sorting and filtering stories
  */
 export function useStoriesConfig(): StoryInfo[] {
-    const { settings } = useTrayStore();
+    const { settings, safariProtection } = useTrayStore();
 
     const requiredStories: StoryInfo[] = [];
     const stories: StoryInfo[] = [];
@@ -59,59 +64,66 @@ export function useStoriesConfig(): StoryInfo[] {
         hiddenStories,
         advancedBlocking,
         safariExtensionsStore,
+        urlFilterState,
         license,
         statistics,
+        lastUpdateMoreSevenDays,
     } = settings;
 
     const { allowTelemetry, language: currentLanguage } = traySettings || {};
     const language = currentLanguage || 'en';
 
-    if (!safariExtensionsStore.allExtensionsEnabled) {
-        requiredStories.push({
-            style: 'warning',
-            icon: 'info',
-            text: translate('tray.story.adguard.extensions'),
-            storyConfig: {
-                id: 'extensions',
-                frames: [
-                    {
-                        title: translate('tray.story.adguard.extensions'),
-                        description: translate('tray.story.adguard.extensions.desc'),
-                        image: 'extensions',
-                        actionButton: {
-                            title: translate('tray.story.adguard.extensions.action'),
-                            action: openSafariPref,
-                        },
-                        frameId: 'extensions1',
-                    },
-                ],
-                backgroundColor: 'aqua',
-            },
-            telemetryEvent: TrayEvent.StoryEnableExtensionsClick,
-        });
-    }
+    const openHealthCheckPage = () => {
+        window.API.Execute(new OpenSettingsWindowRequest());
+    };
 
-    if (!loginItemEnabled) {
+    const healthCheckWarning = isHealthCheckWarningStoryEligible({
+        allExtensionsEnabled: safariExtensionsStore.allExtensionsEnabled,
+        loginItemEnabled,
+        effectiveExtensionsList: safariExtensionsStore.effectiveExtensionsList,
+    });
+
+    if (healthCheckWarning && !hiddenStories.has(HEALTH_CHECK_WARNING_STORY_ID)) {
         requiredStories.push({
             style: 'warning',
             icon: 'info',
-            text: translate('tray.story.login.item'),
+            storyHideFrameId: 1,
+            text: translate('tray.story.health.check'),
             storyConfig: {
-                id: 'loginItem',
+                id: HEALTH_CHECK_WARNING_STORY_ID,
+                totalFrames: 1,
                 frames: [
                     {
-                        title: translate('tray.story.login.item'),
-                        description: translate('tray.story.login.item.desc', { b: (text: string) => (<span style={{ color: 'inherit !important', fontWeight: '600' }}>{text}</span>) }),
-                        image: 'loginItem',
+                        title: translate('tray.story.health.check'),
+                        description: translate('tray.story.health.check.desc'),
+                        image: 'healthCheck1',
                         actionButton: {
-                            title: translate('tray.story.login.item.action'),
-                            action: openLoginItemsSettings,
+                            title: translate('tray.story.health.check.action'),
+                            action: openHealthCheckPage,
                         },
-                        frameId: 'loginItem1',
+                        frameId: 'healthWarning1',
+                    },
+                    {
+                        title: translate('tray.story.health.check.hide'),
+                        description: translate('tray.story.health.check.desc.hide'),
+                        image: 'healthCheck2',
+                        component: ({ onClose }) => (
+                            <PrimaryAndSecondaryButtons
+                                primaryButtonAction={openHealthCheckPage}
+                                primaryButtonTitle={translate('tray.story.health.check.action')}
+                                secondaryButtonAction={() => {
+                                    settings.setHiddenStory(HEALTH_CHECK_WARNING_STORY_ID);
+                                    onClose();
+                                }}
+                                secondaryButtonTitle={translate('tray.story.health.check.action.hide')}
+                            />
+                        ),
+                        frameId: 'healthWarning2',
                     },
                 ],
-                backgroundColor: 'sand',
+                backgroundColor: 'orange',
             },
+            telemetryEvent: TrayEvent.StoryHealthCheckWarningClick,
         });
     }
 
@@ -194,6 +206,92 @@ export function useStoriesConfig(): StoryInfo[] {
             telemetryEvent: TrayEvent.StoryStatisticSlideClick,
         });
     }
+
+    if (isHealthCheckDefaultStoryEligible({
+        lastUpdateMoreSevenDays,
+        blockAds: safariProtection.blockAds,
+        blockSocialButtons: safariProtection.blockSocialButtons,
+        blockCookieNotice: safariProtection.blockCookieNotice,
+        blockPopups: safariProtection.blockPopups,
+        blockWidgets: safariProtection.blockWidgets,
+        blockOtherAnnoyance: safariProtection.blockOtherAnnoyance,
+    }) && !healthCheckWarning) {
+        stories.push({
+            icon: 'info',
+            style: 'default',
+            text: translate('tray.story.health.check'),
+            storyHideFrameId: 1,
+            storyConfig: {
+                id: HEALTH_CHECK_DEFAULT_STORY_ID,
+                totalFrames: 1,
+                frames: [
+                    {
+                        title: translate('tray.story.health.check'),
+                        description: translate('tray.story.health.check.desc'),
+                        image: 'healthCheck1',
+                        actionButton: {
+                            title: translate('tray.story.health.check.action'),
+                            action: openHealthCheckPage,
+                        },
+                        frameId: 'healthDefault1',
+                    },
+                    {
+                        title: translate('tray.story.health.check.hide'),
+                        description: translate('tray.story.health.check.desc.hide'),
+                        image: 'healthCheck2',
+                        component: ({ onClose }) => (
+                            <PrimaryAndSecondaryButtons
+                                primaryButtonAction={openHealthCheckPage}
+                                primaryButtonTitle={translate('tray.story.health.check.action')}
+                                secondaryButtonAction={() => {
+                                    settings.setHiddenStory(HEALTH_CHECK_DEFAULT_STORY_ID);
+                                    onClose();
+                                }}
+                                secondaryButtonTitle={translate('tray.story.health.check.action.hide')}
+                            />
+                        ),
+                        frameId: 'healthDefault2',
+                    },
+                ],
+                backgroundColor: 'orange',
+            },
+            telemetryEvent: TrayEvent.StoryHealthCheckDefaultClick,
+        });
+    }
+
+    if (!isLicenseOrTrialActive || !urlFilterState?.enabled) {
+        let actionButtonTitle = '';
+        let actionButton = noop;
+        if (!isLicenseOrTrialActive) {
+            actionButtonTitle = trialAvailableDays > 0
+                ? translate.plural('tray.story.advanced.features.action.trial', trialAvailableDays, provideTrialDaysParam(trialAvailableDays))
+                : translate('tray.story.advanced.features.action');
+            actionButton = settings.requestOpenPaywallScreen;
+        } else {
+            actionButtonTitle = translate('enable');
+            actionButton = settings.enableSystemWideProtection;
+        }
+        stories.push({
+            icon: 'apps',
+            text: translate('tray.story.system.wide.card'),
+            storyConfig: {
+                id: 'systemWide',
+                frames: [{
+                    title: translate('tray.story.system.wide.title'),
+                    description: translate('tray.story.system.wide.desc'),
+                    image: 'systemWide',
+                    actionButton: {
+                        title: actionButtonTitle,
+                        action: actionButton,
+                    },
+                    frameId: 'systemWide1',
+                }],
+                backgroundColor: 'purple',
+            },
+            telemetryEvent: TrayEvent.StoryUnlockFeaturesClick,
+        });
+    }
+
     if (!isLicenseOrTrialActive) {
         stories.push({
             icon: 'quality',

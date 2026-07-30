@@ -70,7 +70,7 @@ html:theme(light) {
         position: relative;
         height: *;
         width: 396px;
-        padding-top: var(--m-l);
+        padding-top: var(--m-m);
     
         &__left {
             margin-right: *;
@@ -123,7 +123,7 @@ html:theme(light) {
     }
 
     &_advantages {
-        margin-bottom: var(--m-s);
+        margin-bottom: var(--m-xxs);
 
         &_advantage {
             flow: horizontal;
@@ -154,21 +154,26 @@ html:theme(light) {
         }
     
         &_container {
-            border-spacing: 20px;
+            border-spacing: var(--m-xs);
         }
     
         &_button {
             max-width: 364px;
         }
+
+        &_submit {
+            margin-top: var(--m-m);
+        }
     }
 
     &_footer {
-        margin-top: var(--m-m);
+        margin-top: var(--m-s);
         width: 396px;
         text-align: center;
 
         &_btn {
             display: inline-block;
+            padding: 2px var(--m-xxs);
             margin: 0 *;
             color: var(--text-description-description-default);
             &:hover {
@@ -179,6 +184,7 @@ html:theme(light) {
         &_link {
             display: inline-block;
             margin: 0 *;
+            padding: 2px var(--m-xxs);
             cursor: pointer;
             >a {
                 transition: color linear 0.1s;

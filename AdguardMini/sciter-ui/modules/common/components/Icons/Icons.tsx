@@ -4,6 +4,9 @@
 
 import type { JSXInternal } from 'preact/src/jsx';
 
+/**
+ * Union of supported icon identifiers available in the shared icon sprite.
+ */
 export type IconType
     = 'logo'
         | 'logo_dark'
@@ -64,8 +67,13 @@ export type IconType
         | 'extra'
         | 'flag'
         | 'rocket'
-        | 'eye';
+        | 'eye'
+        | 'apps'
+        | 'bullet';
 
+/**
+ * Props accepted by the `Icons` component.
+ */
 export type IconsProps = {
     icon: IconType;
 };
@@ -496,15 +504,15 @@ export function Icons({ icon }: IconsProps): JSXInternal.Element {
         case 'radioChecked': {
             return (
                 <svg fill="none" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" stroke="#67B279" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
-                    <circle cx="12" cy="12" fill="#67B279" r="5" stroke="#67B279" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
+                    <circle cx="12" cy="12" fill="currentColor" r="5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
                 </svg>
             );
         }
         case 'radioUnchecked': {
             return (
                 <svg fill="none" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" stroke="#7F7F7F" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
                 </svg>
             );
         }
@@ -592,6 +600,21 @@ export function Icons({ icon }: IconsProps): JSXInternal.Element {
                     <path d="M6 13V15" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" />
                 </svg>
 
+            );
+        case 'apps':
+            return (
+                <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                    <rect height="7" rx="1" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" width="7" x="14" y="14" />
+                    <path d="M5.62842 14.5495C6.01073 13.8698 6.98927 13.8698 7.37158 14.5495L10.1617 19.5097C10.5367 20.1763 10.055 21 9.29015 21H3.70985C2.94502 21 2.46331 20.1763 2.83827 19.5097L5.62842 14.5495Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
+                    <rect height="7" rx="1" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" width="7" x="3" y="3" />
+                    <path clip-rule="evenodd" d="M17.5 3C19.433 3 21 4.567 21 6.5C21 8.433 19.433 10 17.5 10C15.567 10 14 8.433 14 6.5C14 4.567 15.567 3 17.5 3Z" fill-rule="evenodd" stroke="currentColor" stroke-width="1.5" />
+                </svg>
+            );
+        case 'bullet':
+            return (
+                <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                    <path clip-rule="evenodd" d="M12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16C14.2091 16 16 14.2091 16 12C15.9974 9.79193 14.2081 8.00258 12 8Z" fill="currentColor" fill-rule="evenodd" />
+                </svg>
             );
     }
 }

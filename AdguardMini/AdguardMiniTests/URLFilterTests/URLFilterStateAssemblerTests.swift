@@ -9,10 +9,6 @@
 
 import XCTest
 
-// Closure as last parameter in the assembler init is kept inside parens with
-// a named label for clarity; disabling the rule for this file.
-// swiftlint:disable trailing_closure
-
 private final class FakeURLFilterService: URLFilterService {
     var status: URLFilterStatus = .running
     var configuration: URLFilterConfiguration?
@@ -33,7 +29,9 @@ final class URLFilterStateAssemblerTests: XCTestCase {
         service.configuration = URLFilterConfiguration(protectionLevel: .safe, enabled: true)
         let assembler = URLFilterStateAssembler(
             urlFilterService: service,
-            protectionLevelProvider: { .safe }
+            protectionLevelProvider: { .safe },
+            isNewProvider: { false },
+            isPageNewProvider: { true }
         )
 
         let state = await assembler.makeState()
@@ -41,6 +39,8 @@ final class URLFilterStateAssemblerTests: XCTestCase {
         XCTAssertEqual(state.status, .running)
         XCTAssertTrue(state.enabled)
         XCTAssertEqual(state.protectionLevel, .safe)
+        XCTAssertFalse(state.isNew)
+        XCTAssertTrue(state.isPageNew)
         XCTAssertFalse(state.info.isInstalling)
         XCTAssertNil(state.errorMessage)
     }
@@ -50,7 +50,9 @@ final class URLFilterStateAssemblerTests: XCTestCase {
         service.status = .stopped(errorMessage: "net down")
         let assembler = URLFilterStateAssembler(
             urlFilterService: service,
-            protectionLevelProvider: { .essential }
+            protectionLevelProvider: { .essential },
+            isNewProvider: { true },
+            isPageNewProvider: { true }
         )
 
         let state = await assembler.makeState()
@@ -65,7 +67,9 @@ final class URLFilterStateAssemblerTests: XCTestCase {
         service.status = .starting
         let assembler = URLFilterStateAssembler(
             urlFilterService: service,
-            protectionLevelProvider: { .essential }
+            protectionLevelProvider: { .essential },
+            isNewProvider: { true },
+            isPageNewProvider: { true }
         )
 
         await assembler.markInstallRequested()
@@ -79,7 +83,9 @@ final class URLFilterStateAssemblerTests: XCTestCase {
         service.status = .starting
         let assembler = URLFilterStateAssembler(
             urlFilterService: service,
-            protectionLevelProvider: { .essential }
+            protectionLevelProvider: { .essential },
+            isNewProvider: { true },
+            isPageNewProvider: { true }
         )
 
         await assembler.markInstallRequested()

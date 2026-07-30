@@ -7,13 +7,15 @@ import type { JSX } from 'preact';
 
 /**
  * Story ID type
+ * id - unique story identifier
+ * frame - optional frame number for stories with multiple frames
  */
 export type StoryId = string;
 
 /**
  * Story card icon classname
  */
-export type StoryCardIcon = 'info' | 'quality' | 'phone' | 'custom_filter' | 'star' | 'advanced' | 'rocket' | 'adblocking' | 'tracking';
+export type StoryCardIcon = 'info' | 'quality' | 'phone' | 'custom_filter' | 'star' | 'advanced' | 'rocket' | 'adblocking' | 'tracking' | 'apps';
 
 export type StoryCardStyle = 'default' | 'warning' | 'redIcon' | 'orangeIcon';
 
@@ -25,7 +27,7 @@ export type StoryBackgroundColor = 'aqua' | 'blue' | 'green' | 'purple' | 'sand'
 /**
  * Story frame image classname
  */
-export type StoryFrameImage = 'advanced' | 'devices' | 'extensions' | 'extra1' | 'extra2' | 'extra3' | 'extra4' | 'filters1' | 'filters2' | 'filters3' | 'filters4' | 'filters5' | 'loginItem' | 'rate' | 'telemetry1' | 'telemetry2' | 'telemetry3' | 'telemetry4';
+export type StoryFrameImage = 'advanced' | 'devices' | 'extensions' | 'extra1' | 'extra2' | 'extra3' | 'extra4' | 'filters1' | 'filters2' | 'filters3' | 'filters4' | 'filters5' | 'loginItem' | 'rate' | 'telemetry1' | 'telemetry2' | 'telemetry3' | 'telemetry4' | 'healthCheck1' | 'healthCheck2' | 'systemWide';
 
 /**
  * Main story model
@@ -52,6 +54,11 @@ export type StoryInfo = {
      * Story display config
      */
     storyConfig: StoryViewConfig;
+    /**
+     * Id of the frame to show when user hides the story card.
+     * If not provided, the story will be hidden without showing any frame.
+     */
+    storyHideFrameId?: number;
     /**
      * Telemetry event to send when this story is selected
      * If not provided, no telemetry will be sent
@@ -135,7 +142,7 @@ export interface IStoryFrame {
      *
      * @see FrameContent
      */
-    component?: React.FC<{ isMASReleaseVariant: boolean; frameIdNavigation(frameId: string): void }>;
+    component?: React.FC<{ isMASReleaseVariant: boolean; frameIdNavigation(frameId: string): void; onClose(): void }>;
 
     /**
      * Callback to call when frame shown

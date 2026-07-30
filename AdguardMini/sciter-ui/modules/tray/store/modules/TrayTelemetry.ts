@@ -33,6 +33,8 @@ export enum TrayEvent {
     FixItClick = 'fix_it_click',
     FixItProperlyClick = 'fix_it_properly_click',
     StoryEnableExtensionsClick = 'story_enable_extensions_click',
+    StoryHealthCheckWarningClick = 'story_health_warning_click',
+    StoryHealthCheckDefaultClick = 'story_health_default_click',
     UpdatesFiltersClick = 'updates_filters_click',
     FrequentUpdatesClick = 'frequent_updates_click',
     TelemetryClick = 'telemetry_click',

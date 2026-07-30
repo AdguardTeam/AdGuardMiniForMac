@@ -305,6 +305,11 @@ public struct Settings: @unchecked Sendable {
     set {_uniqueStorage()._non501User = newValue}
   }
 
+  public var macos25OrLower: Bool {
+    get {return _storage._macos25OrLower}
+    set {_uniqueStorage()._macos25OrLower = newValue}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -374,6 +379,8 @@ public struct GlobalSettings: Sendable {
   public var hiddenStories: [String] = []
 
   public var loginItemEnabled: Bool = false
+
+  public var lastUpdateMoreSevenDays: Bool = false
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -474,7 +481,7 @@ extension WindowGeometry: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
 
 extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "Settings"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{3}real_time_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0\u{3}user_rules_editor_geometry\0\u{3}show_safari_toolbar_badge\0\u{3}last_update_more_seven_days\0\u{3}mail_protection_enabled\0\u{3}login_item_enabled\0\u{3}non_501_user\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{3}real_time_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0\u{3}user_rules_editor_geometry\0\u{3}show_safari_toolbar_badge\0\u{3}last_update_more_seven_days\0\u{3}mail_protection_enabled\0\u{3}login_item_enabled\0\u{3}non_501_user\0\u{3}macos_25_or_lower\0")
 
   fileprivate class _StorageClass {
     var _launchOnStartup: Bool = false
@@ -495,6 +502,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     var _mailProtectionEnabled: Bool = false
     var _loginItemEnabled: Bool = false
     var _non501User: Bool = false
+    var _macos25OrLower: Bool = false
 
       // This property is used as the initial default value for new instances of the type.
       // The type itself is protecting the reference to its storage via CoW semantics.
@@ -523,6 +531,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       _mailProtectionEnabled = source._mailProtectionEnabled
       _loginItemEnabled = source._loginItemEnabled
       _non501User = source._non501User
+      _macos25OrLower = source._macos25OrLower
     }
   }
 
@@ -559,6 +568,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         case 16: try { try decoder.decodeSingularBoolField(value: &_storage._mailProtectionEnabled) }()
         case 17: try { try decoder.decodeSingularBoolField(value: &_storage._loginItemEnabled) }()
         case 18: try { try decoder.decodeSingularBoolField(value: &_storage._non501User) }()
+        case 19: try { try decoder.decodeSingularBoolField(value: &_storage._macos25OrLower) }()
         default: break
         }
       }
@@ -625,6 +635,9 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       if _storage._non501User != false {
         try visitor.visitSingularBoolField(value: _storage._non501User, fieldNumber: 18)
       }
+      if _storage._macos25OrLower != false {
+        try visitor.visitSingularBoolField(value: _storage._macos25OrLower, fieldNumber: 19)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -652,6 +665,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         if _storage._mailProtectionEnabled != rhs_storage._mailProtectionEnabled {return false}
         if _storage._loginItemEnabled != rhs_storage._loginItemEnabled {return false}
         if _storage._non501User != rhs_storage._non501User {return false}
+        if _storage._macos25OrLower != rhs_storage._macos25OrLower {return false}
         return true
       }
       if !storagesAreEqual {return false}
@@ -758,7 +772,7 @@ extension ImportStatus: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
 
 extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "GlobalSettings"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}enabled\0\u{2}\u{2}newVersionAvailable\0\u{1}releaseVariant\0\u{1}language\0\u{3}debug_logging\0\u{4}\u{2}allow_telemetry\0\u{1}theme\0\u{3}last_filters_update_timestamp_ms\0\u{3}hidden_stories\0\u{3}login_item_enabled\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}enabled\0\u{2}\u{2}newVersionAvailable\0\u{1}releaseVariant\0\u{1}language\0\u{3}debug_logging\0\u{4}\u{2}allow_telemetry\0\u{1}theme\0\u{3}last_filters_update_timestamp_ms\0\u{3}hidden_stories\0\u{3}login_item_enabled\0\u{3}last_update_more_seven_days\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -776,6 +790,7 @@ extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       case 10: try { try decoder.decodeSingularInt64Field(value: &self.lastFiltersUpdateTimestampMs) }()
       case 11: try { try decoder.decodeRepeatedStringField(value: &self.hiddenStories) }()
       case 12: try { try decoder.decodeSingularBoolField(value: &self.loginItemEnabled) }()
+      case 13: try { try decoder.decodeSingularBoolField(value: &self.lastUpdateMoreSevenDays) }()
       default: break
       }
     }
@@ -812,6 +827,9 @@ extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if self.loginItemEnabled != false {
       try visitor.visitSingularBoolField(value: self.loginItemEnabled, fieldNumber: 12)
     }
+    if self.lastUpdateMoreSevenDays != false {
+      try visitor.visitSingularBoolField(value: self.lastUpdateMoreSevenDays, fieldNumber: 13)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -826,6 +844,7 @@ extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if lhs.lastFiltersUpdateTimestampMs != rhs.lastFiltersUpdateTimestampMs {return false}
     if lhs.hiddenStories != rhs.hiddenStories {return false}
     if lhs.loginItemEnabled != rhs.loginItemEnabled {return false}
+    if lhs.lastUpdateMoreSevenDays != rhs.lastUpdateMoreSevenDays {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

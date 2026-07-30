@@ -101,6 +101,14 @@ public protocol SettingsServiceProtocol
 	func updateHealthCheckDismissedCards (
 						_ message: StringValueArray,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void
+	/// Get dismissed Safari Protection promo cards
+	func getPromoDismissedCards (
+						_ message: EmptyValue,
+						_ promise: @escaping (StringValueArray) -> Void) -> Void
+	/// Update dismissed Safari Protection promo cards
+	func updatePromoDismissedCards (
+						_ message: StringValueArray,
+						_ promise: @escaping (EmptyValue) -> Void) -> Void
 }
 
 // MARK: Protobuf Bridge definition
@@ -383,6 +391,30 @@ open class SettingsService: SciterBridge
 			inputType: StringValueArray.self,
 			outputType: EmptyValue.self,
 			method: cast.updateHealthCheckDismissedCards(_:_:),
+			message,
+			promise
+		)
+	}
+
+	/// Wrapper for `GetPromoDismissedCards`
+	@objc func GetPromoDismissedCards(_ message: Data, promise: @escaping (Data) -> Void)
+	{
+		swiftCall(
+			inputType: EmptyValue.self,
+			outputType: StringValueArray.self,
+			method: cast.getPromoDismissedCards(_:_:),
+			message,
+			promise
+		)
+	}
+
+	/// Wrapper for `UpdatePromoDismissedCards`
+	@objc func UpdatePromoDismissedCards(_ message: Data, promise: @escaping (Data) -> Void)
+	{
+		swiftCall(
+			inputType: StringValueArray.self,
+			outputType: EmptyValue.self,
+			method: cast.updatePromoDismissedCards(_:_:),
 			message,
 			promise
 		)

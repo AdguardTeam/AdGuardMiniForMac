@@ -53,5 +53,8 @@ service SettingsService {
     rpc GetHealthCheckDismissedCards(EmptyValue) returns (StringValueArray);
     /* Update dismissed Safari Protection health check cards */
     rpc UpdateHealthCheckDismissedCards(StringValueArray) returns (EmptyValue);
-    
+    /* Get dismissed Safari Protection promo cards */
+    rpc GetPromoDismissedCards(EmptyValue) returns (StringValueArray);
+    /* Update dismissed Safari Protection promo cards */
+    rpc UpdatePromoDismissedCards(StringValueArray) returns (EmptyValue);
 }

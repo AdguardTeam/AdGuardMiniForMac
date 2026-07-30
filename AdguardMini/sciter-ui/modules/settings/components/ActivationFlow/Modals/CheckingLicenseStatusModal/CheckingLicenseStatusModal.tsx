@@ -6,7 +6,7 @@ import theme from 'Theme';
 import { Modal } from 'UILib';
 
 import s from './CheckingLicenseStatusModal.module.pcss';
-import { AgnarWithTablet } from './Images';
+import { AgnarWithTablet } from '../../../../assets/Images';
 
 type CheckingLicenseStatusModalProps = {
     onClose(): void;

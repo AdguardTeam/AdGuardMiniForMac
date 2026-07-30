@@ -22,6 +22,8 @@ type StoriesLayerProps = {
     closeStories(): void;
     addCompletedStory(storyId: StoryId): void;
     isMASReleaseVariant: boolean;
+    /** Lowest frame index visible in this session. Non-zero when entering from a hide action at a later frame. */
+    minFrameIndex?: number;
 };
 
 /**
@@ -36,6 +38,7 @@ export function StoriesLayer({
     closeStories,
     addCompletedStory,
     isMASReleaseVariant,
+    minFrameIndex = 0,
 }: StoriesLayerProps) {
     const [navigation, dispatch] = useReducer(navigationReducer, story);
     const { currentFrameIndex, length, id, isFirstFrameReturnedBack } = navigation;
@@ -127,7 +130,7 @@ export function StoriesLayer({
                     onFrameClick={handleFrameClick}
                 />
                 <NavigationArrows
-                    hideLeft={currentFrameIndex === 0 && !hasPreviousStory}
+                    hideLeft={currentFrameIndex === minFrameIndex && !hasPreviousStory}
                     onNext={handleNext}
                     onPrevious={handlePrevious}
                 />
@@ -136,6 +139,7 @@ export function StoriesLayer({
                     frameIdNavigation={handleFrameNavigation}
                     isMASReleaseVariant={isMASReleaseVariant}
                     storyActionButtonHandle={handleButtonAction}
+                    onClose={handleClose}
                 />
             </div>
         </div>

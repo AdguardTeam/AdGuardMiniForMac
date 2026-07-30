@@ -54,7 +54,11 @@ export class StoryNavigation {
     /**
      *
      */
-    public constructor(public readonly storyInfo: StoryViewConfig) {}
+    public constructor(public readonly storyInfo: StoryViewConfig, initialIndex?: number) {
+        if (initialIndex !== undefined) {
+            this.currentFrameIndex = initialIndex;
+        }
+    }
 
     /**
      *

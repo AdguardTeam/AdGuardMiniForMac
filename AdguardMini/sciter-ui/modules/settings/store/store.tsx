@@ -77,9 +77,9 @@ export class SettingsStore {
         this.abTests = new ABTests();
         this.advancedBlocking = new AdvancedBlocking(this);
         this.appInfo = new AppInfo(this);
-        this.filters = new Filters(this);
-        this.safariProtection = new SafariProtection(this);
+        this.filters = new Filters();
         this.settings = new Settings(this);
+        this.safariProtection = new SafariProtection(this.filters);
         this.userRules = new UserRules(this);
         this.ui = new UI(this);
         this.windowing = new Windowing();
@@ -98,6 +98,7 @@ export class SettingsStore {
         this.account.getTrialAvailability();
         this.abTests.loadActiveABTests();
         this.advancedBlocking.getAdvancedBlocking();
+        this.advancedBlocking.getURLFilterState();
         this.appInfo.getAppInfo();
         this.filters.getEnabledFilters();
         this.filters.getFilters();
@@ -105,6 +106,7 @@ export class SettingsStore {
         this.filters.getFiltersGroupedByExtension();
         this.settings.getSettings();
         this.settings.getHealthCheckDismissedCards();
+        this.settings.getPromoDismissedCards();
         this.settings.getSafariExtensions();
         this.settings.getUserActionLastDirectory();
         this.userRules.getUserRules();

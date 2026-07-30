@@ -301,10 +301,14 @@ private final class ServiceLocator {
     private lazy var urlFilterStateAssembler: URLFilterStateAssembler = {
         URLFilterStateAssembler(
             urlFilterService: self.urlFilterService,
-            // Labeled parameter makes the role of the closure explicit.
-            // swiftlint:disable:next trailing_closure
             protectionLevelProvider: { [userSettingsService = self.userSettingsService] in
                 userSettingsService.urlFilterProtectionLevel
+            },
+            isNewProvider: { [userSettingsService = self.userSettingsService] in
+                userSettingsService.urlFilterIsNew
+            },
+            isPageNewProvider: { [userSettingsService = self.userSettingsService] in
+                userSettingsService.urlFilterIsPageNew
             }
         )
     }()

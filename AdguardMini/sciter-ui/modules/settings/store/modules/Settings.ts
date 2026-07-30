@@ -7,7 +7,7 @@ import { makeAutoObservable } from 'mobx';
 
 import { UpdateAllowTelemetryRequest, UpdateConsentRequest } from 'Apis/requests/ConsentService';
 import { GetSafariExtensionsRequest } from 'Apis/requests/SafariExtensionsService';
-import { ExportLogsRequest, ExportSettingsRequest, ForceRestartOnHardwareAccelerationImportRequest, GetContentBlockersRulesLimitRequest, GetHealthCheckDismissedCardsRequest, GetSettingsRequest, GetUserActionLastDirectoryRequest, ImportSettingsConfirmRequest, ImportSettingsRequest, ResetSettingsRequest, ResetStatisticsRequest, UpdateAutoFiltersUpdateRequest, UpdateDebugLoggingRequest, UpdateHardwareAccelerationRequest, UpdateHealthCheckDismissedCardsRequest, UpdateLaunchOnStartupRequest, UpdateQuitReactionRequest, UpdateShowInMenuBarRequest, UpdateThemeRequest, UpdateUserActionLastDirectoryRequest, UpdateShowSafariToolbarBadgeRequest } from 'Apis/requests/SettingsService';
+import { ExportLogsRequest, ExportSettingsRequest, ForceRestartOnHardwareAccelerationImportRequest, GetContentBlockersRulesLimitRequest, GetHealthCheckDismissedCardsRequest, GetSettingsRequest, GetUserActionLastDirectoryRequest, ImportSettingsConfirmRequest, ImportSettingsRequest, ResetSettingsRequest, ResetStatisticsRequest, UpdateAutoFiltersUpdateRequest, UpdateDebugLoggingRequest, UpdateHardwareAccelerationRequest, UpdateHealthCheckDismissedCardsRequest, UpdateLaunchOnStartupRequest, UpdateQuitReactionRequest, UpdateShowInMenuBarRequest, UpdateThemeRequest, UpdateUserActionLastDirectoryRequest, UpdateShowSafariToolbarBadgeRequest, UpdatePromoDismissedCardsRequest, GetPromoDismissedCardsRequest } from 'Apis/requests/SettingsService';
 import { OpenLoginItemsSettingsRequest } from 'Apis/requests/SystemService';
 import {
     Settings as SettingsEnt,
@@ -72,7 +72,12 @@ export class Settings {
     /**
      * Defines dismissed health check cards, contains card ids
      */
-    public dissmissedHealthCheckCards = new Set<string>();
+    public dismissedHealthCheckCards = new Set<string>();
+
+    /**
+     * Defines dismissed promo cards, contains card ids
+     */
+    public dismissedPromoCards = new Set<string>();
 
     /**
      * Getter for safari extensions with loading status
@@ -169,7 +174,7 @@ export class Settings {
      *
      */
     public setHealthCheckCardDismissed(cardIds: string[]) {
-        this.dissmissedHealthCheckCards = new Set(cardIds);
+        this.dismissedHealthCheckCards = new Set(cardIds);
     }
 
     /**
@@ -178,6 +183,29 @@ export class Settings {
     public updateHealthCheckDismissedCards(value: string[]) {
         this.setHealthCheckCardDismissed(value);
         window.API.Execute(new UpdateHealthCheckDismissedCardsRequest({ value }));
+    }
+
+    /**
+     * Get list of dismissed promo card IDs
+     */
+    public async getPromoDismissedCards() {
+        const resp = await window.API.Execute(new GetPromoDismissedCardsRequest());
+        this.setPromoDismissed(resp.value);
+    }
+
+    /**
+     * Set dismissed promo cards
+     */
+    public setPromoDismissed(cardIds: string[]) {
+        this.dismissedPromoCards = new Set(cardIds);
+    }
+
+    /**
+     * Update list of dismissed promo card IDs
+     */
+    public updatePromoDismissedCards(value: string[]) {
+        this.setPromoDismissed(value);
+        window.API.Execute(new UpdatePromoDismissedCardsRequest({ value }));
     }
 
     /**

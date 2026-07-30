@@ -40,7 +40,7 @@ function HealthCheckComponent({ setShowConsent }: HealthCheckProps) {
     const { settings, safariProtection } = useSettingsStore();
 
     const {
-        dissmissedHealthCheckCards,
+        dismissedHealthCheckCards,
         loginItemEnabled,
         settings: { lastUpdateMoreSevenDays },
     } = settings;
@@ -79,14 +79,14 @@ function HealthCheckComponent({ setShowConsent }: HealthCheckProps) {
         hasRulesLimitExceeded && (
             <RulesLimitExceededCard key="rulesLimitExceeded" />
         ),
-        lastUpdateMoreSevenDays && !dissmissedHealthCheckCards.has(HealthCheckDismissId.NoUpdates) && (
+        lastUpdateMoreSevenDays && !dismissedHealthCheckCards.has(HealthCheckDismissId.NoUpdates) && (
             <NoUpdatesCard key={HealthCheckDismissId.NoUpdates} />
         ),
-        hasAdBlockingDisabled && !dissmissedHealthCheckCards.has(HealthCheckDismissId.AdBlockingDisabled) && (
+        hasAdBlockingDisabled && !dismissedHealthCheckCards.has(HealthCheckDismissId.AdBlockingDisabled) && (
             <AdBlockingDisabledCard key={HealthCheckDismissId.AdBlockingDisabled} />
         ),
         hasAnnoyanceBlockingDisabled
-        && !dissmissedHealthCheckCards.has(HealthCheckDismissId.AnnoyanceBlockingDisabled) && (
+        && !dismissedHealthCheckCards.has(HealthCheckDismissId.AnnoyanceBlockingDisabled) && (
             <AnnoyanceBlockingDisabledCard
                 key={HealthCheckDismissId.AnnoyanceBlockingDisabled}
                 setShowConsent={setShowConsent}

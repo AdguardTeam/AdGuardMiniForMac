@@ -20,6 +20,12 @@ private enum Constants {
     // UID 501 is macOS's default UID for the first admin account created during initial setup.
     // Non-501 users indicate managed or multi-account scenarios.
     static let isNon501User: Bool = getuid() != 501
+    static let isMacOS25OrLower: Bool = {
+        if #available(macOS 26, *) {
+            return false
+        }
+        return true
+    }()
 }
 
 extension Sciter.SettingsServiceImpl:
@@ -135,6 +141,7 @@ extension Sciter {
                 settings.userRulesEditorGeometry = geometry.toProto()
             }
             settings.non501User = Constants.isNon501User
+            settings.macos25OrLower = Constants.isMacOS25OrLower
             promise(settings)
         }
 
@@ -245,6 +252,19 @@ extension Sciter {
         func updateUserRulesEditorGeometry(_ message: WindowGeometry,
                                            _ promise: @escaping (EmptyValue) -> Void) {
             self.userSettingsService.userRulesEditorGeometry = message.toWindowGeometryDTO()
+            promise(EmptyValue())
+        }
+
+        func getPromoDismissedCards(_ message: EmptyValue,
+                                    _ promise: @escaping (StringValueArray) -> Void) {
+            var response = StringValueArray()
+            response.value = self.userSettingsService.dismissedPromoCards
+            promise(response)
+        }
+
+        func updatePromoDismissedCards(_ message: StringValueArray,
+                                       _ promise: @escaping (EmptyValue) -> Void) {
+            self.userSettingsService.dismissedPromoCards = message.value
             promise(EmptyValue())
         }
     }

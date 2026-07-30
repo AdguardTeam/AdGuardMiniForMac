@@ -4,6 +4,7 @@
 
 import { observer } from 'mobx-react-lite';
 
+import { URLFilterConfiguration } from 'Apis/types/URLFilter';
 import { SettingsEvent } from 'Modules/settings/store/modules';
 import { usePayedFuncsTitle, useSettingsStore } from 'SettingsLib/hooks';
 import theme from 'Theme';
@@ -14,6 +15,7 @@ import { SettingsItemSwitch } from '../../SettingsItem';
 import { AdguardExtraSwitch } from './AdguardExtraSwitch';
 import s from './AdvancedBlockingControl.module.pcss';
 import { AdvancedBlockingTitle } from './AdvancedBlockingTitle';
+import { SystemWideProtectionSwitch } from './SystemWideProtectionSwitch';
 
 /**
  * Advanced blocking main component
@@ -24,6 +26,10 @@ export function AdvancedBlockingControlComponent() {
         adguardExtra,
         realTimeFiltersUpdate,
     } = advancedBlocking.advancedBlocking;
+    const {
+        enabled: systemWideProtectionEnabled,
+        isNew: isSystemWideProtectionNew,
+    } = advancedBlocking.urlFilterState.configuration;
 
     const { isLicenseOrTrialActive } = account;
 
@@ -37,6 +43,17 @@ export function AdvancedBlockingControlComponent() {
             return;
         }
         advancedBlocking.updateAdguardExtra(value);
+    };
+
+    const onUpdateSystemWideProtection = (value: boolean) => {
+        if (isFree) {
+            account.showPaywall();
+            return;
+        }
+        advancedBlocking.updateSystemWideProtection(new URLFilterConfiguration({
+            ...advancedBlocking.urlFilterState.configuration.toObject(),
+            enabled: value,
+        }));
     };
 
     // B variant settings
@@ -60,6 +77,13 @@ export function AdvancedBlockingControlComponent() {
             <AdvancedBlockingTitle tryContent={payedFuncsTitle ? (
                 <div className={s.AdvancedBlockingControl_payedTitle}>{payedFuncsTitle}</div>
             ) : undefined}
+            />
+            <SystemWideProtectionSwitch
+                isNew={isSystemWideProtectionNew}
+                muted={!isLicenseOrTrialActive}
+                orangeIcon={isFree}
+                value={isLicenseOrTrialActive ? systemWideProtectionEnabled : false}
+                onChange={onUpdateSystemWideProtection}
             />
             <AdguardExtraSwitch
                 muted={!isLicenseOrTrialActive}

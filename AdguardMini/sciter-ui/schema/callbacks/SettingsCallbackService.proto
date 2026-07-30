@@ -3,6 +3,7 @@ syntax = "proto3";
 import "PrimitivesWrappers.proto";
 import "Settings.proto";
 import "EffectiveTheme.proto";
+import "URLFilter.proto";
 
 /* Service handles settings lists */
 service SettingsCallbackService {
@@ -24,4 +25,6 @@ service SettingsCallbackService {
     rpc OnEffectiveThemeChanged(EffectiveThemeValue) returns (EmptyValue);
     /* Settings window was requested to open from tray */
     rpc OnSettingsWindowOpened(EmptyValue) returns (EmptyValue);
+    /* Fires when URL filter state changed */
+    rpc OnURLFilterStateChanged(URLFilterState) returns (EmptyValue);
 }

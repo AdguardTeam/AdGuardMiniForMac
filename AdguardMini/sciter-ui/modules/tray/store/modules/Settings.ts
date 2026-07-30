@@ -6,18 +6,18 @@ import { LogLevel } from '@adg/sciter-utils-kit';
 import { makeAutoObservable } from 'mobx';
 
 import { GetTrayLicenseRequest, GetTrialAvailableDaysRequest } from 'Apis/requests/AccountService';
-import { GetAdvancedBlockingRequest } from 'Apis/requests/AdvancedBlockingService';
+import { GetAdvancedBlockingRequest, GetURLFilterStateRequest, UpdateURLFilterConfigurationRequest } from 'Apis/requests/AdvancedBlockingService';
 import { CheckApplicationVersionRequest } from 'Apis/requests/AppUpdateService';
 import { GetFiltersMetadataRequest, RequestFiltersUpdateRequest } from 'Apis/requests/FiltersService';
 import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
 import { GetSafariExtensionsRequest } from 'Apis/requests/SafariExtensionsService';
 import { RequestOpenSettingsPageRequest } from 'Apis/requests/SystemService';
 import { GetStatisticsRequest, GetTraySettingsRequest, UpdateTraySettingsRequest } from 'Apis/requests/TraySettingsService';
-import { GlobalSettings, TrayLicenseOrError, LicenseStatus, ReleaseVariants, StatisticsPeriod, StatisticsResponse, FiltersStatus } from 'Apis/types';
+import { GlobalSettings, TrayLicenseOrError, LicenseStatus, ReleaseVariants, StatisticsPeriod, StatisticsResponse, FiltersStatus, URLFilterConfiguration } from 'Apis/types';
 import { SafariExtensionsStore } from 'Common/stores/SafariExtensionsStore';
 import { updateLanguage } from 'Intl';
 
-import type { Filters, Filter, FilterUpdateStatus, SafariExtensionUpdate, AdvancedBlocking, SafariExtensions } from 'Apis/types';
+import type { Filters, Filter, FilterUpdateStatus, SafariExtensionUpdate, SafariExtensions, AdvancedBlocking } from 'Apis/types';
 import type { StoryId } from 'Modules/tray/modules/stories/model';
 import type { TrayStore } from 'TrayStore';
 
@@ -63,6 +63,11 @@ export class SettingsStore {
      * Bool describes if login item is enabled
      */
     public loginItemEnabled = true;
+
+    /**
+     * Indicates if the last update was more than seven days ago
+     */
+    public lastUpdateMoreSevenDays = false;
 
     /**
      * Advanced blocking status, used in What is Extra story
@@ -121,6 +126,15 @@ export class SettingsStore {
     public statistics = new StatisticsResponse();
 
     /**
+     * URL filter state for system-wide protection settings.
+     */
+    public urlFilterState = new URLFilterConfiguration({
+        enabled: false,
+        isNew: false,
+        isPageNew: false,
+    });
+
+    /**
      * Checks if the license status is active or trial
      */
     public get isLicenseOrTrialActive() {
@@ -167,6 +181,7 @@ export class SettingsStore {
         this.getSafariExtensions();
         this.getTrialAvailability();
         this.getAdvancedBlocking();
+        this.getURLFilterState();
     }
 
     /**
@@ -256,6 +271,31 @@ export class SettingsStore {
     }
 
     /**
+     * Get URL filter state from swift
+     */
+    public async getURLFilterState() {
+        const resp = await window.API.Execute(new GetURLFilterStateRequest());
+        this.setURLFilterState(resp.configuration);
+    }
+
+    /**
+     * URL filter state setter
+     */
+    public setURLFilterState(data: URLFilterConfiguration) {
+        this.urlFilterState = data;
+    }
+
+    /**
+     * Update SystemWideProtection setting
+     */
+    public enableSystemWideProtection() {
+        const newConfiguration = this.urlFilterState.clone();
+        newConfiguration.enabled = true;
+        this.setURLFilterState(newConfiguration);
+        window.API.Execute(new UpdateURLFilterConfigurationRequest(newConfiguration));
+    }
+
+    /**
      * Update tray settings
      */
     public async updateSettings(enabled: boolean) {
@@ -310,6 +350,7 @@ export class SettingsStore {
         this.newVersionAvailable = settings.newVersionAvailable;
         this.hiddenStories = new Set(settings.hiddenStories || []);
         this.loginItemEnabled = settings.loginItemEnabled;
+        this.lastUpdateMoreSevenDays = settings.lastUpdateMoreSevenDays ?? false;
         log.setLogLevel(settings.debugLogging ? LogLevel.DBG : LogLevel.ERR);
         updateLanguage(settings.language);
     }

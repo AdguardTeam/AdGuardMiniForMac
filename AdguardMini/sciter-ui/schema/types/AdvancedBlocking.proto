@@ -8,6 +8,4 @@ message AdvancedBlocking {
     bool adguard_extra = 2;
     bool mail_protection_enabled = 3;
     bool real_time_filters_update = 4;
-    reserved 5;
-    reserved "system_wide";
 }

@@ -20,7 +20,7 @@ function AdBlockingDisabledCardComponent() {
         safariProtection,
     } = useSettingsStore();
     const {
-        dissmissedHealthCheckCards,
+        dismissedHealthCheckCards,
     } = settings;
     const notifyError = useNotificationSomethingWentWrongText();
 
@@ -42,7 +42,7 @@ function AdBlockingDisabledCardComponent() {
             )}
             title={translate('safari.protection.health.ad.blocking')}
             onClose={() => settings.updateHealthCheckDismissedCards([
-                ...dissmissedHealthCheckCards,
+                ...dismissedHealthCheckCards,
                 HealthCheckDismissId.AdBlockingDisabled,
             ])}
         />

@@ -17,7 +17,9 @@ extension URLFilterUIState {
             status: self.status.toProto(),
             configuration: SciterSchema.URLFilterConfiguration(
                 enabled: self.enabled,
-                protectionLevel: self.protectionLevel.toProto()
+                protectionLevel: self.protectionLevel.toProto(),
+                isNew: self.isNew,
+                isPageNew: self.isPageNew
             ),
             info: self.info.toProto(),
             errorMessage: self.errorMessage

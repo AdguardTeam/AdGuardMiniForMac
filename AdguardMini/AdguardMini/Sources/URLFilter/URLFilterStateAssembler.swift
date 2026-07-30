@@ -21,6 +21,8 @@ import Foundation
 actor URLFilterStateAssembler {
     private let urlFilterService: URLFilterService
     private let protectionLevelProvider: @Sendable () -> URLFilterProtectionLevel
+    private let isNewProvider: @Sendable () -> Bool
+    private let isPageNewProvider: @Sendable () -> Bool
     private var installRequested = false
 
     /// Creates the assembler.
@@ -29,10 +31,14 @@ actor URLFilterStateAssembler {
     ///   - protectionLevelProvider: Reads the persisted protection level.
     init(
         urlFilterService: URLFilterService,
-        protectionLevelProvider: @escaping @Sendable () -> URLFilterProtectionLevel
+        protectionLevelProvider: @escaping @Sendable () -> URLFilterProtectionLevel,
+        isNewProvider: @escaping @Sendable () -> Bool,
+        isPageNewProvider: @escaping @Sendable () -> Bool
     ) {
         self.urlFilterService = urlFilterService
         self.protectionLevelProvider = protectionLevelProvider
+        self.isNewProvider = isNewProvider
+        self.isPageNewProvider = isPageNewProvider
     }
 
     /// Records that a first-time installation was requested. Reflected in
@@ -56,6 +62,8 @@ actor URLFilterStateAssembler {
             status: status,
             enabled: configuration?.enabled ?? false,
             protectionLevel: self.protectionLevelProvider(),
+            isNew: self.isNewProvider(),
+            isPageNew: self.isPageNewProvider(),
             info: URLFilterInfo(isInstalling: isInstalling),
             errorMessage: status.errorMessage
         )
