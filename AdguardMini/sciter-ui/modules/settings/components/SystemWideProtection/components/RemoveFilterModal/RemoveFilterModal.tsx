@@ -5,6 +5,7 @@
 import { observer } from 'mobx-react-lite';
 
 import { useSettingsStore } from 'SettingsLib/hooks';
+import { SettingsEvent } from 'Modules/settings/store/modules';
 import { Modal } from 'UILib';
 import theme from 'Theme';
 
@@ -21,9 +22,10 @@ type RemoveFilterModalProps = {
  * Remove URL filter modal for System-wide Protection settings page
  */
 function RemoveFilterModalComponent({ setShowRemoveFilterModal }: RemoveFilterModalProps) {
-    const { advancedBlocking } = useSettingsStore();
+    const { advancedBlocking, telemetry } = useSettingsStore();
 
     const onSubmit = () => {
+        telemetry.trackEvent(SettingsEvent.RemoveURLFilterClick);
         advancedBlocking.removeURLFilter();
         setShowRemoveFilterModal(false);
     };

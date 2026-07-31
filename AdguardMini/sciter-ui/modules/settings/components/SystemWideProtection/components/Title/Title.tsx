@@ -34,7 +34,10 @@ function TitleComponent({ setShowNotSupportedModal, setShowResetCacheModal, setS
         non501User,
     } = settings.settings;
 
-    const payedFuncsTitle = usePayedFuncsTitle(SettingsEvent.TryForFreeAbTest, s.Title_payedTitle_text);
+    const payedFuncsTitle = usePayedFuncsTitle(
+        SettingsEvent.SystemWideProtectionGetFullVersionClick,
+        s.Title_payedTitle_text
+    );
 
     const renderWhyBtn = (text: string) => (
         <Button

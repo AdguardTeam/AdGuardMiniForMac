@@ -48,7 +48,7 @@ const STORIES_TDS_LINK_FROM = 'storyConstructor';
  * Implements logic for sorting and filtering stories
  */
 export function useStoriesConfig(): StoryInfo[] {
-    const { settings, safariProtection } = useTrayStore();
+    const { settings, safariProtection, telemetry } = useTrayStore();
 
     const requiredStories: StoryInfo[] = [];
     const stories: StoryInfo[] = [];
@@ -262,14 +262,24 @@ export function useStoriesConfig(): StoryInfo[] {
     if (!isLicenseOrTrialActive || !urlFilterState?.enabled) {
         let actionButtonTitle = '';
         let actionButton = noop;
-        if (!isLicenseOrTrialActive) {
-            actionButtonTitle = trialAvailableDays > 0
-                ? translate.plural('tray.story.advanced.features.action.trial', trialAvailableDays, provideTrialDaysParam(trialAvailableDays))
-                : translate('tray.story.advanced.features.action');
-            actionButton = settings.requestOpenPaywallScreen;
+        if (!isLicenseOrTrialActive && trialAvailableDays > 0) {
+            actionButtonTitle = translate.plural('tray.story.system.wide.action.trial', trialAvailableDays, provideTrialDaysParam(trialAvailableDays));
+            actionButton = () => {
+                telemetry.trackEvent(TrayEvent.TrayStorySystemWideTryFreeClick);
+                settings.requestOpenPaywallScreen();
+            };
+        } else if (!isLicenseOrTrialActive) {
+            actionButtonTitle = translate('tray.story.system.wide.action');
+            actionButton = () => {
+                telemetry.trackEvent(TrayEvent.TrayStorySystemWideBuyClick);
+                settings.requestOpenPaywallScreen();
+            };
         } else {
             actionButtonTitle = translate('enable');
-            actionButton = settings.enableSystemWideProtection;
+            actionButton = () => {
+                telemetry.trackEvent(TrayEvent.TrayStorySystemWideEnableClick);
+                settings.enableSystemWideProtection();
+            };
         }
         stories.push({
             icon: 'apps',
@@ -288,7 +298,7 @@ export function useStoriesConfig(): StoryInfo[] {
                 }],
                 backgroundColor: 'purple',
             },
-            telemetryEvent: TrayEvent.StoryUnlockFeaturesClick,
+            telemetryEvent: TrayEvent.TrayStorySystemWideClick,
         });
     }
 

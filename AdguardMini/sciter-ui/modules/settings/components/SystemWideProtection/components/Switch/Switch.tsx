@@ -6,6 +6,7 @@ import { observer } from 'mobx-react-lite';
 
 import { URLFilterConfiguration, URLFilterStatus } from 'Apis/types';
 import { useSettingsStore } from 'SettingsLib/hooks';
+import { SettingsEvent } from 'Modules/settings/store/modules';
 
 import { SettingsItemSwitch } from '../../../SettingsItem';
 
@@ -20,7 +21,7 @@ type SwitchProps = {
  * System-wide Protection switch component for settings module
  */
 function SwitchComponent({ setShowInstallModal }: SwitchProps) {
-    const { account, advancedBlocking } = useSettingsStore();
+    const { account, advancedBlocking, telemetry } = useSettingsStore();
     const {
         status: systemWideProtectionStatus,
     } = advancedBlocking.urlFilterState;
@@ -36,6 +37,7 @@ function SwitchComponent({ setShowInstallModal }: SwitchProps) {
         || systemWideProtectionStatus === URLFilterStatus.invalid;
 
     const onUpdateSystemWideProtection = (value: boolean) => {
+        telemetry.trackEvent(SettingsEvent.SystemWideProtectionToggleClick);
         if (isFree) {
             account.showPaywall();
             return;

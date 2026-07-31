@@ -6,6 +6,7 @@ import { observer } from 'mobx-react-lite';
 
 import { URLFilterConfiguration, URLFilterProtectionLevel, URLFilterStatus } from 'Apis/types';
 import { useSettingsStore } from 'SettingsLib/hooks';
+import { SettingsEvent } from 'Modules/settings/store/modules';
 import theme from 'Theme';
 import { Radio, Text } from 'UILib';
 
@@ -19,10 +20,19 @@ type ProtectionLevelProps = {
 };
 
 /**
+ * Mapping of System-wide Protection levels to telemetry events
+ */
+const SystemWideProtectionLevelToTelemetryEventMap: Record<URLFilterProtectionLevel, SettingsEvent> = {
+    [URLFilterProtectionLevel.essential]: SettingsEvent.SystemWideProtectionEssentialClick,
+    [URLFilterProtectionLevel.safe]: SettingsEvent.SystemWideProtectionSafeClick,
+    [URLFilterProtectionLevel.family]: SettingsEvent.SystemWideProtectionFamilyClick,
+};
+
+/**
  * System-wide Protection level component for settings module
  */
 function ProtectionLevelComponent({ setShowInstallModal }: ProtectionLevelProps) {
-    const { account, advancedBlocking } = useSettingsStore();
+    const { account, advancedBlocking, telemetry } = useSettingsStore();
     const {
         status: systemWideProtectionStatus,
     } = advancedBlocking.urlFilterState;
@@ -41,6 +51,7 @@ function ProtectionLevelComponent({ setShowInstallModal }: ProtectionLevelProps)
     const muted = !systemWideProtectionEnabled;
 
     const onUpdateSystemWideProtectionLevel = (value: URLFilterProtectionLevel) => {
+        telemetry.trackEvent(SystemWideProtectionLevelToTelemetryEventMap[value]);
         if (isFree) {
             account.showPaywall();
             return;

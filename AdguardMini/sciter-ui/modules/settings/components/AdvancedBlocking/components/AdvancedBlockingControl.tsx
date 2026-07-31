@@ -46,6 +46,7 @@ export function AdvancedBlockingControlComponent() {
     };
 
     const onUpdateSystemWideProtection = (value: boolean) => {
+        telemetry.trackEvent(SettingsEvent.SystemWideProtectionEntryClick);
         if (isFree) {
             account.showPaywall();
             return;

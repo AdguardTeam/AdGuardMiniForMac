@@ -41,6 +41,10 @@ export enum TrayEvent {
     StoryStatisticsClick = 'story_statistics_click',
     StoryStatisticSlideClick = 'story_statistic_slide_click',
     UpdateClick = 'update_click',
+    TrayStorySystemWideClick = 'tray_story_system_wide_click',
+    TrayStorySystemWideTryFreeClick = 'tray_story_system_wide_try_free_click',
+    TrayStorySystemWideBuyClick = 'tray_story_system_wide_buy_click',
+    TrayStorySystemWideEnableClick = 'tray_story_system_wide_enable_click',
 }
 
 /**

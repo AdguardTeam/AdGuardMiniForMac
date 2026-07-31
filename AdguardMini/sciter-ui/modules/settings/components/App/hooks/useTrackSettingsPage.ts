@@ -46,6 +46,8 @@ function RouteToPage(currentRoute: RouteName): SettingsPage | 'unknown' {
             return SettingsPage.SafariExtensions;
         case RouteName.contact_support:
             return SettingsPage.ContactSupport;
+        case RouteName.system_wide_protection:
+            return SettingsPage.SystemWideProtection;
         default:
             return 'unknown';
     }

@@ -5,6 +5,7 @@
 import { observer } from 'mobx-react-lite';
 
 import { useSettingsStore } from 'SettingsLib/hooks';
+import { SettingsEvent } from 'Modules/settings/store/modules';
 import { Modal } from 'UILib';
 import theme from 'Theme';
 
@@ -22,9 +23,10 @@ type InstallModalProps = {
  * Install modal for System-wide Protection settings page
  */
 function InstallModalComponent({ setShowInstallModal }: InstallModalProps) {
-    const { advancedBlocking } = useSettingsStore();
+    const { advancedBlocking, telemetry } = useSettingsStore();
 
     const onSubmit = () => {
+        telemetry.trackEvent(SettingsEvent.InstallURLFilterClick);
         advancedBlocking.markURLFilterInstallRequested();
         setShowInstallModal(false);
     };
