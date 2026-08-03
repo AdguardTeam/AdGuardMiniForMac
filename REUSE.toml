@@ -34,6 +34,7 @@ path = [
     "**/*.xcodeproj/**",
     "**/*.entitlements",
     "**/*.plist",
+    "**/.dockerignore",
     "**/.eslintignore",
     "**/.nvmrc",
     "**/Package.swift",
