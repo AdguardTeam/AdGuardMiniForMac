@@ -59,10 +59,6 @@ final class SafariApiProvider: NSObject {
     private let keychain: KeychainManager
     private let healthCheckAttentionProvider: HealthCheckAttentionProvider
 
-    #if MAS
-    private let appStoreRateUs: AppStoreRateUs?
-    #endif
-
     // MARK: Init
 
     init(
@@ -77,8 +73,7 @@ final class SafariApiProvider: NSObject {
         telemetry: Telemetry.Service,
         keychain: KeychainManager,
         eventBus: EventBus,
-        healthCheckAttentionProvider: HealthCheckAttentionProvider,
-        appStoreRateUs: AppStoreRateUs?
+        healthCheckAttentionProvider: HealthCheckAttentionProvider
     ) {
         self.proxyStorage = proxyStorage
         self.licenseStateProvider = licenseStateProvider
@@ -92,10 +87,6 @@ final class SafariApiProvider: NSObject {
         self.keychain = keychain
         self.eventBus = eventBus
         self.healthCheckAttentionProvider = healthCheckAttentionProvider
-
-        #if MAS
-        self.appStoreRateUs = appStoreRateUs
-        #endif
     }
 
     // MARK: Deinit
@@ -376,9 +367,6 @@ extension SafariApiProvider: MainAppApi {
     }
 
     func notifyWindowOpened(reply: @escaping (Error?) -> Void) {
-        #if MAS
-        self.appStoreRateUs?.onWindowOpened()
-        #endif
         reply(nil)
     }
 }

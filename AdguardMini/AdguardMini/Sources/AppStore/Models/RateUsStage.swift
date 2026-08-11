@@ -17,11 +17,11 @@ enum RateUsStage: Int {
     var interval: TimeInterval {
         switch self {
         case .first:
-            self.getDevConfigVal(forKey: .rateUsFirstDuration, or: 72.hours)
+            self.getDevConfigVal(forKey: .rateUsFirstDuration, or: 14.days)
         case .second:
-            self.getDevConfigVal(forKey: .rateUsSecondDuration, or: 30.days)
+            self.getDevConfigVal(forKey: .rateUsSecondDuration, or: 90.days)
         case .third:
-            self.getDevConfigVal(forKey: .rateUsThirdDuration, or: 90.days)
+            self.getDevConfigVal(forKey: .rateUsThirdDuration, or: 210.days)
         }
     }
 

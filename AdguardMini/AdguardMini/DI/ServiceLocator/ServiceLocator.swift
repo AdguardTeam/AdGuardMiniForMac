@@ -104,7 +104,10 @@ private final class ServiceLocator {
 
     #if MAS
     private lazy var appStoreRateUs: AppStoreRateUs = {
-        AppStoreRateUsImpl(appMetadata: self.appMetadata)
+        AppStoreRateUsImpl(
+            appMetadata: self.appMetadata,
+            statisticsService: self.statisticsService
+        )
     }()
     #endif
 
@@ -347,14 +350,7 @@ private final class ServiceLocator {
             telemetry: self.telemetryService,
             keychain: self.coreDIContainer.keychain,
             eventBus: self.eventBus,
-            healthCheckAttentionProvider: self.healthCheckAttentionProvider,
-            appStoreRateUs: {
-                #if MAS
-                return self.appStoreRateUs
-                #else
-                return nil
-                #endif
-            }()
+            healthCheckAttentionProvider: self.healthCheckAttentionProvider
         )
     }()
     private lazy var loginItemService: LoginItemService = {

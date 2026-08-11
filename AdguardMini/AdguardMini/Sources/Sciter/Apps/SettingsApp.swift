@@ -8,6 +8,7 @@
 //
 
 import Foundation
+import AppKit
 import AML
 import SciterSchema
 
@@ -57,7 +58,10 @@ final class SettingsApp: SciterApp {
         await super.showWindow()
 
         #if MAS
-        self.appStoreRateUs.onWindowOpened()
+        self.appStoreRateUs.onWindowOpened { @MainActor [weak self] in
+            guard let self else { return false }
+            return !self.isAppHidden() && NSApplication.shared.isActive
+        }
         #endif
     }
 
