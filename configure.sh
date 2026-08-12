@@ -61,6 +61,10 @@ if [ -f "$PRIVATE_ENV" ]; then
     set +a
 fi
 
+# Temporarily disable xtrace to prevent secret leakage into logs
+_xtrace_saved=
+case $- in *x*) _xtrace_saved=1; set +x ;; esac
+
 if [ -n "${CONFIG_BACKEND_REQUEST_KEY:-}" ] && [ -n "${CONFIG_BACKEND_REQUEST_ENCRYPTION_KEY:-}" ]; then
     cat > "$PRIVATE_SOURCE" <<-EOF
 	CONFIG_BACKEND_REQUEST_KEY = ${CONFIG_BACKEND_REQUEST_KEY}
@@ -76,6 +80,12 @@ else
 EOF
     echo "Created $PRIVATE_SOURCE with dummy keys"
 fi
+
+# Restore xtrace to its original state.
+if [ -n "$_xtrace_saved" ]; then
+    set -x
+fi
+unset _xtrace_saved
 
 # Configure Swift package registry for private packages
 if [ -z "${SWIFT_REGISTRY_URL:-}" ]; then
@@ -105,17 +115,14 @@ if [[ "$1" == "dev" ]]; then
     check_latest_version "$SUPPORT_SCRIPTS_GIT" "$SUPPORT_SCRIPTS_TAG" "support-scripts"
 fi
 
-bundle config --local path '.bundle/vendor'
-bundle config unset --local without
+if [[ "$1" == "dev" ]]; then
+    bundle config --local path '.bundle/vendor'
+    bundle config unset --local without
+    bundle install
 
-if [ "$1" != "dev" ]; then
-    bundle config set --local without 'development'
+    # Generate Bundler binstubs with bin/ruby shebang
+    bundle binstubs --all --force --shebang "$PWD/bin/ruby"
 fi
-
-bundle install
-
-# Generate Bundler binstubs with bin/ruby shebang
-bundle binstubs --all --force --shebang "$PWD/bin/ruby"
 
 # Activate python venv and install components
 echo

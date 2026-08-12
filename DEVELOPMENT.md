@@ -5,6 +5,31 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 # Development Guide
 
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+  - [Required Tools](#required-tools)
+  - [Repository Access](#repository-access)
+- [Getting Started](#getting-started)
+- [Development Workflow](#development-workflow)
+  - [Code Style](#code-style)
+  - [Frontend Development](#frontend-development)
+  - [Linting](#linting)
+  - [Testing](#testing)
+  - [Building](#building)
+- [Common Tasks](#common-tasks)
+  - [Protobuf Schema](#protobuf-schema)
+  - [Localization](#localization)
+  - [Update Dependencies](#update-dependencies)
+  - [Utility Scripts](#utility-scripts)
+  - [Theme Generation](#theme-generation)
+- [Troubleshooting](#troubleshooting)
+  - [Ruby or Node.js Version Too Old](#ruby-or-nodejs-version-too-old)
+  - [Tests Don't Build](#tests-dont-build)
+  - [Can't See the Build in TestFlight](#cant-see-the-build-in-testflight)
+  - [Get New Updates Immediately (Sparkle)](#get-new-updates-immediately-sparkle)
+- [Additional Resources](#additional-resources)
+
 ## Prerequisites
 
 ### Required Tools
@@ -13,7 +38,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 |------|---------|-------|
 | Xcode | 26+ | Required for `.icon` asset format |
 | Node.js | 22+ | JavaScript runtime (used by Yarn, Webpack, Sciter UI build) |
-| Ruby | 3.2.2+ | Fastlane and build scripts |
+| Ruby | 3.2.2+ | Build scripts, RuboCop, ruby-lsp |
 | Bundler | 2.6+ | Ruby dependency management |
 | Yarn | 1.22+ | Frontend dependency management |
 | Python | 3.9+ | Protobuf schema generation (venv created by `configure.sh`) |
@@ -24,31 +49,46 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 ### Repository Access
 
-SSH access to the internal Bitbucket server is required. The following private
-repositories are resolved as SPM dependencies during build:
+Private Swift packages are resolved through a **Swift package registry**
+(configured by `configure.sh` via `swift package-registry set --global --scope
+mac`), not via Bitbucket/SSH checkouts. The registry URL is provided through the
+`SWIFT_REGISTRY_URL` variable (see below). The following private packages are
+served from the registry under the `mac` scope:
 
-- `adguard-mac-lib`
-- `sp-appstore`
-- `sp-backend`
-- `sp-color-palette` (+ transitive: `sp-swiftlint`)
-- `sp-flm`
-- `sp-sciter-sdk`
-- `sp-sentry`
-- `sp-xpcgate`
+- `mac.aml` (AdGuard Mac library)
+- `mac.sp-appstore`
+- `mac.sp-backend`
+- `mac.sp-color-palette`
+- `mac.sp-flm`
+- `mac.sp-sciter-sdk`
+- `mac.sp-sentry`
+- `mac.sp-xpcgate`
 
-Additionally, `adguard-mini-private` must be cloned at the same directory level
-as `adguard-mini` (or create it manually from the
-`adguard-mini-private-template` folder).
+Public dependencies (SafariConverterLib, Sparkle, FilterListManager,
+swift-protobuf, SwiftLintPlugins, XMLCoder, etc.) are resolved from GitHub.
+
+Additionally, a private configuration directory named
+`sciter-adguard-mini-private` must exist at the same directory level as the
+`sciter-adguard-mini` repository. It provides a `.env` file consumed by
+`configure.sh` with at least:
+
+- `SWIFT_REGISTRY_URL` — URL of the private Swift package registry
+- `SUPPORT_SCRIPTS_GIT` — git URL of the `support-scripts` repository
+- `CONFIG_BACKEND_REQUEST_KEY` / `CONFIG_BACKEND_REQUEST_ENCRYPTION_KEY` —
+  backend keys (dummy values are used automatically when absent)
+
+You can bootstrap it from the `sciter-adguard-mini-private-template` folder in this
+repository.
 
 ## Getting Started
 
-1. **Clone the repository** and ensure `adguard-mini-private` is at the same
-   directory level as `adguard-mini`:
+1. **Clone the repository** and ensure `sciter-adguard-mini-private` is at the
+   same directory level as `sciter-adguard-mini`:
 
    ```text
    Projects/
-   ├── adguard-mini/
-   └── adguard-mini-private/
+   ├── sciter-adguard-mini/
+   └── sciter-adguard-mini-private/
    ```
 
 2. **Initialize the development environment:**
@@ -59,19 +99,23 @@ as `adguard-mini` (or create it manually from the
 
    This command will:
    - Capture toolchain (Ruby, Bundler, Node, Yarn) and generate wrappers in `bin/`
-   - Install Ruby gems via Bundler
-   - Generate Bundler binstubs
-   - Load credentials from `adguard-mini-private`
+   - Load variables from `sciter-adguard-mini-private/.env` and generate
+     `PrivateConfig.xcconfig`
+   - Configure the private Swift package registry (`SWIFT_REGISTRY_URL`)
+   - Clone the `support-scripts` repository (`SUPPORT_SCRIPTS_GIT`) and install
+     its Ruby gems
+   - Install Ruby gems via Bundler and generate binstubs
    - Create a Python virtual environment (`.venv/`) and install pip packages
    - Install local protoc tools (`protoc` + `protoc-gen-swift`) into
      `build/protoc-tools/`
-   - Sync certificates for MAS and Standalone distributions
+   - Install Node.js dependencies (`yarn install`)
 
    > **Note:** After running `configure.sh`, all Ruby and Node.js tools are
-   > invoked via wrappers in `bin/` (e.g., `bin/fastlane`, `bin/yarn`). This
+   > invoked via wrappers in `bin/` (e.g., `bin/ruby`, `bin/yarn`). This
    > ensures consistent tool versions regardless of your shell configuration.
 
-3. **Install frontend dependencies:**
+3. **Install frontend dependencies** (already done by `configure.sh dev`; run
+   manually only to reinstall):
 
    ```bash
    yarn
@@ -129,24 +173,44 @@ yarn lint:fix
 
 ### Testing
 
-```bash
-# Swift: run XCTest suite from Xcode (target: AdguardMiniTests)
+Swift tests can be run from Xcode (target: `AdguardMiniTests`) or from the
+terminal via `xcodebuild`:
 
-# Swift: run tests via Fastlane
-bin/fastlane test
+```bash
+# Swift: run the XCTest suite from the terminal
+xcodebuild test \
+  -project AdguardMini/AdguardMini.xcodeproj \
+  -scheme AdguardMiniTests \
+  -configuration Release \
+  -skipPackagePluginValidation \
+  CODE_SIGNING_ALLOWED=NO
+
+# TypeScript: run node:test suites (compiles tsconfig.node-tests.json first)
+yarn test:node
 ```
+
+> **Note:** In CI, the same Swift test command is run via the shared
+> `AdGuardSoftwareLimited/actions/.github/workflows/junit-tests.yml` workflow
+> (see `.github/workflows/pr-check.yml`).
 
 ### Building
 
+For day-to-day development, build from Xcode: open
+`AdguardMini/AdguardMini.xcodeproj` and build the `AdguardMini` scheme. The
+Sciter UI is built automatically as a target dependency.
+
 ```bash
-# Production build of Sciter UI
+# Production build of Sciter UI (standalone, if needed)
 yarn build:prod
 
-# Build via Fastlane (various configurations)
-bin/fastlane build config:Debug
-bin/fastlane build config:Release
-bin/fastlane build config:MAS
+# Build the app from the terminal via xcodebuild
+xcodebuild -project AdguardMini/AdguardMini.xcodeproj -scheme AdguardMini build
 ```
+
+Release, Standalone (Developer ID), and MAS builds are produced in CI via
+GitHub Actions. See the workflows in `.github/workflows/`:
+`build-standalone.yml`, `build-mas.yml`, `build-variant.yml`, and
+`pr-check.yml`.
 
 ## Common Tasks
 
@@ -164,8 +228,11 @@ The app uses Protobuf for Swift ↔ TypeScript communication.
 Regenerate after modifying `.proto` files:
 
 ```bash
-bin/fastlane update_proto_schema
+./Support/Scripts/update_proto_schema.sh
 ```
+
+This wrapper ensures the local protoc tools (`build/protoc-tools/`) are on
+`PATH` and then runs `AdguardMini/Scripts/updateProtoSchema.sh`.
 
 **Version pinning (optional):** To ensure reproducible protoc builds:
 
@@ -196,27 +263,28 @@ yarn locales:check
 
 ### Update Dependencies
 
+Third-party dependencies can be updated via:
+
 ```bash
-# Update all dependencies
-bin/fastlane update_third_party_deps
+bundle exec ruby Support/Scripts/update_third_party_deps.rb
+```
 
-# Update specific packages (available: assistant, safari-extension, safariconverterlib)
-bin/fastlane update_third_party_deps packages:assistant,safariconverterlib
+To check for updates without applying:
 
-# Check for updates without applying
-bin/fastlane update_third_party_deps dry_run:true
+```bash
+bundle exec ruby Support/Scripts/update_third_party_deps.rb --dry-run
+```
+
+To update specific packages:
+
+```bash
+bundle exec ruby Support/Scripts/update_third_party_deps.rb \
+  --packages=assistant,safariconverterlib
 ```
 
 > **IMPORTANT**: SafariConverterLib and @adguard/safari-extension versions
-> **MUST** always be exactly the same for compatibility. After running
-> `update_third_party_deps`, you MUST manually verify and synchronize versions:
->
-> 1. Check SafariConverterLib version in Xcode Project → Package Dependencies
-> 2. Check @adguard/safari-extension version in
->    `AdguardMini/PopupExtension/ContentScript/package.json`
-> 3. **Manually update** the mismatched version to ensure they are identical
-
-For detailed Fastlane options, see `fastlane/README.md`.
+> **MUST** always be exactly the same for compatibility. The script
+> automatically syncs both, but if you update manually, verify they match.
 
 ### Utility Scripts
 
@@ -226,7 +294,9 @@ All scripts are located in `Support/Scripts/`.
 |--------|-------------|
 | `flush_adguard_mini_data.sh` | Cleans all AdGuard Mini data (settings, keychain, group containers), restoring to first-run state |
 | `move_templates.sh` | Installs Xcode file templates (available under `macOS/AdGuardMini related` in New → File) |
-| `increment-some-number.sh` | Modifies version or build number components |
+| `install_protoc_tools.sh` | Installs local protoc tools into `build/protoc-tools/` |
+| `update_proto_schema.sh` | Regenerates Swift/TypeScript Protobuf schema (see Protobuf Schema section) |
+| `update_third_party_deps.rb` | Updates npm and SPM dependencies (see Update Dependencies section) |
 | `locales.sh` | Pushes/pulls localization strings (see Localization section) |
 
 ### Theme Generation
@@ -283,5 +353,8 @@ defaults write com.adguard.safari.AdGuard.Dev SUUpdateGroupIdentifier -int 2009
 - [AGENTS.md](./AGENTS.md) — Project context, code guidelines, and
   contribution rules
 - [README.md](./README.md) — Product overview and user documentation
-- [fastlane/README.md](./fastlane/README.md) — Full Fastlane lane
-  documentation (auto-generated)
+- [.github/workflows/](./.github/workflows/) — CI/CD pipelines (build, test,
+  and deploy)
+- [Production build and deploy](./docs/production-build-and-deploy.md) —
+  release channels, build variants, pipeline overview, and the release
+  checklist

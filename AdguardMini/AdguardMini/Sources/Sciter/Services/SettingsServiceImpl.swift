@@ -7,8 +7,6 @@
 //  AdguardMini
 //
 
-// swiftlint:disable file_length
-
 import Foundation
 import SciterSchema
 import AML
@@ -269,5 +267,3 @@ extension Sciter {
         }
     }
 }
-
-// swiftlint:enable file_length

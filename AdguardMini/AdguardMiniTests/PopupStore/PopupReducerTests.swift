@@ -7,8 +7,6 @@
 //  AdguardMiniTests
 //
 
-// swiftlint:disable file_length
-
 import XCTest
 import AML
 

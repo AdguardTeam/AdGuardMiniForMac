@@ -1,0 +1,62 @@
+# SPDX-FileCopyrightText: AdGuard Software Limited
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# One-click production release: validates and creates a semver tag, then
+# immediately runs deploy-app.yml for it via workflow_call (no dependency
+# on the tag-push event).
+#
+# Usage: Actions tab → Run workflow; set `tag` (e.g. v2.5.0) and pick the
+# branch or pin `ref` (empty = HEAD of the picked branch).
+#
+# See docs/production-build-and-deploy.md.
+
+name: Tag & Deploy
+run-name: 'Tag ${{ inputs.tag }}'
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Semver tag to create and deploy (e.g. v2.5.0, v2.6.0-beta.1)'
+        type: string
+        required: true
+      slack-channel:
+        description: 'Slack channel for notifications'
+        type: string
+        default: '#adguard-qa-desktop-builds'
+      ref:
+        description: 'Git ref to tag (SHA or branch). Empty = current HEAD.'
+        type: string
+        default: ''
+
+permissions:
+  contents: write
+  id-token: write
+  actions: read
+
+jobs:
+
+  # Validates the requested tag and creates it; fails fast without touching
+  # the deploy if the tag is malformed, duplicated, or lacks a changelog.
+  tag:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Validate & tag
+    uses: AdGuardSoftwareLimited/actions/.github/workflows/validate-and-tag.yml@master
+    with:
+      team: mac
+      tag: ${{ inputs.tag }}
+      ref: ${{ inputs.ref }}
+    secrets: inherit
+
+  # Runs the production pipeline (deploy-app.yml) for the new tag and
+  # reports the result to the configured Slack channel.
+  deploy:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Deploy
+    needs: [tag]
+    uses: ./.github/workflows/deploy-app.yml
+    with:
+      tag: ${{ inputs.tag }}
+      slack-channel: ${{ inputs.slack-channel }}
+    secrets: inherit

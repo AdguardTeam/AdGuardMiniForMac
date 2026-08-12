@@ -67,7 +67,7 @@ struct ExchangeSettingsModelManifest: Codable {
 
     init() {
         self.version = ExchangeSettingsModel.version
-        self.appVersion = BuildConfig.AG_FULL_VERSION
+        self.appVersion = BuildConfig.AG_VERSION_TITLE
         self.timestamp = Date().timeIntervalSince1970
         self.settingsType = .base
     }

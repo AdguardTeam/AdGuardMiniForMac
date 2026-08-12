@@ -1,0 +1,69 @@
+# SPDX-FileCopyrightText: AdGuard Software Limited
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# Wrapper around build-variant.yml for the Mac App Store ("mas")
+# distribution: not notarized (App Store re-processes the build).
+# `app-store-info` generates AppStoreInfo.plist required for TestFlight.
+# Artifact: AdGuardMini-MAS. Callers: deploy-app.yml, pr-check.yml.
+
+name: Build MAS
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: "Version string (e.g. 2.4.0). Overrides AG_VERSION from xcconfig. Uses xcconfig default when empty."
+        type: string
+        default: ""
+      version-title:
+        description: "Display version title. Overrides AG_VERSION_TITLE from xcconfig. Uses xcconfig default when empty."
+        type: string
+        default: ""
+      build-number:
+        description: "Build number (e.g. 1090). Overrides AG_BUILD from xcconfig. Uses xcconfig default when empty."
+        type: string
+        default: ""
+      channel:
+        description: "Release channel (release, beta, nightly). Controls AG_CHANNEL and update feed URL."
+        type: string
+        default: "release"
+      app-store-info:
+        description: "Generate AppStoreInfo.plist inside the archive (required for TestFlight upload)."
+        type: boolean
+        default: false
+      sentry-release:
+        description: "Release identifier for Sentry. Empty disables Sentry upload."
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  config:
+    name: Config
+    uses: ./.github/workflows/build-variant-config.yml
+    with:
+      variant: mas
+      app-store-info: ${{ inputs.app-store-info }}
+
+  build:
+    name: Build
+    needs: [config]
+    uses: ./.github/workflows/build-variant.yml
+    secrets: inherit
+    with:
+      configuration: ${{ needs.config.outputs.configuration }}
+      signing-type: ${{ needs.config.outputs.signing-type }}
+      additional-cert-types: ${{ needs.config.outputs.additional-cert-types }}
+      skip-profiles: ${{ fromJSON(needs.config.outputs.skip-profiles) }}
+      app-identifiers: ${{ needs.config.outputs.app-identifiers }}
+      notarize: ${{ fromJSON(needs.config.outputs.notarize) }}
+      app-store-info: ${{ fromJSON(needs.config.outputs.app-store-info) }}
+      version: ${{ inputs.version }}
+      version-title: ${{ inputs.version-title }}
+      build-number: ${{ inputs.build-number }}
+      channel: ${{ inputs.channel }}
+      sentry-release: ${{ inputs.sentry-release }}

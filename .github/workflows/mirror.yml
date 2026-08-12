@@ -1,0 +1,29 @@
+# SPDX-FileCopyrightText: AdGuard Software Limited
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# Mirrors master, release/* branches and all tags to the public repository AdguardTeam/AdGuardMiniForMac.
+
+name: Mirror
+
+on:
+  push:
+    branches:
+      - master
+      - release/*
+    tags:
+      - '*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+  id-token: write
+
+jobs:
+  mirror:
+    if: github.repository_owner == 'AdGuardSoftwareLimited'
+    uses: AdGuardSoftwareLimited/actions/.github/workflows/mirror.yml@master
+    with:
+      team: mac
+      target_repo: git@github.com:AdguardTeam/AdGuardMiniForMac.git

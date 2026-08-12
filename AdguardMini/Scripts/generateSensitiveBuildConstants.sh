@@ -27,5 +27,5 @@ echo '// =======================================================================
 
 /// Special enum, allowing to access some sensitive configuration constants
 enum '${AGP_SENSITIVE_CONFIG_CONSTANTS_CONTAINER_NAME}' {' > "${TARGET_FILE}"
-/usr/bin/env | /usr/bin/sort | /usr/bin/sed -n -E -e 's/"/\\"/g' -e 's/^ *(SENS_[_A-Za-z0-9]*) *= *(.*)/\tstatic let \1 = "\2"/p' >> "${TARGET_FILE}"
+/usr/bin/env | /usr/bin/sort | /usr/bin/uniq | /usr/bin/sed -n -E -e 's/"/\\"/g' -e 's/^ *(SENS_[_A-Za-z0-9]*) *= *(.*)/\tstatic let \1 = "\2"/p' >> "${TARGET_FILE}"
 echo "}" >> "${TARGET_FILE}"

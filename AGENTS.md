@@ -5,6 +5,32 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 # AGENTS
 
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Technical Context](#technical-context)
+- [Project Structure](#project-structure)
+- [Build And Test Commands](#build-and-test-commands)
+    - [Project Setup](#project-setup)
+    - [Frontend (TypeScript/Sciter UI)](#frontend-typescriptsciter-ui)
+    - [Platform (Swift/Xcode)](#platform-swiftxcode)
+    - [Testing](#testing)
+    - [Linting](#linting)
+    - [Localization](#localization)
+    - [Protobuf Schema](#protobuf-schema)
+    - [Dependency Updates](#dependency-updates)
+    - [Production Build And Deploy](#production-build-and-deploy)
+- [Contribution Instructions](#contribution-instructions)
+- [Code Guidelines](#code-guidelines)
+    - [System Design](#system-design)
+    - [Architecture](#architecture)
+    - [Code Quality](#code-quality)
+    - [Testing Discipline](#testing-discipline)
+    - [Dependency Management](#dependency-management)
+    - [Configuration & Documentation](#configuration--documentation)
+    - [Markdown Formatting](#markdown-formatting)
+    - [Other](#other)
+
 ## Project Overview
 
 AdGuard Mini (formerly AdGuard for Safari) is a macOS ad-blocking application
@@ -45,21 +71,33 @@ adguard-mini/
 │   ├── AdguardMini/                      # Main app target
 │   │   ├── DI/                           # Dependency injection containers
 │   │   ├── Sources/                      # App source code
-│   │   │   ├── Backend/                  # Backend API communication
-│   │   │   ├── Core/                     # Core services and protocols
-│   │   │   ├── Filters/                  # Filter management and Safari integration
-│   │   │   ├── Sciter/                   # Sciter runtime bridge
-│   │   │   ├── Licensing/                # License management
-│   │   │   ├── AppStore/                 # App Store / in-app purchase
+│   │   │   ├── main.swift                # Process entry point
+│   │   │   ├── AppDelegate.swift         # App lifecycle entry
+│   │   │   ├── ProtectionService.swift   # Enables/disables protection
+│   │   │   ├── ServiceSupervisor.swift   # Actor starting/stopping services
+│   │   │   ├── Backend/                  # Backend API, licensing, web flows
+│   │   │   ├── Core/                     # Core services, protocols, DTOs
+│   │   │   ├── Filters/                  # Filter management, Safari conversion
+│   │   │   ├── Sciter/                   # Sciter bridge (windows, services)
+│   │   │   ├── BrowserApi/               # Safari / XPC API providers
 │   │   │   ├── SafariExtensions/         # Safari extension management
+│   │   │   ├── URLFilter/                # URL-filtering configuration
+│   │   │   ├── Settings/                 # User settings management
+│   │   │   ├── Licensing/                # License management
+│   │   │   ├── AppStore/                 # App Store / in-app purchase (MAS)
+│   │   │   ├── AppUpdater/               # Sparkle-based app updates
+│   │   │   ├── AppLifecycle/             # Lifecycle, reset, watchdog
+│   │   │   ├── Migration/                # Versioned + legacy migrations
+│   │   │   ├── Legacy/                   # AdGuard for Safari legacy mappers
 │   │   │   ├── ImportExport/             # Settings import/export
 │   │   │   ├── CustomUrlSchemes/         # URL scheme / deep link handling
-│   │   │   ├── Settings/                 # User settings management
 │   │   │   ├── Telemetry/                # Telemetry event definitions
 │   │   │   ├── LoginItem/                # Launch-at-login management
-│   │   │   ├── Mail/                     # Mail Tracking Protection (generator, updater, seams)
-│   │   │   ├── UI/                       # Native UI elements (alerts, windows)
-│   │   │   └── Utils/                    # Utility classes
+│   │   │   ├── Mail/                     # Mail Tracking Protection
+│   │   │   ├── Sentry/                   # Sentry crash reporting setup
+│   │   │   ├── Support/                  # Support contact entry point
+│   │   │   ├── UI/                       # Native UI (status bar, menus, alerts)
+│   │   │   └── Utils/                    # Utility extensions
 │   │   ├── Resources/                    # Assets, plists, configs
 │   │   └── Localization/                 # Swift localization strings
 │   ├── PopupExtension/                   # Safari popup extension (toolbar UI)
@@ -76,6 +114,7 @@ adguard-mini/
 │   ├── OtherContentBlocker/              # Content blocker: other annoyances
 │   ├── CustomContentBlocker/             # Content blocker: user custom rules
 │   ├── MailBlocker/                      # MailKit content blocker (Mail.app)
+│   ├── URLFilterExtension/               # Safari URL-filtering web extension
 │   ├── SharedSources/                    # Code shared across all targets
 │   │   ├── DI/                           # Shared DI containers
 │   │   ├── ContentBlockers/              # Content blocker shared logic
@@ -83,6 +122,8 @@ adguard-mini/
 │   │   ├── ExtensionBrowserApi/          # Browser API abstractions
 │   │   ├── FileSystem/                   # File storage protocols
 │   │   ├── ProductInfo/                  # App metadata and version info
+│   │   ├── Statistics/                   # CoreData blocking statistics
+│   │   ├── Storages/                     # Shared keychain / storage
 │   │   └── Utils/                        # Shared utilities
 │   ├── SciterResources/                  # Compiled Sciter UI resources
 │   │   └── SciterSchema/                 # Generated Protobuf Swift schema
@@ -184,16 +225,29 @@ adguard-mini/
 
 ### Protobuf Schema
 
-- `bin/fastlane update_proto_schema` - Regenerate Swift and TypeScript
+- `./Support/Scripts/update_proto_schema.sh` - Regenerate Swift and TypeScript
   schema from Protobuf definitions
 
 ### Dependency Updates
 
-- `bin/fastlane update_third_party_deps` - Update all dependencies
-- `bin/fastlane update_third_party_deps packages:sparkle` - Update
-  specific package
-- `bin/fastlane update_third_party_deps dry_run:true` - Check for
-  updates without applying
+- `bundle exec ruby Support/Scripts/update_third_party_deps.rb` - Update all
+  third-party dependencies
+- `bundle exec ruby Support/Scripts/update_third_party_deps.rb`
+  `--packages=assistant,safariconverterlib` - Update specific packages
+- `bundle exec ruby Support/Scripts/update_third_party_deps.rb --dry-run` -
+  Check for updates without applying
+
+### Production Build And Deploy
+
+Production builds and deployment run entirely in GitHub Actions
+(`.github/workflows/`). The entry point is the `Tag & Deploy` workflow
+launched with a semver tag (e.g. `v2.5.0`, `v2.6.0-beta.1`); the
+prerelease suffix selects the release channel: no suffix = `release`,
+`-beta.N` / `-rc.N` = `beta`, `-nightly.N` = `nightly`. Every release
+builds the standalone (Developer ID + notarization) and MAS (App Store)
+variants and publishes them to the static storage and
+TestFlight respectively. For the full pipeline map, variant table, and
+release checklist, see `docs/production-build-and-deploy.md`.
 
 ## Contribution Instructions
 
@@ -217,6 +271,9 @@ You MUST follow the following rules for EVERY task that you perform:
 - You MUST run tests (see "Testing" section) and verify no test failures
   after making Swift changes.
 
+- You MUST update the unit tests for any code you change so they cover the new
+  behavior, and verify the whole suite still passes.
+
 - When making changes to the project structure, ensure the Project Structure
   section in `AGENTS.md` is updated and remains valid.
 
@@ -233,7 +290,79 @@ You MUST follow the following rules for EVERY task that you perform:
 
 ## Code Guidelines
 
-### I. Architecture
+### System Design
+
+AdGuard Mini is a long-running macOS desktop application composed of a Swift
+platform layer and a Sciter/TypeScript UI. Design for a resource-rich but
+long-lived environment:
+
+- The app runs as a long-lived process — release resources (file handles, XPC
+  connections, timers, `NotificationCenter` observers) proactively; do not
+  rely on process exit to free them.
+- Handle multiple Sciter windows (tray, settings, onboarding) and concurrent
+  user actions safely; use Swift Concurrency and `@MainActor` rather than raw
+  shared-state mutation (see the Concurrency guideline in Other).
+- Persist user preferences and window geometry across restarts via
+  `UserDefaults` and the shared App Group storage, and restore them on launch.
+- Perform heavy work (filter conversion, downloads, FLM operations) off the
+  main thread; keep the UI responsive.
+- Support graceful shutdown — cancel in-progress tasks and stop services
+  through `ServiceSupervisor` before the app exits.
+- Handle crashes gracefully — report through Sentry and never corrupt the
+  shared App Group data that Safari extensions depend on.
+- Safari extensions run in separate sandboxed processes and MUST keep working
+  when the main app is absent (see the Extension independence guideline in
+  Other).
+
+### Architecture
+
+The codebase should follow these universal design principles:
+
+- **Separation of Concerns** — each module owns one aspect of the system
+  (filters, licensing, Sciter bridge, storage).
+- **Single Responsibility Principle** — every file, class, or function has one
+  reason to change.
+- **Dependency Direction** — dependencies point downward: UI → services →
+  domain / core; lower layers never import higher ones.
+- **Explicit Boundaries** — cross-target code goes through `SharedSources/`
+  and Protobuf interfaces; do not reach into another module's internals.
+- **Data Flow Clarity** — user actions flow TS → Protobuf → Swift service →
+  storage, and results flow back via registered callbacks.
+- **Minimize Coupling, Maximize Cohesion** — services interact through narrow
+  `*Dependent` protocols rather than concrete types.
+- **Make Invalid States Impossible** — model state with Swift enums/optionals
+  and Protobuf types so illegal combinations fail at compile time.
+- **Observability Built-in** — logging (`Subsystem`) and Sentry reporting are
+  first-class, not afterthoughts.
+- **Keep It Boring** — prefer the established DI + service-supervisor pattern
+  over novel abstractions.
+
+The easiest way to achieve these principles is **layered architecture**.
+This project's layers, from top to bottom:
+
+```text
+Native UI (status bar, menus, alerts) + Sciter UI (TypeScript/Preact/MobX)
+     ↓
+Sciter Bridge (Protobuf services + callbacks, window lifecycle)
+     ↓
+Service Layer (ProtectionService, UserSettingsService, SafariExtensions,
+               Mail, URLFilter, LoginItem, AppLifecycle, Migration, Telemetry)
+     ↓
+Domain + Backend (FiltersSupervisor, SafariConverter, BackendService,
+                  LicenseService)
+     ↓
+Core (KeychainManager, AMFileManager, NetworkManager, EventBus, DTOs)
+     ↓
+SharedSources (storage, content-blocker handlers, file system, statistics)
+```
+
+Each layer may call the layer below it; no layer may depend on a layer above
+it. For example, `SettingsServiceImpl` (bridge) calls `UserSettingsService`
+(service), which persists through `SharedSettingsStorage` (shared), while
+`FiltersSupervisor` (domain) drives `SafariConverter` and writes the Content
+Blocker JSON consumed by the extension targets.
+
+**Project-specific architecture conventions:**
 
 1. **Dependency Injection**: The app uses a custom DI container pattern.
    Main app services are registered in `AdguardMini/AdguardMini/DI/`, shared
@@ -266,7 +395,20 @@ You MUST follow the following rules for EVERY task that you perform:
    **Rationale**: Module isolation prevents coupling and allows independent
    loading.
 
-### II. Code Quality Standards
+**Known exclusions** (acceptable today, to be improved over time):
+
+- `ServiceLocator` is a large Service Locator / God Object that lazily builds
+  and injects ~30 services, hiding the real dependency graph
+  (`AdguardMini/AdguardMini/DI/ServiceLocator/ServiceLocator.swift`).
+- Sciter `*ServiceImpl` bridge classes (e.g., `SettingsServiceImpl`) conform
+  to many `*Dependent` protocols and hold business logic, violating Interface
+  Segregation and mixing the bridge and service layers.
+- `SharedDIContainer.shared` is a global mutable singleton with fixed
+  implementations, which complicates testing and isolation.
+- Legacy "AdGuard for Safari" migration code lives in the main target without
+  isolation (`Sources/Legacy/`, `Sources/Migration/`).
+
+### Code Quality
 
 1. **SwiftLint compliance**: All Swift code MUST pass SwiftLint with the
    configuration at `AdguardMini/.swiftlint.yml`. Key rules:
@@ -363,7 +505,7 @@ You MUST follow the following rules for EVERY task that you perform:
   **Rationale**: Prevents fabricated requirements from entering the codebase
   and ensures the implementation matches the designer's intent.
 
-### III. Testing Discipline
+### Testing Discipline
 
 1. **XCTest for Swift**: Unit tests are located in `AdguardMini/AdguardMiniTests/`.
    New logic SHOULD have corresponding tests.
@@ -393,7 +535,87 @@ You MUST follow the following rules for EVERY task that you perform:
    **Rationale**: Prevents regressions from slipping through code review by
    catching failures at commit time.
 
-### IV. Other
+### Dependency Management
+
+- **Pin dependency versions explicitly** — avoid version ranges that allow
+  automatic upgrades to untested releases. For Swift Package Manager, pin to
+  exact versions; for the UI, prefer exact versions in `package.json`.
+- **Prefer vanilla solutions** — use the Swift standard library / Foundation
+  and TypeScript built-ins before adding a dependency.
+- **Reputable sources only** — dependencies MUST come from well-established,
+  actively maintained projects (judge by downloads, activity, maintainers).
+- **Avoid unpopular libraries** — do NOT add niche or obscure packages with
+  limited adoption; they add security and maintenance risk.
+- **Minimize dependency count** — every dependency increases attack surface,
+  bundle size, and maintenance burden. Justify each addition.
+- **Use the latest stable version** — check the package registry (npm / SPM)
+  for the current stable release instead of copying old version numbers from
+  memory or other projects.
+- **SafariConverterLib and @adguard/safari-extension versions MUST always
+  match exactly** — after updating either, verify and synchronize both.
+
+**Rationale**: Fewer, well-vetted dependencies reduce security
+vulnerabilities, supply chain risk, and long-term maintenance cost.
+
+**Known exclusions** (to be fixed): `package.json` currently uses caret (`^`)
+ranges for all runtime and dev dependencies rather than exact pins.
+
+### Configuration & Documentation
+
+1. **Build configuration** lives in `.xcconfig` files (`AppConfig.xcconfig`,
+   `CommonConfig.xcconfig`, `ConfigMAS.xcconfig`, `ConfigNative.xcconfig`).
+   `UserDefaults` defaults are generated by `AdguardMini Prebuilder`, and
+   Fastlane reads settings from `fastlane/.env.default`.
+
+2. **Version and build number** come from external sources (CI / xcodebuild
+   arguments), never hardcoded — see the External version management guideline
+   in Other.
+
+3. **No hardcoded secrets** — API keys, certificates, and credentials MUST NOT
+   be committed. Use Fastlane match, the keychain, and CI-provided environment
+   variables.
+
+4. **Keep docs in sync with code** — when you change build commands, the
+   project layout, or the Protobuf schema, update `AGENTS.md` (and
+   `DEVELOPMENT.md` / `README.md` for environment setup) in the same change.
+
+**Rationale**: Configuration truth stays in CI and per-environment files,
+keeping the repository reproducible and free of secrets.
+
+### Markdown Formatting
+
+All Markdown files MUST follow these formatting rules:
+
+- **Line length**: Keep lines at most 80 characters, but don't overwrap the
+  lines artificially short just to hit the limit, keep them close to 80
+  characters where possible. This is not a hard lint gate, but SHOULD be
+  followed for readability. Lines inside fenced code blocks are exempt from
+  this limit.
+- **Unordered lists**: Use dashes (`-`) for bullet points. Indent nested
+  list items by 4 spaces.
+- **Continuation lines**: When a list item wraps to the next line, align the
+  continuation with the first character of the item text, not the list
+  marker. This applies to all list types (ordered and unordered).
+- **Emphasis**: Use asterisks (`*`) for emphasis (`*italic*`, `**bold**`).
+  Do NOT use underscores.
+- **Headings**: Duplicate heading names are allowed only among sibling
+  headings (same parent level). Avoid duplicates across different levels.
+- **Inline HTML**: Avoid raw HTML in Markdown. The only allowed elements are
+  `<a>`, `<p>`, `<details>`, `<summary>`, and `<img>`.
+- **Trailing spaces**: Do NOT leave trailing whitespace on any line. Do NOT
+  use two-space line breaks — use a blank line instead.
+- **Bare URLs**: Bare URLs are permitted and do not need to be wrapped in
+  angle brackets.
+- **Table formatting**: Align table columns with padding when the table fits
+  within 80 characters. If the table exceeds 80 characters or triggers an
+  MD060 linter warning, switch to a compact format using single spaces only.
+  This applies to the separator row as well — it should be written as
+  `| --- |`, not `|--|`.
+
+**Rationale**: Uniform Markdown formatting improves readability for both
+humans and AI agents that consume project documentation.
+
+### Other
 
 1. **Localization**: The project supports 35 languages via TwoSky. Base locale
    is English. Swift strings are in `.strings` files, TypeScript strings in
@@ -453,7 +675,27 @@ You MUST follow the following rules for EVERY task that you perform:
    **Rationale**: Eliminates magic numbers, makes intent clear, and simplifies
    future changes.
 
-### V. Sciter runtime
+8. **External version management**: Version and build number MUST come from
+   external sources (CI, xcodebuild arguments), not hardcoded in
+   `CommonConfig.xcconfig`. The xcconfig contains placeholder values
+   (`AG_VERSION = 99.9.9`, `AG_BUILD = 999999`) that are overridden at build
+   time by passing `AG_VERSION=x.y.z` and `AG_BUILD=N` as xcodebuild arguments.
+   The `generateConfigConstants.sh` script reads these from environment
+   variables, so `BuildConfig.swift` automatically reflects the overridden
+   values.
+
+   To build with a specific version from the command line:
+   ```
+   xcodebuild archive ... AG_VERSION=2.5.0 AG_BUILD=1089
+   ```
+
+   To pass version/build in CI, use the `version` and `build-number` inputs of
+   `build-variant.yml`.
+
+   **Rationale**: Keeps version truth in CI/CD (git tags, KV store) rather than
+   requiring manual edits to xcconfig for every release.
+
+#### Sciter runtime
 
 1. **Hidden Sciter windows do not process idle.** In the Sciter engine
    (`wing::ET_WINDOW_IDLE`), windows whose state is `WINDOW_HIDDEN` skip

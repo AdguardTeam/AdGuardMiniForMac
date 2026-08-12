@@ -62,7 +62,7 @@ SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
 path = [
-    "adguard-mini-private-template/**",
+    "sciter-adguard-mini-private-template/**",
     "Support/XcodeTemplates/**",
     ".github/**",
 ]
@@ -71,26 +71,20 @@ SPDX-FileCopyrightText = "AdGuard Software Limited"
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
-path = [
-    ".windsurf/**"
-]
+path = [".windsurf/**"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "AdGuard Software Limited"
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
-path = [
-    "AdguardMini/sciter-ui/schema/**/*.proto"
-]
+path = ["AdguardMini/sciter-ui/schema/**/*.proto"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "AdGuard Software Limited"
 SPDX-License-Identifier = "GPL-3.0-or-later"
 SPDX-FileComment = "Protocol Buffers schema definitions"
 
 [[annotations]]
-path = [
-    "AdguardMini/SciterResources/SciterSchema/Sources/**/*.swift"
-]
+path = ["AdguardMini/SciterResources/SciterSchema/Sources/**/*.swift"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "AdGuard Software Limited"
 SPDX-License-Identifier = "GPL-3.0-or-later"
@@ -100,7 +94,7 @@ SPDX-FileComment = "Generated from proto schemas"
 path = [
     "AdguardMini/sciter-ui/modules/common/apis/types/**/*.ts",
     "AdguardMini/sciter-ui/modules/common/apis/requests/**/*.ts",
-    "AdguardMini/sciter-ui/modules/common/apis/callbacks/**/*.ts"
+    "AdguardMini/sciter-ui/modules/common/apis/callbacks/**/*.ts",
 ]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "AdGuard Software Limited"
@@ -114,7 +108,7 @@ path = [
     "*.xcodeproj/**",
     "DerivedData/**",
     "**/*.resolved",
-    "**/*.lock"
+    "**/*.lock",
 ]
 SPDX-FileCopyrightText = "NONE"
 SPDX-License-Identifier = "CC0-1.0"

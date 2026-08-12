@@ -2910,7 +2910,7 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		162BF3092EA2311900421157 /* Debug(MAS) */ = {
+		162BF3092EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB097EEC2C00BA0C00E8A086 /* ConfigMAS.xcconfig */;
 			buildSettings = {
@@ -2953,7 +2953,7 @@
 				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "$(AG_TEAM)";
+				DEVELOPMENT_TEAM = TC3Q7MAJXF;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -2970,7 +2970,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "$(AG_COPYRIGHT)";
 				MACOSX_DEPLOYMENT_TARGET = "$(AG_DEPLOYMENT_TARGET)";
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2978,9 +2978,9 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_STRICT_CONCURRENCY = minimal;
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF30A2EA2311900421157 /* Debug(MAS) */ = {
+		162BF30A2EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -3008,7 +3008,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				OTHER_LDFLAGS = (
 					"$(inherit)",
 					"-framework",
@@ -3022,9 +3022,9 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF30B2EA2311900421157 /* Debug(MAS) */ = {
+		162BF30B2EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Helper/HelperDebug.entitlements;
@@ -3037,7 +3037,7 @@
 				INFOPLIST_KEY_NSPrincipalClass = "";
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				MACH_O_TYPE = mh_execute;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_HELPER_ID)";
 				PRODUCT_NAME = "$(AG_HELPER_NAME)";
 				SKIP_INSTALL = YES;
@@ -3045,9 +3045,9 @@
 				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF30C2EA2311900421157 /* Debug(MAS) */ = {
+		162BF30C2EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -3066,7 +3066,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -3080,9 +3080,9 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF30D2EA2311900421157 /* Debug(MAS) */ = {
+		162BF30D2EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(PRODUCT_NAME)/$(PRODUCT_NAME).entitlements";
@@ -3107,9 +3107,9 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF30E2EA2311900421157 /* Debug(MAS) */ = {
+		162BF30E2EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -3124,7 +3124,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_GENERAL_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -3132,9 +3132,9 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF30F2EA2311900421157 /* Debug(MAS) */ = {
+		162BF30F2EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = PrivacyContentBlocker/PrivacyContentBlocker.entitlements;
@@ -3148,7 +3148,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_PRIVACY_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -3156,9 +3156,9 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF3102EA2311900421157 /* Debug(MAS) */ = {
+		162BF3102EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = SecurityContentBlocker/SecurityContentBlocker.entitlements;
@@ -3172,7 +3172,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_SECURITY_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -3180,9 +3180,9 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF3112EA2311900421157 /* Debug(MAS) */ = {
+		162BF3112EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = SocialContentBlocker/SocialContentBlocker.entitlements;
@@ -3196,7 +3196,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_SOCIAL_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -3204,9 +3204,9 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF3122EA2311900421157 /* Debug(MAS) */ = {
+		162BF3122EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = OtherContentBlocker/OtherContentBlocker.entitlements;
@@ -3220,7 +3220,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_OTHER_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -3228,9 +3228,9 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF3132EA2311900421157 /* Debug(MAS) */ = {
+		162BF3132EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = CustomContentBlocker/CustomContentBlocker.entitlements;
@@ -3244,7 +3244,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_CUSTOM_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -3252,9 +3252,9 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF3142EA2311900421157 /* Debug(MAS) */ = {
+		162BF3142EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Watchdog/Watchdog.entitlements;
@@ -3269,9 +3269,9 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_VERSION = 5.0;
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF3152EA2311900421157 /* Debug(MAS) */ = {
+		162BF3152EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
@@ -3293,9 +3293,9 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_VERSION = 5.0;
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF3162EA2311900421157 /* Debug(MAS) */ = {
+		162BF3162EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
@@ -3309,9 +3309,9 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_VERSION = 5.0;
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF3172EA2311900421157 /* Debug(MAS) */ = {
+		162BF3172EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
@@ -3328,9 +3328,9 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_VERSION = 5.0;
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF3182EA2311900421157 /* Debug(MAS) */ = {
+		162BF3182EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
@@ -3344,18 +3344,18 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF3192EA2311900421157 /* Debug(MAS) */ = {
+		162BF3192EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = TC3Q7MAJXF;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF31A2EA2311900421157 /* Debug(MAS) */ = {
+		162BF31A2EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
@@ -3365,9 +3365,9 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF31B2EA2311900421157 /* Debug(MAS) */ = {
+		162BF31B2EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
@@ -3377,9 +3377,9 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF31C2EA2311900421157 /* Debug(MAS) */ = {
+		162BF31C2EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
@@ -3389,9 +3389,9 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162BF31D2EA2311900421157 /* Debug(MAS) */ = {
+		162BF31D2EA2311900421157 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
@@ -3407,9 +3407,9 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
-		162E77712FF2B04F00232A89 /* Debug */ = {
+		162E77712FF2B04F00232A89 /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = MailBlocker/MailBlocker.entitlements;
@@ -3433,9 +3433,9 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
-		162E77722FF2B04F00232A89 /* Debug(MAS) */ = {
+		162E77722FF2B04F00232A89 /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = MailBlocker/MailBlocker.entitlements;
@@ -3459,7 +3459,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
 		162E77732FF2B04F00232A89 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -3487,58 +3487,6 @@
 			};
 			name = Release;
 		};
-		162E77742FF2B04F00232A89 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = MailBlocker/MailBlocker.entitlements;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = MailBlocker/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = BlockerMail;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_MAIL_EXTENSION_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Beta;
-		};
-		162E77752FF2B04F00232A89 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = MailBlocker/MailBlocker.entitlements;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = MailBlocker/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = BlockerMail;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_MAIL_EXTENSION_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Nightly;
-		};
 		162E77762FF2B04F00232A89 /* MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3565,40 +3513,14 @@
 			};
 			name = MAS;
 		};
-		162E77772FF2B04F00232A89 /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = MailBlocker/MailBlocker.entitlements;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = MailBlocker/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = BlockerMail;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_MAIL_EXTENSION_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = "MAS(IAP)";
-		};
-		16426F982DC20F94004276C0 /* Debug */ = {
+		16426F982DC20F94004276C0 /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = TC3Q7MAJXF;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		16426F992DC20F94004276C0 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -3609,24 +3531,6 @@
 			};
 			name = Release;
 		};
-		16426F9B2DC20F94004276C0 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = TC3Q7MAJXF;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Beta;
-		};
-		16426F9C2DC20F94004276C0 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = TC3Q7MAJXF;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Nightly;
-		};
 		16426F9D2DC20F94004276C0 /* MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3636,32 +3540,23 @@
 			};
 			name = MAS;
 		};
-		16426F9E2DC20F94004276C0 /* MAS(IAP) */ = {
+		164E41272EA90B8800C28D3C /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = TC3Q7MAJXF;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
-			name = "MAS(IAP)";
+			name = "Debug-Standalone";
 		};
-		164E41272EA90B8800C28D3C /* Debug */ = {
+		164E41282EA90B8800C28D3C /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = TC3Q7MAJXF;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
-			name = Debug;
-		};
-		164E41282EA90B8800C28D3C /* Debug(MAS) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = TC3Q7MAJXF;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
 		164E41292EA90B8800C28D3C /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -3672,24 +3567,6 @@
 			};
 			name = Release;
 		};
-		164E412B2EA90B8800C28D3C /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = TC3Q7MAJXF;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Beta;
-		};
-		164E412C2EA90B8800C28D3C /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = TC3Q7MAJXF;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Nightly;
-		};
 		164E412D2EA90B8800C28D3C /* MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3699,16 +3576,7 @@
 			};
 			name = MAS;
 		};
-		164E412E2EA90B8800C28D3C /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = TC3Q7MAJXF;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = "MAS(IAP)";
-		};
-		168279D03008F8DA001486BD /* Debug */ = {
+		168279D03008F8DA001486BD /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = URLFilterExtension/URLFilterExtension.entitlements;
@@ -3745,9 +3613,9 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
-		168279D13008F8DA001486BD /* Debug(MAS) */ = {
+		168279D13008F8DA001486BD /* Debug-MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = URLFilterExtension/URLFilterExtension.entitlements;
@@ -3784,7 +3652,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 			};
-			name = "Debug(MAS)";
+			name = "Debug-MAS";
 		};
 		168279D23008F8DA001486BD /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -3825,84 +3693,6 @@
 			};
 			name = Release;
 		};
-		168279D33008F8DA001486BD /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = URLFilterExtension/URLFilterExtension.entitlements;
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
-				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
-				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
-				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
-				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
-				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
-				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
-				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
-				ENABLE_RESOURCE_ACCESS_USB = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = URLFilterExtension/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = URLFilterExtension;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = "$(AGP_URL_FILTER_EXTENSION_DEPLOYMENT_TARGET)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_NETWORK_EXTENSION_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 6.0;
-			};
-			name = Beta;
-		};
-		168279D43008F8DA001486BD /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = URLFilterExtension/URLFilterExtension.entitlements;
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
-				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
-				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
-				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
-				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
-				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
-				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
-				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
-				ENABLE_RESOURCE_ACCESS_USB = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = URLFilterExtension/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = URLFilterExtension;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = "$(AGP_URL_FILTER_EXTENSION_DEPLOYMENT_TARGET)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_NETWORK_EXTENSION_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 6.0;
-			};
-			name = Nightly;
-		};
 		168279D53008F8DA001486BD /* MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3942,46 +3732,7 @@
 			};
 			name = MAS;
 		};
-		168279D63008F8DA001486BD /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = URLFilterExtension/URLFilterExtension.entitlements;
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
-				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
-				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
-				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
-				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
-				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
-				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
-				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
-				ENABLE_RESOURCE_ACCESS_USB = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = URLFilterExtension/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = URLFilterExtension;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = "$(AGP_URL_FILTER_EXTENSION_DEPLOYMENT_TARGET)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_NETWORK_EXTENSION_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 6.0;
-			};
-			name = "MAS(IAP)";
-		};
-		169664DB2E9FEB2B00E0B87E /* Debug */ = {
+		169664DB2E9FEB2B00E0B87E /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
@@ -3998,7 +3749,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_VERSION = 5.0;
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		169664DC2E9FEB2B00E0B87E /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -4014,34 +3765,6 @@
 			};
 			name = Release;
 		};
-		169664DE2E9FEB2B00E0B87E /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				ENABLE_APP_SANDBOX = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.5;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Beta;
-		};
-		169664DF2E9FEB2B00E0B87E /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				ENABLE_APP_SANDBOX = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.5;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Nightly;
-		};
 		169664E02E9FEB2B00E0B87E /* MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4056,21 +3779,7 @@
 			};
 			name = MAS;
 		};
-		169664E12E9FEB2B00E0B87E /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				ENABLE_APP_SANDBOX = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.5;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = "MAS(IAP)";
-		};
-		EB0A20BF2D5B56C1002A8029 /* Debug */ = {
+		EB0A20BF2D5B56C1002A8029 /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(PRODUCT_NAME)/$(PRODUCT_NAME).entitlements";
@@ -4095,7 +3804,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		EB0A20C02D5B56C1002A8029 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -4123,58 +3832,6 @@
 			};
 			name = Release;
 		};
-		EB0A20C22D5B56C1002A8029 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "$(PRODUCT_NAME)/$(PRODUCT_NAME).entitlements";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "$(PRODUCT_NAME)/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "WebExtension (Experimental)";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				OTHER_LDFLAGS = (
-					"-framework",
-					SafariServices,
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_WEB_EXTENSION_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Beta;
-		};
-		EB0A20C32D5B56C1002A8029 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "$(PRODUCT_NAME)/$(PRODUCT_NAME).entitlements";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "$(PRODUCT_NAME)/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "WebExtension (Experimental)";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				OTHER_LDFLAGS = (
-					"-framework",
-					SafariServices,
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_WEB_EXTENSION_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Nightly;
-		};
 		EB0A20C42D5B56C1002A8029 /* MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4200,456 +3857,6 @@
 				SWIFT_VERSION = 5.0;
 			};
 			name = MAS;
-		};
-		EB1A109A2D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = EB097EEC2C00BA0C00E8A086 /* ConfigMAS.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_ARC_EXCEPTIONS = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "$(AG_TEAM)";
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "$(AG_COPYRIGHT)";
-				MACOSX_DEPLOYMENT_TARGET = "$(AG_DEPLOYMENT_TARGET)";
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				OTHER_CODE_SIGN_FLAGS = "--timestamp";
-				SDKROOT = macosx;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_STRICT_CONCURRENCY = minimal;
-			};
-			name = "MAS(IAP)";
-		};
-		EB1A109B2D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = AdguardMini/AdguardMini.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_ASSET_PATHS = "";
-				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				EXCLUDED_ARCHS = "";
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = AdguardMini/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "$(AG_APP_DISPLAYED_NAME)";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				OTHER_LDFLAGS = "$(inherit)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_APP_ID)";
-				PRODUCT_NAME = "$(AG_PRODUCT_NAME)";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = "MAS(IAP)";
-		};
-		EB1A109C2D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = Helper/Helper.entitlements;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				DEAD_CODE_STRIPPING = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_LSBackgroundOnly = YES;
-				INFOPLIST_KEY_NSPrincipalClass = "";
-				INFOPLIST_KEY_UIStatusBarHidden = YES;
-				MACH_O_TYPE = mh_execute;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_HELPER_ID)";
-				PRODUCT_NAME = "$(AG_HELPER_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				WRAPPER_EXTENSION = app;
-			};
-			name = "MAS(IAP)";
-		};
-		EB1A109D2D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AGGreen;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = PopupExtension/PopupExtension.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				DEAD_CODE_STRIPPING = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = PopupExtension/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				OTHER_LDFLAGS = (
-					"-framework",
-					SafariServices,
-				);
-				OTHER_SWIFT_FLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_POPUP_EXTENSION_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = "MAS(IAP)";
-		};
-		EB1A109E2D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "$(PRODUCT_NAME)/$(PRODUCT_NAME).entitlements";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "$(PRODUCT_NAME)/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "WebExtension (Experimental)";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				OTHER_LDFLAGS = (
-					"-framework",
-					SafariServices,
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_WEB_EXTENSION_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = "MAS(IAP)";
-		};
-		EB1A109F2D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = GeneralContentBlocker/GeneralContentBlocker.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				DEAD_CODE_STRIPPING = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = GeneralContentBlocker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_GENERAL_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = "MAS(IAP)";
-		};
-		EB1A10A02D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = PrivacyContentBlocker/PrivacyContentBlocker.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = PrivacyContentBlocker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_PRIVACY_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = "MAS(IAP)";
-		};
-		EB1A10A12D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = SecurityContentBlocker/SecurityContentBlocker.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SecurityContentBlocker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_SECURITY_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = "MAS(IAP)";
-		};
-		EB1A10A22D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = SocialContentBlocker/SocialContentBlocker.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SocialContentBlocker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_SOCIAL_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = "MAS(IAP)";
-		};
-		EB1A10A32D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = OtherContentBlocker/OtherContentBlocker.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = OtherContentBlocker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_OTHER_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = "MAS(IAP)";
-		};
-		EB1A10A42D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = CustomContentBlocker/CustomContentBlocker.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = CustomContentBlocker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_CUSTOM_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = "MAS(IAP)";
-		};
-		EB1A10A52D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = Watchdog/Watchdog.entitlements;
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				INSTALL_PATH = "";
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				OTHER_CODE_SIGN_FLAGS = "$(inherited) \"-i $(PRODUCT_BUNDLE_IDENTIFIER)\"";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_WATCHDOG_ID)";
-				PRODUCT_NAME = "$(AG_WATCHDOG_PRODUCT_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = "MAS(IAP)";
-		};
-		EB1A10A62D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				ENABLE_APP_SANDBOX = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				INSTALL_PATH = "";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"'@executable_path/../Frameworks'",
-					"'@executable_path/Frameworks'",
-					"@loader_path/../Frameworks",
-					"'@loader_path/Frameworks'",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = "MAS(IAP)";
-		};
-		EB1A10A72D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				ENABLE_APP_SANDBOX = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = "MAS(IAP)";
-		};
-		EB1A10A82D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = "MAS(IAP)";
-		};
-		EB1A10A92D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = "MAS(IAP)";
-		};
-		EB1A10AA2D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = "MAS(IAP)";
-		};
-		EB1A10AB2D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = "MAS(IAP)";
-		};
-		EB1A10AC2D8415B7006DB3CF /* MAS(IAP) */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.adguard.AdguardMiniTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-			};
-			name = "MAS(IAP)";
 		};
 		EB1C6E642B05145300AC69F2 /* MAS */ = {
 			isa = XCBuildConfiguration;
@@ -4694,7 +3901,7 @@
 				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "$(AG_TEAM)";
+				DEVELOPMENT_TEAM = TC3Q7MAJXF;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -4709,7 +3916,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "$(AG_COPYRIGHT)";
 				MACOSX_DEPLOYMENT_TARGET = "$(AG_DEPLOYMENT_TARGET)";
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -4747,7 +3954,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				OTHER_LDFLAGS = "$(inherit)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_APP_ID)";
 				PRODUCT_NAME = "$(AG_PRODUCT_NAME)";
@@ -4771,7 +3978,7 @@
 				INFOPLIST_KEY_NSPrincipalClass = "";
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				MACH_O_TYPE = mh_execute;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_HELPER_ID)";
 				PRODUCT_NAME = "$(AG_HELPER_NAME)";
 				SKIP_INSTALL = YES;
@@ -4799,7 +4006,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -4828,7 +4035,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_GENERAL_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -4837,7 +4044,7 @@
 			};
 			name = MAS;
 		};
-		EB2705122BA9B15600983795 /* Debug */ = {
+		EB2705122BA9B15600983795 /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
@@ -4851,7 +4058,7 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		EB2705132BA9B15600983795 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -4881,7 +4088,7 @@
 			};
 			name = MAS;
 		};
-		EB4410272C076D16003F4DB5 /* Debug */ = {
+		EB4410272C076D16003F4DB5 /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
@@ -4903,7 +4110,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_VERSION = 5.0;
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		EB4410282C076D16003F4DB5 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -4928,52 +4135,6 @@
 			};
 			name = Release;
 		};
-		EB4410292C076D16003F4DB5 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				ENABLE_APP_SANDBOX = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				INSTALL_PATH = "";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"'@executable_path/../Frameworks'",
-					"'@executable_path/Frameworks'",
-					"@loader_path/../Frameworks",
-					"'@loader_path/Frameworks'",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Beta;
-		};
-		EB44102A2C076D16003F4DB5 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				ENABLE_APP_SANDBOX = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				INSTALL_PATH = "";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"'@executable_path/../Frameworks'",
-					"'@executable_path/Frameworks'",
-					"@loader_path/../Frameworks",
-					"'@loader_path/Frameworks'",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Nightly;
-		};
 		EB44102B2C076D16003F4DB5 /* MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4997,7 +4158,7 @@
 			};
 			name = MAS;
 		};
-		EB455C752B3AD41C0010C9B3 /* Debug */ = {
+		EB455C752B3AD41C0010C9B3 /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Watchdog/Watchdog.entitlements;
@@ -5012,7 +4173,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_VERSION = 5.0;
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		EB455C762B3AD41C0010C9B3 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -5046,7 +4207,7 @@
 			};
 			name = MAS;
 		};
-		EB843F0D2B90ED16009179E0 /* Debug */ = {
+		EB843F0D2B90ED16009179E0 /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
@@ -5062,7 +4223,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		EB843F0E2B90ED16009179E0 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -5098,7 +4259,7 @@
 			};
 			name = MAS;
 		};
-		EB88F5D82C00879D0033E2E8 /* Debug */ = {
+		EB88F5D82C00879D0033E2E8 /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
@@ -5108,7 +4269,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		EB88F5D92C00879D0033E2E8 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -5122,30 +4283,6 @@
 			};
 			name = Release;
 		};
-		EB88F5DA2C00879D0033E2E8 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Beta;
-		};
-		EB88F5DB2C00879D0033E2E8 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Nightly;
-		};
 		EB88F5DC2C00879D0033E2E8 /* MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -5158,7 +4295,7 @@
 			};
 			name = MAS;
 		};
-		EB93A67C2C218C14003D84A5 /* Debug */ = {
+		EB93A67C2C218C14003D84A5 /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
@@ -5172,7 +4309,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_VERSION = 5.0;
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		EB93A67D2C218C14003D84A5 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -5189,36 +4326,6 @@
 			};
 			name = Release;
 		};
-		EB93A67E2C218C14003D84A5 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				ENABLE_APP_SANDBOX = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Beta;
-		};
-		EB93A67F2C218C14003D84A5 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				ENABLE_APP_SANDBOX = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Nightly;
-		};
 		EB93A6802C218C14003D84A5 /* MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -5234,7 +4341,7 @@
 			};
 			name = MAS;
 		};
-		EB93A6942C240B6B003D84A5 /* Debug */ = {
+		EB93A6942C240B6B003D84A5 /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
@@ -5244,7 +4351,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		EB93A6952C240B6B003D84A5 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -5258,30 +4365,6 @@
 			};
 			name = Release;
 		};
-		EB93A6962C240B6B003D84A5 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Beta;
-		};
-		EB93A6972C240B6B003D84A5 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Nightly;
-		};
 		EB93A6982C240B6B003D84A5 /* MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -5294,7 +4377,7 @@
 			};
 			name = MAS;
 		};
-		EB98C06C2C007875000C976B /* Debug */ = {
+		EB98C06C2C007875000C976B /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
@@ -5304,7 +4387,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		EB98C06D2C007875000C976B /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -5318,30 +4401,6 @@
 			};
 			name = Release;
 		};
-		EB98C06E2C007875000C976B /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Beta;
-		};
-		EB98C06F2C007875000C976B /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Nightly;
-		};
 		EB98C0702C007875000C976B /* MAS */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -5354,7 +4413,7 @@
 			};
 			name = MAS;
 		};
-		EBAA09A52BAC7AD60032C591 /* Debug */ = {
+		EBAA09A52BAC7AD60032C591 /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = PrivacyContentBlocker/PrivacyContentBlocker.entitlements;
@@ -5368,7 +4427,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_PRIVACY_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -5376,7 +4435,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		EBAA09A62BAC7AD60032C591 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -5392,7 +4451,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_PRIVACY_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -5415,7 +4474,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_PRIVACY_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -5424,7 +4483,7 @@
 			};
 			name = MAS;
 		};
-		EBAA09B92BAC7DDA0032C591 /* Debug */ = {
+		EBAA09B92BAC7DDA0032C591 /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = SecurityContentBlocker/SecurityContentBlocker.entitlements;
@@ -5438,7 +4497,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_SECURITY_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -5446,7 +4505,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		EBAA09BA2BAC7DDA0032C591 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -5462,7 +4521,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_SECURITY_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -5485,7 +4544,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_SECURITY_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -5494,7 +4553,7 @@
 			};
 			name = MAS;
 		};
-		EBAA09CD2BAC7EA10032C591 /* Debug */ = {
+		EBAA09CD2BAC7EA10032C591 /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = SocialContentBlocker/SocialContentBlocker.entitlements;
@@ -5508,7 +4567,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_SOCIAL_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -5516,7 +4575,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		EBAA09CE2BAC7EA10032C591 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -5532,7 +4591,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_SOCIAL_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -5555,7 +4614,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_SOCIAL_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -5564,7 +4623,7 @@
 			};
 			name = MAS;
 		};
-		EBAA09E12BAC7EBD0032C591 /* Debug */ = {
+		EBAA09E12BAC7EBD0032C591 /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = OtherContentBlocker/OtherContentBlocker.entitlements;
@@ -5578,7 +4637,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_OTHER_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -5586,7 +4645,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		EBAA09E22BAC7EBD0032C591 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -5602,7 +4661,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_OTHER_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -5625,7 +4684,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_OTHER_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -5634,7 +4693,7 @@
 			};
 			name = MAS;
 		};
-		EBAA0A092BAC7EE20032C591 /* Debug */ = {
+		EBAA0A092BAC7EE20032C591 /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = CustomContentBlocker/CustomContentBlocker.entitlements;
@@ -5648,7 +4707,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_CUSTOM_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -5656,7 +4715,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		EBAA0A0A2BAC7EE20032C591 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -5672,7 +4731,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_CUSTOM_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -5695,7 +4754,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_CUSTOM_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -5704,7 +4763,7 @@
 			};
 			name = MAS;
 		};
-		EBC4D9B42AB8772000C255F4 /* Debug */ = {
+		EBC4D9B42AB8772000C255F4 /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Helper/HelperDebug.entitlements;
@@ -5717,7 +4776,7 @@
 				INFOPLIST_KEY_NSPrincipalClass = "";
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				MACH_O_TYPE = mh_execute;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_HELPER_ID)";
 				PRODUCT_NAME = "$(AG_HELPER_NAME)";
 				SKIP_INSTALL = YES;
@@ -5725,7 +4784,7 @@
 				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		EBC4D9B52AB8772000C255F4 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -5740,7 +4799,7 @@
 				INFOPLIST_KEY_NSPrincipalClass = "";
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				MACH_O_TYPE = mh_execute;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_HELPER_ID)";
 				PRODUCT_NAME = "$(AG_HELPER_NAME)";
 				SKIP_INSTALL = YES;
@@ -5750,715 +4809,7 @@
 			};
 			name = Release;
 		};
-		EBE644BE2BFCB91000785148 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = EB097EEB2C00B9DF00E8A086 /* ConfigNative.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_ARC_EXCEPTIONS = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "$(AG_TEAM)";
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "$(AG_COPYRIGHT)";
-				MACOSX_DEPLOYMENT_TARGET = "$(AG_DEPLOYMENT_TARGET)";
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				OTHER_CODE_SIGN_FLAGS = "--timestamp";
-				SDKROOT = macosx;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_STRICT_CONCURRENCY = minimal;
-			};
-			name = Nightly;
-		};
-		EBE644BF2BFCB91000785148 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = AdguardMini/AdguardMini.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_ASSET_PATHS = "";
-				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				EXCLUDED_ARCHS = "";
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = AdguardMini/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "$(AG_APP_DISPLAYED_NAME)";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				OTHER_LDFLAGS = (
-					"$(inherit)",
-					"-framework",
-					Sparkle,
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_APP_ID)";
-				PRODUCT_NAME = "$(AG_PRODUCT_NAME)";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Nightly;
-		};
-		EBE644C02BFCB91000785148 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = Helper/Helper.entitlements;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				DEAD_CODE_STRIPPING = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_LSBackgroundOnly = YES;
-				INFOPLIST_KEY_NSPrincipalClass = "";
-				INFOPLIST_KEY_UIStatusBarHidden = YES;
-				MACH_O_TYPE = mh_execute;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_HELPER_ID)";
-				PRODUCT_NAME = "$(AG_HELPER_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				WRAPPER_EXTENSION = app;
-			};
-			name = Nightly;
-		};
-		EBE644C12BFCB91000785148 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AGGreen;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = PopupExtension/PopupExtension.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				DEAD_CODE_STRIPPING = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = PopupExtension/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				OTHER_LDFLAGS = (
-					"-framework",
-					SafariServices,
-				);
-				OTHER_SWIFT_FLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_POPUP_EXTENSION_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Nightly;
-		};
-		EBE644C22BFCB91000785148 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = GeneralContentBlocker/GeneralContentBlocker.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				DEAD_CODE_STRIPPING = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = GeneralContentBlocker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_GENERAL_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Nightly;
-		};
-		EBE644C32BFCB91000785148 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = PrivacyContentBlocker/PrivacyContentBlocker.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = PrivacyContentBlocker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_PRIVACY_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Nightly;
-		};
-		EBE644C42BFCB91000785148 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = SecurityContentBlocker/SecurityContentBlocker.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SecurityContentBlocker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_SECURITY_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Nightly;
-		};
-		EBE644C52BFCB91000785148 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = SocialContentBlocker/SocialContentBlocker.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SocialContentBlocker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_SOCIAL_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Nightly;
-		};
-		EBE644C62BFCB91000785148 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = OtherContentBlocker/OtherContentBlocker.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = OtherContentBlocker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_OTHER_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Nightly;
-		};
-		EBE644C72BFCB91000785148 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = CustomContentBlocker/CustomContentBlocker.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = CustomContentBlocker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_CUSTOM_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Nightly;
-		};
-		EBE644C82BFCB91000785148 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = Watchdog/Watchdog.entitlements;
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				INSTALL_PATH = "";
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				OTHER_CODE_SIGN_FLAGS = "$(inherited) \"-i $(PRODUCT_BUNDLE_IDENTIFIER)\"";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_WATCHDOG_ID)";
-				PRODUCT_NAME = "$(AG_WATCHDOG_PRODUCT_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Nightly;
-		};
-		EBE644CA2BFCB91000785148 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Nightly;
-		};
-		EBE644CB2BFCB91000785148 /* Nightly */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.adguard.AdguardMiniTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Nightly;
-		};
-		EBE644CD2BFCB91400785148 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = EB097EEB2C00B9DF00E8A086 /* ConfigNative.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_ARC_EXCEPTIONS = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "$(AG_TEAM)";
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "$(AG_COPYRIGHT)";
-				MACOSX_DEPLOYMENT_TARGET = "$(AG_DEPLOYMENT_TARGET)";
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				OTHER_CODE_SIGN_FLAGS = "--timestamp";
-				SDKROOT = macosx;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_STRICT_CONCURRENCY = minimal;
-			};
-			name = Beta;
-		};
-		EBE644CE2BFCB91400785148 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = AdguardMini/AdguardMini.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_ASSET_PATHS = "";
-				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				EXCLUDED_ARCHS = "";
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = AdguardMini/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "$(AG_APP_DISPLAYED_NAME)";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				OTHER_LDFLAGS = (
-					"$(inherit)",
-					"-framework",
-					Sparkle,
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_APP_ID)";
-				PRODUCT_NAME = "$(AG_PRODUCT_NAME)";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Beta;
-		};
-		EBE644CF2BFCB91400785148 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = Helper/Helper.entitlements;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				DEAD_CODE_STRIPPING = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_LSBackgroundOnly = YES;
-				INFOPLIST_KEY_NSPrincipalClass = "";
-				INFOPLIST_KEY_UIStatusBarHidden = YES;
-				MACH_O_TYPE = mh_execute;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_HELPER_ID)";
-				PRODUCT_NAME = "$(AG_HELPER_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				WRAPPER_EXTENSION = app;
-			};
-			name = Beta;
-		};
-		EBE644D02BFCB91400785148 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AGGreen;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = PopupExtension/PopupExtension.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				DEAD_CODE_STRIPPING = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = PopupExtension/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				OTHER_LDFLAGS = (
-					"-framework",
-					SafariServices,
-				);
-				OTHER_SWIFT_FLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_POPUP_EXTENSION_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Beta;
-		};
-		EBE644D12BFCB91400785148 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = GeneralContentBlocker/GeneralContentBlocker.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				DEAD_CODE_STRIPPING = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = GeneralContentBlocker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_GENERAL_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Beta;
-		};
-		EBE644D22BFCB91400785148 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = PrivacyContentBlocker/PrivacyContentBlocker.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = PrivacyContentBlocker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_PRIVACY_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Beta;
-		};
-		EBE644D32BFCB91400785148 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = SecurityContentBlocker/SecurityContentBlocker.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SecurityContentBlocker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_SECURITY_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Beta;
-		};
-		EBE644D42BFCB91400785148 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = SocialContentBlocker/SocialContentBlocker.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SocialContentBlocker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_SOCIAL_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Beta;
-		};
-		EBE644D52BFCB91400785148 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = OtherContentBlocker/OtherContentBlocker.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = OtherContentBlocker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_OTHER_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Beta;
-		};
-		EBE644D62BFCB91400785148 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = CustomContentBlocker/CustomContentBlocker.entitlements;
-				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = CustomContentBlocker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_CUSTOM_BUNDLEID)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Beta;
-		};
-		EBE644D72BFCB91400785148 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = Watchdog/Watchdog.entitlements;
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				INSTALL_PATH = "";
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				OTHER_CODE_SIGN_FLAGS = "$(inherited) \"-i $(PRODUCT_BUNDLE_IDENTIFIER)\"";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_WATCHDOG_ID)";
-				PRODUCT_NAME = "$(AG_WATCHDOG_PRODUCT_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Beta;
-		};
-		EBE644D92BFCB91400785148 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Beta;
-		};
-		EBE644DA2BFCB91400785148 /* Beta */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.adguard.AdguardMiniTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Beta;
-		};
-		EC3463172A29DD9400F59ABC /* Debug */ = {
+		EC3463172A29DD9400F59ABC /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB097EEB2C00B9DF00E8A086 /* ConfigNative.xcconfig */;
 			buildSettings = {
@@ -6501,7 +4852,7 @@
 				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "$(AG_TEAM)";
+				DEVELOPMENT_TEAM = TC3Q7MAJXF;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -6518,7 +4869,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "$(AG_COPYRIGHT)";
 				MACOSX_DEPLOYMENT_TARGET = "$(AG_DEPLOYMENT_TARGET)";
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -6526,7 +4877,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_STRICT_CONCURRENCY = minimal;
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		EC3463182A29DD9400F59ABC /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -6572,7 +4923,7 @@
 				CURRENT_PROJECT_VERSION = "$(AG_BUILD)";
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "$(AG_TEAM)";
+				DEVELOPMENT_TEAM = TC3Q7MAJXF;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -6587,7 +4938,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "$(AG_COPYRIGHT)";
 				MACOSX_DEPLOYMENT_TARGET = "$(AG_DEPLOYMENT_TARGET)";
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_CODE_SIGN_FLAGS = "--timestamp";
@@ -6598,7 +4949,7 @@
 			};
 			name = Release;
 		};
-		EC34631A2A29DD9400F59ABC /* Debug */ = {
+		EC34631A2A29DD9400F59ABC /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -6626,7 +4977,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				OTHER_LDFLAGS = (
 					"$(inherit)",
 					"-framework",
@@ -6640,7 +4991,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		EC34631B2A29DD9400F59ABC /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -6670,7 +5021,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				OTHER_LDFLAGS = (
 					"$(inherit)",
 					"-framework",
@@ -6685,7 +5036,7 @@
 			};
 			name = Release;
 		};
-		EC4197BF2A6FE790000F363D /* Debug */ = {
+		EC4197BF2A6FE790000F363D /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -6700,7 +5051,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_GENERAL_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -6708,7 +5059,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		EC4197C02A6FE790000F363D /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -6725,7 +5076,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(AG_BLOCKER_GENERAL_BUNDLEID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -6734,7 +5085,7 @@
 			};
 			name = Release;
 		};
-		ECDF56A22A6029580017A270 /* Debug */ = {
+		ECDF56A22A6029580017A270 /* Debug-Standalone */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -6753,7 +5104,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -6767,7 +5118,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
-			name = Debug;
+			name = "Debug-Standalone";
 		};
 		ECDF56A32A6029580017A270 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -6787,7 +5138,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = "$(AG_MARKETING_VERSION)";
+				MARKETING_VERSION = "$(AG_VERSION_TITLE)";
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -6807,13 +5158,10 @@
 		162E77702FF2B04F00232A89 /* Build configuration list for PBXNativeTarget "MailBlocker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				162E77712FF2B04F00232A89 /* Debug */,
-				162E77722FF2B04F00232A89 /* Debug(MAS) */,
+				162E77712FF2B04F00232A89 /* Debug-Standalone */,
+				162E77722FF2B04F00232A89 /* Debug-MAS */,
 				162E77732FF2B04F00232A89 /* Release */,
-				162E77742FF2B04F00232A89 /* Beta */,
-				162E77752FF2B04F00232A89 /* Nightly */,
 				162E77762FF2B04F00232A89 /* MAS */,
-				162E77772FF2B04F00232A89 /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6821,13 +5169,10 @@
 		16426F972DC20F94004276C0 /* Build configuration list for PBXAggregateTarget "Build advanced script" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				16426F982DC20F94004276C0 /* Debug */,
-				162BF3192EA2311900421157 /* Debug(MAS) */,
+				16426F982DC20F94004276C0 /* Debug-Standalone */,
+				162BF3192EA2311900421157 /* Debug-MAS */,
 				16426F992DC20F94004276C0 /* Release */,
-				16426F9B2DC20F94004276C0 /* Beta */,
-				16426F9C2DC20F94004276C0 /* Nightly */,
 				16426F9D2DC20F94004276C0 /* MAS */,
-				16426F9E2DC20F94004276C0 /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6835,13 +5180,10 @@
 		164E41262EA90B8800C28D3C /* Build configuration list for PBXAggregateTarget "Download AdGuard Extra" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				164E41272EA90B8800C28D3C /* Debug */,
-				164E41282EA90B8800C28D3C /* Debug(MAS) */,
+				164E41272EA90B8800C28D3C /* Debug-Standalone */,
+				164E41282EA90B8800C28D3C /* Debug-MAS */,
 				164E41292EA90B8800C28D3C /* Release */,
-				164E412B2EA90B8800C28D3C /* Beta */,
-				164E412C2EA90B8800C28D3C /* Nightly */,
 				164E412D2EA90B8800C28D3C /* MAS */,
-				164E412E2EA90B8800C28D3C /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6849,13 +5191,10 @@
 		168279D73008F8DA001486BD /* Build configuration list for PBXNativeTarget "URLFilterExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				168279D03008F8DA001486BD /* Debug */,
-				168279D13008F8DA001486BD /* Debug(MAS) */,
+				168279D03008F8DA001486BD /* Debug-Standalone */,
+				168279D13008F8DA001486BD /* Debug-MAS */,
 				168279D23008F8DA001486BD /* Release */,
-				168279D33008F8DA001486BD /* Beta */,
-				168279D43008F8DA001486BD /* Nightly */,
 				168279D53008F8DA001486BD /* MAS */,
-				168279D63008F8DA001486BD /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6863,13 +5202,10 @@
 		169664DA2E9FEB2B00E0B87E /* Build configuration list for PBXNativeTarget "SafariExtension Builder" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				169664DB2E9FEB2B00E0B87E /* Debug */,
-				162BF3172EA2311900421157 /* Debug(MAS) */,
+				169664DB2E9FEB2B00E0B87E /* Debug-Standalone */,
+				162BF3172EA2311900421157 /* Debug-MAS */,
 				169664DC2E9FEB2B00E0B87E /* Release */,
-				169664DE2E9FEB2B00E0B87E /* Beta */,
-				169664DF2E9FEB2B00E0B87E /* Nightly */,
 				169664E02E9FEB2B00E0B87E /* MAS */,
-				169664E12E9FEB2B00E0B87E /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6877,13 +5213,10 @@
 		EB0A20C62D5B56C1002A8029 /* Build configuration list for PBXNativeTarget "WebExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EB0A20BF2D5B56C1002A8029 /* Debug */,
-				162BF30D2EA2311900421157 /* Debug(MAS) */,
+				EB0A20BF2D5B56C1002A8029 /* Debug-Standalone */,
+				162BF30D2EA2311900421157 /* Debug-MAS */,
 				EB0A20C02D5B56C1002A8029 /* Release */,
-				EB0A20C22D5B56C1002A8029 /* Beta */,
-				EB0A20C32D5B56C1002A8029 /* Nightly */,
 				EB0A20C42D5B56C1002A8029 /* MAS */,
-				EB1A109E2D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6891,13 +5224,10 @@
 		EB2705112BA9B15600983795 /* Build configuration list for PBXLegacyTarget "Build Sciter UI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EB2705122BA9B15600983795 /* Debug */,
-				162BF3182EA2311900421157 /* Debug(MAS) */,
+				EB2705122BA9B15600983795 /* Debug-Standalone */,
+				162BF3182EA2311900421157 /* Debug-MAS */,
 				EB2705132BA9B15600983795 /* Release */,
-				EBE644D92BFCB91400785148 /* Beta */,
-				EBE644CA2BFCB91000785148 /* Nightly */,
 				EB2705142BA9B15600983795 /* MAS */,
-				EB1A10A82D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6905,13 +5235,10 @@
 		EB4410262C076D16003F4DB5 /* Build configuration list for PBXNativeTarget "AdguardMini Builder" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EB4410272C076D16003F4DB5 /* Debug */,
-				162BF3152EA2311900421157 /* Debug(MAS) */,
+				EB4410272C076D16003F4DB5 /* Debug-Standalone */,
+				162BF3152EA2311900421157 /* Debug-MAS */,
 				EB4410282C076D16003F4DB5 /* Release */,
-				EB4410292C076D16003F4DB5 /* Beta */,
-				EB44102A2C076D16003F4DB5 /* Nightly */,
 				EB44102B2C076D16003F4DB5 /* MAS */,
-				EB1A10A62D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6919,13 +5246,10 @@
 		EB455C742B3AD41C0010C9B3 /* Build configuration list for PBXNativeTarget "Watchdog" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EB455C752B3AD41C0010C9B3 /* Debug */,
-				162BF3142EA2311900421157 /* Debug(MAS) */,
+				EB455C752B3AD41C0010C9B3 /* Debug-Standalone */,
+				162BF3142EA2311900421157 /* Debug-MAS */,
 				EB455C762B3AD41C0010C9B3 /* Release */,
-				EBE644D72BFCB91400785148 /* Beta */,
-				EBE644C82BFCB91000785148 /* Nightly */,
 				EB455C772B3AD41C0010C9B3 /* MAS */,
-				EB1A10A52D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6933,13 +5257,10 @@
 		EB843F0C2B90ED16009179E0 /* Build configuration list for PBXNativeTarget "AdguardMiniTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EB843F0D2B90ED16009179E0 /* Debug */,
-				162BF31D2EA2311900421157 /* Debug(MAS) */,
+				EB843F0D2B90ED16009179E0 /* Debug-Standalone */,
+				162BF31D2EA2311900421157 /* Debug-MAS */,
 				EB843F0E2B90ED16009179E0 /* Release */,
-				EBE644DA2BFCB91400785148 /* Beta */,
-				EBE644CB2BFCB91000785148 /* Nightly */,
 				EB843F0F2B90ED16009179E0 /* MAS */,
-				EB1A10AC2D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6947,13 +5268,10 @@
 		EB88F5D72C00879D0033E2E8 /* Build configuration list for PBXAggregateTarget "Generate Sensitive Config Constants" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EB88F5D82C00879D0033E2E8 /* Debug */,
-				162BF31B2EA2311900421157 /* Debug(MAS) */,
+				EB88F5D82C00879D0033E2E8 /* Debug-Standalone */,
+				162BF31B2EA2311900421157 /* Debug-MAS */,
 				EB88F5D92C00879D0033E2E8 /* Release */,
-				EB88F5DA2C00879D0033E2E8 /* Beta */,
-				EB88F5DB2C00879D0033E2E8 /* Nightly */,
 				EB88F5DC2C00879D0033E2E8 /* MAS */,
-				EB1A10AA2D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6961,13 +5279,10 @@
 		EB93A67B2C218C14003D84A5 /* Build configuration list for PBXNativeTarget "AdguardMini Prebuilder" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EB93A67C2C218C14003D84A5 /* Debug */,
-				162BF3162EA2311900421157 /* Debug(MAS) */,
+				EB93A67C2C218C14003D84A5 /* Debug-Standalone */,
+				162BF3162EA2311900421157 /* Debug-MAS */,
 				EB93A67D2C218C14003D84A5 /* Release */,
-				EB93A67E2C218C14003D84A5 /* Beta */,
-				EB93A67F2C218C14003D84A5 /* Nightly */,
 				EB93A6802C218C14003D84A5 /* MAS */,
-				EB1A10A72D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6975,13 +5290,10 @@
 		EB93A6932C240B6B003D84A5 /* Build configuration list for PBXAggregateTarget "Run prebuilder" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EB93A6942C240B6B003D84A5 /* Debug */,
-				162BF31C2EA2311900421157 /* Debug(MAS) */,
+				EB93A6942C240B6B003D84A5 /* Debug-Standalone */,
+				162BF31C2EA2311900421157 /* Debug-MAS */,
 				EB93A6952C240B6B003D84A5 /* Release */,
-				EB93A6962C240B6B003D84A5 /* Beta */,
-				EB93A6972C240B6B003D84A5 /* Nightly */,
 				EB93A6982C240B6B003D84A5 /* MAS */,
-				EB1A10AB2D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6989,13 +5301,10 @@
 		EB98C0712C007875000C976B /* Build configuration list for PBXAggregateTarget "Generate Config Constants" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EB98C06C2C007875000C976B /* Debug */,
-				162BF31A2EA2311900421157 /* Debug(MAS) */,
+				EB98C06C2C007875000C976B /* Debug-Standalone */,
+				162BF31A2EA2311900421157 /* Debug-MAS */,
 				EB98C06D2C007875000C976B /* Release */,
-				EB98C06E2C007875000C976B /* Beta */,
-				EB98C06F2C007875000C976B /* Nightly */,
 				EB98C0702C007875000C976B /* MAS */,
-				EB1A10A92D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -7003,13 +5312,10 @@
 		EBAA09A42BAC7AD60032C591 /* Build configuration list for PBXNativeTarget "PrivacyContentBlocker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EBAA09A52BAC7AD60032C591 /* Debug */,
-				162BF30F2EA2311900421157 /* Debug(MAS) */,
+				EBAA09A52BAC7AD60032C591 /* Debug-Standalone */,
+				162BF30F2EA2311900421157 /* Debug-MAS */,
 				EBAA09A62BAC7AD60032C591 /* Release */,
-				EBE644D22BFCB91400785148 /* Beta */,
-				EBE644C32BFCB91000785148 /* Nightly */,
 				EBAA09A72BAC7AD60032C591 /* MAS */,
-				EB1A10A02D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -7017,13 +5323,10 @@
 		EBAA09B82BAC7DDA0032C591 /* Build configuration list for PBXNativeTarget "SecurityContentBlocker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EBAA09B92BAC7DDA0032C591 /* Debug */,
-				162BF3102EA2311900421157 /* Debug(MAS) */,
+				EBAA09B92BAC7DDA0032C591 /* Debug-Standalone */,
+				162BF3102EA2311900421157 /* Debug-MAS */,
 				EBAA09BA2BAC7DDA0032C591 /* Release */,
-				EBE644D32BFCB91400785148 /* Beta */,
-				EBE644C42BFCB91000785148 /* Nightly */,
 				EBAA09BB2BAC7DDA0032C591 /* MAS */,
-				EB1A10A12D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -7031,13 +5334,10 @@
 		EBAA09CC2BAC7EA10032C591 /* Build configuration list for PBXNativeTarget "SocialContentBlocker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EBAA09CD2BAC7EA10032C591 /* Debug */,
-				162BF3112EA2311900421157 /* Debug(MAS) */,
+				EBAA09CD2BAC7EA10032C591 /* Debug-Standalone */,
+				162BF3112EA2311900421157 /* Debug-MAS */,
 				EBAA09CE2BAC7EA10032C591 /* Release */,
-				EBE644D42BFCB91400785148 /* Beta */,
-				EBE644C52BFCB91000785148 /* Nightly */,
 				EBAA09CF2BAC7EA10032C591 /* MAS */,
-				EB1A10A22D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -7045,13 +5345,10 @@
 		EBAA09E02BAC7EBD0032C591 /* Build configuration list for PBXNativeTarget "OtherContentBlocker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EBAA09E12BAC7EBD0032C591 /* Debug */,
-				162BF3122EA2311900421157 /* Debug(MAS) */,
+				EBAA09E12BAC7EBD0032C591 /* Debug-Standalone */,
+				162BF3122EA2311900421157 /* Debug-MAS */,
 				EBAA09E22BAC7EBD0032C591 /* Release */,
-				EBE644D52BFCB91400785148 /* Beta */,
-				EBE644C62BFCB91000785148 /* Nightly */,
 				EBAA09E32BAC7EBD0032C591 /* MAS */,
-				EB1A10A32D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -7059,13 +5356,10 @@
 		EBAA0A082BAC7EE20032C591 /* Build configuration list for PBXNativeTarget "CustomContentBlocker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EBAA0A092BAC7EE20032C591 /* Debug */,
-				162BF3132EA2311900421157 /* Debug(MAS) */,
+				EBAA0A092BAC7EE20032C591 /* Debug-Standalone */,
+				162BF3132EA2311900421157 /* Debug-MAS */,
 				EBAA0A0A2BAC7EE20032C591 /* Release */,
-				EBE644D62BFCB91400785148 /* Beta */,
-				EBE644C72BFCB91000785148 /* Nightly */,
 				EBAA0A0B2BAC7EE20032C591 /* MAS */,
-				EB1A10A42D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -7073,13 +5367,10 @@
 		EBC4D9B32AB8772000C255F4 /* Build configuration list for PBXNativeTarget "Helper" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EBC4D9B42AB8772000C255F4 /* Debug */,
-				162BF30B2EA2311900421157 /* Debug(MAS) */,
+				EBC4D9B42AB8772000C255F4 /* Debug-Standalone */,
+				162BF30B2EA2311900421157 /* Debug-MAS */,
 				EBC4D9B52AB8772000C255F4 /* Release */,
-				EBE644CF2BFCB91400785148 /* Beta */,
-				EBE644C02BFCB91000785148 /* Nightly */,
 				EB1C6E662B05145300AC69F2 /* MAS */,
-				EB1A109C2D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -7087,13 +5378,10 @@
 		EC3462EF2A29DD9200F59ABC /* Build configuration list for PBXProject "AdguardMini" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EC3463172A29DD9400F59ABC /* Debug */,
-				162BF3092EA2311900421157 /* Debug(MAS) */,
+				EC3463172A29DD9400F59ABC /* Debug-Standalone */,
+				162BF3092EA2311900421157 /* Debug-MAS */,
 				EC3463182A29DD9400F59ABC /* Release */,
-				EBE644CD2BFCB91400785148 /* Beta */,
-				EBE644BE2BFCB91000785148 /* Nightly */,
 				EB1C6E642B05145300AC69F2 /* MAS */,
-				EB1A109A2D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -7101,13 +5389,10 @@
 		EC3463192A29DD9400F59ABC /* Build configuration list for PBXNativeTarget "AdguardMini" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EC34631A2A29DD9400F59ABC /* Debug */,
-				162BF30A2EA2311900421157 /* Debug(MAS) */,
+				EC34631A2A29DD9400F59ABC /* Debug-Standalone */,
+				162BF30A2EA2311900421157 /* Debug-MAS */,
 				EC34631B2A29DD9400F59ABC /* Release */,
-				EBE644CE2BFCB91400785148 /* Beta */,
-				EBE644BF2BFCB91000785148 /* Nightly */,
 				EB1C6E652B05145300AC69F2 /* MAS */,
-				EB1A109B2D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -7115,13 +5400,10 @@
 		EC4197C12A6FE790000F363D /* Build configuration list for PBXNativeTarget "GeneralContentBlocker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EC4197BF2A6FE790000F363D /* Debug */,
-				162BF30E2EA2311900421157 /* Debug(MAS) */,
+				EC4197BF2A6FE790000F363D /* Debug-Standalone */,
+				162BF30E2EA2311900421157 /* Debug-MAS */,
 				EC4197C02A6FE790000F363D /* Release */,
-				EBE644D12BFCB91400785148 /* Beta */,
-				EBE644C22BFCB91000785148 /* Nightly */,
 				EB1C6E682B05145300AC69F2 /* MAS */,
-				EB1A109F2D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -7129,13 +5411,10 @@
 		ECDF56A12A6029580017A270 /* Build configuration list for PBXNativeTarget "PopupExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				ECDF56A22A6029580017A270 /* Debug */,
-				162BF30C2EA2311900421157 /* Debug(MAS) */,
+				ECDF56A22A6029580017A270 /* Debug-Standalone */,
+				162BF30C2EA2311900421157 /* Debug-MAS */,
 				ECDF56A32A6029580017A270 /* Release */,
-				EBE644D02BFCB91400785148 /* Beta */,
-				EBE644C12BFCB91000785148 /* Nightly */,
 				EB1C6E672B05145300AC69F2 /* MAS */,
-				EB1A109D2D8415B7006DB3CF /* MAS(IAP) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -1,0 +1,430 @@
+# SPDX-FileCopyrightText: AdGuard Software Limited
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# Production build & deploy pipeline for AdGuard Mini.
+#
+# Triggers: semver tag push, manual dispatch, or tag-and-deploy.yml.
+# The prerelease suffix selects the channel: no suffix = release,
+# -beta.N / -rc.N = beta, -nightly.N = nightly.
+#
+# Full pipeline map, variants, release checklist:
+# docs/production-build-and-deploy.md
+
+name: Deploy App
+run-name: 'Deploy ${{ inputs.tag || github.ref_name }}'
+
+on:
+  push:
+    tags:
+      - 'v[0-9]*.[0-9]*.[0-9]*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Semver tag to deploy (e.g. v2.4.0)'
+        type: string
+        required: true
+      slack-channel:
+        description: 'Slack channel for notifications'
+        type: string
+        default: '#adguard-mini-deploy'
+  workflow_call:
+    inputs:
+      tag:
+        description: 'Semver tag to deploy'
+        type: string
+        required: true
+      slack-channel:
+        description: 'Slack channel for notifications'
+        type: string
+        default: '#adguard-mini-deploy'
+
+permissions:
+  contents: read
+  id-token: write
+  actions: read
+
+concurrency:
+  group: deploy-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+
+  # ---------------------------------------------------------------------------
+  # Metadata & constants
+  # ---------------------------------------------------------------------------
+
+  # Parses the tag into version metadata used by every downstream job.
+  meta:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Version metadata
+    uses: AdGuardSoftwareLimited/actions/.github/workflows/version-metadata.yml@master
+    with:
+      team: mac
+      tag: ${{ inputs.tag || github.ref_name }}
+
+  # Sparkle orders updates by build number, so it must grow monotonically;
+  # the KV store keeps the counter atomic across runs.
+  build-number:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Increment build number
+    needs: [meta]
+    runs-on: [team-mac]
+    outputs:
+      value: ${{ steps.incr.outputs.value }}
+    steps:
+      - uses: AdGuardSoftwareLimited/actions/actions/kv-incr@master
+        id: incr
+        with:
+          key: sciter-adguard-mini/build-number
+
+  # The runner image lives in the KV store so it can be rotated without edits.
+  resolve-runner:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Resolve runner
+    runs-on: [team-mac]
+    outputs:
+      image: ${{ steps.kv.outputs.value }}
+    steps:
+      - uses: AdGuardSoftwareLimited/actions/actions/kv-get@master
+        id: kv
+        with:
+          key: build-images/macos
+
+  # Single source for artifact names, download URLs and the deployer module.
+  constants:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Constants
+    needs: [meta, build-number]
+    runs-on: [team-mac]
+    outputs:
+      static-url: ${{ steps.const.outputs.static-url }}
+      public-github-repo: ${{ steps.const.outputs.public-github-repo }}
+      sentry-project: ${{ steps.const.outputs.sentry-project }}
+      app-name: ${{ steps.const.outputs.app-name }}
+      zip-name: ${{ steps.const.outputs.zip-name }}
+      zip-stable-name: ${{ steps.const.outputs.zip-stable-name }}
+      appcast-name: ${{ steps.const.outputs.appcast-name }}
+      release-notes-url: ${{ steps.const.outputs.release-notes-url }}
+      download-url: ${{ steps.const.outputs.download-url }}
+      deployer-module: ${{ steps.const.outputs.deployer-module }}
+      channel: ${{ steps.const.outputs.channel }}
+    steps:
+      - id: const
+        env:
+          VERSION: ${{ needs.meta.outputs.version }}
+          VERSION_TITLE: ${{ needs.meta.outputs.version-title }}
+          CHANNEL: ${{ needs.meta.outputs.release-channel }}
+          BUILD_NUMBER: ${{ needs.build-number.outputs.value }}
+        run: |
+          set -euo pipefail
+
+          STATIC_URL="https://static.adtidy.org/macmini"
+          PUBLIC_GITHUB_REPO="AdguardTeam/AdGuardMiniForMac"
+          SENTRY_PROJECT="adguard-mac-mini"
+          APP_NAME="AdGuard Mini"
+          ZIP_NAME="AdGuardMini-${VERSION}.${BUILD_NUMBER}.zip"
+          ZIP_STABLE_NAME="AdGuardMini.zip"
+          APPCAST_NAME="adguard-mini-appcast.xml"
+          RELEASE_NOTES_URL="https://link.adtidy.info/forward.html?app=mini_mac&v=&action=mac_release_notes&from=updater&channel=${CHANNEL}"
+          DOWNLOAD_URL="${STATIC_URL}/${CHANNEL}/${ZIP_NAME}"
+          DEPLOYER_MODULE="mac-mini-${CHANNEL}"
+
+          echo "static-url=${STATIC_URL}" >> "$GITHUB_OUTPUT"
+          echo "public-github-repo=${PUBLIC_GITHUB_REPO}" >> "$GITHUB_OUTPUT"
+          echo "sentry-project=${SENTRY_PROJECT}" >> "$GITHUB_OUTPUT"
+          echo "app-name=${APP_NAME}" >> "$GITHUB_OUTPUT"
+          echo "zip-name=${ZIP_NAME}" >> "$GITHUB_OUTPUT"
+          echo "zip-stable-name=${ZIP_STABLE_NAME}" >> "$GITHUB_OUTPUT"
+          echo "appcast-name=${APPCAST_NAME}" >> "$GITHUB_OUTPUT"
+          echo "release-notes-url=${RELEASE_NOTES_URL}" >> "$GITHUB_OUTPUT"
+          echo "download-url=${DOWNLOAD_URL}" >> "$GITHUB_OUTPUT"
+          echo "deployer-module=${DEPLOYER_MODULE}" >> "$GITHUB_OUTPUT"
+          echo "channel=${CHANNEL}" >> "$GITHUB_OUTPUT"
+
+  # ---------------------------------------------------------------------------
+  # Changelog
+  #
+  # collect-changelog.yml uploads with `archive: false`, so the actual GitHub
+  # artifact is named after the file (`changelog.md` / `changelog.txt`), while
+  # the `artifact-name` input only appears in the job summary title.
+  # ---------------------------------------------------------------------------
+
+  # QA-facing changelog in Markdown, collected from the private repository.
+  changelog-qa:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Changelog (QA)
+    needs: [meta, constants]
+    uses: AdGuardSoftwareLimited/actions/.github/workflows/collect-changelog.yml@master
+    with:
+      team: mac
+      from-ref: ${{ needs.meta.outputs.previous-tag }}
+      source: github
+      format: md
+      private: 'true'
+      github-repo: ${{ needs.constants.outputs.public-github-repo }}
+      artifact-name: qa-changelog
+    secrets: inherit
+
+  # Public changelog from the public mirror (synced by mirror.yml).
+  changelog-public:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Changelog (public)
+    needs: [meta, constants]
+    uses: AdGuardSoftwareLimited/actions/.github/workflows/collect-changelog.yml@master
+    with:
+      team: mac
+      from-ref: ${{ needs.meta.outputs.previous-tag }}
+      source: github
+      format: txt
+      private: 'false'
+      github-repo: ${{ needs.constants.outputs.public-github-repo }}
+      artifact-name: changelog
+    secrets: inherit
+
+  # ---------------------------------------------------------------------------
+  # Nightly
+  # ---------------------------------------------------------------------------
+
+  # Nightly channel only: maintains builds.json for the nightly update feed.
+  nightly-json:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini' && needs.meta.outputs.release-channel == 'nightly'
+    name: Nightly builds.json
+    needs: [meta, build-number, constants, changelog-public]
+    uses: AdGuardSoftwareLimited/actions/.github/workflows/compose-nightly-json.yml@master
+    with:
+      team: mac
+      build-entry: >-
+        {"version": "${{ needs.meta.outputs.version }}.${{ needs.build-number.outputs.value }}",
+         "buildNumber": "${{ needs.build-number.outputs.value }}",
+         "downloadUrl": "${{ needs.constants.outputs.download-url }}"}
+      update-url: ${{ needs.constants.outputs.download-url }}
+      builds-json-url: ${{ needs.constants.outputs.static-url }}/nightly/builds.json
+      changelog-text: ${{ needs.changelog-public.outputs.changelog-text }}
+    secrets: inherit
+
+  # ---------------------------------------------------------------------------
+  # Build
+  # ---------------------------------------------------------------------------
+
+  # Both variants use the SAME version/build/channel so the standalone and
+  # Mac App Store releases always match.
+  build-standalone:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Build Standalone
+    needs: [meta, build-number, constants]
+    uses: ./.github/workflows/build-standalone.yml
+    secrets: inherit
+    with:
+      version: ${{ needs.meta.outputs.version }}
+      version-title: ${{ needs.meta.outputs.version-title }}
+      build-number: ${{ needs.build-number.outputs.value }}
+      channel: ${{ needs.constants.outputs.channel }}
+      sentry-release: ${{ needs.meta.outputs.raw-version }}
+
+  build-mas:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Build MAS
+    needs: [meta, build-number, constants]
+    uses: ./.github/workflows/build-mas.yml
+    secrets: inherit
+    with:
+      version: ${{ needs.meta.outputs.version }}
+      version-title: ${{ needs.meta.outputs.version }}
+      build-number: ${{ needs.build-number.outputs.value }}
+      channel: ${{ needs.constants.outputs.channel }}
+      app-store-info: true
+      sentry-release: ${{ needs.meta.outputs.raw-version }}
+
+  # ---------------------------------------------------------------------------
+  # Package & sign
+  # ---------------------------------------------------------------------------
+
+  # Renames the notarized zip (keeps a stable copy), reads
+  # LSMinimumSystemVersion for the appcast, and signs the archive with the
+  # Sparkle EdDSA key verified by the in-app updater. Runs on a fresh
+  # ephemeral VM — only the downloaded artifact is needed.
+  package:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Package & sign
+    needs: [meta, build-number, constants, resolve-runner, build-standalone]
+    runs-on:
+      - ephemeral
+      - ephemeral-mac
+      - ${{ needs.resolve-runner.outputs.image }}
+      - ephemeral-limit-memory-8192
+      - ephemeral-limit-cpu-4
+      - ephemeral-limit-disk-gb-20
+    outputs:
+      ed-signature: ${{ steps.sparkle-sign.outputs.ed-signature }}
+      file-length: ${{ steps.sparkle-sign.outputs.file-length }}
+      min-system-version: ${{ steps.read-info.outputs.min-system-version }}
+    steps:
+      - name: Download notarized app
+        uses: actions/download-artifact@v8
+        with:
+          name: AdGuardMini-Release
+          path: build/Release
+
+      - name: Read minimum system version and rename zip
+        id: read-info
+        env:
+          ZIP_NAME: ${{ needs.constants.outputs.zip-name }}
+          ZIP_STABLE_NAME: ${{ needs.constants.outputs.zip-stable-name }}
+        run: |
+          set -euo pipefail
+          cd build/Release
+
+          TMP_PLIST="$RUNNER_TEMP/Info.plist"
+          unzip -p "AdGuard Mini.app.zip" "AdGuard Mini.app/Contents/Info.plist" > "$TMP_PLIST"
+          MIN_VERSION=$(/usr/libexec/PlistBuddy -c "Print :LSMinimumSystemVersion" "$TMP_PLIST")
+          echo "min-system-version=${MIN_VERSION}" >> "$GITHUB_OUTPUT"
+
+          mv "AdGuard Mini.app.zip" "${ZIP_NAME}"
+          cp "${ZIP_NAME}" "${ZIP_STABLE_NAME}"
+          echo "=== Zip prepared ==="
+          ls -lh "${ZIP_NAME}" "${ZIP_STABLE_NAME}"
+
+      - name: Sign with Sparkle EdDSA
+        id: sparkle-sign
+        uses: AdGuardSoftwareLimited/actions/actions/sign-by-sparkle@master
+        with:
+          archive-path: build/Release/${{ needs.constants.outputs.zip-name }}
+          vault-url: ${{ vars.VAULT_URL }}
+          ak-url: ${{ vars.ARTIFACT_KEEPER_URL }}
+
+      - name: Upload deploy artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: native-zip
+          path: |
+            build/Release/${{ needs.constants.outputs.zip-name }}
+            build/Release/${{ needs.constants.outputs.zip-stable-name }}
+          retention-days: 7
+          if-no-files-found: error
+
+  # ---------------------------------------------------------------------------
+  # Appcast
+  # ---------------------------------------------------------------------------
+
+  # Generates the Sparkle appcast XML consumed by the in-app auto-updater.
+  appcast:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Generate appcast
+    needs: [meta, build-number, constants, package]
+    uses: AdGuardSoftwareLimited/actions/.github/workflows/generate-sparkle-appcast.yml@master
+    with:
+      team: mac
+      version: ${{ needs.build-number.outputs.value }}
+      short-version: ${{ needs.meta.outputs.version-title }}
+      app-name: ${{ needs.constants.outputs.app-name }}
+      ed-signature: ${{ needs.package.outputs.ed-signature }}
+      file-length: ${{ needs.package.outputs.file-length }}
+      download-url: ${{ needs.constants.outputs.download-url }}
+      min-system-version: ${{ needs.package.outputs.min-system-version }}
+      release-notes-url: ${{ needs.constants.outputs.release-notes-url }}
+      appcast-name: ${{ needs.constants.outputs.appcast-name }}
+      appcast-title: AdGuard Mini's Changelog
+      link: ${{ needs.constants.outputs.static-url }}/${{ needs.constants.outputs.channel }}/${{ needs.constants.outputs.appcast-name }}
+      artifact-name: native-appcast
+    secrets: inherit
+
+  # ---------------------------------------------------------------------------
+  # Finalize standalone
+  # ---------------------------------------------------------------------------
+
+  # Bundles zips + appcast (+ builds.json) into `native-deploy`; runs even
+  # if optional stages failed, whenever the package job succeeded.
+  finalize-standalone:
+    if: ${{ always() && !cancelled() && github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini' }}
+    name: Finalize standalone deploy artifact
+    needs: [constants, package, appcast, nightly-json]
+    runs-on: [team-mac]
+    steps:
+      - name: Download zip artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: native-zip
+          path: deploy/
+
+      - name: Download appcast artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: native-appcast
+          path: deploy/
+
+      - name: Download nightly builds.json
+        if: needs.nightly-json.result == 'success'
+        uses: actions/download-artifact@v8
+        with:
+          name: builds.json
+          path: deploy/
+
+      - name: Upload final deploy artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: native-deploy
+          path: deploy/
+          retention-days: 7
+          if-no-files-found: error
+
+  # ---------------------------------------------------------------------------
+  # Deploy
+  # ---------------------------------------------------------------------------
+
+  # Standalone: publishes the bundle to the static storage through the
+  # channel-specific deployer module, which picks the actual target; the
+  # deploy is protected by a per-channel deployment environment (may
+  # require manual approval).
+  deploy-static:
+    name: Deploy to static storage
+    needs: [meta, constants, finalize-standalone]
+    if: ${{ !cancelled() && needs.meta.result == 'success' && needs.finalize-standalone.result == 'success' && github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini' }}
+    uses: AdGuardSoftwareLimited/actions/.github/workflows/deploy-to-static.yml@master
+    with:
+      team: mac
+      deployer-module: ${{ needs.constants.outputs.deployer-module }}
+      artifact-name: native-deploy
+      environment: ${{ needs.meta.outputs.release-channel }}-static-server
+    secrets: inherit
+
+  # Mac App Store: uploads to TestFlight (internal group); external
+  # distribution and review submission are done manually afterwards.
+  deploy-mas:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Deploy MAS to TestFlight
+    needs: [meta, build-mas]
+    uses: AdGuardSoftwareLimited/actions/.github/workflows/deploy-to-testflight.yml@master
+    with:
+      team: mac
+      asset-artifact-name: AdGuardMini-MAS
+      groups: 'App Store Connect Users'
+      distribute-external: false
+      submit-beta-review: false
+      environment: ${{ needs.meta.outputs.release-channel }}-testflight
+    secrets: inherit
+
+  # ---------------------------------------------------------------------------
+  # Notification
+  # ---------------------------------------------------------------------------
+
+  # A notification failure never fails the deploy (continue-on-error).
+  slack-notify:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Slack notification
+    needs: [meta, build-number, constants, build-mas, finalize-standalone]
+    uses: AdGuardSoftwareLimited/actions/.github/workflows/slack-build-notify.yml@master
+    with:
+      team: mac
+      channel: ${{ inputs.slack-channel || '#adguard-mini-deploy' }}
+      product: AdGuard Mini for Mac
+      version-title: ${{ needs.meta.outputs.version-title }}
+      metadata: >-
+        {
+          "Version": "${{ needs.meta.outputs.version }}",
+          "Channel": "${{ needs.constants.outputs.channel }}",
+          "Tag": "${{ inputs.tag || github.ref_name }}",
+          "Build": "${{ needs.build-number.outputs.value }}"
+        }
+      continue-on-error: true
+    secrets: inherit

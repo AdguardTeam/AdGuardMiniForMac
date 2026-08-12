@@ -9,8 +9,6 @@
 
 import XCTest
 
-// TLD-level rule tests extend the file beyond 400 lines.
-// swiftlint:disable file_length
 final class UrlFilteringCheckerTests: XCTestCase {
     private let fChecker = UrlFilteringCheckerImpl(urlBuilder: AllowBlockListRuleBuilderImpl())
     private let testHost = "example.com"
@@ -417,5 +415,3 @@ private extension Bundle {
         self.url(forResource: "Filter\(number)", withExtension: "txt")
     }
 }
-
-// swiftlint:enable file_length

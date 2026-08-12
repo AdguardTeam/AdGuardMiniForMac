@@ -166,7 +166,7 @@ final class SupportImpl {
         let updateTimeString = hours > 0 ? "\(hours)h \(minutes)m ago" : "\(minutes)m ago"
 
         return """
-        Application version: \(BuildConfig.AG_FULL_VERSION)
+        Application version: \(BuildConfig.AG_VERSION_TITLE)
         Application channel: \(BuildConfig.AG_CHANNEL)
 
         Application ID: \(await self.productInfo.applicationId)
@@ -362,7 +362,7 @@ extension SupportImpl: ReportSiteProtocol {
         return await ReportsWebAPI.newIssue(
             tds:               .macMini(appid: self.productInfo.applicationId, from: screen),
             productType:       .macMini,
-            productVersion:    BuildConfig.AG_FULL_VERSION,
+            productVersion:    BuildConfig.AG_VERSION_TITLE,
             licenseType:       isPaid ? .paid : .free,
             browser:           .safari,
             url:               reportUrl,

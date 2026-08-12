@@ -25,5 +25,7 @@ echo "// MARK: List of Constants" >> "${AGP_CONFIG_CONSTANTS_FILE}"
 echo >> "${AGP_CONFIG_CONSTANTS_FILE}"
 echo "/// Special enum, allowing to access some configuration constants" >> "${AGP_CONFIG_CONSTANTS_FILE}"
 echo "enum ${AGP_CONFIG_CONSTANTS_CONTAINER_NAME} {" >> "${AGP_CONFIG_CONSTANTS_FILE}"
-/usr/bin/env | /usr/bin/sort | /usr/bin/sed -n -E -e 's/"/\\"/g' -e 's/^ *(AG_[_A-Za-z0-9]*) *= *(.*)/\tstatic let \1 = "\2"/p' >> "${AGP_CONFIG_CONSTANTS_FILE}"
+# Note: `uniq` is required because xcodebuild 26.4.x can export duplicate
+# environment entries for build settings overridden via CLI arguments.
+/usr/bin/env | /usr/bin/sort | /usr/bin/uniq | /usr/bin/sed -n -E -e 's/"/\\"/g' -e 's/^ *(AG_[_A-Za-z0-9]*) *= *(.*)/\tstatic let \1 = "\2"/p' >> "${AGP_CONFIG_CONSTANTS_FILE}"
 echo "}" >> "${AGP_CONFIG_CONSTANTS_FILE}"

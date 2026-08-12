@@ -16,7 +16,7 @@ extension AppBackend.Core.Tds {
             app: "mac-mini",
             appid: appid,
             from: screen,
-            version: BuildConfig.AG_FULL_VERSION
+            version: BuildConfig.AG_VERSION_TITLE
         )
     }
 }

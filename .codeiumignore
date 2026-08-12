@@ -4,4 +4,3 @@
 
 PrivateConfig.xcconfig
 SensitiveBuildConfig.swift
-fastlane/keychain

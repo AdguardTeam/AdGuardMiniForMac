@@ -135,7 +135,7 @@ extension Telemetry {
             self.telemetry = AML.Telemetry(
                 syntheticId: SyntheticId.get(),
                 appType: .miniMac,
-                appVersion: BuildConfig.AG_REPORTED_VERSION
+                appVersion: BuildConfig.AG_VERSION_TITLE
             )
         }
 

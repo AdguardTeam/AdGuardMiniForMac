@@ -1,0 +1,110 @@
+# SPDX-FileCopyrightText: AdGuard Software Limited
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# Maps a variant name (standalone / mas / mas-iap) to the parameter set
+# of build-variant.yml; single source of truth for the variant table and
+# the project bundle identifiers.
+#
+# Variant semantics: docs/production-build-and-deploy.md
+
+name: Build variant config
+
+on:
+  workflow_call:
+    inputs:
+      variant:
+        description: "Variant name: standalone (Developer ID, notarized), mas (Mac App Store), or mas-iap (MAS config + Developer ID signing for IAP testing)."
+        type: string
+        required: true
+      app-store-info:
+        description: "Generate AppStoreInfo.plist (only meaningful for the mas variant)."
+        type: boolean
+        default: false
+    outputs:
+      configuration:
+        description: "Xcode build configuration name"
+        value: ${{ jobs.resolve.outputs.configuration }}
+      signing-type:
+        description: "Match signing type"
+        value: ${{ jobs.resolve.outputs.signing-type }}
+      additional-cert-types:
+        description: "Additional certificate types, comma-separated"
+        value: ${{ jobs.resolve.outputs.additional-cert-types }}
+      skip-profiles:
+        description: "Skip provisioning profiles"
+        value: ${{ jobs.resolve.outputs.skip-profiles }}
+      notarize:
+        description: "Whether to notarize the build"
+        value: ${{ jobs.resolve.outputs.notarize }}
+      app-identifiers:
+        description: "App bundle identifiers, comma-separated (project-wide, shared across all variants)"
+        value: ${{ jobs.resolve.outputs.app-identifiers }}
+      app-store-info:
+        description: "Generate AppStoreInfo.plist"
+        value: ${{ jobs.resolve.outputs.app-store-info }}
+
+jobs:
+  resolve:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Resolve ${{ inputs.variant }}
+    runs-on: [team-mac]
+    outputs:
+      configuration: ${{ steps.resolve.outputs.configuration }}
+      signing-type: ${{ steps.resolve.outputs.signing-type }}
+      additional-cert-types: ${{ steps.resolve.outputs.additional-cert-types }}
+      skip-profiles: ${{ steps.resolve.outputs.skip-profiles }}
+      notarize: ${{ steps.resolve.outputs.notarize }}
+      app-identifiers: ${{ steps.resolve.outputs.app-identifiers }}
+      app-store-info: ${{ steps.resolve.outputs.app-store-info }}
+    steps:
+      - id: resolve
+        env:
+          VARIANT: ${{ inputs.variant }}
+          APP_STORE_INFO: ${{ inputs.app-store-info }}
+        run: |
+          set -euo pipefail
+
+          # Bundle identifiers are project metadata, identical for every variant
+          # (standalone, MAS, and the URL filter extension). Single source of truth
+          # for the whole CI pipeline — callers must NOT re-specify these.
+          APP_IDENTIFIERS="com.adguard.safari.AdGuard,com.adguard.safari.AdGuard.Extension,com.adguard.safari.AdGuard.URLFilterExtension"
+
+          case "${VARIANT}" in
+            standalone)
+              CONFIGURATION="Release"
+              SIGNING_TYPE="developer_id"
+              ADDITIONAL_CERT_TYPES="developer_id_installer"
+              SKIP_PROFILES="false"
+              NOTARIZE="true"
+              APP_STORE_INFO_EFFECTIVE="false"
+              ;;
+            mas)
+              CONFIGURATION="MAS"
+              SIGNING_TYPE="appstore"
+              ADDITIONAL_CERT_TYPES="mac_installer_distribution"
+              SKIP_PROFILES="false"
+              NOTARIZE="false"
+              APP_STORE_INFO_EFFECTIVE="${APP_STORE_INFO}"
+              ;;
+            mas-iap)
+              CONFIGURATION="MAS"
+              SIGNING_TYPE="developer_id"
+              ADDITIONAL_CERT_TYPES="developer_id_installer"
+              SKIP_PROFILES="false"
+              NOTARIZE="true"
+              APP_STORE_INFO_EFFECTIVE="false"
+              ;;
+            *)
+              echo "::error::Unknown build variant: ${VARIANT}" >&2
+              exit 1
+              ;;
+          esac
+
+          echo "configuration=${CONFIGURATION}" >> "$GITHUB_OUTPUT"
+          echo "signing-type=${SIGNING_TYPE}" >> "$GITHUB_OUTPUT"
+          echo "additional-cert-types=${ADDITIONAL_CERT_TYPES}" >> "$GITHUB_OUTPUT"
+          echo "skip-profiles=${SKIP_PROFILES}" >> "$GITHUB_OUTPUT"
+          echo "notarize=${NOTARIZE}" >> "$GITHUB_OUTPUT"
+          echo "app-identifiers=${APP_IDENTIFIERS}" >> "$GITHUB_OUTPUT"
+          echo "app-store-info=${APP_STORE_INFO_EFFECTIVE}" >> "$GITHUB_OUTPUT"

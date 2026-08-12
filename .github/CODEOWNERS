@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: AdGuard Software Limited
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# Documentation: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Critical
+/.github/ @forcomprehension @fix-parrot @vityevato
+
+# Default
+* @AdGuardSoftwareLimited/sciter @fix-parrot @vityevato

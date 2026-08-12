@@ -2,14 +2,19 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+# CI gate for pull requests: SwiftLint + REUSE compliance, full builds of
+# both variants (catches signing/packaging regressions before merge) and
+# the XCTest suite.
+#
+# PR builds use a synthetic epoch-based version so they never collide
+# with real releases; newer pushes cancel the in-flight run.
+
 name: PR Check
 
-on:
-  pull_request:
-    branches: [master]
+on: pull_request
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -22,6 +27,7 @@ jobs:
   # Lint
   # ---------------------------------------------------------------------------
 
+  # Swift style check with the project configuration (AdguardMini/.swiftlint.yml).
   swiftlint:
     if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
     name: SwiftLint
@@ -30,6 +36,7 @@ jobs:
       team: mac
       source-path: AdguardMini
 
+  # SPDX license compliance (REUSE spec, configured in REUSE.toml).
   reuse:
     if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
     name: REUSE Compliance
@@ -41,10 +48,25 @@ jobs:
   # Build & Test
   # ---------------------------------------------------------------------------
 
+  # Synthetic epoch-based version so PR artifacts never collide with
+  # real releases.
+  prepare:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Prepare version metadata
+    runs-on: [team-mac]
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      version-title: ${{ steps.meta.outputs.version-title }}
+      raw-version: ${{ steps.meta.outputs.raw-version }}
+    steps:
+      - uses: AdGuardSoftwareLimited/actions/actions/epoch-version-metadata@master
+        id: meta
+
+  # The runner image lives in the KV store so it can be rotated without edits.
   resolve-runner:
     if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
     name: Resolve runner
-    runs-on: [team-platform]
+    runs-on: [team-mac]
     outputs:
       image: ${{ steps.kv.outputs.value }}
     steps:
@@ -56,28 +78,26 @@ jobs:
   build-standalone-release:
     if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
     name: Build Standalone Release
-    uses: ./.github/workflows/build-variant.yml
+    needs: [prepare]
+    uses: ./.github/workflows/build-standalone.yml
     secrets: inherit
     with:
-      configuration: Release
-      signing-type: developer_id
-      additional-cert-types: developer_id_installer
-      skip-profiles: false
-      app-identifiers: com.adguard.safari.AdGuard,com.adguard.safari.AdGuard.Extension,com.adguard.safari.AdGuard.URLFilterExtension
-      notarize: true
+      version: ${{ needs.prepare.outputs.version }}
+      version-title: ${{ needs.prepare.outputs.version-title }}
+      build-number: '${{ github.run_number }}'
+      sentry-release: ${{ needs.prepare.outputs.raw-version }}
 
   build-mas:
     if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
     name: Build MAS
-    uses: ./.github/workflows/build-variant.yml
+    needs: [prepare]
+    uses: ./.github/workflows/build-mas.yml
     secrets: inherit
     with:
-      configuration: MAS
-      signing-type: appstore
-      additional-cert-types: mac_installer_distribution
-      skip-profiles: false
-      app-identifiers: com.adguard.safari.AdGuard,com.adguard.safari.AdGuard.Extension,com.adguard.safari.AdGuard.URLFilterExtension
-      notarize: false
+      version: ${{ needs.prepare.outputs.version }}
+      version-title: ${{ needs.prepare.outputs.version-title }}
+      build-number: '${{ github.run_number }}'
+      sentry-release: ${{ needs.prepare.outputs.raw-version }}
 
   test:
     if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'

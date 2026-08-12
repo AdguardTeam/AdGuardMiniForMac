@@ -8,7 +8,7 @@
 /lib/bundler/man/
 
 
-# Created by https://www.gitignore.io/api/xcode,swift,macos,appcode,fastlane,cocoapods,objective-c
+# Created by https://www.gitignore.io/api/xcode,swift,macos,appcode,cocoapods,objective-c
 
 ### AppCode ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
@@ -46,9 +46,6 @@ atlassian-ide-plugin.xml
 # Ruby plugin and RubyMine
 /.rakeTasks
 
-# Fastlane change_code_signing_settings plugin
-*PersonalTeam.entitlements
-
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml
 crashlytics.properties
@@ -65,27 +62,6 @@ fabric.properties
 #           - Also handy if you have a large number of dependant pods
 #           - AS PER https://guides.cocoapods.org/using/using-cocoapods.html NEVER IGNORE THE LOCK FILE
 Pods/
-
-### fastlane ###
-# fastlane - A streamlined workflow tool for Cocoa deployment
-#
-# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
-# screenshots whenever they are needed.
-# For more information about the recommended setup visit:
-# https://docs.fastlane.tools/best-practices/source-control/#source-control
-
-# fastlane specific
-fastlane/report.xml
-
-# deliver temporary files
-fastlane/Preview.html
-
-# snapshot generated screenshots
-fastlane/screenshots/**/*.png
-fastlane/screenshots/screenshots.html
-
-# scan temporary files
-fastlane/test_output
 
 ### macOS ###
 *.DS_Store
@@ -147,15 +123,6 @@ xcuserdata/
 
 # Carthage - Refactored to standalone file
 
-# fastlane
-#
-# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
-# screenshots whenever they are needed.
-# For more information about the recommended setup visit:
-# https://docs.fastlane.tools/best-practices/source-control/#source-control
-
-fastlane/screenshots
-
 # Code Injection
 #
 # After new code Injection tools there's a generated folder /iOSInjectionProject
@@ -193,14 +160,6 @@ playground.xcworkspace
 
 # Carthage - Refactored to standalone file
 
-# fastlane
-#
-# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
-# screenshots whenever they are needed.
-# For more information about the recommended setup visit:
-# https://docs.fastlane.tools/best-practices/source-control/#source-control
-
-
 ### Xcode ###
 # Xcode
 #
@@ -220,7 +179,7 @@ playground.xcworkspace
 /*.gcno
 
 
-# End of https://www.gitignore.io/api/xcode,swift,macos,appcode,fastlane,cocoapods,objective-c
+# End of https://www.gitignore.io/api/xcode,swift,macos,appcode,cocoapods,objective-c
 
 ### Sciter ###
 
@@ -239,7 +198,6 @@ AdguardMini.zip
 "Adguard Mini.zip"
 .vscode
 .venv
-fastlane/keychain/
 bin/
 buildServer.json
 

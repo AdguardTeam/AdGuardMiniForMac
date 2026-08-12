@@ -2,6 +2,14 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+# Builds ONE distribution variant end to end: signing setup → archive →
+# export → notarize → artifact → Sentry. Version/build/channel inputs
+# override the xcconfig placeholders (see "External version management"
+# in AGENTS.md).
+#
+# Called by the build-standalone / build-mas / build-mas-iap wrappers;
+# mechanics: docs/production-build-and-deploy.md
+
 name: Build variant
 
 on:
@@ -35,6 +43,30 @@ on:
         description: "Release identifier for Sentry"
         type: string
         default: ""
+      version:
+        description: "Version string (e.g. 2.4.0). Overrides AG_VERSION from xcconfig. Uses xcconfig default when empty."
+        type: string
+        default: ""
+      version-title:
+        description: "Display version title (e.g. 2.5.0 or 2026.07.21 Build). Overrides AG_VERSION_TITLE from xcconfig. Uses xcconfig default when empty."
+        type: string
+        default: ""
+      build-number:
+        description: "Build number (e.g. 1090). Overrides AG_BUILD from xcconfig. Uses xcconfig default when empty."
+        type: string
+        default: ""
+      channel:
+        description: "Release channel (release, beta, nightly). Controls AG_CHANNEL and update feed URL."
+        type: string
+        default: "release"
+      app-store-info:
+        description: "Generate AppStoreInfo.plist and upload the MAS output directory (for TestFlight deploy). Only applicable to appstore signing."
+        type: boolean
+        default: false
+      xcodebuild-args:
+        description: "Additional xcodebuild build settings appended to XCODEBUILD_ARGS (e.g. 'AG_FOO=\"bar\" AG_BAZ=\"qux\"')."
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -44,7 +76,7 @@ jobs:
   resolve-artifact-path:
     if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
     name: Resolve artifact path
-    runs-on: ubuntu-latest
+    runs-on: [team-mac]
     outputs:
       path: ${{ steps.resolve.outputs.path }}
       archive-path: ${{ steps.resolve.outputs.archive-path }}
@@ -53,14 +85,21 @@ jobs:
       SIGNING_TYPE: ${{ inputs.signing-type }}
     steps:
       - id: resolve
+        env:
+          APP_STORE_INFO: ${{ inputs.app-store-info }}
         run: |
-          if [ "${SIGNING_TYPE}" = "appstore" ]; then
-            ext="pkg"
-          else
-            ext="app"
-          fi
           output_dir="build/${CONFIG}"
-          echo "path=${output_dir}/AdGuard Mini.${ext}" >> "$GITHUB_OUTPUT"
+          if [ "${SIGNING_TYPE}" = "appstore" ]; then
+            if [ "${APP_STORE_INFO}" = "true" ]; then
+              # Keep the whole export dir; the TestFlight deployer finds the
+              # .pkg/AppStoreInfo.plist by glob at the top of the artifact.
+              echo "path=${output_dir}" >> "$GITHUB_OUTPUT"
+            else
+              echo "path=${output_dir}/AdGuard Mini.pkg" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "path=${output_dir}/AdGuard Mini.app" >> "$GITHUB_OUTPUT"
+          fi
           echo "archive-path=${output_dir}/AdguardMini.xcarchive" >> "$GITHUB_OUTPUT"
 
   build:
@@ -71,13 +110,35 @@ jobs:
     secrets: inherit
     with:
       runner-memory-mb: 8192
-      channel: release
+      channel: ${{ inputs.channel }}
       signing-type: ${{ inputs.signing-type }}
       additional-cert-types: ${{ inputs.additional-cert-types }}
       skip-profiles: ${{ inputs.skip-profiles }}
       app-identifiers: ${{ inputs.app-identifiers }}
+      vault-role: appbackend-request-key
+      vault-secrets: |
+        secret/data/ci-secrets/appbackend-request-key request_encryption_key | CONFIG_BACKEND_REQUEST_ENCRYPTION_KEY;
+        secret/data/ci-secrets/appbackend-request-key request_key | CONFIG_BACKEND_REQUEST_KEY
       prepare-script: |
         export SWIFT_REGISTRY_URL=${{ vars.SWIFT_REGISTRY_URL }}-virtual
+
+        # Build xcodebuild CLI build settings to override xcconfig defaults.
+        XCODEBUILD_OVERRIDE_ARGS=()
+        [ -n "$BUILD_CHANNEL" ] && XCODEBUILD_OVERRIDE_ARGS+=("AG_CHANNEL=$BUILD_CHANNEL")
+        [ -n "${{ inputs.version }}" ] && XCODEBUILD_OVERRIDE_ARGS+=("AG_VERSION=${{ inputs.version }}")
+        [ -n "${{ inputs.version-title }}" ] && XCODEBUILD_OVERRIDE_ARGS+=("AG_VERSION_TITLE=${{ inputs.version-title }}")
+        [ -n "${{ inputs.build-number }}" ] && XCODEBUILD_OVERRIDE_ARGS+=("AG_BUILD=${{ inputs.build-number }}")
+        if [ -n "${{ inputs.xcodebuild-args }}" ]; then
+          while IFS= read -r arg; do
+            XCODEBUILD_OVERRIDE_ARGS+=("$arg")
+          done < <(printf '%s' "${{ inputs.xcodebuild-args }}" | xargs printf '%s\n')
+        fi
+        {
+          echo "XCODEBUILD_OVERRIDE_ARGS<<EOF"
+          printf '%s\n' "${XCODEBUILD_OVERRIDE_ARGS[@]}"
+          echo "EOF"
+        } >> "$GITHUB_ENV"
+
         [ -f .nvmrc ] || { ./configure.sh; exit 0; }
         NODE_REQUIRED=$(sed 's/^v//; s/\..*//' < .nvmrc)
         NODE_CURRENT=$(node --version 2>/dev/null | sed 's/^v//; s/\..*//')
@@ -147,6 +208,9 @@ jobs:
           done
         fi
 
+        # ── Overrides (set by prepare-script) ─────────────────
+        mapfile -t XCODEBUILD_ARGS <<< "$XCODEBUILD_OVERRIDE_ARGS"
+
         # ── Archive ───────────────────────────────────────────────────
         # Adhoc-sign: real identity requires profiles per target; exportArchive re-signs later.
         xcodebuild archive \
@@ -158,7 +222,8 @@ jobs:
           -skipPackagePluginValidation \
           CODE_SIGN_IDENTITY="-" \
           CODE_SIGN_STYLE=Manual \
-          DEVELOPMENT_TEAM=""
+          DEVELOPMENT_TEAM="" \
+          "${XCODEBUILD_ARGS[@]}"
 
         # ── Add installer cert to export options ─────────────────────
         # Required for PKG signing (separate from app signing).
@@ -172,6 +237,12 @@ jobs:
           fi
         fi
 
+        # ── Generate AppStoreInfo.plist for TestFlight ────────────
+        # Required by deploy-to-testflight.yml for App Store Connect upload.
+        if [ "${EXPORT_METHOD}" = "app-store" ] && [ "${{ inputs.app-store-info }}" = "true" ]; then
+          /usr/libexec/PlistBuddy -c "Add generateAppStoreInformation bool true" "${EXPORT_OPTS}"
+        fi
+
         # ── Export .app ───────────────────────────────────────────────
         xcodebuild -exportArchive \
           -archivePath "${ARCHIVE_PATH}" \
@@ -182,7 +253,10 @@ jobs:
         ls -laR "${OUTPUT_DIR}" || true
       artifact-name: AdGuardMini-${{ inputs.configuration }}
       artifact-path: ${{ needs.resolve-artifact-path.outputs.path }}
-      artifact-archive: true
+      # Standalone/IAP artifacts are directories and get ditto-archived. The
+      # TestFlight MAS artifact must stay a flat dir (its .pkg is matched by
+      # glob in deploy-to-testflight.yml), so skip the ditto zip for it.
+      artifact-archive: ${{ !(inputs.signing-type == 'appstore' && inputs.app-store-info == true) }}
       notarize: ${{ inputs.notarize }}
       sentry-project: adguard-mac-mini
       sentry-debug-files-path: ${{ needs.resolve-artifact-path.outputs.archive-path }}/dSYMs/

@@ -90,7 +90,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 #endif
         }
 
-        LogInfo("Application Started! Version: \(BuildConfig.AG_FULL_VERSION)")
+        LogInfo("Application Started! Version: \(BuildConfig.AG_VERSION_TITLE)")
 
         NSWorkspace.shared.notificationCenter.addObserver(
             self,

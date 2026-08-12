@@ -203,7 +203,7 @@ private final class ServiceLocator {
                 metadataUrl: DeveloperConfigUtils[.filtersMetaUrl] as? String ?? "https://filters.adtidy.org/extension/safari/filters.json",
                 i18nURL: DeveloperConfigUtils[.filtersI18nUrl] as? String ?? "https://filters.adtidy.org/extension/safari/filters_i18n.js",
                 appName: BuildConfig.AG_PRODUCT_NAME,
-                version: BuildConfig.AG_MARKETING_VERSION,
+                version: BuildConfig.AG_VERSION_TITLE,
                 filtersCompilationPolicyConstants: ["adguard_ext_safari"]
             )
         )

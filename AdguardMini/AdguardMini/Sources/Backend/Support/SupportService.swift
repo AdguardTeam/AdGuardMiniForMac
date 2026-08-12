@@ -45,7 +45,7 @@ final class SupportServiceImpl: SupportService {
     ) async throws {
         let request = BackendRequest.supportFeedback(
             applicationId: await self.productInfo.applicationId,
-            version: BuildConfig.AG_FULL_VERSION,
+            version: BuildConfig.AG_VERSION_TITLE,
             email: email,
             language: Locale.current.languageCode ?? "en",
             subject: subject,

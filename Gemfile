@@ -6,13 +6,9 @@
 
 source 'https://rubygems.org'
 
-gem 'abbrev'
-gem 'fastlane'
+gem 'plist'
 
 group :development do
   gem 'rubocop', '~> 1.75.6'
   gem 'ruby-lsp', '~> 0.23.21'
 end
-
-plugins_path = File.join(File.dirname(__FILE__), 'fastlane', 'Pluginfile')
-eval_gemfile(plugins_path) if File.exist?(plugins_path)

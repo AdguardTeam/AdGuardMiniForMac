@@ -1,0 +1,54 @@
+# SPDX-FileCopyrightText: AdGuard Software Limited
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# MAS configuration with Developer ID signing for manual in-app purchase
+# testing outside the Mac App Store. Artifact: AdGuardMini-MAS.
+# MUST NOT be uploaded to TestFlight or the App Store.
+
+name: Build MAS (IAP)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version string (e.g. 2.4.0)."
+        type: string
+        default: ""
+      version-title:
+        description: "Display version title."
+        type: string
+        default: "IAP Build"
+      build-number:
+        description: "Build number (e.g. 1090)."
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  config:
+    name: Config
+    uses: ./.github/workflows/build-variant-config.yml
+    with:
+      variant: mas-iap
+
+  build:
+    name: Build
+    needs: [config]
+    uses: ./.github/workflows/build-variant.yml
+    secrets: inherit
+    with:
+      configuration: ${{ needs.config.outputs.configuration }}
+      signing-type: ${{ needs.config.outputs.signing-type }}
+      additional-cert-types: ${{ needs.config.outputs.additional-cert-types }}
+      skip-profiles: ${{ fromJSON(needs.config.outputs.skip-profiles) }}
+      app-identifiers: ${{ needs.config.outputs.app-identifiers }}
+      notarize: ${{ fromJSON(needs.config.outputs.notarize) }}
+      app-store-info: false
+      version: ${{ inputs.version }}
+      version-title: ${{ inputs.version-title }}
+      build-number: ${{ inputs.build-number }}
+      xcodebuild-args: 'AG_APP_DISPLAYED_NAME="AdGuard Mini IAP" AG_HELPER_REQ="anchor apple generic and certificate leaf[subject.OU] = \$(AG_TEAM)"'

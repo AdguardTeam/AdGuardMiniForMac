@@ -94,7 +94,7 @@ final class SentryHelperImpl: SentryHelper {
 
     private func makeWindowTitle() -> String {
         let mainAppName = BuildConfig.AG_APP_DISPLAYED_NAME
-        let mainAppShortVersion = BuildConfig.AG_FULL_VERSION
+        let mainAppShortVersion = BuildConfig.AG_VERSION_TITLE
 
         return String(format: .localized.base.window_controller_crash_reporter, mainAppName, mainAppShortVersion)
     }

@@ -22,7 +22,7 @@ enum ProductInfo {
     /// Returns string that represents User-Agent HTTP Header.
     static let userAgentString: String = {
         let version = ProcessInfo.processInfo.operatingSystemVersion
-        return "\(BuildConfig.AG_PRODUCT_NAME)/\(BuildConfig.AG_FULL_VERSION) (Macintosh; Intel Mac OS X \(version.majorVersion)_\(version.minorVersion)_\(version.patchVersion))"
+        return "\(BuildConfig.AG_PRODUCT_NAME)/\(BuildConfig.AG_VERSION_TITLE) (Macintosh; Intel Mac OS X \(version.majorVersion)_\(version.minorVersion)_\(version.patchVersion))"
     }()
 
     static func applicationId() async -> String {
