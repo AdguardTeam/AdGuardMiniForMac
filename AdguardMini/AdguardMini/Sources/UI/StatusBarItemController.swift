@@ -95,19 +95,25 @@ final class StatusBarItemControllerImpl: StatusBarItemController {
 
     @MainActor
     func getTrayIconRect() async -> CGRect {
-        LogDebugTrace()
-        var trayIconRect: CGRect
-        if let statusBarItemView = self.statusBarItemView {
-            trayIconRect = statusBarItemView.globalRect
-        } else {
-            LogDebug("No view")
-            let screenRect = NSScreen.screens[0].frame
-            let size = CGSize(width: NSStatusItem.squareLength, height: NSStatusBar.system.thickness)
-            let originX = (screenRect.width - size.width) / 2
-            let originY = (screenRect.height - size.height) * 2
-            trayIconRect = CGRect(origin: CGPoint(x: originX, y: originY), size: size)
+        if let rect = self.statusBarItemView?.globalRect, rect.width > 0, rect.height > 0 {
+            return rect
         }
-        return trayIconRect
+        // Right after launch (for example after an app update) the status item
+        // May not be laid out yet. Wait a short moment and retry, so the popup
+        // Opens under the real icon position instead of the screen corner.
+        try? await Task.sleep(seconds: 0.25)
+        if let rect = self.statusBarItemView?.globalRect, rect.width > 0, rect.height > 0 {
+            return rect
+        }
+        // Safe fallback: center under the menu bar instead of the screen corner.
+        let screenRect = NSScreen.screens[0].frame
+        let size = CGSize(width: NSStatusItem.squareLength, height: NSStatusBar.system.thickness)
+        return CGRect(
+            x: (screenRect.width - size.width) / 2,
+            y: screenRect.maxY - size.height,
+            width: size.width,
+            height: size.height
+        )
     }
 
     func openContextMenu(_ sender: NSStatusBarButton) {
