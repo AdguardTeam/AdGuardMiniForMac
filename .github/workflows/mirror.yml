@@ -27,3 +27,5 @@ jobs:
     with:
       team: mac
       target_repo: git@github.com:AdguardTeam/AdGuardMiniForMac.git
+      # Only the branches/tags that trigger this workflow (and the release branches) are mirrored
+      refspecs: '+refs/heads/master:refs/heads/master +refs/heads/release/*:refs/heads/release/* +refs/tags/*:refs/tags/*'
