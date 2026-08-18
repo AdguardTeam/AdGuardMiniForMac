@@ -15,6 +15,7 @@ type Props = {
     onChange(value: boolean): void;
     orangeIcon?: boolean;
     isNew?: boolean;
+    disabled?: boolean;
 };
 
 /**
@@ -27,12 +28,14 @@ export function SystemWideProtectionSwitch(props: Props) {
         onChange,
         isNew = false,
         orangeIcon = false,
+        disabled = false,
     } = props;
 
     return muted
         ? (
             <SettingsItemLink
                 description={translate('advanced.blocking.system.wide.desc')}
+                disabled={disabled}
                 icon="apps"
                 iconColor={orangeIcon ? 'orange' : undefined}
                 internalLink={RouteName.system_wide_protection}
@@ -42,6 +45,7 @@ export function SystemWideProtectionSwitch(props: Props) {
         ) : (
             <SettingsItemSwitch
                 description={translate('advanced.blocking.system.wide.desc')}
+                disabled={disabled}
                 icon="apps"
                 iconColor={orangeIcon ? 'orange' : undefined}
                 muted={muted}

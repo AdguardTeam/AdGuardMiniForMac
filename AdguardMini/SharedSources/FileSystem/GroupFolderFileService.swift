@@ -24,6 +24,10 @@ extension GroupFolderFileService {
         await self.loadFile(relativePath: relativePath, fileExtension: fileExtension)
     }
 
+    func removeFile(relativePath: String, fileExtension: String? = nil) async -> Bool {
+        await self.removeFile(relativePath: relativePath, fileExtension: fileExtension)
+    }
+
     func buildUrl(relativePath: String, with fileExtension: String? = nil) -> URL {
         self.buildUrl(relativePath: relativePath, with: fileExtension)
     }
@@ -81,6 +85,22 @@ extension GroupFolderFileServiceImpl: GroupFolderFileService {
             LogError("Can't load data from \(fullURL): \(error)")
             return nil
         }
+    }
+
+    func removeFile(relativePath: String, fileExtension: String? = nil) async -> Bool {
+        let fullURL = self.buildUrl(relativePath: relativePath, with: fileExtension)
+        // The existence check is intentionally skipped.
+        // The removal itself reports a missing file as success.
+        // This also avoids the pre-check racing with a concurrent delete.
+        guard let error = await self.fileManager.removeFile(url: fullURL) else {
+            return true
+        }
+        let nsError = error as NSError
+        if nsError.domain == NSCocoaErrorDomain && nsError.code == NSFileNoSuchFileError {
+            return true
+        }
+        LogError("Can't remove file at \(fullURL): \(error)")
+        return false
     }
 
     func buildUrl(relativePath: String, with fileExtension: String? = nil) -> URL {

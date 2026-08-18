@@ -125,6 +125,18 @@ public struct URLFilterConfiguration: Sendable {
 
   public var protectionLevel: URLFilterProtectionLevel = .essential
 
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+/// Flags marking the system-wide protection UI as seen.
+///Persisted without touching the platform URL filter configuration. 
+public struct URLFilterSeen: Sendable {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
   public var isNew: Bool = false
 
   public var isPageNew: Bool = false
@@ -203,6 +215,10 @@ public struct URLFilterState: Sendable {
   /// Clears the value of `errorMessage`. Subsequent reads from it will return its default value.
   public mutating func clearErrorMessage() {self._errorMessage = nil}
 
+  public var isNew: Bool = false
+
+  public var isPageNew: Bool = false
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -237,7 +253,7 @@ extension URLFilterProtectionLevel: SwiftProtobuf._ProtoNameProviding {
 
 extension URLFilterConfiguration: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "URLFilterConfiguration"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}enabled\0\u{3}protection_level\0\u{1}isNew\0\u{1}isPageNew\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}enabled\0\u{3}protection_level\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -247,8 +263,6 @@ extension URLFilterConfiguration: SwiftProtobuf.Message, SwiftProtobuf._MessageI
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularBoolField(value: &self.enabled) }()
       case 2: try { try decoder.decodeSingularEnumField(value: &self.protectionLevel) }()
-      case 3: try { try decoder.decodeSingularBoolField(value: &self.isNew) }()
-      case 4: try { try decoder.decodeSingularBoolField(value: &self.isPageNew) }()
       default: break
       }
     }
@@ -261,18 +275,45 @@ extension URLFilterConfiguration: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     if self.protectionLevel != .essential {
       try visitor.visitSingularEnumField(value: self.protectionLevel, fieldNumber: 2)
     }
-    if self.isNew != false {
-      try visitor.visitSingularBoolField(value: self.isNew, fieldNumber: 3)
-    }
-    if self.isPageNew != false {
-      try visitor.visitSingularBoolField(value: self.isPageNew, fieldNumber: 4)
-    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: URLFilterConfiguration, rhs: URLFilterConfiguration) -> Bool {
     if lhs.enabled != rhs.enabled {return false}
     if lhs.protectionLevel != rhs.protectionLevel {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension URLFilterSeen: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "URLFilterSeen"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}is_new\0\u{3}is_page_new\0")
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularBoolField(value: &self.isNew) }()
+      case 2: try { try decoder.decodeSingularBoolField(value: &self.isPageNew) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.isNew != false {
+      try visitor.visitSingularBoolField(value: self.isNew, fieldNumber: 1)
+    }
+    if self.isPageNew != false {
+      try visitor.visitSingularBoolField(value: self.isPageNew, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: URLFilterSeen, rhs: URLFilterSeen) -> Bool {
     if lhs.isNew != rhs.isNew {return false}
     if lhs.isPageNew != rhs.isPageNew {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
@@ -326,7 +367,7 @@ extension URLFilterInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
 
 extension URLFilterState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "URLFilterState"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}status\0\u{1}configuration\0\u{1}info\0\u{3}error_message\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}status\0\u{1}configuration\0\u{1}info\0\u{3}error_message\0\u{3}is_new\0\u{3}is_page_new\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -338,6 +379,8 @@ extension URLFilterState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       case 2: try { try decoder.decodeSingularMessageField(value: &self._configuration) }()
       case 3: try { try decoder.decodeSingularMessageField(value: &self._info) }()
       case 4: try { try decoder.decodeSingularStringField(value: &self._errorMessage) }()
+      case 5: try { try decoder.decodeSingularBoolField(value: &self.isNew) }()
+      case 6: try { try decoder.decodeSingularBoolField(value: &self.isPageNew) }()
       default: break
       }
     }
@@ -360,6 +403,12 @@ extension URLFilterState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     try { if let v = self._errorMessage {
       try visitor.visitSingularStringField(value: v, fieldNumber: 4)
     } }()
+    if self.isNew != false {
+      try visitor.visitSingularBoolField(value: self.isNew, fieldNumber: 5)
+    }
+    if self.isPageNew != false {
+      try visitor.visitSingularBoolField(value: self.isPageNew, fieldNumber: 6)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -368,6 +417,8 @@ extension URLFilterState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if lhs._configuration != rhs._configuration {return false}
     if lhs._info != rhs._info {return false}
     if lhs._errorMessage != rhs._errorMessage {return false}
+    if lhs.isNew != rhs.isNew {return false}
+    if lhs.isPageNew != rhs.isPageNew {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

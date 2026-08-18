@@ -5,7 +5,7 @@
 import { observer } from 'mobx-react-lite';
 
 import { URLFilterConfiguration, URLFilterStatus } from 'Apis/types';
-import { useSettingsStore } from 'SettingsLib/hooks';
+import { useIsSystemWideProtectionDisabled, useSettingsStore } from 'SettingsLib/hooks';
 import { SettingsEvent } from 'Modules/settings/store/modules';
 
 import { SettingsItemSwitch } from '../../../SettingsItem';
@@ -14,13 +14,13 @@ import { SettingsItemSwitch } from '../../../SettingsItem';
  * Props for System-wide Protection switch component
  */
 type SwitchProps = {
-    setShowInstallModal(value: boolean): void;
+    onNeedInstall(configuration: URLFilterConfiguration): void;
 };
 
 /**
  * System-wide Protection switch component for settings module
  */
-function SwitchComponent({ setShowInstallModal }: SwitchProps) {
+function SwitchComponent({ onNeedInstall }: SwitchProps) {
     const { account, advancedBlocking, telemetry } = useSettingsStore();
     const {
         status: systemWideProtectionStatus,
@@ -33,6 +33,8 @@ function SwitchComponent({ setShowInstallModal }: SwitchProps) {
 
     const isFree = !isLicenseOrTrialActive;
 
+    const isDisabled = useIsSystemWideProtectionDisabled();
+
     const isNeedInstall = systemWideProtectionStatus === URLFilterStatus.unknown
         || systemWideProtectionStatus === URLFilterStatus.invalid;
 
@@ -43,7 +45,10 @@ function SwitchComponent({ setShowInstallModal }: SwitchProps) {
             return;
         }
         if (isNeedInstall) {
-            setShowInstallModal(true);
+            onNeedInstall(new URLFilterConfiguration({
+                ...advancedBlocking.urlFilterState.configuration.toObject(),
+                enabled: value,
+            }));
             return;
         }
         advancedBlocking.updateSystemWideProtection(new URLFilterConfiguration({
@@ -54,6 +59,7 @@ function SwitchComponent({ setShowInstallModal }: SwitchProps) {
 
     return (
         <SettingsItemSwitch
+            disabled={isDisabled}
             icon="apps"
             setValue={onUpdateSystemWideProtection}
             title={translate('advanced.blocking.system.wide')}

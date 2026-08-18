@@ -11,10 +11,8 @@ import Foundation
 
 // MARK: - ToolbarRendererLogic
 
-/// Pure computation extracted from `ToolbarRenderer` for testability.
-/// `SFSafariToolbarItem` cannot be instantiated in unit tests;
-/// this type contains the logic without Safari API or design-system
-/// dependencies and is compiled into `AdguardMiniTests` directly.
+/// Pure computation that derives the toolbar icon and badge state from the
+/// store and tab statistics, independent of the Safari toolbar UI.
 enum ToolbarRendererLogic {
     struct RenderResult: Equatable {
         let isOn: Bool

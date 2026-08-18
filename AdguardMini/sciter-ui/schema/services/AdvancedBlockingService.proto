@@ -16,6 +16,8 @@ service AdvancedBlockingService {
     rpc GetURLFilterState(EmptyValue) returns (URLFilterState);
     /* Mark URLFilter installation as requested */
     rpc MarkURLFilterInstallRequested(EmptyValue) returns (EmptyValue);
+    /* Mark the settings UI as seen without changing the platform configuration */
+    rpc MarkURLFilterSeen(URLFilterSeen) returns (EmptyValue);
     /* Reset URLFilter prefilter cache */
     rpc ResetURLFilterCache(EmptyValue) returns (EmptyValue);
     /* Remove URLFilter configuration */

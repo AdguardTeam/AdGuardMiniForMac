@@ -5,7 +5,7 @@
 import { observer } from 'mobx-react-lite';
 
 import { URLFilterConfiguration, URLFilterProtectionLevel, URLFilterStatus } from 'Apis/types';
-import { useSettingsStore } from 'SettingsLib/hooks';
+import { useIsSystemWideProtectionDisabled, useSettingsStore } from 'SettingsLib/hooks';
 import { SettingsEvent } from 'Modules/settings/store/modules';
 import theme from 'Theme';
 import { Radio, Text } from 'UILib';
@@ -16,7 +16,7 @@ import s from './ProtectionLevel.module.pcss';
  * Props for System-wide Protection level component
  */
 type ProtectionLevelProps = {
-    setShowInstallModal(value: boolean): void;
+    onNeedInstall(configuration: URLFilterConfiguration): void;
 };
 
 /**
@@ -31,7 +31,7 @@ const SystemWideProtectionLevelToTelemetryEventMap: Record<URLFilterProtectionLe
 /**
  * System-wide Protection level component for settings module
  */
-function ProtectionLevelComponent({ setShowInstallModal }: ProtectionLevelProps) {
+function ProtectionLevelComponent({ onNeedInstall }: ProtectionLevelProps) {
     const { account, advancedBlocking, telemetry } = useSettingsStore();
     const {
         status: systemWideProtectionStatus,
@@ -45,6 +45,8 @@ function ProtectionLevelComponent({ setShowInstallModal }: ProtectionLevelProps)
 
     const isFree = !isLicenseOrTrialActive;
 
+    const isDisabled = useIsSystemWideProtectionDisabled();
+
     const isNeedInstall = systemWideProtectionStatus === URLFilterStatus.unknown
         || systemWideProtectionStatus === URLFilterStatus.invalid;
 
@@ -57,7 +59,11 @@ function ProtectionLevelComponent({ setShowInstallModal }: ProtectionLevelProps)
             return;
         }
         if (isNeedInstall) {
-            setShowInstallModal(true);
+            onNeedInstall(new URLFilterConfiguration({
+                ...advancedBlocking.urlFilterState.configuration.toObject(),
+                protectionLevel: value,
+                enabled: true,
+            }));
             return;
         }
         advancedBlocking.updateSystemWideProtection(new URLFilterConfiguration({
@@ -79,6 +85,7 @@ function ProtectionLevelComponent({ setShowInstallModal }: ProtectionLevelProps)
             <Radio
                 checked={systemWideProtectionLevel === URLFilterProtectionLevel.essential}
                 className={s.ProtectionLevel_level}
+                disabled={isDisabled}
                 muted={muted}
                 onClick={() => onUpdateSystemWideProtectionLevel(URLFilterProtectionLevel.essential)}
             >
@@ -92,6 +99,7 @@ function ProtectionLevelComponent({ setShowInstallModal }: ProtectionLevelProps)
             <Radio
                 checked={systemWideProtectionLevel === URLFilterProtectionLevel.safe}
                 className={s.ProtectionLevel_level}
+                disabled={isDisabled}
                 muted={muted}
                 onClick={() => onUpdateSystemWideProtectionLevel(URLFilterProtectionLevel.safe)}
             >
@@ -105,6 +113,7 @@ function ProtectionLevelComponent({ setShowInstallModal }: ProtectionLevelProps)
             <Radio
                 checked={systemWideProtectionLevel === URLFilterProtectionLevel.family}
                 className={s.ProtectionLevel_level}
+                disabled={isDisabled}
                 muted={muted}
                 onClick={() => onUpdateSystemWideProtectionLevel(URLFilterProtectionLevel.family)}
             >

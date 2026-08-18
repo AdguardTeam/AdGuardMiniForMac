@@ -9,8 +9,7 @@
 
 import Foundation
 
-/// Abstraction over side-effect execution. Injected into `PopupStore`
-/// so that tests can substitute a mock.
+/// Abstraction over side-effect execution, injected into `PopupStore`.
 protocol EffectRunning: Sendable {
     /// Execute a single effect; return a completion action (if any)
     /// to feed back into the store.

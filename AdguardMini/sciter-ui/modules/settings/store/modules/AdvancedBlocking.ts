@@ -8,6 +8,7 @@ import {
     GetAdvancedBlockingRequest,
     GetURLFilterStateRequest,
     MarkURLFilterInstallRequestedRequest,
+    MarkURLFilterSeenRequest,
     UpdateAdvancedBlockingRequest,
     UpdateRealTimeFiltersUpdateRequest,
     UpdateURLFilterConfigurationRequest,
@@ -51,9 +52,9 @@ export class AdvancedBlocking {
     public urlFilterState = new URLFilterState({
         configuration: new URLFilterConfiguration({
             enabled: false,
-            isNew: false,
-            isPageNew: false,
         }),
+        isNew: false,
+        isPageNew: false,
     });
 
     /**
@@ -145,8 +146,6 @@ export class AdvancedBlocking {
     public updateSystemWideProtection(value: URLFilterConfiguration) {
         const newConfiguration = new URLFilterConfiguration({
             enabled: value.enabled,
-            isNew: value.isNew,
-            isPageNew: value.isPageNew,
             protectionLevel: value.protectionLevel,
         });
 
@@ -155,9 +154,25 @@ export class AdvancedBlocking {
             configuration: newConfiguration,
             info: this.urlFilterState.info,
             errorMessage: this.urlFilterState.errorMessage,
+            isNew: this.urlFilterState.isNew,
+            isPageNew: this.urlFilterState.isPageNew,
         }));
 
         window.API.Execute(new UpdateURLFilterConfigurationRequest(newConfiguration));
+    }
+
+    /**
+     * Installs system-wide protection with the given configuration.
+     *
+     * Marks the install as requested so the transient installing state is
+     * surfaced while the platform filter is starting, then commits the
+     * configuration which performs the actual URL filter installation.
+     *
+     * @param configuration Configuration to install; `enabled` must be `true`.
+     */
+    public installSystemWideProtection(configuration: URLFilterConfiguration) {
+        this.markURLFilterInstallRequested();
+        this.updateSystemWideProtection(configuration);
     }
 
     /**
@@ -185,41 +200,39 @@ export class AdvancedBlocking {
      * Marks system-wide protection card as seen.
      */
     public markSystemWideProtectionAsSeen() {
-        const newConfiguration = new URLFilterConfiguration({
-            enabled: this.urlFilterState.configuration.enabled,
-            isNew: false,
-            isPageNew: this.urlFilterState.configuration.isPageNew,
-            protectionLevel: this.urlFilterState.configuration.protectionLevel,
-        });
-
+        const { isPageNew } = this.urlFilterState;
         this.setURLFilterState(new URLFilterState({
             status: this.urlFilterState.status,
-            configuration: newConfiguration,
+            configuration: this.urlFilterState.configuration,
             info: this.urlFilterState.info,
             errorMessage: this.urlFilterState.errorMessage,
+            isNew: false,
+            isPageNew,
         }));
 
-        window.API.Execute(new UpdateURLFilterConfigurationRequest(newConfiguration));
+        window.API.Execute(new MarkURLFilterSeenRequest({
+            isNew: false,
+            isPageNew,
+        }));
     }
 
     /**
      * Marks system-wide protection page as seen.
      */
     public markSystemWideProtectionPageAsSeen() {
-        const newConfiguration = new URLFilterConfiguration({
-            enabled: this.urlFilterState.configuration.enabled,
-            isNew: this.urlFilterState.configuration.isNew,
-            isPageNew: false,
-            protectionLevel: this.urlFilterState.configuration.protectionLevel,
-        });
-
+        const { isNew } = this.urlFilterState;
         this.setURLFilterState(new URLFilterState({
             status: this.urlFilterState.status,
-            configuration: newConfiguration,
+            configuration: this.urlFilterState.configuration,
             info: this.urlFilterState.info,
             errorMessage: this.urlFilterState.errorMessage,
+            isNew,
+            isPageNew: false,
         }));
 
-        window.API.Execute(new UpdateURLFilterConfigurationRequest(newConfiguration));
+        window.API.Execute(new MarkURLFilterSeenRequest({
+            isNew,
+            isPageNew: false,
+        }));
     }
 }

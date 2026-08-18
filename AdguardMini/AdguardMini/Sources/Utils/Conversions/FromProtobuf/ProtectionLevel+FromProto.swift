@@ -3,22 +3,25 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 //
-//  ProtectionLevel+ToProto.swift
+//  ProtectionLevel+FromProto.swift
 //  AdguardMini
 //
 
+// Improve readability
 // swiftlint:disable switch_case_on_newline
 
 import Foundation
 import SciterSchema
 
-extension URLFilterProtectionLevel {
-    /// Maps the Swift protection level to its Protobuf enum value.
-    func toProto() -> SciterSchema.URLFilterProtectionLevel {
+extension SciterSchema.URLFilterProtectionLevel {
+    /// Maps the Protobuf protection level to its Swift enum value.
+    /// Unrecognized values fall back to ``URLFilterProtectionLevel/essential``.
+    func toSwift() -> URLFilterProtectionLevel {
         switch self {
         case .essential: .essential
         case .safe:      .safe
         case .family:    .family
+        default:         .essential
         }
     }
 }

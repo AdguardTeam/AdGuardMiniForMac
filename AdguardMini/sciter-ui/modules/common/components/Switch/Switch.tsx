@@ -35,7 +35,7 @@ export function Switch({
     return (
         <label
             aria-label={ariaLabel}
-            className={cx(s.switch, className)}
+            className={cx(s.switch, disabled && s.disabledSwitch, className)}
             htmlFor={id}
             tabIndex={0}
             onClick={(e) => {

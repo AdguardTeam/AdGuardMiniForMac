@@ -13,7 +13,9 @@ extension URLFilterState {
         status: URLFilterStatus = .unknown,
         configuration: URLFilterConfiguration = URLFilterConfiguration(),
         info: URLFilterInfo = URLFilterInfo(),
-        errorMessage: String? = nil
+        errorMessage: String? = nil,
+        isNew: Bool = false,
+        isPageNew: Bool = false
     ) {
         self.init()
         self.status = status
@@ -22,5 +24,7 @@ extension URLFilterState {
         if let errorMessage {
             self.errorMessage = errorMessage
         }
+        self.isNew = isNew
+        self.isPageNew = isPageNew
     }
 }

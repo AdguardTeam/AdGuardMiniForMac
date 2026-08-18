@@ -5,7 +5,7 @@
 import { observer } from 'mobx-react-lite';
 
 import { SettingsEvent } from 'Modules/settings/store/modules';
-import { usePayedFuncsTitle, useSettingsStore } from 'SettingsLib/hooks';
+import { useIsSystemWideProtectionDisabled, usePayedFuncsTitle, useSettingsStore } from 'SettingsLib/hooks';
 import { Button, Text } from 'UILib';
 import theme from 'Theme';
 
@@ -28,7 +28,7 @@ function TitleComponent({ setShowNotSupportedModal, setShowResetCacheModal, setS
     const { advancedBlocking, settings } = useSettingsStore();
     const {
         isPageNew: isSystemWideProtectionPageNew,
-    } = advancedBlocking.urlFilterState.configuration;
+    } = advancedBlocking.urlFilterState;
     const {
         macos25OrLower,
         non501User,
@@ -38,6 +38,11 @@ function TitleComponent({ setShowNotSupportedModal, setShowResetCacheModal, setS
         SettingsEvent.SystemWideProtectionGetFullVersionClick,
         s.Title_payedTitle_text
     );
+
+    // Unsupported accounts get only the warning line and no context menu with
+    // cache reset and filter removal: those actions make no sense on an
+    // unsupported system.
+    const isUnsupported = useIsSystemWideProtectionDisabled();
 
     const renderWhyBtn = (text: string) => (
         <Button
@@ -58,7 +63,7 @@ function TitleComponent({ setShowNotSupportedModal, setShowResetCacheModal, setS
     return (
         <SettingsTitle
             description={translate('advanced.blocking.system.wide.desc')}
-            elements={[{
+            elements={isUnsupported ? undefined : [{
                 text: translate('advanced.blocking.system.wide.reset.cache'),
                 action: () => setShowResetCacheModal(true),
             }, {

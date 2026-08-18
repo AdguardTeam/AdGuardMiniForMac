@@ -1,4 +1,4 @@
-/* 
+/*
     SPDX-FileCopyrightText: AdGuard Software Limited
     SPDX-License-Identifier: GPL-3.0-or-later
 */
@@ -8,6 +8,23 @@
     cursor: pointer;
     flow: horizontal;
     width: max-content;
+
+    &.disabledSwitch {
+        cursor: default;
+
+        &:hover,
+        &:active {
+            .disabled {
+                border-color: var(--text-links-error-link-default);
+                background-color: var(--text-links-error-link-default);
+            }
+
+            .enabled {
+                border-color: var(--fills-buttons-main-button-default);
+                background-color: var(--fills-buttons-main-button-default);
+            }
+        }
+    }
 
     &:hover {
         .disabled {
@@ -65,7 +82,7 @@
     height: 28px;
     border-radius: 20px;
     cursor: pointer;
-    
+
     &::before {
         content: "";
         display: block;

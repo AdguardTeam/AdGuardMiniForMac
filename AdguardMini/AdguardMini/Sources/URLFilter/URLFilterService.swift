@@ -76,6 +76,8 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
     }
 
     func start() async {
+        let status = await self.currentStatus()
+        LogInfo("URLFilter service started, current status: \(status)")
         self.startObserving()
         self.startObservingPaidStatus()
     }
@@ -132,6 +134,10 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
         // Persist the protection level so the network extension can read it.
         self.sharedKeychainStorage.urlFilterProtectionLevel =
             configuration.protectionLevel
+        LogInfo(
+            "URLFilter configuration saved: level=\(configuration.protectionLevel), "
+                + "server=\(levelConfig.pirServerURL), enabled=\(configuration.enabled)"
+        )
         self.eventBus.post(event: .urlFilterConfigurationChanged, userInfo: configuration)
     }
 
@@ -141,6 +147,7 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
         } catch {
             throw URLFilterServiceError.removeFailed(error)
         }
+        LogInfo("URLFilter configuration removed")
         self.eventBus.post(event: .urlFilterConfigurationChanged, userInfo: nil)
     }
 
@@ -150,12 +157,21 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
         for attempt in 1...Constants.maxRetryAttempts {
             do {
                 try await self.setEnabledOnce(enabled)
+                LogInfo("URLFilter setEnabled(\(enabled)) succeeded on attempt \(attempt)")
                 return
             } catch {
                 if attempt < Constants.maxRetryAttempts {
+                    LogWarn(
+                        "URLFilter setEnabled(\(enabled)) failed on attempt \(attempt) "
+                            + "(retrying in \(baseDelay)s): \(error)"
+                    )
                     try await Task.sleep(seconds: baseDelay)
                     baseDelay *= 2
                 } else {
+                    LogError(
+                        "URLFilter setEnabled(\(enabled)) failed after "
+                            + "\(Constants.maxRetryAttempts) attempts: \(error)"
+                    )
                     throw error
                 }
             }
@@ -219,6 +235,7 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
 
     private func publishStatusChange() async {
         let status = await self.currentStatus()
+        LogInfo("URLFilter status changed: \(status)")
         self.syncEnabledFromStatus(status)
         self.eventBus.post(event: .urlFilterStatusChanged, userInfo: status)
     }
@@ -294,11 +311,19 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
         let serverURL = manager.pirServerURL
         async let lastError = manager.lastDisconnectError
         let raw = self.rawStatus(from: await status)
+        let disconnectError = await lastError
+        // The raw error is crucial for diagnosing filter failures, so log the enum case and raw value too.
+        if let disconnectError {
+            LogError(
+                "URLFilter lastDisconnectError raw: \(disconnectError) "
+                    + "(rawValue: \(disconnectError.rawValue))"
+            )
+        }
         return URLFilterStatus.derive(
             rawStatus: raw,
             isEnabled: isEnabled,
             hasValidConfiguration: serverURL != nil,
-            errorMessage: await lastError?.localizedDescription
+            errorMessage: disconnectError?.localizedDescription
         )
     }
 

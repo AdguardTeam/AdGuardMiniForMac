@@ -39,6 +39,13 @@ class GenericFileStorage: FileStorageProtocol {
         )
     }
 
+    func removeFile(relativePath: String, fileExtension: String?) async -> Bool {
+        await self.fileStorage.removeFile(
+            relativePath: self.updateRelativePath(relativePath),
+            fileExtension: fileExtension
+        )
+    }
+
     func isFileExists(relativePath: String, fileExtension: String?) async -> Bool {
         await self.fileStorage.isFileExists(
             relativePath: self.updateRelativePath(relativePath),

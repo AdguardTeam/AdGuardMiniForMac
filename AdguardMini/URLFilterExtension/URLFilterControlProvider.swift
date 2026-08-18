@@ -10,7 +10,7 @@ import AML
 // MARK: - Constants
 
 private enum Constants {
-    static let prefilterFileName = "urlfilter-prefilter-bloomfilterdata"
+    static let prefilterFileName = URLFilterPrefilterFile.name
 }
 
 // MARK: - URLFilterControlProvider
@@ -19,6 +19,7 @@ private enum Constants {
 final class URLFilterControlProvider: NEURLFilterControlProvider {
     private let fileStorage: GroupFolderFileService = GroupFolderFileServiceImpl()
     private let keychainStorage: SharedKeychainStorage = SharedKeychainStorageImpl()
+    private let bloomMetadataStorage: URLFilterBloomMetadataStorage = URLFilterBloomMetadataStorageImpl()
 
     init() {
         LogConfig.setupSharedLogger(for: .urlFilterExtension)
@@ -94,18 +95,9 @@ final class URLFilterControlProvider: NEURLFilterControlProvider {
             let (paramsData, _) = try await URLSession.shared.data(from: url)
 
             // Parse the JSON response
-            struct BloomParams: Codable {
-                let falsePositiveTolerance: Double
-                let murmurSeed: UInt32
-                let numberOfBits: Int
-                let numberOfHashes: Int
-                let tag: String
-                let url: String
-            }
-
-            let params: BloomParams
+            let params: URLFilterBloomParams
             do {
-                params = try JSONDecoder().decode(BloomParams.self, from: paramsData)
+                params = try JSONDecoder().decode(URLFilterBloomParams.self, from: paramsData)
                 LogInfo("Bloom params decoded: tag=\(params.tag), bits=\(params.numberOfBits), hashes=\(params.numberOfHashes)")
             } catch {
                 LogError("Failed to decode bloom params: \(error)")
@@ -114,6 +106,13 @@ final class URLFilterControlProvider: NEURLFilterControlProvider {
 
             // Step 2: Check if tag is the same as existing
             if let existingTag = existingPrefilterTag, existingTag == params.tag {
+                // A settings reset could have removed the persisted metadata,
+                // So restore it from the fresh params before skipping the install
+                self.saveBloomMetadata(
+                    rulesCount: params.rulesCount,
+                    timeUpdated: params.timeUpdated,
+                    tag: params.tag
+                )
                 LogInfo("Bloom filter tag unchanged (\(params.tag)), returning nil")
                 return nil
             }
@@ -145,7 +144,11 @@ final class URLFilterControlProvider: NEURLFilterControlProvider {
             let fileURL = fileStorage.buildUrl(relativePath: Constants.prefilterFileName)
             LogInfo("Bloom filter data written to shared container at \(fileURL.path)")
 
-            // Step 5: Initialize NEURLFilterPrefilter with the temporary file path
+            // Step 5: Persist the bloom metadata so the main app can show
+            // The rule count and the last update time in the settings UI
+            self.saveBloomMetadata(rulesCount: params.rulesCount, timeUpdated: params.timeUpdated, tag: params.tag)
+
+            // Step 6: Initialize NEURLFilterPrefilter with the temporary file path
             let prefilterData: NEURLFilterPrefilter.PrefilterData = .temporaryFilepath(fileURL)
             let preFilter = NEURLFilterPrefilter(
                 data: prefilterData,
@@ -162,4 +165,44 @@ final class URLFilterControlProvider: NEURLFilterControlProvider {
             return nil
         }
     }
+
+    /// Persists the bloom metadata so the main app can show the rule count
+    /// and the last update time in the settings UI.
+    ///
+    /// Only values the reader accepts are persisted; `URLFilterBloomMetadata`
+    /// decoding in the main app requires a positive rule count and update
+    /// time, so anything else is dropped and surfaced in the logs.
+    private func saveBloomMetadata(rulesCount: Int, timeUpdated: Int, tag: String) {
+        guard rulesCount > 0, timeUpdated > 0 else {
+            LogError(
+                "Skipping bloom metadata with invalid values: "
+                    + "rulesCount=\(rulesCount), timeUpdated=\(timeUpdated)"
+            )
+            return
+        }
+        let metadata = URLFilterBloomMetadata(
+            rulesCount: rulesCount,
+            timeUpdated: Date(timeIntervalSince1970: TimeInterval(timeUpdated)),
+            tag: tag
+        )
+        self.bloomMetadataStorage.save(metadata)
+        LogInfo("Bloom metadata persisted: rulesCount=\(rulesCount), timeUpdated=\(timeUpdated)")
+    }
+}
+
+// MARK: - URLFilterBloomParams
+
+/// Bloom filter parameters returned by the PIR params endpoint.
+///
+/// Used by `URLFilterControlProvider.fetchPrefilter` to decide whether a new
+/// prefilter should be downloaded and installed.
+private struct URLFilterBloomParams: Codable {
+    let falsePositiveTolerance: Double
+    let murmurSeed: UInt32
+    let numberOfBits: Int
+    let numberOfHashes: Int
+    let tag: String
+    let url: String
+    let rulesCount: Int
+    let timeUpdated: Int
 }

@@ -29,6 +29,10 @@ public protocol AdvancedBlockingServiceProtocol
 	func markURLFilterInstallRequested (
 						_ message: EmptyValue,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void
+	/// Mark the settings UI as seen without changing the platform configuration
+	func markURLFilterSeen (
+						_ message: URLFilterSeen,
+						_ promise: @escaping (EmptyValue) -> Void) -> Void
 	/// Reset URLFilter prefilter cache
 	func resetURLFilterCache (
 						_ message: EmptyValue,
@@ -107,6 +111,18 @@ open class AdvancedBlockingService: SciterBridge
 			inputType: EmptyValue.self,
 			outputType: EmptyValue.self,
 			method: cast.markURLFilterInstallRequested(_:_:),
+			message,
+			promise
+		)
+	}
+
+	/// Wrapper for `MarkURLFilterSeen`
+	@objc func MarkURLFilterSeen(_ message: Data, promise: @escaping (Data) -> Void)
+	{
+		swiftCall(
+			inputType: URLFilterSeen.self,
+			outputType: EmptyValue.self,
+			method: cast.markURLFilterSeen(_:_:),
 			message,
 			promise
 		)

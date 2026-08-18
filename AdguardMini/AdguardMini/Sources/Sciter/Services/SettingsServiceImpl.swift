@@ -16,8 +16,13 @@ import ContentBlockerConverter
 private enum Constants {
     static let noUpdatesThreshold: TimeInterval = 7.days
     // UID 501 is macOS's default UID for the first admin account created during initial setup.
-    // Non-501 users indicate managed or multi-account scenarios.
-    static let isNon501User: Bool = getuid() != 501
+    // Non-501 users indicate managed or multi-account scenarios; the URL filter is unavailable.
+    // The actual UID can be overridden through devConfig ('url_filter_override_uid') to test it.
+    // Setting it to 501 effectively disables the account check.
+    static var isNon501User: Bool {
+        let effectiveUID = DeveloperConfigUtils[.urlFilterOverrideUID] as? Int ?? Int(getuid())
+        return effectiveUID != 501
+    }
     static let isMacOS25OrLower: Bool = {
         if #available(macOS 26, *) {
             return false

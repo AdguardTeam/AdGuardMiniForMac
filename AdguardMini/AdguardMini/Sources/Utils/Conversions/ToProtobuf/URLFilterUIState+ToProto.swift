@@ -17,12 +17,12 @@ extension URLFilterUIState {
             status: self.status.toProto(),
             configuration: SciterSchema.URLFilterConfiguration(
                 enabled: self.enabled,
-                protectionLevel: self.protectionLevel.toProto(),
-                isNew: self.isNew,
-                isPageNew: self.isPageNew
+                protectionLevel: self.protectionLevel.toProto()
             ),
             info: self.info.toProto(),
-            errorMessage: self.errorMessage
+            errorMessage: self.errorMessage,
+            isNew: self.isNew,
+            isPageNew: self.isPageNew
         )
     }
 }

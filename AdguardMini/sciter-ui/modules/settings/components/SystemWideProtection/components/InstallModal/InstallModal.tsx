@@ -12,26 +12,27 @@ import theme from 'Theme';
 import { AgnarWithTablet } from '../../../../assets/Images';
 import s from './InstallModal.module.pcss';
 
+import type { URLFilterConfiguration } from 'Apis/types';
+
 /**
  * Props for InstallModal component
  */
 type InstallModalProps = {
-    setShowInstallModal: (value: boolean) => void;
+    configuration: URLFilterConfiguration;
+    onClose: () => void;
 };
 
 /**
  * Install modal for System-wide Protection settings page
  */
-function InstallModalComponent({ setShowInstallModal }: InstallModalProps) {
+function InstallModalComponent({ configuration, onClose }: InstallModalProps) {
     const { advancedBlocking, telemetry } = useSettingsStore();
 
     const onSubmit = () => {
         telemetry.trackEvent(SettingsEvent.InstallURLFilterClick);
-        advancedBlocking.markURLFilterInstallRequested();
-        setShowInstallModal(false);
+        advancedBlocking.installSystemWideProtection(configuration);
+        onClose();
     };
-
-    const onClose = () => setShowInstallModal(false);
 
     return (
         <Modal

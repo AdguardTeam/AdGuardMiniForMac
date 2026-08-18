@@ -1,6 +1,7 @@
 export * from './GetAdvancedBlockingRequest';
 export * from './GetURLFilterStateRequest';
 export * from './MarkURLFilterInstallRequestedRequest';
+export * from './MarkURLFilterSeenRequest';
 export * from './RemoveURLFilterRequest';
 export * from './ResetURLFilterCacheRequest';
 export * from './UpdateAdvancedBlockingRequest';

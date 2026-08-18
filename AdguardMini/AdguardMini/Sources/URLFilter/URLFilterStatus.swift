@@ -14,9 +14,9 @@ import Foundation
 /// Platform-independent mirror of `NEURLFilterManager.Status`.
 ///
 /// `NEURLFilterManager.Status` is only available on macOS 26+, so the raw value
-/// is bridged into this enum inside an availability guard. This keeps the
+/// is bridged into this enum inside an availability guard, keeping the
 /// ``URLFilterStatus/derive(rawStatus:isEnabled:hasValidConfiguration:errorMessage:)``
-/// mapper pure and testable on any OS version.
+/// mapper available on any OS version.
 enum URLFilterRawStatus {
     /// The extension is not installed or the configuration is invalid.
     case invalid

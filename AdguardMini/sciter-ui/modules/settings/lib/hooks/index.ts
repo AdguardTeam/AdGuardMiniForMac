@@ -12,3 +12,4 @@ export * from './useABTests';
 export * from './useTheme';
 export * from './useNotificationSomethingWentWrongText';
 export * from './useSafariExtensionsStatus';
+export * from './useIsSystemWideProtectionDisabled';

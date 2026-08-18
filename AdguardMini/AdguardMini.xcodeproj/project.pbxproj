@@ -703,6 +703,7 @@
 				URLFilter/URLFilterInfo.swift,
 				URLFilter/URLFilterLevelConfiguration.swift,
 				URLFilter/URLFilterProtectionLevel.swift,
+				URLFilter/URLFilterResetService.swift,
 				URLFilter/URLFilterService.swift,
 				URLFilter/URLFilterServiceError.swift,
 				URLFilter/URLFilterStateAssembler.swift,
@@ -817,6 +818,7 @@
 				Backend/Models/LicenseStatus.swift,
 				Backend/Models/LicenseType.swift,
 				Backend/Models/SubscriptionStatus.swift,
+				Core/DeveloperConfigUtils.swift,
 				Core/KeychainManager.swift,
 				"URLFilter/SharedSettingsStorage+URLFilter.swift",
 				URLFilter/URLFilterLevelConfiguration.swift,
@@ -877,6 +879,13 @@
 				Defaults.plist,
 			);
 			target = EC3462F32A29DD9200F59ABC /* AdguardMini */;
+		};
+		16A56649F000000000000002 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				URLFilterBloomMetadata.swift,
+			);
+			target = 168279C43008F8D9001486BD /* URLFilterExtension */;
 		};
 		16ADDE012F00000000000001 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -1044,6 +1053,7 @@
 		169664D72E9FEB2B00E0B87E /* SafariExtension Builder */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "SafariExtension Builder"; sourceTree = "<group>"; };
 		169707F12E4E4C0000FE5A4E /* DI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = DI; sourceTree = "<group>"; };
 		169716FC2E55B51900FE5A4E /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (169717012E55B51900FE5A4E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
+		16A56649F000000000000001 /* URLFilter */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (16A56649F000000000000002 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = URLFilter; sourceTree = "<group>"; };
 		16E54EC82E69E4BA006C7856 /* CustomUrlSchemes */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = CustomUrlSchemes; sourceTree = "<group>"; };
 		16E54ED32E69E4BD006C7856 /* ContentBlockers */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (16E54F062E69E4BD006C7856 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 16E54F072E69E4BD006C7856 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 167F9FA42F63298800A2B65E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 16E54F082E69E4BD006C7856 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 16E54F092E69E4BD006C7856 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 16E54F0A2E69E4BD006C7856 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 16E54F0B2E69E4BD006C7856 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 16E54F0C2E69E4BD006C7856 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 16E54F0D2E69E4BD006C7856 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 16E54F0E2E69E4BD006C7856 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ContentBlockers; sourceTree = "<group>"; };
 		16E54F182E69E4C0006C7856 /* FileSystem */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (168279E330090BD5001486BD /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = FileSystem; sourceTree = "<group>"; };
@@ -1368,6 +1378,7 @@
 				16E54F732E69E4C2006C7856 /* ProductInfo */,
 				16FA01012FE10A0000000001 /* Statistics */,
 				16E54F7D2E69E4C8006C7856 /* Storages */,
+				16A56649F000000000000001 /* URLFilter */,
 				EB1A0DA42D81EC17006DB3CF /* Utils */,
 				EC66B32A2A717FA100139963 /* Resources */,
 				EB6C52B02D37E4480024F189 /* Sentry.swift */,
@@ -1615,6 +1626,7 @@
 			fileSystemSynchronizedGroups = (
 				16148DBA2E01CD62000A55E9 /* AdguardMiniTests */,
 				16209B4B2E0C267E00F0B9F5 /* ExtensionBrowserApi */,
+				16A56649F000000000000001 /* URLFilter */,
 				16E54F182E69E4C0006C7856 /* FileSystem */,
 				16E54F732E69E4C2006C7856 /* ProductInfo */,
 				16E54F7D2E69E4C8006C7856 /* Storages */,
@@ -1863,6 +1875,7 @@
 				1644A07A2DB8D8AB003852C6 /* DI */,
 				169707F12E4E4C0000FE5A4E /* DI */,
 				169716FC2E55B51900FE5A4E /* Resources */,
+				16A56649F000000000000001 /* URLFilter */,
 				16E54EC82E69E4BA006C7856 /* CustomUrlSchemes */,
 				16E54F182E69E4C0006C7856 /* FileSystem */,
 				16E54F732E69E4C2006C7856 /* ProductInfo */,

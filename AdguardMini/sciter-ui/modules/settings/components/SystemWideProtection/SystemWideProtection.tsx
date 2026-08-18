@@ -10,6 +10,8 @@ import { Layout } from 'UILib';
 
 import { FilteringRules, HowItWorks, NotSupportedModal, ProtectionLevel, Switch, Title, InstallModal, ResetCacheModal, RemoveFilterModal } from './components';
 
+import type { URLFilterConfiguration } from 'Apis/types';
+
 /**
  * System-wide Protection page component for settings module
  */
@@ -18,10 +20,10 @@ function SystemWideProtectionComponent() {
     const {
         isNew: isSystemWideProtectionNew,
         isPageNew: isSystemWideProtectionPageNew,
-    } = advancedBlocking.urlFilterState.configuration;
+    } = advancedBlocking.urlFilterState;
 
     const [showNotSupportedModal, setShowNotSupportedModal] = useState(false);
-    const [showInstallModal, setShowInstallModal] = useState(false);
+    const [pendingInstall, setPendingInstall] = useState<URLFilterConfiguration | null>(null);
     const [showResetCacheModal, setShowResetCacheModal] = useState(false);
     const [showRemoveFilterModal, setShowRemoveFilterModal] = useState(false);
 
@@ -46,15 +48,15 @@ function SystemWideProtectionComponent() {
                 setShowResetCacheModal={setShowResetCacheModal}
                 setShowRemoveFilterModal={setShowRemoveFilterModal}
             />
-            <Switch setShowInstallModal={setShowInstallModal} />
-            <ProtectionLevel setShowInstallModal={setShowInstallModal} />
+            <Switch onNeedInstall={(configuration) => setPendingInstall(configuration)} />
+            <ProtectionLevel onNeedInstall={(configuration) => setPendingInstall(configuration)} />
             <FilteringRules />
             <HowItWorks />
             {showNotSupportedModal && (
                 <NotSupportedModal setShowNotSupportedModal={setShowNotSupportedModal} />
             )}
-            {showInstallModal && (
-                <InstallModal setShowInstallModal={setShowInstallModal} />
+            {pendingInstall && (
+                <InstallModal configuration={pendingInstall} onClose={() => setPendingInstall(null)} />
             )}
             {showResetCacheModal && (
                 <ResetCacheModal setShowResetCacheModal={setShowResetCacheModal} />

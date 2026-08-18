@@ -14,7 +14,7 @@ import Foundation
 /// The URL filter protection level selected by the user.
 ///
 /// Persisted as its `Int` raw value via the existing settings storage.
-enum URLFilterProtectionLevel: Int, Codable {
+enum URLFilterProtectionLevel: Int, Codable, CaseIterable {
     case essential = 0
     case safe      = 1
     case family    = 2

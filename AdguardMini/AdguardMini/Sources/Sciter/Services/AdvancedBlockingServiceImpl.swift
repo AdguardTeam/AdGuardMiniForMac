@@ -62,6 +62,15 @@ extension Sciter {
             }
         }
 
+        func markURLFilterSeen(_ message: SciterSchema.URLFilterSeen,
+                               _ promise: @escaping (EmptyValue) -> Void) {
+            // Persists only the UI seen flags and never touches the platform
+            // URL filter configuration, so no install prompt is triggered.
+            self.userSettingsService.urlFilterIsNew = message.isNew
+            self.userSettingsService.urlFilterIsPageNew = message.isPageNew
+            promise(EmptyValue())
+        }
+
         func resetURLFilterCache(_ message: EmptyValue,
                                  _ promise: @escaping (EmptyValue) -> Void) {
             Task {
@@ -80,6 +89,7 @@ extension Sciter {
             Task {
                 do {
                     try await self.urlFilterService.removeConfiguration()
+                    await self.urlFilterStateAssembler.markConfigurationRemoved()
                 } catch {
                     LogError("Failed to remove URLFilter configuration: \(error)")
                 }
@@ -92,22 +102,22 @@ extension Sciter {
                                           _ promise: @escaping (EmptyValue) -> Void) {
             Task {
                 do {
-                    // TODO: AG-56649
-                    // Need to fix convertation
-                    let protectionLevel = URLFilterProtectionLevel(proto: message.protectionLevel)
-                    self.userSettingsService.urlFilterProtectionLevel = protectionLevel
-                    self.userSettingsService.urlFilterIsNew = message.isNew
-                    self.userSettingsService.urlFilterIsPageNew = message.isPageNew
+                    let dto = message.toDTO()
 
-                    // TODO: AG-56649
-                    // Need to fix initialization
+                    self.userSettingsService.urlFilterProtectionLevel = dto.protectionLevel
+
+                    // The wire format omits the platform-only fields.
+                    // Preserve their values from the current configuration.
+                    // Defaults apply only when no configuration exists yet.
                     let current = try await self.urlFilterService.loadConfiguration()
-                    let configuration = URLFilterConfiguration(
-                        protectionLevel: protectionLevel,
-                        prefilterFetchInterval: current?.prefilterFetchInterval ?? 45.minutes,
-                        shouldFailClosed: current?.shouldFailClosed ?? false,
-                        enabled: message.enabled
+                    var configuration = URLFilterConfiguration(
+                        protectionLevel: dto.protectionLevel,
+                        enabled: dto.enabled
                     )
+                    if let current {
+                        configuration.prefilterFetchInterval = current.prefilterFetchInterval
+                        configuration.shouldFailClosed = current.shouldFailClosed
+                    }
 
                     try await self.urlFilterService.save(configuration: configuration)
                 } catch {

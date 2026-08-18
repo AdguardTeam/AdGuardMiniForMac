@@ -24,6 +24,7 @@ protocol AMFileManager: AnyObject, Sendable {
 
     func saveFile(data: Data, url: URL) async -> Error?
     func loadFile(url: URL) async -> Result<Data, Error>
+    func removeFile(url: URL) async -> Error?
 
     func isFileExists(url: URL) async -> Bool
     func isDirectoryNotEmpty(_ url: URL) async -> Bool
@@ -86,6 +87,18 @@ final actor AMFileManagerImpl: AMFileManager {
 
     func isFileExists(url: URL) async -> Bool {
         self.fileManager.fileExists(atPath: url.path)
+    }
+
+    func removeFile(url: URL) async -> Error? {
+        await Task.detached(priority: .userInitiated) {
+            do {
+                try FileManager.default.removeItem(at: url)
+            } catch {
+                return error
+            }
+            return nil
+        }
+        .value
     }
 
     func isDirectoryNotEmpty(_ url: URL) async -> Bool {

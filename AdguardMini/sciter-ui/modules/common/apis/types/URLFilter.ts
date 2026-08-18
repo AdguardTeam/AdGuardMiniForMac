@@ -23,8 +23,6 @@ export class URLFilterConfiguration extends pb_1.Message {
     constructor(data?: any[] | {
         enabled?: boolean;
         protectionLevel?: URLFilterProtectionLevel;
-        isNew?: boolean;
-        isPageNew?: boolean;
     }) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
@@ -34,12 +32,6 @@ export class URLFilterConfiguration extends pb_1.Message {
             }
             if ("protectionLevel" in data && data.protectionLevel != undefined) {
                 this.protectionLevel = data.protectionLevel;
-            }
-            if ("isNew" in data && data.isNew != undefined) {
-                this.isNew = data.isNew;
-            }
-            if ("isPageNew" in data && data.isPageNew != undefined) {
-                this.isPageNew = data.isPageNew;
             }
         }
     }
@@ -55,23 +47,9 @@ export class URLFilterConfiguration extends pb_1.Message {
     set protectionLevel(value: URLFilterProtectionLevel) {
         pb_1.Message.setField(this, 2, value);
     }
-    get isNew() {
-        return pb_1.Message.getFieldWithDefault(this, 3, false) as boolean;
-    }
-    set isNew(value: boolean) {
-        pb_1.Message.setField(this, 3, value);
-    }
-    get isPageNew() {
-        return pb_1.Message.getFieldWithDefault(this, 4, false) as boolean;
-    }
-    set isPageNew(value: boolean) {
-        pb_1.Message.setField(this, 4, value);
-    }
     static fromObject(data: {
         enabled?: boolean;
         protectionLevel?: URLFilterProtectionLevel;
-        isNew?: boolean;
-        isPageNew?: boolean;
     }): URLFilterConfiguration {
         const message = new URLFilterConfiguration({});
         if (data.enabled != null) {
@@ -80,32 +58,18 @@ export class URLFilterConfiguration extends pb_1.Message {
         if (data.protectionLevel != null) {
             message.protectionLevel = data.protectionLevel;
         }
-        if (data.isNew != null) {
-            message.isNew = data.isNew;
-        }
-        if (data.isPageNew != null) {
-            message.isPageNew = data.isPageNew;
-        }
         return message;
     }
     toObject() {
         const data: {
             enabled?: boolean;
             protectionLevel?: URLFilterProtectionLevel;
-            isNew?: boolean;
-            isPageNew?: boolean;
         } = {};
         if (this.enabled != null) {
             data.enabled = this.enabled;
         }
         if (this.protectionLevel != null) {
             data.protectionLevel = this.protectionLevel;
-        }
-        if (this.isNew != null) {
-            data.isNew = this.isNew;
-        }
-        if (this.isPageNew != null) {
-            data.isPageNew = this.isPageNew;
         }
         return data;
     }
@@ -117,10 +81,6 @@ export class URLFilterConfiguration extends pb_1.Message {
             writer.writeBool(1, this.enabled);
         if (this.protectionLevel != URLFilterProtectionLevel.essential)
             writer.writeEnum(2, this.protectionLevel);
-        if (this.isNew != false)
-            writer.writeBool(3, this.isNew);
-        if (this.isPageNew != false)
-            writer.writeBool(4, this.isPageNew);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -136,12 +96,6 @@ export class URLFilterConfiguration extends pb_1.Message {
                 case 2:
                     message.protectionLevel = reader.readEnum();
                     break;
-                case 3:
-                    message.isNew = reader.readBool();
-                    break;
-                case 4:
-                    message.isPageNew = reader.readBool();
-                    break;
                 default: reader.skipField();
             }
         }
@@ -152,6 +106,96 @@ export class URLFilterConfiguration extends pb_1.Message {
     }
     static deserializeBinary(bytes: Uint8Array): URLFilterConfiguration {
         return URLFilterConfiguration.deserialize(bytes);
+    }
+}
+export class URLFilterSeen extends pb_1.Message {
+    #one_of_decls: number[][] = [];
+    constructor(data?: any[] | {
+        isNew?: boolean;
+        isPageNew?: boolean;
+    }) {
+        super();
+        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+        if (!Array.isArray(data) && typeof data == "object") {
+            if ("isNew" in data && data.isNew != undefined) {
+                this.isNew = data.isNew;
+            }
+            if ("isPageNew" in data && data.isPageNew != undefined) {
+                this.isPageNew = data.isPageNew;
+            }
+        }
+    }
+    get isNew() {
+        return pb_1.Message.getFieldWithDefault(this, 1, false) as boolean;
+    }
+    set isNew(value: boolean) {
+        pb_1.Message.setField(this, 1, value);
+    }
+    get isPageNew() {
+        return pb_1.Message.getFieldWithDefault(this, 2, false) as boolean;
+    }
+    set isPageNew(value: boolean) {
+        pb_1.Message.setField(this, 2, value);
+    }
+    static fromObject(data: {
+        isNew?: boolean;
+        isPageNew?: boolean;
+    }): URLFilterSeen {
+        const message = new URLFilterSeen({});
+        if (data.isNew != null) {
+            message.isNew = data.isNew;
+        }
+        if (data.isPageNew != null) {
+            message.isPageNew = data.isPageNew;
+        }
+        return message;
+    }
+    toObject() {
+        const data: {
+            isNew?: boolean;
+            isPageNew?: boolean;
+        } = {};
+        if (this.isNew != null) {
+            data.isNew = this.isNew;
+        }
+        if (this.isPageNew != null) {
+            data.isPageNew = this.isPageNew;
+        }
+        return data;
+    }
+    serialize(): Uint8Array;
+    serialize(w: pb_1.BinaryWriter): void;
+    serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+        const writer = w || new pb_1.BinaryWriter();
+        if (this.isNew != false)
+            writer.writeBool(1, this.isNew);
+        if (this.isPageNew != false)
+            writer.writeBool(2, this.isPageNew);
+        if (!w)
+            return writer.getResultBuffer();
+    }
+    static deserialize(bytes: Uint8Array | pb_1.BinaryReader): URLFilterSeen {
+        const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new URLFilterSeen();
+        while (reader.nextField()) {
+            if (reader.isEndGroup())
+                break;
+            switch (reader.getFieldNumber()) {
+                case 1:
+                    message.isNew = reader.readBool();
+                    break;
+                case 2:
+                    message.isPageNew = reader.readBool();
+                    break;
+                default: reader.skipField();
+            }
+        }
+        return message;
+    }
+    serializeBinary(): Uint8Array {
+        return this.serialize();
+    }
+    static deserializeBinary(bytes: Uint8Array): URLFilterSeen {
+        return URLFilterSeen.deserialize(bytes);
     }
 }
 export class URLFilterInfo extends pb_1.Message {
@@ -299,6 +343,8 @@ export class URLFilterState extends pb_1.Message {
         status?: URLFilterStatus;
         configuration?: URLFilterConfiguration;
         info?: URLFilterInfo;
+        isNew?: boolean;
+        isPageNew?: boolean;
     } & (({
         errorMessage?: string;
     })))) {
@@ -316,6 +362,12 @@ export class URLFilterState extends pb_1.Message {
             }
             if ("errorMessage" in data && data.errorMessage != undefined) {
                 this.errorMessage = data.errorMessage;
+            }
+            if ("isNew" in data && data.isNew != undefined) {
+                this.isNew = data.isNew;
+            }
+            if ("isPageNew" in data && data.isPageNew != undefined) {
+                this.isPageNew = data.isPageNew;
             }
         }
     }
@@ -352,6 +404,18 @@ export class URLFilterState extends pb_1.Message {
     get has_error_message() {
         return pb_1.Message.getField(this, 4) != null;
     }
+    get isNew() {
+        return pb_1.Message.getFieldWithDefault(this, 5, false) as boolean;
+    }
+    set isNew(value: boolean) {
+        pb_1.Message.setField(this, 5, value);
+    }
+    get isPageNew() {
+        return pb_1.Message.getFieldWithDefault(this, 6, false) as boolean;
+    }
+    set isPageNew(value: boolean) {
+        pb_1.Message.setField(this, 6, value);
+    }
     get _errorMessage() {
         const cases: {
             [index: number]: "none" | "errorMessage";
@@ -366,6 +430,8 @@ export class URLFilterState extends pb_1.Message {
         configuration?: ReturnType<typeof URLFilterConfiguration.prototype.toObject>;
         info?: ReturnType<typeof URLFilterInfo.prototype.toObject>;
         errorMessage?: string;
+        isNew?: boolean;
+        isPageNew?: boolean;
     }): URLFilterState {
         const message = new URLFilterState({});
         if (data.status != null) {
@@ -380,6 +446,12 @@ export class URLFilterState extends pb_1.Message {
         if (data.errorMessage != null) {
             message.errorMessage = data.errorMessage;
         }
+        if (data.isNew != null) {
+            message.isNew = data.isNew;
+        }
+        if (data.isPageNew != null) {
+            message.isPageNew = data.isPageNew;
+        }
         return message;
     }
     toObject() {
@@ -388,6 +460,8 @@ export class URLFilterState extends pb_1.Message {
             configuration?: ReturnType<typeof URLFilterConfiguration.prototype.toObject>;
             info?: ReturnType<typeof URLFilterInfo.prototype.toObject>;
             errorMessage?: string;
+            isNew?: boolean;
+            isPageNew?: boolean;
         } = {};
         if (this.status != null) {
             data.status = this.status;
@@ -400,6 +474,12 @@ export class URLFilterState extends pb_1.Message {
         }
         if (this.errorMessage != null) {
             data.errorMessage = this.errorMessage;
+        }
+        if (this.isNew != null) {
+            data.isNew = this.isNew;
+        }
+        if (this.isPageNew != null) {
+            data.isPageNew = this.isPageNew;
         }
         return data;
     }
@@ -415,6 +495,10 @@ export class URLFilterState extends pb_1.Message {
             writer.writeMessage(3, this.info, () => this.info.serialize(writer));
         if (this.has_error_message)
             writer.writeString(4, this.errorMessage);
+        if (this.isNew != false)
+            writer.writeBool(5, this.isNew);
+        if (this.isPageNew != false)
+            writer.writeBool(6, this.isPageNew);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -435,6 +519,12 @@ export class URLFilterState extends pb_1.Message {
                     break;
                 case 4:
                     message.errorMessage = reader.readString();
+                    break;
+                case 5:
+                    message.isNew = reader.readBool();
+                    break;
+                case 6:
+                    message.isPageNew = reader.readBool();
                     break;
                 default: reader.skipField();
             }

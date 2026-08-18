@@ -13,8 +13,9 @@ import Foundation
 
 /// Read-only URL filter metadata surfaced to the UI.
 ///
-/// In the current iteration `rulesCount` and `lastUpdate` are not yet plumbed
-/// from `URLFilterControlProvider` and remain `nil`.
+/// `rulesCount` and `lastUpdate` are populated from the bloom metadata
+/// persisted by the URL filter extension; they stay `nil` until the
+/// prefilter has been fetched at least once.
 struct URLFilterInfo: Equatable {
     /// Number of rules in the active prefilter, if known.
     var rulesCount: Int?

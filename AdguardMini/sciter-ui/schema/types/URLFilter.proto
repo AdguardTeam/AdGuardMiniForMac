@@ -25,8 +25,13 @@ enum URLFilterProtectionLevel {
 message URLFilterConfiguration {
     bool enabled = 1;
     URLFilterProtectionLevel protection_level = 2;
-    bool isNew = 3;
-    bool isPageNew = 4;
+}
+
+/* Flags marking the system-wide protection UI as seen.
+   Persisted without touching the platform URL filter configuration. */
+message URLFilterSeen {
+    bool is_new = 1;
+    bool is_page_new = 2;
 }
 
 /* Read-only URL filter metadata. */
@@ -42,6 +47,8 @@ message URLFilterState {
     URLFilterConfiguration configuration = 2;
     URLFilterInfo info = 3;
     optional string error_message = 4;
+    bool is_new = 5;
+    bool is_page_new = 6;
 }
 
 /* Single-value wrapper for setting the protection level. */

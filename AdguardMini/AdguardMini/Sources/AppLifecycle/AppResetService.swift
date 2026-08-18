@@ -31,6 +31,7 @@ actor AppResetServiceImpl: AppResetService {
     private let userSettings: UserSettingsService
     private let serviceSupervisor: ServiceSupervisor
     private let statisticsService: StatisticsService
+    private let urlFilterResetService: URLFilterResetService
 
     init(
         _ lifecycle: AppLifecycleService,
@@ -38,7 +39,8 @@ actor AppResetServiceImpl: AppResetService {
         _ filtersSupervisor: FiltersSupervisor,
         _ userSettings: UserSettingsService,
         _ serviceSupervisor: ServiceSupervisor,
-        _ statisticsService: StatisticsService
+        _ statisticsService: StatisticsService,
+        _ urlFilterResetService: URLFilterResetService
     ) {
         self.lifecycle = lifecycle
         self.sharedStorage = sharedStorage
@@ -46,6 +48,7 @@ actor AppResetServiceImpl: AppResetService {
         self.userSettings = userSettings
         self.serviceSupervisor = serviceSupervisor
         self.statisticsService = statisticsService
+        self.urlFilterResetService = urlFilterResetService
     }
 
     func resetApp(request: Bool) async -> Bool {
@@ -71,6 +74,14 @@ actor AppResetServiceImpl: AppResetService {
 
     private func resetAppData() async {
         await self.serviceSupervisor.stopAll()
+
+        // Clears the system-wide protection state so a settings reset
+        // Behaves like a first run: the network extension configuration,
+        // Keychain protection level, bloom metadata, and the prefilter
+        // Data file are all cleared or restored to their defaults.
+        if let error = await self.urlFilterResetService.reset() {
+            LogError("URL filter reset failed during app reset: \(error)")
+        }
 
         self.sharedStorage.resetStorage()
         await self.filtersSupervisor.reset()

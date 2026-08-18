@@ -291,15 +291,20 @@ private final class ServiceLocator {
 
     private lazy var eventBus: EventBus = EventBusImpl()
 
+    private lazy var sharedKeychainStorage: SharedKeychainStorage = SharedKeychainStorageImpl()
+
     private lazy var urlFilterService: URLFilterService = {
         if #available(macOS 26, *) {
             return URLFilterServiceLiveImpl(
                 eventBus: self.eventBus,
-                sharedKeychainStorage: SharedKeychainStorageImpl()
+                sharedKeychainStorage: self.sharedKeychainStorage
             )
         }
         return URLFilterServiceNoOp()
     }()
+
+    private lazy var urlFilterBloomMetadataStorage: URLFilterBloomMetadataStorage =
+        URLFilterBloomMetadataStorageImpl()
 
     private lazy var urlFilterStateAssembler: URLFilterStateAssembler = {
         URLFilterStateAssembler(
@@ -312,9 +317,20 @@ private final class ServiceLocator {
             },
             isPageNewProvider: { [userSettingsService = self.userSettingsService] in
                 userSettingsService.urlFilterIsPageNew
+            },
+            bloomMetadataProvider: { [bloomMetadataStorage = self.urlFilterBloomMetadataStorage] in
+                bloomMetadataStorage.load()
             }
         )
     }()
+
+    private lazy var urlFilterResetService: URLFilterResetService = URLFilterResetServiceImpl(
+        self.urlFilterService,
+        self.sharedKeychainStorage,
+        self.urlFilterBloomMetadataStorage,
+        self.groupFolderFileService,
+        self.urlFilterStateAssembler
+    )
 
     private lazy var telemetryService: Telemetry.Service = Telemetry.ServiceImpl(
         network: self.coreDIContainer.networkManager,
@@ -398,7 +414,7 @@ private final class ServiceLocator {
             userSettingsManager: self.userSettingsManager,
             appSettingUpdateHandler: self.appSettingUpdateHandler,
             sharedSettingsStorage: SharedDIContainer.shared.sharedSettingsStorage,
-            sharedKeychainStorage: SharedKeychainStorageImpl(),
+            sharedKeychainStorage: self.sharedKeychainStorage,
             eventBus: self.eventBus,
             mailFiltersUpdater: self.mailFiltersUpdater
         )
@@ -516,7 +532,8 @@ private final class ServiceLocator {
             self.filtersSupervisor,
             self.userSettingsService,
             self.serviceSupervisor,
-            self.statisticsService
+            self.statisticsService,
+            self.urlFilterResetService
         )
     }()
 

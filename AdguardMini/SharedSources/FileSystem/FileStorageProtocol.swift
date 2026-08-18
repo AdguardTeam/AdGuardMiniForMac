@@ -31,6 +31,13 @@ protocol FileStorageProtocol {
     /// - Returns: Data if the load was successful, otherwise nil.
     func loadFile(relativePath: String, fileExtension: String?) async -> Data?
 
+    /// Remove file in origin folder.
+    /// - Parameters:
+    ///   - relativePath: Path relative to the origin folder.
+    ///   - fileExtension: Optional extension of file.
+    /// - Returns: True if the file was removed or was already absent.
+    func removeFile(relativePath: String, fileExtension: String?) async -> Bool
+
     /// Check that relative path is exists in origin folder.
     /// - Parameters:
     ///   - relativePath: Path relative to the origin folder.
@@ -59,6 +66,11 @@ extension FileStorageProtocol {
     @inlinable
     func loadFile(relativePath: String) async -> Data? {
         await self.loadFile(relativePath: relativePath, fileExtension: nil)
+    }
+
+    @inlinable
+    func removeFile(relativePath: String) async -> Bool {
+        await self.removeFile(relativePath: relativePath, fileExtension: nil)
     }
 
     @inlinable

@@ -124,6 +124,7 @@ adguard-mini/
 │   │   ├── ProductInfo/                  # App metadata and version info
 │   │   ├── Statistics/                   # CoreData blocking statistics
 │   │   ├── Storages/                     # Shared keychain / storage
+│   │   ├── URLFilter/                    # URL filtering shared contracts
 │   │   └── Utils/                        # Shared utilities
 │   ├── SciterResources/                  # Compiled Sciter UI resources
 │   │   └── SciterSchema/                 # Generated Protobuf Swift schema
@@ -288,6 +289,12 @@ You MUST follow the following rules for EVERY task that you perform:
   exactly the same for compatibility. After updating either, verify and
   synchronize both.
 
+- A finding that points to an explicit `// TODO: AG-<task>` trade-off scoped
+  to the current change is an acknowledged decision: flag it in the review
+  with its severity and the JIRA reference, but it MUST NOT block the merge
+  on its own. Unblocked, untracked concerns and ordinary findings still
+  apply as usual.
+
 ## Code Guidelines
 
 ### System Design
@@ -386,6 +393,16 @@ Blocker JSON consumed by the extension targets.
 
    **Rationale**: Ensures type-safe communication between Swift platform layer
    and TypeScript UI layer.
+
+   The Protobuf bridge is deployed atomically: the Swift platform and the
+   Sciter UI ship in a single app bundle, and the schema is an in-memory wire
+   only — messages are never serialized to durable storage. Consequently,
+   removing or renaming fields does not require reserving their tag numbers
+   and names; deleted tags may be freely reused in later schema revisions.
+
+   **Exception**: if a message is ever persisted (UserDefaults, files,
+   CoreData) or crosses a version boundary, mark deleted tags and names as
+   `reserved` to prevent silent wire corruption.
 
 4. **Sciter UI modules**: Each UI module (`tray`, `settings`, `onboarding`,
    `userrules`, `inline`) runs independently in its own Sciter window. Shared
@@ -505,6 +522,55 @@ Blocker JSON consumed by the extension targets.
   **Rationale**: Prevents fabricated requirements from entering the codebase
   and ensures the implementation matches the designer's intent.
 
+7. **Doc comments describe the documented type only**: Doc comments MUST
+  describe the purpose and behavior of the documented type itself. They
+  MUST NOT reveal the internal implementation of other modules — how a
+  consumer works, why a consumer exists, or build/test wiring (test target
+  membership, Sciter dependencies, "extracted so it can be unit-tested").
+  References to other types are allowed only where they are part of the
+  documented type's own contract: its data flow (who writes/reads it),
+  platform or threading constraints it must respect, or a brief pointer to
+  an adjacent type. Testability, consumer wiring, and linker details belong
+  in the consumer's own documentation.
+
+  **Rationale**: Keeps documentation stable when consumers change and
+  prevents internal wiring and test-infrastructure details from leaking
+  into type contracts, while preserving contract-level cross-references.
+
+8. **Fatal errors**: `fatalError` is reserved for failures of a fundamental
+   mechanism the process depends on: a missing App Group container or shared
+   storage, a failed Sciter or filter engine initialization. Such a failure
+   puts the process in a severely broken state (broken provisioning, missing
+   resources) that cannot be recovered at runtime, and degrading would only
+   mask it — the same mechanism serves other data, including critical data.
+   Ordinary per-operation failures (network, decode, missing file) MUST NOT
+   crash: handle them with optionals, errors, and fallbacks.
+
+   Availability of a shared container or storage is a binary, process-wide
+   property: if it is missing, every consumer of it is broken, so a failable
+   or caller-supplied initializer for a single consumer neither keeps the
+   process functional nor prevents a crash — the same precondition already
+   fails the other initializers built on that mechanism. Do not soften an
+   initializer based on what data it carries today (for example "UI-only"
+   metadata): the criterion is the mechanism, not the data, because the same
+   mechanism may later carry critical data.
+
+   **Rationale**: Matches the established convention and keeps crashes loud
+   and meaningful for genuinely fatal conditions only.
+
+9. **Enforced data contracts**: Values crossing a boundary (wire format,
+   shared storage, an endpoint payload) are governed by a contract with the
+   producer. Required fields are enforced loudly: the consumer fails and
+   logs when they are missing or invalid, and does not silently degrade
+   around a contract violation — the same mechanism may carry other,
+   critical data. The producer and the consumer validate under one
+   contract: the writer MUST NOT persist values the reader would reject.
+   Optionality is a deliberate contract decision (absent is a valid state),
+   never a fallback that masks a broken producer.
+
+   **Rationale**: Keeps backend and versioning contract violations visible
+   instead of papering over them.
+
 ### Testing Discipline
 
 1. **XCTest for Swift**: Unit tests are located in `AdguardMini/AdguardMiniTests/`.
@@ -534,6 +600,18 @@ Blocker JSON consumed by the extension targets.
 
    **Rationale**: Prevents regressions from slipping through code review by
    catching failures at commit time.
+
+4. **Environment-independent tests**: Tests MUST NOT depend on, or be affected
+   by, the developer's local environment — files on disk (`devConfig.json`),
+   network availability, system state (UID, macOS version), or ambient
+   settings. Make the code under test read an injected value or a pure
+   compiled-in default instead of ambient state. Only in exceptional cases
+   where ambient state is the very contract under test (for example a
+   platform-availability check) may a test consult it, and then it MUST be
+   explicit about it.
+
+   **Rationale**: Keeps the suite green and deterministic on every machine and
+   in CI, regardless of what a developer happens to have configured locally.
 
 ### Dependency Management
 

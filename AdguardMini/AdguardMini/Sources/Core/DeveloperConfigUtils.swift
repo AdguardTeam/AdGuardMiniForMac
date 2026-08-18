@@ -22,7 +22,7 @@ private enum Constants {
 ///
 /// File **devConfig.json** must be placed in `Shared product data directory`
 ///
-/// It is `/Library/Application Support/AdGuard Software/com.adguard.safari.AdGuard` or `/Library/Application Support/AdGuard Software/com.adguard.safari.AdGuard.debug`.
+/// It is `/Library/Application Support/AdGuard Software Limited/com.adguard.safari.AdGuard`.
 ///
 /// File must have owner **root** and readonly rights for others.
 struct DeveloperConfigUtils {
@@ -64,12 +64,33 @@ struct DeveloperConfigUtils {
         /// Example: `{"AG-51019-Advanced-settings": "optA"}`.
         /// Valid options: `"optA"`, `"optB"`, `"notInTest"`
         case abTestOverrides = "ab_tests"
+
+        /// Value is a dictionary overriding URL filter level configurations.
+        ///
+        /// It is keyed by protection level (`essential`, `safe`, `family`).
+        /// Each entry may contain `pir_server_url`, `pir_privacy_pass_issuer_url`,
+        /// `pir_authentication_token` and `bloom_params_url`; unset fields keep
+        /// the compiled-in defaults.
+        ///
+        /// Example: `{"essential": {"pir_server_url": "...", "pir_authentication_token": "..."}}`.
+        case urlFilterLevelOverrides = "url_filter"
+
+        /// Value is an integer UID overriding the account UID used by the
+        /// URL-filter `non501User` check.
+        ///
+        /// System-wide protection (URL filter) is only available to the first
+        /// admin account (UID 501). This override lets a development build on a
+        /// non-501 account emulate UID 501 without changing the actual user;
+        /// setting it to `501` effectively disables the account check.
+        ///
+        /// Example: `{"url_filter_override_uid": 501}`.
+        case urlFilterOverrideUID = "url_filter_override_uid"
     }
 
     // MARK: Public properties and methods
 
     static subscript(name: Property) -> Any? {
-        Self.queue.sync {
+        Self.queue.sync(flags: .barrier) {
             if Self.forceToReload {
                 Self.config = [:]
                 if self.checkFile() {
@@ -122,30 +143,37 @@ struct DeveloperConfigUtils {
 
     /// True if config is empty.
     static var isEmpty: Bool {
-        self.config.isEmpty
+        Self.queue.sync {
+            Self.config.isEmpty
+        }
     }
 
     /// Config file content
     static var description: String {
-        var result = ""
-        if !Self.isEmpty {
-            for key in Self.Property.allCases {
-                if let value = Self.config[key.rawValue] {
-                    result += "\t\(key.rawValue): \(value)\n"
-                } else {
-                    result += "\t\(key.rawValue): none\n"
+        Self.queue.sync {
+            var result = ""
+            if !Self.config.isEmpty {
+                for key in Self.Property.allCases {
+                    if let value = Self.config[key.rawValue] {
+                        result += "\t\(key.rawValue): \(value)\n"
+                    } else {
+                        result += "\t\(key.rawValue): none\n"
+                    }
                 }
             }
-        }
 
-        return result
+            return result
+        }
     }
 
     // MARK: Private
 
     private static let queue = DispatchQueue(label: "dev.config.queue", attributes: .concurrent)
-    private static var config: [String: Any] = [:]
-    private static var forceToReload = true
+    // Both properties are serialized by `queue`.
+    // Reads run inside sync blocks, mutations inside barrier blocks.
+    // The compiler-level concurrency check is therefore safely disabled.
+    nonisolated(unsafe) private static var config: [String: Any] = [:]
+    nonisolated(unsafe) private static var forceToReload = true
 
     private static func checkFile() -> Bool {
         guard let fileUrl = self.fileUrl else {

@@ -130,8 +130,6 @@ export class SettingsStore {
      */
     public urlFilterState = new URLFilterConfiguration({
         enabled: false,
-        isNew: false,
-        isPageNew: false,
     });
 
     /**

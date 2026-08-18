@@ -14,9 +14,7 @@ import Foundation
 /// UI-facing aggregate of the URL filter state, expressed in pure Swift types.
 ///
 /// Produced by ``URLFilterStateAssembler`` and converted to the Protobuf
-/// `URLFilterState` by an app-target-only `toProto()` extension. Keeping this
-/// type free of any sciter dependency lets the assembly logic be unit-tested
-/// without linking `SciterSchema`.
+/// `URLFilterState` by an app-target-only `toProto()` extension.
 struct URLFilterUIState: Equatable {
     /// Derived URL filter status.
     var status: URLFilterStatus

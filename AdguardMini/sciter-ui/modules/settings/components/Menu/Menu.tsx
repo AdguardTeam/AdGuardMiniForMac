@@ -22,7 +22,7 @@ function MenuComponent() {
     const { account, settings, telemetry, advancedBlocking } = useSettingsStore();
     const {
         isNew: isSystemWideProtectionNew,
-    } = advancedBlocking.urlFilterState.configuration;
+    } = advancedBlocking.urlFilterState;
 
     const {
         isFreeware,

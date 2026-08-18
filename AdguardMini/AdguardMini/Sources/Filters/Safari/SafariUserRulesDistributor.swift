@@ -15,8 +15,7 @@ import ContentBlockerConverter
 
 /// Distributes user rules and service groups across Safari content blockers.
 ///
-/// Encapsulates the tail of the user-rules conversion pipeline so it can be
-/// unit-tested against real production code:
+/// Encapsulates the tail of the user-rules conversion pipeline:
 /// 1. Non-empty service groups are appended to `.other` before user rules.
 /// 2. User rules are appended to every `ContentBlockerType.allCases`; affinity
 ///    routing is delegated to `AffinityRulesGrouper`.

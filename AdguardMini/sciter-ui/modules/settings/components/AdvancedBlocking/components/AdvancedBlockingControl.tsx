@@ -6,7 +6,7 @@ import { observer } from 'mobx-react-lite';
 
 import { URLFilterConfiguration } from 'Apis/types/URLFilter';
 import { SettingsEvent } from 'Modules/settings/store/modules';
-import { usePayedFuncsTitle, useSettingsStore } from 'SettingsLib/hooks';
+import { useIsSystemWideProtectionDisabled, usePayedFuncsTitle, useSettingsStore } from 'SettingsLib/hooks';
 import theme from 'Theme';
 import { Text } from 'UILib';
 
@@ -28,12 +28,16 @@ export function AdvancedBlockingControlComponent() {
     } = advancedBlocking.advancedBlocking;
     const {
         enabled: systemWideProtectionEnabled,
-        isNew: isSystemWideProtectionNew,
     } = advancedBlocking.urlFilterState.configuration;
+    const {
+        isNew: isSystemWideProtectionNew,
+    } = advancedBlocking.urlFilterState;
 
     const { isLicenseOrTrialActive } = account;
 
     const isFree = !isLicenseOrTrialActive;
+
+    const isSystemWideProtectionDisabled = useIsSystemWideProtectionDisabled();
 
     const payedFuncsTitle = usePayedFuncsTitle(SettingsEvent.TryForFreeAbTest);
     const onAdguardExtraChange = (value: boolean) => {
@@ -80,6 +84,7 @@ export function AdvancedBlockingControlComponent() {
             ) : undefined}
             />
             <SystemWideProtectionSwitch
+                disabled={isSystemWideProtectionDisabled}
                 isNew={isSystemWideProtectionNew}
                 muted={!isLicenseOrTrialActive}
                 orangeIcon={isFree}
