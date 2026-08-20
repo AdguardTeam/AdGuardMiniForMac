@@ -14,3 +14,10 @@ export const provideContactSupportParam = (props?: Omit<ContactSupportLinkProps,
         <ContactSupportLink text={text} {...props} />
     ),
 });
+
+/**
+ * Provides a notification text for a general error.
+ */
+export const getNotificationSomethingWentWrongText = () => {
+    return translate('notification.something.went.wrong', provideContactSupportParam());
+};

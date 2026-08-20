@@ -20,7 +20,20 @@ import {
     URLFilterConfiguration,
     URLFilterState,
 } from 'Apis/types';
+import {
+    NotificationContext,
+    NotificationsQueueIconType,
+    NotificationsQueueType,
+} from 'Common/stores/NotificationsQueue';
 import { withLast } from 'Common/utils/queue';
+import {
+    notifySingleActive,
+    rollbackURLFilterCardSeen,
+    rollbackURLFilterConfiguration,
+    rollbackURLFilterPageSeen,
+    withURLFilterConfiguration,
+} from 'Common/utils/urlFilterState';
+import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
 
 import type { EmptyValue } from 'Apis/types';
 import type { SettingsStore } from 'SettingsStore';
@@ -58,6 +71,11 @@ export class AdvancedBlocking {
     });
 
     /**
+     * Active URL-filter failure notification id used to deduplicate toasts.
+     */
+    private urlFilterCallFailedNotificationId: string | null = null;
+
+    /**
      * Ctor
      *
      * @param rootStore
@@ -67,6 +85,26 @@ export class AdvancedBlocking {
         makeAutoObservable(this, {
             rootStore: false,
         }, { autoBind: true });
+    }
+
+    /**
+     * Shows a generic warning when a System-wide Protection backend call fails.
+     */
+    private notifyURLFilterCallFailed() {
+        this.urlFilterCallFailedNotificationId = notifySingleActive(
+            this.urlFilterCallFailedNotificationId,
+            this.rootStore.notification,
+            {
+                message: getNotificationSomethingWentWrongText(),
+                notificationContext: NotificationContext.info,
+                type: NotificationsQueueType.warning,
+                iconType: NotificationsQueueIconType.error,
+                closeable: true,
+                onClose: () => {
+                    this.urlFilterCallFailedNotificationId = null;
+                },
+            },
+        );
     }
 
     /**
@@ -105,8 +143,12 @@ export class AdvancedBlocking {
      * Get URL filter state from swift
      */
     public async getURLFilterState() {
-        const resp = await window.API.Execute(new GetURLFilterStateRequest());
-        this.setURLFilterState(resp);
+        try {
+            const resp = await window.API.Execute(new GetURLFilterStateRequest());
+            this.setURLFilterState(resp);
+        } catch {
+            this.notifyURLFilterCallFailed();
+        }
     }
 
     /**
@@ -144,21 +186,19 @@ export class AdvancedBlocking {
      * Update SystemWideProtection setting
      */
     public updateSystemWideProtection(value: URLFilterConfiguration) {
+        const previousConfiguration = URLFilterConfiguration.fromObject(this.urlFilterState.configuration.toObject());
         const newConfiguration = new URLFilterConfiguration({
             enabled: value.enabled,
             protectionLevel: value.protectionLevel,
         });
 
-        this.setURLFilterState(new URLFilterState({
-            status: this.urlFilterState.status,
-            configuration: newConfiguration,
-            info: this.urlFilterState.info,
-            errorMessage: this.urlFilterState.errorMessage,
-            isNew: this.urlFilterState.isNew,
-            isPageNew: this.urlFilterState.isPageNew,
-        }));
+        this.setURLFilterState(withURLFilterConfiguration(this.urlFilterState, newConfiguration));
 
-        window.API.Execute(new UpdateURLFilterConfigurationRequest(newConfiguration));
+        void window.API.Execute(new UpdateURLFilterConfigurationRequest(newConfiguration))
+            .catch(() => {
+                this.setURLFilterState(rollbackURLFilterConfiguration(this.urlFilterState, previousConfiguration));
+                this.notifyURLFilterCallFailed();
+            });
     }
 
     /**
@@ -179,60 +219,75 @@ export class AdvancedBlocking {
      * Marks URL filter install process as requested.
      */
     public markURLFilterInstallRequested() {
-        window.API.Execute(new MarkURLFilterInstallRequestedRequest());
+        void window.API.Execute(new MarkURLFilterInstallRequestedRequest())
+            .catch(() => {
+                this.notifyURLFilterCallFailed();
+            });
     }
 
     /**
      * Resets URL filter prefilter cache.
      */
     public resetURLFilterCache() {
-        window.API.Execute(new ResetURLFilterCacheRequest());
+        void window.API.Execute(new ResetURLFilterCacheRequest())
+            .catch(() => {
+                this.notifyURLFilterCallFailed();
+            });
     }
 
     /**
      * Removes URL filter configuration.
      */
     public removeURLFilter() {
-        window.API.Execute(new RemoveURLFilterRequest());
+        void window.API.Execute(new RemoveURLFilterRequest())
+            .catch(() => {
+                this.notifyURLFilterCallFailed();
+            });
     }
 
     /**
      * Marks system-wide protection card as seen.
      */
     public markSystemWideProtectionAsSeen() {
-        const { isPageNew } = this.urlFilterState;
+        const { isNew, isPageNew: previousIsPageNew } = this.urlFilterState;
         this.setURLFilterState(new URLFilterState({
             status: this.urlFilterState.status,
             configuration: this.urlFilterState.configuration,
             info: this.urlFilterState.info,
             errorMessage: this.urlFilterState.errorMessage,
             isNew: false,
-            isPageNew,
+            isPageNew: previousIsPageNew,
         }));
 
-        window.API.Execute(new MarkURLFilterSeenRequest({
+        void window.API.Execute(new MarkURLFilterSeenRequest({
             isNew: false,
-            isPageNew,
-        }));
+            isPageNew: previousIsPageNew,
+        })).catch(() => {
+            this.setURLFilterState(rollbackURLFilterCardSeen(this.urlFilterState, isNew));
+            this.notifyURLFilterCallFailed();
+        });
     }
 
     /**
      * Marks system-wide protection page as seen.
      */
     public markSystemWideProtectionPageAsSeen() {
-        const { isNew } = this.urlFilterState;
+        const { isNew: previousIsNew, isPageNew } = this.urlFilterState;
         this.setURLFilterState(new URLFilterState({
             status: this.urlFilterState.status,
             configuration: this.urlFilterState.configuration,
             info: this.urlFilterState.info,
             errorMessage: this.urlFilterState.errorMessage,
-            isNew,
+            isNew: previousIsNew,
             isPageNew: false,
         }));
 
-        window.API.Execute(new MarkURLFilterSeenRequest({
-            isNew,
+        void window.API.Execute(new MarkURLFilterSeenRequest({
+            isNew: previousIsNew,
             isPageNew: false,
-        }));
+        })).catch(() => {
+            this.setURLFilterState(rollbackURLFilterPageSeen(this.urlFilterState, isPageNew));
+            this.notifyURLFilterCallFailed();
+        });
     }
 }

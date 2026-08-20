@@ -14,8 +14,18 @@ import { GetSafariExtensionsRequest } from 'Apis/requests/SafariExtensionsServic
 import { RequestOpenSettingsPageRequest } from 'Apis/requests/SystemService';
 import { GetStatisticsRequest, GetTraySettingsRequest, UpdateTraySettingsRequest } from 'Apis/requests/TraySettingsService';
 import { GlobalSettings, TrayLicenseOrError, LicenseStatus, ReleaseVariants, StatisticsPeriod, StatisticsResponse, FiltersStatus, URLFilterConfiguration } from 'Apis/types';
+import {
+    NotificationContext,
+    NotificationsQueueIconType,
+    NotificationsQueueType,
+} from 'Common/stores/NotificationsQueue';
 import { SafariExtensionsStore } from 'Common/stores/SafariExtensionsStore';
+import {
+    notifySingleActive,
+    rollbackTrayURLFilterEnabled,
+} from 'Common/utils/urlFilterState';
 import { updateLanguage } from 'Intl';
+import { getNotificationSomethingWentWrongText } from 'TrayLib/utils/translate';
 
 import type { Filters, Filter, FilterUpdateStatus, SafariExtensionUpdate, SafariExtensions, AdvancedBlocking } from 'Apis/types';
 import type { StoryId } from 'Modules/tray/modules/stories/model';
@@ -133,6 +143,11 @@ export class SettingsStore {
     });
 
     /**
+     * Active URL-filter failure notification id used to deduplicate toasts.
+     */
+    private urlFilterCallFailedNotificationId: string | null = null;
+
+    /**
      * Checks if the license status is active or trial
      */
     public get isLicenseOrTrialActive() {
@@ -180,6 +195,26 @@ export class SettingsStore {
         this.getTrialAvailability();
         this.getAdvancedBlocking();
         this.getURLFilterState();
+    }
+
+    /**
+     * Shows a generic warning when a System-wide Protection backend call fails.
+     */
+    private notifyURLFilterCallFailed() {
+        this.urlFilterCallFailedNotificationId = notifySingleActive(
+            this.urlFilterCallFailedNotificationId,
+            this.rootStore.notification,
+            {
+                message: getNotificationSomethingWentWrongText(),
+                notificationContext: NotificationContext.info,
+                type: NotificationsQueueType.warning,
+                iconType: NotificationsQueueIconType.error,
+                closeable: true,
+                onClose: () => {
+                    this.urlFilterCallFailedNotificationId = null;
+                },
+            },
+        );
     }
 
     /**
@@ -272,8 +307,12 @@ export class SettingsStore {
      * Get URL filter state from swift
      */
     public async getURLFilterState() {
-        const resp = await window.API.Execute(new GetURLFilterStateRequest());
-        this.setURLFilterState(resp.configuration);
+        try {
+            const resp = await window.API.Execute(new GetURLFilterStateRequest());
+            this.setURLFilterState(resp.configuration);
+        } catch {
+            this.notifyURLFilterCallFailed();
+        }
     }
 
     /**
@@ -287,10 +326,15 @@ export class SettingsStore {
      * Update SystemWideProtection setting
      */
     public enableSystemWideProtection() {
-        const newConfiguration = this.urlFilterState.clone();
+        const previousEnabled = this.urlFilterState.enabled;
+        const newConfiguration = URLFilterConfiguration.fromObject(this.urlFilterState.toObject());
         newConfiguration.enabled = true;
         this.setURLFilterState(newConfiguration);
-        window.API.Execute(new UpdateURLFilterConfigurationRequest(newConfiguration));
+        void window.API.Execute(new UpdateURLFilterConfigurationRequest(newConfiguration))
+            .catch(() => {
+                this.setURLFilterState(rollbackTrayURLFilterEnabled(this.urlFilterState, previousEnabled));
+                this.notifyURLFilterCallFailed();
+            });
     }
 
     /**
