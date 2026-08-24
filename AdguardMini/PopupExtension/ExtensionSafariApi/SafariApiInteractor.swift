@@ -24,7 +24,8 @@ protocol SafariApiInteractor {
     func appState() async throws -> EBAAppState
     func getCurrentFilteringState(withUrl url: String) async throws -> EBACurrentFilteringState
     func getExtraState(withUrl url: String) async throws -> Bool
-    func hasHealthCheckAttention() async throws -> Bool
+    /// Fetches health-check and upsell state together for the popup presentation.
+    func popupPresentationState() async throws -> (hasAttention: Bool, isUpsellAvailable: Bool)
     func isOnboardingCompleted() async throws -> Bool
 
     func setProtectionStatus(_ enabled: Bool) async throws -> EBATimestamp
@@ -75,9 +76,18 @@ final class SafariApiInteractorImpl: SafariApiInteractor {
         }
     }
 
-    func hasHealthCheckAttention() async throws -> Bool {
+    /// Fetches health-check and upsell state together for the popup presentation.
+    func popupPresentationState() async throws -> (hasAttention: Bool, isUpsellAvailable: Bool) {
         try await withCheckedThrowingContinuation { continuation in
-            self.safariApi.hasHealthCheckAttention(reply: continuation.callback)
+            self.safariApi.popupPresentationState { hasAttention, isUpsellAvailable, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(
+                        returning: (hasAttention: hasAttention, isUpsellAvailable: isUpsellAvailable)
+                    )
+                }
+            }
         }
     }
 

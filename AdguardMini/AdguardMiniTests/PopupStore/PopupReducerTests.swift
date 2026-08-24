@@ -35,9 +35,9 @@ final class PopupReducerTests: XCTestCase {
         protectionEnabledForCurrentUrl: Bool = true,
         hasHealthCheckAttention: Bool = false,
         xpcAvailable: Bool = true,
-        isFreeUser: Bool = true,
         isTrialAvailable: Bool = false,
         trialDays: Int = 0,
+        isUpsellAvailable: Bool = false,
         tabStats: TabStats = TabStats(),
         tabContext: Store.TabContext = .empty,
         pausedUrls: Set<String> = [],
@@ -52,9 +52,9 @@ final class PopupReducerTests: XCTestCase {
             protectionEnabledForCurrentUrl: protectionEnabledForCurrentUrl,
             hasHealthCheckAttention: hasHealthCheckAttention,
             xpcAvailable: xpcAvailable,
-            isFreeUser: isFreeUser,
             isTrialAvailable: isTrialAvailable,
             trialDays: trialDays,
+            isUpsellAvailable: isUpsellAvailable,
             tabStats: tabStats,
             tabContext: tabContext,
             pausedUrls: pausedUrls,
@@ -1081,7 +1081,7 @@ final class PopupReducerTests: XCTestCase {
     }
 
     func testUpsellTappedEmitsOpenPurchaseAndDismissPopover() {
-        let initial = self.state(isFreeUser: true)
+        let initial = self.state()
         let (next, effects) = PopupReducer.reduce(
             state: initial,
             action: .upsellTapped
@@ -1102,7 +1102,6 @@ final class PopupReducerTests: XCTestCase {
 
     func testAppStateChangedPropagatesLicenseFields() {
         let initial = self.state(
-            isFreeUser: true,
             isTrialAvailable: false,
             lastAppStateTimestamp: .zero
         )
@@ -1111,7 +1110,6 @@ final class PopupReducerTests: XCTestCase {
             lastCheckTime: Constants.freshTimestamp,
             logLevel: 0,
             theme: 0,
-            isFreeUser: false,
             isTrialAvailable: true,
             trialDays: 7
         )
@@ -1119,9 +1117,17 @@ final class PopupReducerTests: XCTestCase {
             state: initial,
             action: .appStateChanged(snapshot)
         )
-        XCTAssertFalse(next.isFreeUser)
         XCTAssertTrue(next.isTrialAvailable)
         XCTAssertEqual(next.trialDays, 7)
+    }
+
+    func testPopupReadyPropagatesUpsellAvailability() {
+        let initial = self.state()
+        let (next, _) = PopupReducer.reduce(
+            state: initial,
+            action: .popupReady(hasHealthCheckAttention: false, isUpsellAvailable: true)
+        )
+        XCTAssertTrue(next.isUpsellAvailable)
     }
 
     // MARK: Telemetry screen — `.healthCheckAttention` branch of `mainOrHealthCheckAttention`
@@ -1207,7 +1213,7 @@ final class PopupReducerTests: XCTestCase {
         let initial = self.state()
         let (next, effects) = PopupReducer.reduce(
             state: initial,
-            action: .popupReady(hasHealthCheckAttention: false)
+            action: .popupReady(hasHealthCheckAttention: false, isUpsellAvailable: false)
         )
         XCTAssertFalse(next.hasHealthCheckAttention)
         XCTAssertEqual(effects, [.sendTelemetry(.pageView(.main))])
@@ -1217,7 +1223,7 @@ final class PopupReducerTests: XCTestCase {
         let initial = self.state()
         let (next, effects) = PopupReducer.reduce(
             state: initial,
-            action: .popupReady(hasHealthCheckAttention: true)
+            action: .popupReady(hasHealthCheckAttention: true, isUpsellAvailable: false)
         )
         XCTAssertTrue(next.hasHealthCheckAttention)
         XCTAssertEqual(effects, [.sendTelemetry(.pageView(.healthCheckAttention))])
@@ -1227,7 +1233,7 @@ final class PopupReducerTests: XCTestCase {
         let initial = self.state(protectionEnabled: false)
         let (_, effects) = PopupReducer.reduce(
             state: initial,
-            action: .popupReady(hasHealthCheckAttention: false)
+            action: .popupReady(hasHealthCheckAttention: false, isUpsellAvailable: false)
         )
         XCTAssertEqual(effects, [.sendTelemetry(.pageView(.protectionDisabled))])
     }
@@ -1236,7 +1242,7 @@ final class PopupReducerTests: XCTestCase {
         let initial = self.state(lastError: .launchFailed)
         let (_, effects) = PopupReducer.reduce(
             state: initial,
-            action: .popupReady(hasHealthCheckAttention: false)
+            action: .popupReady(hasHealthCheckAttention: false, isUpsellAvailable: false)
         )
         XCTAssertEqual(effects, [.sendTelemetry(.pageView(.failedEnableProtection))])
     }
@@ -1245,7 +1251,7 @@ final class PopupReducerTests: XCTestCase {
         let initial = self.state(onboardingStatus: .notCompleted)
         let (_, effects) = PopupReducer.reduce(
             state: initial,
-            action: .popupReady(hasHealthCheckAttention: false)
+            action: .popupReady(hasHealthCheckAttention: false, isUpsellAvailable: false)
         )
         XCTAssertTrue(effects.isEmpty)
     }
@@ -1582,28 +1588,6 @@ final class PopupReducerTests: XCTestCase {
         )
     }
 
-    // MARK: healthCheckRefreshed
-
-    func testHealthCheckRefreshedSetsAttention() {
-        let initial = self.state(hasHealthCheckAttention: false)
-        let (next, effects) = PopupReducer.reduce(
-            state: initial,
-            action: .healthCheckRefreshed(hasAttention: true)
-        )
-        XCTAssertTrue(next.hasHealthCheckAttention)
-        XCTAssertTrue(effects.isEmpty)
-    }
-
-    func testHealthCheckRefreshedClearsAttention() {
-        let initial = self.state(hasHealthCheckAttention: true)
-        let (next, effects) = PopupReducer.reduce(
-            state: initial,
-            action: .healthCheckRefreshed(hasAttention: false)
-        )
-        XCTAssertFalse(next.hasHealthCheckAttention)
-        XCTAssertTrue(effects.isEmpty)
-    }
-
     // MARK: popupWillShow triggers popup preparation
 
     func testPopupWillShowTriggersPreparePopup() {
@@ -1623,7 +1607,7 @@ final class PopupReducerTests: XCTestCase {
         XCTAssertEqual(effects, [.preparePopup])
     }
 
-    func testPopupOpenedDoesNotTriggerHealthCheckOrPreparePopup() {
+    func testPopupOpenedDoesNotTriggerPreparePopup() {
         let initial = self.state(
             mainAppRunning: true,
             tabContext: Store.TabContext(
@@ -1640,10 +1624,6 @@ final class PopupReducerTests: XCTestCase {
         XCTAssertFalse(
             effects.contains(.preparePopup),
             "popupOpened must not trigger preparePopup — popupWillShow already did it"
-        )
-        XCTAssertFalse(
-            effects.contains(.refreshHealthCheck),
-            "popupOpened must not trigger health check — popupWillShow already did it"
         )
     }
 }

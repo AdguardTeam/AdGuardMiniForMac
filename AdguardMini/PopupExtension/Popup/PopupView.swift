@@ -106,7 +106,7 @@ struct PopupView: View {
     }
 
     private var upsellConfiguration: DomainView.UpsellConfiguration? {
-        guard self.viewState.isFreeUser else { return nil }
+        guard self.viewState.isUpsellAvailable else { return nil }
 
         return .init(
             title: .localized.base.item_upsell_title,

@@ -95,10 +95,9 @@ enum PopupReducer {
                 tabUrl: tabUrl,
                 isFilteringEnabled: isFilteringEnabled
             )
-        case let .healthCheckRefreshed(hasAttention):
-            return Self.handleHealthCheckRefreshed(state: state, hasAttention: hasAttention)
-        case let .popupReady(hasAttention):
-            return Self.handlePopupReady(state: state, hasHealthCheckAttention: hasAttention)
+        case let .popupReady(hasAttention, isUpsellAvailable):
+            return Self.handlePopupReady(
+                state: state, hasHealthCheckAttention: hasAttention, isUpsellAvailable: isUpsellAvailable)
         // MARK: Lifecycle
         case .popupWillShow:
             return Self.handlePopupWillShow(state: state)
@@ -189,7 +188,6 @@ private extension PopupReducer {
         let protectionChanged = state.protectionEnabled != snapshot.isProtectionEnabled
         let hadError = state.lastError != nil
         next.protectionEnabled = snapshot.isProtectionEnabled
-        next.isFreeUser = snapshot.isFreeUser
         next.isTrialAvailable = snapshot.isTrialAvailable
         next.trialDays = snapshot.trialDays
         next.lastError = nil
@@ -476,15 +474,6 @@ private extension PopupReducer {
         return (next, effects)
     }
 
-    static func handleHealthCheckRefreshed(
-        state: Store.State,
-        hasAttention: Bool
-    ) -> (Store.State, [Store.Effect]) {
-        var next = state
-        next.hasHealthCheckAttention = hasAttention
-        return (next, [])
-    }
-
     static func handleAppStateRefreshSkipped(
         state: Store.State,
         isXpcUnavailable: Bool
@@ -520,14 +509,16 @@ private extension PopupReducer {
     }
 
     /// Handles the result of the `.preparePopup` effect.
-    /// Updates health-check state and emits the initial page-view
-    /// telemetry with the now-correct screen type.
+    /// Updates health-check and upsell availability, then emits the initial
+    /// page-view telemetry with the now-correct screen type.
     static func handlePopupReady(
         state: Store.State,
-        hasHealthCheckAttention: Bool
+        hasHealthCheckAttention: Bool,
+        isUpsellAvailable: Bool
     ) -> (Store.State, [Store.Effect]) {
         var next = state
         next.hasHealthCheckAttention = hasHealthCheckAttention
+        next.isUpsellAvailable = isUpsellAvailable
         return (next, self.pageViewEffects(state: next))
     }
 }

@@ -28,7 +28,6 @@ private enum CancellationCategory: Hashable {
     case settings
     case purchase
     case report
-    case healthCheck
     case preparePopup
 }
 
@@ -45,7 +44,6 @@ private extension Store.Effect {
         case .openSettings:             .settings
         case .openPurchase:             .purchase
         case .reportSite:               .report
-        case .refreshHealthCheck:       .healthCheck
         case .preparePopup:             .preparePopup
         case .openUrlInNewTab,
              .openUrlWithSystemHandler,
@@ -186,8 +184,6 @@ final class EffectRunner: EffectRunning, @unchecked Sendable {
             return await self.executeOpenPurchase()
         case let .reportSite(url):
             return await self.executeReportSite(url: url)
-        case .refreshHealthCheck:
-            return await self.executeRefreshHealthCheck()
         case .preparePopup:
             return await self.executePreparePopup()
         case let .openUrlWithSystemHandler(url):
@@ -238,7 +234,6 @@ final class EffectRunner: EffectRunning, @unchecked Sendable {
                 lastCheckTime: appState.lastCheckTime,
                 logLevel: appState.logLevel,
                 theme: appState.theme,
-                isFreeUser: appState.isFreeUser,
                 isTrialAvailable: appState.isTrialAvailable,
                 trialDays: appState.trialDays
             ))
@@ -271,20 +266,12 @@ final class EffectRunner: EffectRunning, @unchecked Sendable {
         }
     }
 
-    private func executeRefreshHealthCheck() async -> Store.Action? {
-        do {
-            let hasAttention = try await self.safariApi.hasHealthCheckAttention()
-            return .healthCheckRefreshed(hasAttention: hasAttention)
-        } catch {
-            return nil
-        }
-    }
-
-    /// Fetches health-check status and returns `.popupReady`,
-    /// guaranteeing an action even on XPC failure (defaults to `false`).
+    /// Fetches health-check status and upsell availability, returning
+    /// `.popupReady` and guaranteeing an action even on XPC failure.
     private func executePreparePopup() async -> Store.Action? {
-        let hasAttention = (try? await self.safariApi.hasHealthCheckAttention()) ?? false
-        return .popupReady(hasHealthCheckAttention: hasAttention)
+        let state = (try? await self.safariApi.popupPresentationState())
+            ?? (hasAttention: false, isUpsellAvailable: false)
+        return .popupReady(hasHealthCheckAttention: state.hasAttention, isUpsellAvailable: state.isUpsellAvailable)
     }
 
     private func executeRestartMainApp() async -> Store.Action {

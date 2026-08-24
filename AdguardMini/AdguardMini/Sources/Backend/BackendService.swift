@@ -20,6 +20,10 @@ private enum Constants {
 
     static let refreshAppStatusInfoInterval: Double = 1.hour
     static let networkRelaxationTimeout: TimeInterval = 5.seconds
+    /// How often the background keeps the shared promo cache fresh.
+    /// The refresh loop is independent of popup opens, so `createAppState`
+    /// never triggers promo work and stays side-effect free.
+    static let promoInfoRefreshInterval: TimeInterval = 1.hour
 }
 
 // MARK: - BackendServiceError
@@ -51,6 +55,10 @@ protocol BackendService {
     func validateReceipt(jws: String, restore: Bool) async throws -> ValidateReceiptResponse
 
     func promoInfo() async throws -> PromotionResponse
+
+    /// Returns the cached promo info without a network call.
+    /// Used by the Safari popup path so app-state replies never block.
+    func cachedPromoInfo() async -> PromotionResponse?
 
     func startPurchaseFlow(from screen: String) async throws
     func startRenewalFlow(licenseKey: String, from screen: String) async throws
@@ -87,6 +95,15 @@ final actor BackendServiceImpl: BackendService {
 
     private let lock = UnfairLock()
     private var isBootstrapped = false
+
+    // MARK: Promo info cache
+
+    /// Cached promo info. `nil` means a cache miss.
+    /// Kept fresh by the hourly background loop and by paywall refreshes.
+    private var promoInfoCache: PromotionResponse?
+
+    /// Hourly background promo refresh task.
+    private var promoInfoRefreshTask: Task<Void, Never>?
 
     // MARK: Public properties
 
@@ -126,6 +143,7 @@ final actor BackendServiceImpl: BackendService {
     deinit {
         self.checkStatusLoopTask?.cancel()
         self.networkStatusTask?.cancel()
+        self.promoInfoRefreshTask?.cancel()
     }
 
     func webActivateApp(from screen: String) async throws -> WebActivateResult {
@@ -252,8 +270,15 @@ final actor BackendServiceImpl: BackendService {
 
     func promoInfo() async throws -> PromotionResponse {
         LogDebugTrace()
-        try self.checkNetworkReachability()
-        return try await self.licenseService.promoInfo()
+
+        // The paywall is the refresh trigger and updates the shared cache.
+        // Fresh promo content is then served to the Safari popup path.
+        return try await self.fetchAndCachePromoInfo()
+    }
+
+    func cachedPromoInfo() async -> PromotionResponse? {
+        LogDebugTrace()
+        return self.promoInfoCache
     }
 
     func getStoredAppStatusInfo() async -> AppStatusInfo? {
@@ -270,6 +295,12 @@ final actor BackendServiceImpl: BackendService {
         } else {
             self.makeNetworkStatusLoop()
         }
+
+        #if MAS
+        // Pre-warm the promo cache at startup and keep it fresh hourly.
+        // The Safari popup path never triggers promo work itself.
+        self.makePromoInfoRefreshLoop()
+        #endif
     }
 
     // MARK: Private methods
@@ -285,6 +316,43 @@ final actor BackendServiceImpl: BackendService {
             self.bootstrap()
         }
     }
+
+    /// Fetches promo info after checking the network and updates the shared cache.
+    private func fetchAndCachePromoInfo() async throws -> PromotionResponse {
+        try self.checkNetworkReachability()
+        let info = try await self.licenseService.promoInfo()
+        self.promoInfoCache = info
+        return info
+    }
+
+    #if MAS
+    /// Starts the hourly background promo refresh so the shared cache stays warm.
+    /// Runs independently of popup opens and user actions.
+    private func makePromoInfoRefreshLoop() {
+        self.promoInfoRefreshTask?.cancel()
+        self.promoInfoRefreshTask = Task { [weak self] in
+            while !Task.isCancelled {
+                await self?.refreshPromoInfo()
+                do {
+                    try await Task.sleep(seconds: Constants.promoInfoRefreshInterval)
+                } catch {
+                    break
+                }
+            }
+        }
+    }
+
+    /// Fetches promo info in the background and updates the cache.
+    /// On failure the last cached value is kept and the next loop tick retries.
+    private func refreshPromoInfo() async {
+        do {
+            _ = try await self.fetchAndCachePromoInfo()
+            LogDebug("Promo info refreshed in background")
+        } catch {
+            LogError("Failed to refresh promo info: \(error)")
+        }
+    }
+    #endif
 
     private func makeNetworkStatusLoop() {
         self.networkStatusTask?.cancel()

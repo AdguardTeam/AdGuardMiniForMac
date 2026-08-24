@@ -17,7 +17,6 @@ final class EBAAppState: NSObject, NSSecureCoding {
     @objc dynamic var lastCheckTime: EBATimestamp = currentTimestamp()
     @objc dynamic var logLevel: Int32 = Int32(Logger.shared.logLevel.rawValue)
     @objc dynamic var theme: Int32 = Int32(Theme.system.rawValue)
-    @objc dynamic var isFreeUser: Bool = true
     @objc dynamic var isTrialAvailable: Bool = false
     @objc dynamic var trialDays: Int = 0
 
@@ -46,7 +45,6 @@ final class EBAAppState: NSObject, NSSecureCoding {
         coder.encode(self.lastCheckTime, forKey: "lastCheckTime")
         coder.encode(self.logLevel, forKey: "logLevel")
         coder.encode(self.theme, forKey: "theme")
-        coder.encode(self.isFreeUser, forKey: "isFreeUser")
         coder.encode(self.isTrialAvailable, forKey: "isTrialAvailable")
         coder.encode(self.trialDays, forKey: "trialDays")
     }
@@ -56,7 +54,6 @@ final class EBAAppState: NSObject, NSSecureCoding {
         self.lastCheckTime = coder.decodeDouble(forKey: "lastCheckTime")
         self.logLevel = coder.decodeInt32(forKey: "logLevel")
         self.theme = coder.decodeInt32(forKey: "theme")
-        self.isFreeUser = coder.decodeBool(forKey: "isFreeUser")
         self.isTrialAvailable = coder.decodeBool(forKey: "isTrialAvailable")
         self.trialDays = coder.decodeInteger(forKey: "trialDays")
     }
@@ -66,7 +63,7 @@ final class EBAAppState: NSObject, NSSecureCoding {
     }
 
     override var description: String {
-        "<\(type(of: self)): \(Unmanaged.passUnretained(self).toOpaque())> isProtectionEnabled: \(self.isProtectionEnabled), lastCheckTime: \(self.lastCheckTimeString), logLevel: \(self.logLevel), theme: \(self.theme), isFreeUser: \(self.isFreeUser), isTrialAvailable: \(self.isTrialAvailable), trialDays: \(self.trialDays)"
+        "<\(type(of: self)): \(Unmanaged.passUnretained(self).toOpaque())> isProtectionEnabled: \(self.isProtectionEnabled), lastCheckTime: \(self.lastCheckTimeString), logLevel: \(self.logLevel), theme: \(self.theme), isTrialAvailable: \(self.isTrialAvailable), trialDays: \(self.trialDays)"
     }
 }
 

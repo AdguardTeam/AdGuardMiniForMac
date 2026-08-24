@@ -415,7 +415,14 @@ final class ServiceLocator {
             telemetry: self.telemetryService,
             keychain: self.coreDIContainer.keychain,
             eventBus: self.eventBus,
-            healthCheckAttentionProvider: self.healthCheckAttentionProvider
+            healthCheckAttentionProvider: self.healthCheckAttentionProvider,
+            backendService: {
+                #if MAS
+                return self.backendService
+                #else
+                return nil
+                #endif
+            }()
         )
     }()
     private lazy var loginItemService: LoginItemService = {

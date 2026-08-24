@@ -108,7 +108,6 @@ extension ExternalEventsAdapter: ExtensionSafariApiClientDelegate {
             lastCheckTime: appState.lastCheckTime,
             logLevel: appState.logLevel,
             theme: appState.theme,
-            isFreeUser: appState.isFreeUser,
             isTrialAvailable: appState.isTrialAvailable,
             trialDays: appState.trialDays
         )

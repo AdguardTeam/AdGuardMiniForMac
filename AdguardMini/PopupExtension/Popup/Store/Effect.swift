@@ -34,7 +34,6 @@ extension Store {
         case setAppTheme(Theme)
         case dismissPopover
         case notifyWindowOpened
-        case refreshHealthCheck
         case preparePopup
     }
 }

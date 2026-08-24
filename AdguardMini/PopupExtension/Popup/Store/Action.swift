@@ -63,8 +63,7 @@ extension Store {
             tabUrl: String,
             isFilteringEnabled: Bool
         )
-        case healthCheckRefreshed(hasAttention: Bool)
-        case popupReady(hasHealthCheckAttention: Bool)
+        case popupReady(hasHealthCheckAttention: Bool, isUpsellAvailable: Bool)
         // MARK: Lifecycle
 
         case popupWillShow

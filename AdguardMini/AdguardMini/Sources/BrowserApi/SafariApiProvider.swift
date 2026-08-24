@@ -59,6 +59,10 @@ final class SafariApiProvider: NSObject {
     private let keychain: KeychainManager
     private let healthCheckAttentionProvider: HealthCheckAttentionProvider
 
+    #if MAS
+    private let backendService: BackendService?
+    #endif
+
     // MARK: Init
 
     init(
@@ -73,7 +77,8 @@ final class SafariApiProvider: NSObject {
         telemetry: Telemetry.Service,
         keychain: KeychainManager,
         eventBus: EventBus,
-        healthCheckAttentionProvider: HealthCheckAttentionProvider
+        healthCheckAttentionProvider: HealthCheckAttentionProvider,
+        backendService: BackendService?
     ) {
         self.proxyStorage = proxyStorage
         self.licenseStateProvider = licenseStateProvider
@@ -87,6 +92,10 @@ final class SafariApiProvider: NSObject {
         self.keychain = keychain
         self.eventBus = eventBus
         self.healthCheckAttentionProvider = healthCheckAttentionProvider
+
+        #if MAS
+        self.backendService = backendService
+        #endif
     }
 
     // MARK: Deinit
@@ -177,8 +186,6 @@ extension SafariApiProvider: MainAppApi {
         appState.isProtectionEnabled = self.protectionService.isProtectionEnabled
         appState.logLevel = Int32(Logger.shared.logLevel.rawValue)
         appState.theme = Int32(self.userSettingsService.theme.rawValue)
-        let statusInfo = await self.keychain.getAppStatusInfo()
-        appState.isFreeUser = !(statusInfo?.isPaid ?? false)
         let trialAvailability = await self.licenseStateProvider.getTrialAvailability()
         appState.isTrialAvailable = trialAvailability.isAvailable
         appState.trialDays = trialAvailability.availableDays
@@ -218,10 +225,22 @@ extension SafariApiProvider: MainAppApi {
         }
     }
 
-    func hasHealthCheckAttention(reply: @escaping (Bool, Error?) -> Void) {
+    /// Replies with health-check attention and upsell availability.
+    /// The upsell block is shown to free users only; on MAS an active promo
+    /// offer replaces it, so the upsell is hidden while a promo is actual.
+    func popupPresentationState(
+        reply: @escaping (_ hasAttention: Bool, _ isUpsellAvailable: Bool, _ error: Error?) -> Void
+    ) {
         Task {
-            let result = await self.healthCheckAttentionProvider.hasAttention()
-            reply(result, nil)
+            let hasAttention = await self.healthCheckAttentionProvider.hasAttention()
+            let statusInfo = await self.keychain.getAppStatusInfo()
+            let isFreeUser = !(statusInfo?.isPaid ?? false)
+            #if MAS
+            let isPromoActive = (await self.backendService?.cachedPromoInfo())?.isActual ?? false
+            reply(hasAttention, isFreeUser && !isPromoActive, nil)
+            #else
+            reply(hasAttention, isFreeUser, nil)
+            #endif
         }
     }
 

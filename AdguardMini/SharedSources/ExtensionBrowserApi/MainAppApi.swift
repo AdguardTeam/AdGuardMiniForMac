@@ -9,7 +9,7 @@
 
 import Foundation
 
-let ExtensionSafariApiProtocolId = "SafariAPI:2026/04/17"
+let ExtensionSafariApiProtocolId = "SafariAPI:2026/08/11"
 
 typealias EBATimestamp = TimeInterval
 
@@ -21,7 +21,9 @@ protocol MainAppApi {
     func getCurrentFilteringState(withUrl url: String,
                                   reply: @escaping (EBACurrentFilteringState?, Error?) -> Void)
     func getExtraState(withUrl url: String, reply: @escaping (Bool, Error?) -> Void)
-    func hasHealthCheckAttention(reply: @escaping (Bool, Error?) -> Void)
+    func popupPresentationState(
+        reply: @escaping (_ hasAttention: Bool, _ isUpsellAvailable: Bool, _ error: Error?) -> Void
+    )
     func isOnboardingCompleted(reply: @escaping (Bool, Error?) -> Void)
     func setProtectionStatus(_ enabled: Bool, reply: @escaping (EBATimestamp, Error?) -> Void)
     func setFilteringStatusWithUrl(_ url: String,

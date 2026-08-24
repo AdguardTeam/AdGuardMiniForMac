@@ -42,10 +42,12 @@ extension ExtensionSafariApiClientImpl: MainAppApi {
         }
     }
 
-    func hasHealthCheckAttention(reply: @escaping (Bool, Error?) -> Void) {
+    func popupPresentationState(
+        reply: @escaping (_ hasAttention: Bool, _ isUpsellAvailable: Bool, _ error: Error?) -> Void
+    ) {
         LogDebugTrace()
-        self.withSafariApi(else: { reply(false, ExtensionSafariApiClientErrorCode.linkTimeout) }) {
-            $0.hasHealthCheckAttention(reply: reply)
+        self.withSafariApi(else: { reply(false, false, ExtensionSafariApiClientErrorCode.linkTimeout) }) {
+            $0.popupPresentationState(reply: reply)
         }
     }
 
