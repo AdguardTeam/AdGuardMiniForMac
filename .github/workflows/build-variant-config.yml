@@ -74,7 +74,7 @@ jobs:
             standalone)
               CONFIGURATION="Release"
               SIGNING_TYPE="developer_id"
-              ADDITIONAL_CERT_TYPES="developer_id_installer"
+              ADDITIONAL_CERT_TYPES=""
               SKIP_PROFILES="false"
               NOTARIZE="true"
               APP_STORE_INFO_EFFECTIVE="false"
@@ -90,7 +90,7 @@ jobs:
             mas-iap)
               CONFIGURATION="MAS"
               SIGNING_TYPE="developer_id"
-              ADDITIONAL_CERT_TYPES="developer_id_installer"
+              ADDITIONAL_CERT_TYPES=""
               SKIP_PROFILES="false"
               NOTARIZE="true"
               APP_STORE_INFO_EFFECTIVE="false"
