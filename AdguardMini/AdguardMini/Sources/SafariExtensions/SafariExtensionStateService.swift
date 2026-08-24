@@ -216,16 +216,20 @@ extension SafariExtensionStateServiceImpl: ReloadExtensionDelegate {
     @discardableResult
     private func updateInfo(_ result: ReloadExtensionResult) async -> SafariExtension.State {
         var conversionInfo: ConversionInfo = .empty
-        var actualError: SafariExtension.State.ExtensionError?
+        var storedError: SafariExtension.State.ExtensionError?
         if let currentsState = await self.storage.getState(result.blockerType) {
             conversionInfo = currentsState.rulesInfo
-            let storedError = currentsState.error
-            if storedError == .converterError {
-                actualError = storedError
-            }
+            storedError = currentsState.error
         }
-        if let safariError = result.error,
-           actualError != .converterError {
+        var actualError: SafariExtension.State.ExtensionError?
+        if result.isAborted {
+            // The reload never reached Safari, so no new result exists.
+            // Keep the stored error unchanged: a previously persisted
+            // `.safariError` or converter error then survives the abort.
+            actualError = storedError
+        } else if storedError == .converterError {
+            actualError = storedError
+        } else if let safariError = result.error {
             actualError = .safariError("\(safariError)")
         }
         let newState = SafariExtension.State(

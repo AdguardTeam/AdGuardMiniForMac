@@ -209,3 +209,4 @@ support-scripts
 # Ignore all Package.resolved files except the main Xcode project one.
 **/Package.resolved
 !AdguardMini/AdguardMini.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+.temp/

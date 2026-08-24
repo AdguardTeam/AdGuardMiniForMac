@@ -25,4 +25,12 @@ protocol SafariExtensionManager {
     /// - Returns: True if the reload was successful, otherwise false.
     @discardableResult
     func reloadAllContentBlockers() async -> Bool
+
+    /// Reload the given content blockers in parallel.
+    ///
+    /// Also logs an error if an error occurs.
+    /// - Parameter types: The blockers to reload.
+    /// - Returns: True if the reload was successful, otherwise false.
+    @discardableResult
+    func reloadContentBlockers(_ types: [SafariBlockerType]) async -> Bool
 }

@@ -161,15 +161,13 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
 
                     let reloadStart = Date()
                     LogInfo("\(LogTag.safari) reloadContentBlockers start (ID: \(updateId))")
-                    await withTaskGroup(of: Void.self) { group in
-                        for await blocker in updatedBlockers {
-                            group.addTask {
-                                let blockerType = blocker.blockerType
-                                LogDebug("Blocker \(blockerType) conversion info: \(blocker.conversionInfo)")
-                                await self.safariExtensionManager.reloadContentBlocker(blockerType)
-                            }
-                        }
+                    var blockersToReload: [SafariBlockerType] = []
+                    for await blocker in updatedBlockers {
+                        LogDebug("Blocker \(blocker.blockerType) conversion info: \(blocker.conversionInfo)")
+                        blockersToReload.append(blocker.blockerType)
                     }
+                    try self.checkCancellation(progress)
+                    await self.safariExtensionManager.reloadContentBlockers(blockersToReload)
                     LogInfo("\(LogTag.safari) reloadContentBlockers end (ID: \(updateId)), \(reloadStart.elapsedMs())")
 
                     progress.completedUnitCount += 1
