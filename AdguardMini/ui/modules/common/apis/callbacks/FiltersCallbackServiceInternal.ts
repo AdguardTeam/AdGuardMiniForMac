@@ -13,6 +13,7 @@ export class FiltersCallbackServiceInternal  implements IFiltersCallbackServiceI
 
     async OnFiltersIndexUpdate(param: FiltersIndex): Promise<EmptyValue> {
         store.filters.setIndex(param);
+        store.filters.getFilters();
         return new EmptyValue();
     }
 

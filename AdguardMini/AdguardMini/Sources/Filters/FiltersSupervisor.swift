@@ -32,6 +32,10 @@ enum FlmApi {
 
     protocol ReadOnly {
         func getAllFilters() async -> [FilterInfo]
+
+        /// Returns stored filter metadata paired with the downloaded rules
+        /// count. Filters whose rules were not downloaded yet are still
+        /// returned, with a count of 0.
         func getStoredFilterMetadataWithRulesCount() async -> [(meta: FilterInfo, count: Int)]
         func getEnabledFilters() async -> [FilterInfo]
         func getEnabledFilterIds() async -> [Int]
@@ -430,7 +434,14 @@ extension FiltersSupervisorImpl: FlmApi.ReadOnly {
 
     func getStoredFilterMetadataWithRulesCount() async -> [(meta: FilterInfo, count: Int)] {
         await self.flmCall {
-            self.filtersManager.getStoredFilterMetadataWithRulesCount()
+            // Rejoin the full stored set with the downloaded rules counts.
+            // The combined query drops filters that have no count yet.
+            // Count missing rules as zero to keep new filters visible.
+            let filters = self.filtersManager.getAllFilters()
+            let withRulesCount = self.filtersManager.getStoredFilterMetadataWithRulesCount()
+            var countsByFilterId: [Int: Int] = [:]
+            withRulesCount.forEach { countsByFilterId[$0.meta.filterId] = $0.count }
+            return filters.map { (meta: $0, count: countsByFilterId[$0.filterId] ?? 0) }
         }
     }
 

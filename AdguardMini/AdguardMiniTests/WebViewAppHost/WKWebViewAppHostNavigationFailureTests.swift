@@ -51,7 +51,7 @@ private final class RecordingFailurePresenter: WKWebViewFailurePresenting {
 final class WKWebViewAppHostNavigationFailureTests: XCTestCase {
     @MainActor
     private func makeHost(presenter: RecordingFailurePresenter) -> WKWebViewAppHost {
-        WKWebViewAppHost(
+        let host = WKWebViewAppHost(
             module: .settings,
             entryURL: URL(fileURLWithPath: "/tmp/WebUI/settings.html"),
             onVisibilityChange: nil,
@@ -60,6 +60,11 @@ final class WKWebViewAppHostNavigationFailureTests: XCTestCase {
             // swiftlint:disable:next trailing_closure
             bridgeSetup: { _ in }
         )
+        // Tear down each host so its real `WKWebView` and WebContent process
+        // Released before the next test: leaked hosts accumulate on parallel CI
+        // Shards and stall the main executor past the fulfillment timeout.
+        addTeardownBlock { host.teardown() }
+        return host
     }
 
     @MainActor
@@ -73,7 +78,7 @@ final class WKWebViewAppHostNavigationFailureTests: XCTestCase {
         }
         host.loadEntryIfNeeded()
         host.didFailProvisionalNavigation(error: NSError(domain: "test", code: 42))
-        await fulfillment(of: [exp], timeout: 2)
+        await fulfillment(of: [exp], timeout: 10)
         XCTAssertEqual(host.state, .error)
         XCTAssertEqual(presenter.loadFailureCalls.count, 1)
         XCTAssertEqual(presenter.loadFailureCalls.first?.module, "settings")
@@ -94,7 +99,7 @@ final class WKWebViewAppHostNavigationFailureTests: XCTestCase {
         }
         host.loadEntryIfNeeded()
         host.webView(host.webView, didFail: nil, withError: NSError(domain: "test", code: 7))
-        await fulfillment(of: [exp], timeout: 2)
+        await fulfillment(of: [exp], timeout: 10)
         XCTAssertEqual(host.state, .error)
         XCTAssertEqual(presenter.loadFailureCalls.count, 1)
         XCTAssertEqual(presenter.loadFailureCalls.first?.module, "settings")
