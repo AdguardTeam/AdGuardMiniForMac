@@ -7,7 +7,7 @@
 //  AdguardMini
 //
 
-import SciterSchema
+import ProtoSchema
 
 extension ABTests.ActiveExperiment {
     func toProto() -> ActiveABTest {

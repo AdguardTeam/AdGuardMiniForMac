@@ -8,9 +8,9 @@
 //
 
 import Foundation
-import SciterSchema
+import ProtoSchema
 
-extension SciterSchema.ImportMode {
+extension ProtoSchema.ImportMode {
     func toSwift() -> ImportMode {
         // swiftlint:disable switch_case_on_newline
         switch self {

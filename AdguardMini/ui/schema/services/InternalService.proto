@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "PrimitivesWrappers.proto";
+
+/* Service that handles client-platform communication */
+service InternalService {
+    /* Opens settings window of Adguard window */
+    rpc OpenSettingsWindow(EmptyValue) returns (EmptyValue);
+    /* Opens the user-rules editor window */
+    rpc OpenUserRulesWindow(EmptyValue) returns (EmptyValue);
+    /* Closes the user-rules editor window (called by the editor after it
+       resolves unsaved changes, or immediately if there are none) */
+    rpc CloseUserRulesWindow(EmptyValue) returns (EmptyValue);
+    /* Returns the system UI language so the editor can localise translate() */
+    rpc GetSystemLanguage(EmptyValue) returns (StringValue);
+    /* Activates the Finder, and opens one window selecting the specified file */
+    rpc ShowInFinder(Path) returns (EmptyValue);
+    /* Opens report page in default browser */
+    rpc reportAnIssue(EmptyValue) returns (EmptyValue);
+}

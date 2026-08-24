@@ -13,13 +13,11 @@ import StoreKit
 import AML
 import FLM
 import AppStore
-import class SciterSchema.SettingsCallbackService
-import class SciterSchema.AccountCallbackService
-import class SciterSchema.TrayCallbackService
-import class SciterSchema.UserRulesCallbackService
-import class SciterSchema.FiltersCallbackService
-import class SciterSchema.OnboardingCallbackService
-
+// Generated service base types (`ThemeService`, `AccountService`, etc.)
+// Are provided by the local `ProtoSchema` SPM package. Concrete
+// `<Name>ServiceImpl` classes live in the app target and conform to
+// `<Name>Service.ServiceType`.
+import ProtoSchema
 // MARK: - ServiceDependent.setupServices
 
 extension ServiceDependent {
@@ -54,16 +52,13 @@ extension ServiceLocator {
         (client as? UserSettingsManagerDependent)?.userSettingsManager = self.userSettingsManager
         (client as? UserSettingsServiceDependent)?.userSettingsService = self.userSettingsService
         (client as? UrlSchemesProcessorDependent)?.urlSchemesProcessorInjector = { self.urlSchemesProcessor }
-        (client as? SciterAppControllerDependent)?.sciterAppController = self.sciterAppController
         (client as? LicenseStateProviderDependent)?.licenseStateProvider = self.licenseStateProvider
         (client as? AppActivationObserverDependent)?.appActivationObserver = self.appActivationObserver
         (client as? URLFilterStateAssemblerDependent)?.urlFilterStateAssembler = self.urlFilterStateAssembler
-        (client as? SciterCallbackServiceDependent)?.sciterCallbackService = self.sciterCallbackService
-        (client as? SciterOnboardingCallbackServiceDependent)?
-            .sciterOnboardingCallbackService = self.sciterOnboardingCallbackService
         (client as? LegacyMigrationServiceDependent)?.legacyMigrationService = self.legacyMigrationService
         (client as? TrayIconUpdatesHandlerDependent)?.trayIconUpdatesHandler = self.appSettingUpdateHandler
         (client as? StatusBarItemControllerDependent)?.statusBarItemController = self.statusBarItemController
+        (client as? WebViewAppsControllerDependent)?.webViewAppsController = self.webViewAppsController
 
         (client as? SafariExtensionStateServiceDependent)?
             .safariExtensionStateService = self.safariExtensionStateService
@@ -79,8 +74,37 @@ extension ServiceLocator {
     }
 }
 
+// MARK: - WKWebView bridge service accessors
+//
+// Computed properties referenced by AppDelegate's host factory. Each
+// Lazily creates a service instance via the Sciter SDK's
+// `<Name>ServiceImpl` factory. After Task 13 regenerates the codegen
+// To drop the `sciterCall` fallback, these will point to directly-
+// Extended service implementations.
+
+extension ServiceLocator {
+    var themeService: ThemeService.ServiceType { self._themeService }
+    var traySettingsService: TraySettingsService.ServiceType { self._traySettingsService }
+    var accountService: AccountService.ServiceType { self._accountService }
+    var safariExtensionsService: SafariExtensionsService.ServiceType { self._safariExtensionsService }
+    var advancedBlockingService: AdvancedBlockingService.ServiceType { self._advancedBlockingService }
+    var appUpdateService: AppUpdateService.ServiceType { self._appUpdateService }
+    // Name `telemetryBridgeService` to avoid the type collision with
+    // `ServiceLocator`'s `.telemetryService` (`Telemetry.Service` vs
+    // `TelemetryService.ServiceType`).
+    var telemetryBridgeService: TelemetryService.ServiceType { self._telemetryBridgeService }
+    var settingsService: SettingsService.ServiceType { self._settingsService }
+    var appInfoService: AppInfoService.ServiceType { self._appInfoService }
+    var filtersService: FiltersService.ServiceType { self._filtersService }
+    var userRulesService: UserRulesService.ServiceType { self._userRulesService }
+    var onboardingService: OnboardingService.ServiceType { self._onboardingService }
+    var consentService: ConsentService.ServiceType { self._consentService }
+    var internalService: InternalService.ServiceType { self._internalService }
+    var systemService: SystemService.ServiceType { self._systemService }
+}
+
 /// Smart ServiceLocator.
-private final class ServiceLocator {
+final class ServiceLocator {
     // MARK: Services
 
     private let coreDIContainer: CoreDIContainer = CoreDIContainerImpl()
@@ -283,7 +307,35 @@ private final class ServiceLocator {
 
     private lazy var abTestsStorage: ABTests.Storage = ABTests.StorageImpl()
 
-    private lazy var sciterAppLocator: SciterAppLocator = SciterAppLocator.shared
+    // MARK: - WKWebView bridge services
+
+    // Services registered on `WKWebViewBridge` instances by `AppDelegate`'s
+    // Host factory. Concrete `<Name>ServiceImpl` classes live in the app target
+    // `Sources/WebView/Services/` and conform to `<Name>Service.ServiceType`.
+
+    private lazy var _themeService: ThemeService.ServiceType = ThemeServiceImpl()
+    private lazy var _traySettingsService: TraySettingsService.ServiceType = TraySettingsServiceImpl()
+    private lazy var _accountService: AccountService.ServiceType = AccountServiceImpl()
+    private lazy var _safariExtensionsService
+        = SafariExtensionsServiceImpl() as SafariExtensionsService.ServiceType
+    private lazy var _advancedBlockingService
+        = AdvancedBlockingServiceImpl() as AdvancedBlockingService.ServiceType
+    private lazy var _appUpdateService: AppUpdateService.ServiceType = AppUpdateServiceImpl()
+    private lazy var _telemetryBridgeService: TelemetryService.ServiceType = TelemetryServiceImpl()
+    private lazy var _settingsService: SettingsService.ServiceType = SettingsServiceImpl()
+    private lazy var _appInfoService: AppInfoService.ServiceType = AppInfoServiceImpl()
+    private lazy var _filtersService: FiltersService.ServiceType = FiltersServiceImpl()
+    private lazy var _userRulesService: UserRulesService.ServiceType = UserRulesServiceImpl()
+    private lazy var _onboardingService: OnboardingService.ServiceType = OnboardingServiceImpl()
+    private lazy var _consentService: ConsentService.ServiceType = ConsentServiceImpl()
+    private lazy var _internalService: InternalService.ServiceType = InternalServiceImpl()
+    private lazy var _systemService: SystemService.ServiceType = SystemServiceImpl()
+
+    /// Set by `AppDelegate` after the `WebViewAppsController` is created from
+    /// `AppDelegate.init()`. Injected into DI clients via
+    /// `ServiceLocator.shared.injectDependencies` per the `WebViewAppsControllerDependent`
+    /// protocol at `WKWebViewAppLocator.swift:34-36`.
+    var webViewAppsController: WebViewAppsController!
 
     // MARK: Injectable properties
 
@@ -314,9 +366,6 @@ private final class ServiceLocator {
             },
             isNewProvider: { [userSettingsService = self.userSettingsService] in
                 userSettingsService.urlFilterIsNew
-            },
-            isPageNewProvider: { [userSettingsService = self.userSettingsService] in
-                userSettingsService.urlFilterIsPageNew
             },
             bloomMetadataProvider: { [bloomMetadataStorage = self.urlFilterBloomMetadataStorage] in
                 bloomMetadataStorage.load()
@@ -434,47 +483,12 @@ private final class ServiceLocator {
         )
     }()
 
-    private lazy var sciterCallbackService: SciterCallbackService = {
-        SciterCallbackServiceImpl(
-            settingsCallbacksGetter: self.sciterAppLocator.settingsApp.app.callback(SettingsCallbackService.self),
-            accountCallbacksGetter: self.sciterAppLocator.settingsApp.app.callback(AccountCallbackService.self),
-            trayCallbacksGetter: self.sciterAppLocator.trayApp.app.callback(TrayCallbackService.self),
-            userRulesCallbacksGetter: self.sciterAppLocator.settingsApp.app.callback(UserRulesCallbackService.self),
-            filtersCallbacksGetter: self.sciterAppLocator.settingsApp.app.callback(FiltersCallbackService.self),
-            urlFilterStateAssembler: self.urlFilterStateAssembler,
-            licenseStateProvider: self.licenseStateProvider,
-            isSettingsHidden: { [sciterAppLocator] in
-                sciterAppLocator.settingsApp.isAppHidden()
-            },
-            isTrayHidden: { [sciterAppLocator] in
-                sciterAppLocator.trayApp.isAppHidden()
-            },
-            eventBus: self.eventBus
-        )
-    }()
-
-    private lazy var sciterOnboardingCallbackService: SciterOnboardingCallbackService = {
-        SciterOnboardingCallbackServiceImpl(
-            onboardingCallbacksGetter: self.sciterAppLocator.onboardingApp.app.callback(OnboardingCallbackService.self),
-            eventBus: self.eventBus
-        )
-    }()
-
     private lazy var importExportService: ImportExportService = ImportExportServiceImpl(
         userSettingsService: self.userSettingsService,
         filtersSupervisor: self.filtersSupervisor,
         legacyMapper: self.legacyMapper,
         eventBus: self.eventBus
     )
-
-    private lazy var sciterAppController: SciterAppsController = {
-        SciterAppsControllerImpl(
-            sciterAppLocator: self.sciterAppLocator,
-            sciterCallbackService: self.sciterCallbackService,
-            sciterOnboardingCallbackService: self.sciterOnboardingCallbackService,
-            protectionService: self.protectionService
-        )
-    }()
 
     private lazy var safariExtensionStateService: SafariExtensionStateService = {
         SafariExtensionStateServiceImpl(
@@ -519,7 +533,7 @@ private final class ServiceLocator {
         UrlSchemesProcessorImpl(
             appLifecycleService: self.appLifecycleService,
             backendService: self.backendService,
-            sciterAppController: self.sciterAppController,
+            webViewAppsController: self.webViewAppsController,
             userSettings: self.userSettingsManager,
             eventBus: self.eventBus
         )

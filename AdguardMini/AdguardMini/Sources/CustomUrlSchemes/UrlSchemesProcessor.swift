@@ -21,20 +21,20 @@ protocol UrlSchemesProcessor {
 final class UrlSchemesProcessorImpl: UrlSchemesProcessor {
     private let appLifecycleService: AppLifecycleService
     private let backendService: BackendService
-    private let sciterAppController: SciterAppsController
+    private let webViewAppsController: WebViewAppsController
     private let userSettings: UserSettingsManager
     private let eventBus: EventBus
 
     init(
         appLifecycleService: AppLifecycleService,
         backendService: BackendService,
-        sciterAppController: SciterAppsController,
+        webViewAppsController: WebViewAppsController,
         userSettings: UserSettingsManager,
         eventBus: EventBus
     ) {
         self.appLifecycleService = appLifecycleService
         self.backendService = backendService
-        self.sciterAppController = sciterAppController
+        self.webViewAppsController = webViewAppsController
         self.userSettings = userSettings
         self.eventBus = eventBus
     }
@@ -84,7 +84,7 @@ final class UrlSchemesProcessorImpl: UrlSchemesProcessor {
         case InternalUrlSchemeActionUrl.subscribeFilter.path:
             LogInfo("Subscribe filter settings received by deep link.")
 
-            Task {
+            Task { @MainActor in
                 let subscribeFilterParamUrl = InternalUrlSchemeActionUrl.SubscribeFilterParam.url
                 guard let queryItems = urlComponents.queryItems,
                         let subscribeUrl = queryItems.first(where: {
@@ -93,10 +93,10 @@ final class UrlSchemesProcessorImpl: UrlSchemesProcessor {
                     LogError("Missing required parameter '\(subscribeFilterParamUrl)' in subscribe filter deep link.")
                     return
                 }
+                self.handleShowSettings()
                 if !self.userSettings.firstRun {
                     self.eventBus.post(event: .customFilterSubscriptionUrlReceived, userInfo: subscribeUrl)
                 }
-                self.handleShowSettings()
             }
         default:
             LogWarn("Unknown deep link url: \(urlComponents)")
@@ -104,7 +104,7 @@ final class UrlSchemesProcessorImpl: UrlSchemesProcessor {
     }
 
     private func processMainScheme(_ urlComponents: URLComponents, host: String) {
-        Task {
+        Task { @MainActor in
             switch host {
             case MainUrlSchemeActionUrl.webFlowRedirect.host:
                 do {
@@ -138,11 +138,14 @@ final class UrlSchemesProcessorImpl: UrlSchemesProcessor {
 
     private func handleShowSettings(page: String? = nil) {
         let firstRun = self.userSettings.firstRun
-        let app: AvailableSciterApp = firstRun ? .onboarding : .settings
-        if let page, !firstRun {
-            self.eventBus.post(event: .settingsPageRequested, userInfo: page)
+        if firstRun {
+            self.webViewAppsController.show(.onboarding)
+        } else {
+            self.webViewAppsController.show(.settings)
+            if let page {
+                self.eventBus.post(event: .settingsPageRequested, userInfo: page)
+            }
         }
-        self.sciterAppController.showApp(app)
     }
 }
 

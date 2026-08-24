@@ -8,7 +8,7 @@
 //
 
 import Foundation
-import SciterSchema
+import ProtoSchema
 
 extension AppStatusInfo {
     func toProto(canReset: Bool) -> LicenseOrError {
@@ -51,7 +51,7 @@ extension AppStatusInfo {
 // swiftlint:disable switch_case_on_newline
 
 extension AppStatusInfo.LicenseStatus {
-    func toProto() -> SciterSchema.LicenseStatus {
+    func toProto() -> ProtoSchema.LicenseStatus {
         switch self {
         case .active:          .active
         case .alreadyActivate: .alreadyActivate
@@ -67,7 +67,7 @@ extension AppStatusInfo.LicenseStatus {
 }
 
 extension AppStatusInfo.LicenseType {
-    func toProto() -> SciterSchema.LicenseType {
+    func toProto() -> ProtoSchema.LicenseType {
         switch self {
         case .beta:     .beta
         case .bonus:    .bonus

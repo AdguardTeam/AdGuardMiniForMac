@@ -1,0 +1,9 @@
+{
+    "namespace" : "Mini",
+    "lib_name" : "",
+    "service_class_name" : "WebViewBridge",
+    "callback_class_name" : "WebViewCallbackBridge",
+    "service_protocol" : "Service",
+    "types_package" : "AdguardMini.Types",
+    "omit_lang_postfix_in_output_path": true
+}

@@ -1,0 +1,47 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.FilterGroupPage {
+    display: flex;
+    flex-flow: column;
+
+    &_addFilter {
+        margin-top: var(--m-s);
+        display: flex;
+        color: var(--fills-buttons-main-button-default);
+        cursor: pointer;
+        
+
+        &:hover {
+            color: var(--fills-buttons-main-button-hovered);
+        }
+        padding: var(--m-xxs) var(--m-s);
+
+        &_text {
+            margin-left: var(--m-xs);
+        }
+    }
+
+    &_emptyResult {
+        height: auto;
+        width: auto;
+        margin: auto 0;
+
+        &_icon {
+            width: 64px;
+            height: 64px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: auto;
+        }
+
+        &_text {
+            color: var(--text-description-description-default);
+            text-align: center;
+            margin-bottom: auto;
+        }
+    }
+
+}

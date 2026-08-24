@@ -3,7 +3,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 excluded:
-    - "SciterResources/*"
+    - "MiniResources/*"
+    - "ui/packages/*"
+    - "build/*"
+    - "../.bundle/*"
+    - "../Support/XcodeTemplates/*"
     - "*/Localization/String+localized.swift"
     - "**/sp-flm"
     - "**/.build"

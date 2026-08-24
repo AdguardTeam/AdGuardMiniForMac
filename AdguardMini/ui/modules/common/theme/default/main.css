@@ -1,0 +1,25 @@
+/*
+ * SPDX-FileCopyrightText: AdGuard Software Limited
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+ 
+body {
+    font-family: system-ui, -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    /* `--lh-elem` is undefined in variables.css; use the medium line-height
+       token (130%) so the intended size actually applies. */
+    line-height: var(--lh-m);
+    color: var(--text-main-text-main-default);
+    background-color: var(--fills-backgrounds-page-background-default);
+}
+
+textarea::selection,
+input::selection {
+    background: var(--stroke-dividers-item-divider-default);
+    color: var(--text-main-text-main-default);
+}
+
+textarea,
+input {
+    caret-color: var(--text-main-text-main-default);
+}

@@ -1,0 +1,185 @@
+/*
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.switch {
+    display: block;
+    cursor: pointer;
+    display: flex;
+    width: max-content;
+    outline: none;
+
+    &.disabledSwitch {
+        cursor: default;
+
+        &:hover,
+        &:active {
+            .disabled {
+                border-color: var(--text-links-error-link-default);
+                background-color: var(--text-links-error-link-default);
+            }
+
+            .enabled {
+                border-color: var(--fills-buttons-main-button-default);
+                background-color: var(--fills-buttons-main-button-default);
+            }
+        }
+    }
+
+    &:hover {
+        .disabled {
+            border-color: var(--text-links-error-link-hovered);
+            background-color: var(--text-links-error-link-hovered);
+        }
+
+        .enabled {
+            border-color: var(--fills-buttons-main-button-hovered);
+            background-color: var(--fills-buttons-main-button-hovered);
+        }
+    }
+
+    &:active {
+        .label {
+            outline: none;
+        }
+
+        .disabled {
+            border-color: var(--text-links-error-link-pressed);
+            background-color: var(--text-links-error-link-pressed);
+        }
+
+        .enabled {
+            border-color: var(--fills-buttons-main-button-pressed);
+            background-color: var(--fills-buttons-main-button-pressed);
+        }
+    }
+}
+
+.input {
+    display: none;
+
+    &.checked {
+        & + .label {
+            &.enabled {
+                &::before {
+                    left: 40px;
+                }
+            }
+        }
+    }
+
+    &:disabled {
+        & + .label::before {
+            opacity: 0.5;
+        }
+    }
+}
+
+.label {
+    position: relative;
+    display: block;
+    width: 48px;
+    height: 28px;
+    border-radius: 20px;
+    cursor: pointer;
+
+    &::before {
+        content: "";
+        display: block;
+        z-index: var(--zi-above-extra);
+        position: absolute;
+        top: 1px;
+        width: 26px;
+        height: 26px;
+        background-color: var(--fills-switch-all-knob-default);
+        border-radius: 50%;
+    }
+}
+
+
+.labelDisabled {
+    background-color: var(--fills-switch-all-off-default);
+
+    &::before {
+        left: 1px;
+    }
+}
+
+.labelEnabled {
+    background-color: var(--fills-buttons-main-button-default);
+    border-color: var(--fills-buttons-main-button-default);
+
+    &::before {
+        left: 21px;
+    }
+}
+
+.labelTransitions {
+    transition: background-color linear 0.3s;
+
+    &::before {
+        transition: left linear 0.3s, background-image linear 0.3s;
+    }
+}
+
+.enabled,
+.disabled {
+    height: 30px;
+    width: 80px;
+
+    &::before {
+        content: "";
+        display: block;
+        position: absolute;
+        background-position: 50% 50%;
+        /*
+            Sciter did not tile background images, but standard CSS defaults
+            to "repeat", which tiles the 19px icon across the 50px knob.
+        */
+        background-repeat: no-repeat;
+        background-color: var(--fills-switch-all-knob-default);
+        box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);
+        width: 50px;
+        height: 50px;
+        top: -12px;
+        left: -3px;
+        /* z-index: var(--zi-above); */
+    }
+}
+
+.enabled {
+    background-color: var(--fills-buttons-main-button-default);
+    border-color: var(--fills-buttons-main-button-default);
+
+    &::before {
+        background-image: url('./enabled.svg');
+        background-size: 19px;
+    }
+}
+
+.disabled {
+    background-color: var(--text-links-error-link-default);
+    border-color: var(--text-links-error-link-default);
+
+    &:hover {
+        & + .label {
+
+            &::before {
+                background-color: var(--fills-switch-all-knob-default);
+            }
+        }
+    }
+
+    &::before {
+        background-image: url('./disabled.svg');
+        background-size: 19px;
+    }
+}
+
+.muted {
+    &.labelEnabled {
+        background-color: var(--fills-switch-all-off-hovered-inactive);
+        border-color: var(--fills-switch-all-off-hovered-inactive);
+    }
+}

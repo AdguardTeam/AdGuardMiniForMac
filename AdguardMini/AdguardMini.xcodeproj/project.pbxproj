@@ -74,7 +74,6 @@
 		162E2FE62FF687CE00232A89 /* Subsystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB52735E2BBDA61D00196F03 /* Subsystem.swift */; };
 		162E2FE72FF687D800232A89 /* LogConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5273422BBD65B800196F03 /* LogConfig.swift */; };
 		162E2FE82FF695FD00232A89 /* BuildConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB88F5C62C00848B0033E2E8 /* BuildConfig.swift */; };
-		163C981F2FB32E7A00752872 /* TelemetryEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1675B7592EFD7490004D72B7 /* TelemetryEvents.swift */; };
 		16426FD02DC21471004276C0 /* advanced-script.js in Resources */ = {isa = PBXBuildFile; fileRef = 16426FCF2DC21471004276C0 /* advanced-script.js */; };
 		16426FD12DC21471004276C0 /* advanced-script.js in Resources */ = {isa = PBXBuildFile; fileRef = 16426FCF2DC21471004276C0 /* advanced-script.js */; };
 		1644A0A52DB8D977003852C6 /* ContentBlockerConverter in Frameworks */ = {isa = PBXBuildFile; productRef = 1644A0A42DB8D977003852C6 /* ContentBlockerConverter */; };
@@ -124,6 +123,8 @@
 		16901ACC2FFFCFAA007DF535 /* AppStore in Frameworks */ = {isa = PBXBuildFile; productRef = 16901ACB2FFFCFAA007DF535 /* AppStore */; };
 		169664EF2E9FF09C00E0B87E /* adguard-extra.js in Resources */ = {isa = PBXBuildFile; fileRef = 169664EE2E9FF09C00E0B87E /* adguard-extra.js */; };
 		16B91426300139130046E668 /* AGSentry in Frameworks */ = {isa = PBXBuildFile; productRef = 16B91425300139130046E668 /* AGSentry */; };
+		173AF1A1003AF1A1007DF535 /* ProtoSchema in Frameworks */ = {isa = PBXBuildFile; productRef = 173AF101003AF101007DF535 /* ProtoSchema */; };
+		173AF1A2003AF1A2007DF535 /* FLM in Frameworks */ = {isa = PBXBuildFile; productRef = 173AF102003AF102007DF535 /* FLM */; };
 		EB00BB882ABAF71F007FA047 /* AGSEDesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = EB00BB872ABAF71F007FA047 /* AGSEDesignSystem */; };
 		EB0532072C4FDD400054CF62 /* SharedSettingsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3F1C582BADC40400DD2717 /* SharedSettingsStorage.swift */; };
 		EB08495D2AB33E4900222913 /* DIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB08495C2AB33E4900222913 /* DIContainer.swift */; };
@@ -190,8 +191,7 @@
 		EBAA09FD2BAC7EE20032C591 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC4197B32A6FE790000F363D /* Cocoa.framework */; };
 		EBAA0A072BAC7EE20032C591 /* CustomContentBlocker.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = EBAA09FC2BAC7EE20032C591 /* CustomContentBlocker.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		EBE991992C173FA50099CC0E /* emptyBlockingRules.json in Resources */ = {isa = PBXBuildFile; fileRef = EC41980B2A71141C000F363D /* emptyBlockingRules.json */; };
-		EC3848DF2A2DD626005AE5CD /* resources.bin in Resources */ = {isa = PBXBuildFile; fileRef = EC3848DE2A2DD626005AE5CD /* resources.bin */; };
-		EC4131A62A6ED42400C93BDF /* SciterSchema in Frameworks */ = {isa = PBXBuildFile; productRef = EC4131A52A6ED42400C93BDF /* SciterSchema */; };
+		EC4131A62A6ED42400C93BDF /* ProtoSchema in Frameworks */ = {isa = PBXBuildFile; productRef = EC4131A52A6ED42400C93BDF /* ProtoSchema */; };
 		EC4197B42A6FE790000F363D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC4197B32A6FE790000F363D /* Cocoa.framework */; };
 		EC4197BE2A6FE790000F363D /* GeneralContentBlocker.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = EC4197B22A6FE790000F363D /* GeneralContentBlocker.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		EC4906222AB3120E00830379 /* ContentBlockerConverter in Frameworks */ = {isa = PBXBuildFile; productRef = EC4906212AB3120E00830379 /* ContentBlockerConverter */; };
@@ -340,13 +340,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = EB98C06B2C007875000C976B;
 			remoteInfo = "Generate Config Constants";
-		};
-		EB2705152BA9B1B900983795 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = EC3462EC2A29DD9200F59ABC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = EB2705102BA9B15600983795;
-			remoteInfo = "Build Sciter UI";
 		};
 		EB44102C2C076D27003F4DB5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -582,14 +575,13 @@
 		EBE644DC2BFCB98F00785148 /* PopupExtensionMAS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PopupExtensionMAS.entitlements; sourceTree = "<group>"; };
 		EC3462F42A29DD9200F59ABC /* AdGuard Mini.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AdGuard Mini.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC3462FD2A29DD9300F59ABC /* AdguardMini.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AdguardMini.entitlements; sourceTree = "<group>"; };
-		EC3463262A29F54E00F59ABC /* sciter-ui */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "sciter-ui"; sourceTree = "<group>"; };
-		EC3848DE2A2DD626005AE5CD /* resources.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = resources.bin; sourceTree = "<group>"; };
+		EC3463262A29F54E00F59ABC /* ui */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ui; sourceTree = "<group>"; };
 		EC4197B22A6FE790000F363D /* GeneralContentBlocker.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = GeneralContentBlocker.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC4197B32A6FE790000F363D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		EC41980B2A71141C000F363D /* emptyBlockingRules.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = emptyBlockingRules.json; sourceTree = "<group>"; };
 		EC5539EF2A2E15970091270B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		EC66B31F2A71482D00139963 /* CommonConfig.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CommonConfig.xcconfig; sourceTree = "<group>"; };
-		EC8402052A6E71E000DC7A4C /* SciterSchema */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SciterSchema; sourceTree = "<group>"; };
+		EC8402052A6E71E000DC7A4C /* ProtoSchema */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ProtoSchema; sourceTree = "<group>"; };
 		EC9114252A4D5C6200730C2A /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; name = .gitignore; path = ../.gitignore; sourceTree = "<group>"; };
 		ECBA974F2A8A5F8200D6088E /* MainAppDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAppDiscovery.swift; sourceTree = "<group>"; };
 		ECDF568E2A6029570017A270 /* PopupExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PopupExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -670,7 +662,6 @@
 				Core/EventBus.swift,
 				Core/KeychainManager.swift,
 				Core/Models/QuitReaction.swift,
-				Core/Models/WindowGeometryDTO.swift,
 				Core/RestartableService.swift,
 				Filters/FilteringDecision.swift,
 				Filters/Models/BlockerConversionError.swift,
@@ -678,6 +669,7 @@
 				Filters/Safari/FiltersConverter.swift,
 				Filters/Safari/SafariUserRulesDistributor.swift,
 				Filters/UrlFilteringChecker.swift,
+				Mail/MailProtectionStatusProvider.swift,
 				Mail/Models/MailExtension/MailConversionInfo.swift,
 				Mail/Models/MailExtension/MailExtension.State.ExtensionError.swift,
 				Mail/Models/MailExtension/MailExtension.State.swift,
@@ -699,19 +691,43 @@
 				SafariExtensions/SafariExtensionStateService.swift,
 				SafariExtensions/SafariExtensionStateStorage.swift,
 				SafariExtensions/SafariExtensionStatusManager/SafariExtensionStatusManagerProtocol.swift,
-				Sciter/SciterCallbackService/SciterCallbackService.swift,
+				Settings/UserSettingsManager.swift,
+				UI/UIElements/Alerts.swift,
 				"URLFilter/SharedSettingsStorage+URLFilter.swift",
 				URLFilter/URLFilterConfiguration.swift,
+				URLFilter/URLFilterError.swift,
 				URLFilter/URLFilterInfo.swift,
 				URLFilter/URLFilterLevelConfiguration.swift,
 				URLFilter/URLFilterProtectionLevel.swift,
 				URLFilter/URLFilterResetService.swift,
 				URLFilter/URLFilterService.swift,
 				URLFilter/URLFilterServiceError.swift,
+				URLFilter/URLFilterState.swift,
 				URLFilter/URLFilterStateAssembler.swift,
 				URLFilter/URLFilterStatus.swift,
 				URLFilter/URLFilterUIState.swift,
+				"Utils/EffectiveThemeValue+Utils.swift",
 				Utils/LogTag.swift,
+				WebView/Services/FilePanelPresenter.swift,
+				WebView/Services/UserRulesValidator.swift,
+				WebViewAdapter/ChildWindow.swift,
+				WebViewAdapter/ExternalLinkGate.swift,
+				WebViewAdapter/InterfaceRequestDenier.swift,
+				WebViewAdapter/JsLogMessageHandler.swift,
+				WebViewAdapter/JsRuntimeErrorMessageHandler.swift,
+				WebViewAdapter/ModuleCapabilities.swift,
+				WebViewAdapter/ModuleId.swift,
+				WebViewAdapter/ModuleWindowConfiguration.swift,
+				WebViewAdapter/NavigationPolicy.swift,
+				WebViewAdapter/PathConfiner.swift,
+				WebViewAdapter/PathGrantStore.swift,
+				WebViewAdapter/RecurringRpcTimeoutMonitor.swift,
+				WebViewAdapter/RpcTimeoutAlertMessageHandler.swift,
+				WebViewAdapter/SystemActionsMessageHandler.swift,
+				WebViewAdapter/TokenBucketLimiter.swift,
+				WebViewAdapter/WebViewAppsController.swift,
+				WebViewAdapter/WKWebViewAppHost.swift,
+				WebViewAdapter/WKWebViewFailurePresenter.swift,
 				"Utils/Date+Utils.swift",
 				"Utils/NSExceptions+Utils.swift",
 			);
@@ -1128,6 +1144,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				173AF1A2003AF1A2007DF535 /* FLM in Frameworks */,
+				173AF1A1003AF1A1007DF535 /* ProtoSchema in Frameworks */,
 				16901AAA2FFFCD9C007DF535 /* ContentBlockerConverter in Frameworks */,
 				16901AA82FFFCD8F007DF535 /* AdGuardMacLib in Frameworks */,
 			);
@@ -1200,7 +1218,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC4131A62A6ED42400C93BDF /* SciterSchema in Frameworks */,
+				EC4131A62A6ED42400C93BDF /* ProtoSchema in Frameworks */,
 				16901AC62FFFCF34007DF535 /* AGSentry in Frameworks */,
 				16901ACC2FFFCFAA007DF535 /* AppStore in Frameworks */,
 				16901AC22FFFCEFD007DF535 /* AdGuardMacLib in Frameworks */,
@@ -1295,8 +1313,8 @@
 				EC9114252A4D5C6200730C2A /* .gitignore */,
 				EC5539EF2A2E15970091270B /* README.md */,
 				EB3D65C02D4D130F00BC6AE6 /* Scripts */,
-				EC3463262A29F54E00F59ABC /* sciter-ui */,
-				ECDC9EA42A2DF635005727DA /* SciterResources */,
+				EC3463262A29F54E00F59ABC /* ui */,
+				ECDC9EA42A2DF635005727DA /* MiniResources */,
 				EC4197EF2A6FF91C000F363D /* SharedSources */,
 				EC3462F62A29DD9200F59ABC /* AdguardMini */,
 				EB1A0D9D2D81E81D006DB3CF /* Helper */,
@@ -1405,13 +1423,12 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		ECDC9EA42A2DF635005727DA /* SciterResources */ = {
+		ECDC9EA42A2DF635005727DA /* MiniResources */ = {
 			isa = PBXGroup;
 			children = (
-				EC8402052A6E71E000DC7A4C /* SciterSchema */,
-				EC3848DE2A2DD626005AE5CD /* resources.bin */,
+				EC8402052A6E71E000DC7A4C /* ProtoSchema */,
 			);
-			path = SciterResources;
+			path = MiniResources;
 			sourceTree = "<group>";
 		};
 		ECDF568F2A6029580017A270 /* PopupExtension */ = {
@@ -1440,23 +1457,6 @@
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
-
-/* Begin PBXLegacyTarget section */
-		EB2705102BA9B15600983795 /* Build Sciter UI */ = {
-			isa = PBXLegacyTarget;
-			buildArgumentsString = "-f \"$(SRCROOT)/Scripts/BuildSciterUIMakefile\" $(ACTION)";
-			buildConfigurationList = EB2705112BA9B15600983795 /* Build configuration list for PBXLegacyTarget "Build Sciter UI" */;
-			buildPhases = (
-			);
-			buildToolPath = /usr/bin/make;
-			buildWorkingDirectory = "";
-			dependencies = (
-			);
-			name = "Build Sciter UI";
-			passBuildSettingsInEnvironment = 1;
-			productName = BuildSciterUI;
-		};
-/* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
 		162E77632FF2B04E00232A89 /* MailBlocker */ = {
@@ -1630,6 +1630,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				16148DBA2E01CD62000A55E9 /* AdguardMiniTests */,
+				16148DD02E01CDA4000A55E9 /* Localization */,
 				16209B4B2E0C267E00F0B9F5 /* ExtensionBrowserApi */,
 				16A56649F000000000000001 /* URLFilter */,
 				16E54F182E69E4C0006C7856 /* FileSystem */,
@@ -1639,6 +1640,8 @@
 			);
 			name = AdguardMiniTests;
 			packageProductDependencies = (
+				173AF101003AF101007DF535 /* ProtoSchema */,
+				173AF102003AF102007DF535 /* FLM */,
 				16901AA72FFFCD8F007DF535 /* AdGuardMacLib */,
 				16901AA92FFFCD9C007DF535 /* ContentBlockerConverter */,
 			);
@@ -1842,6 +1845,7 @@
 				EC3462F02A29DD9200F59ABC /* Sources */,
 				EC3462F12A29DD9200F59ABC /* Frameworks */,
 				EC3462F22A29DD9200F59ABC /* Resources */,
+				A4FD96F171DE4A27ACF3C778 /* Build Web UI */,
 				EB4410402C0787BC003F4DB5 /* Build And Copy Addition Resources Script */,
 				EB455C832B3B0AF40010C9B3 /* Embed additional executables */,
 				ECDB4D7E2A5D971900C68821 /* Embed Foundation Extensions */,
@@ -1859,7 +1863,6 @@
 				EB44102D2C076D27003F4DB5 /* PBXTargetDependency */,
 				EB2041B72C00C86E0083E1DA /* PBXTargetDependency */,
 				EB2041B52C00C8600083E1DA /* PBXTargetDependency */,
-				EB2705162BA9B1B900983795 /* PBXTargetDependency */,
 				EB455C812B3AF2B50010C9B3 /* PBXTargetDependency */,
 				ECDF569F2A6029580017A270 /* PBXTargetDependency */,
 				EC4197BD2A6FE790000F363D /* PBXTargetDependency */,
@@ -1890,7 +1893,7 @@
 			);
 			name = AdguardMini;
 			packageProductDependencies = (
-				EC4131A52A6ED42400C93BDF /* SciterSchema */,
+				EC4131A52A6ED42400C93BDF /* ProtoSchema */,
 				EC4906212AB3120E00830379 /* ContentBlockerConverter */,
 				16901ABF2FFFCEF6007DF535 /* AppBackend */,
 				16901AC32FFFCF0B007DF535 /* FLM */,
@@ -2003,9 +2006,6 @@
 					};
 					EB0A20A42D5B56C1002A8029 = {
 						CreatedOnToolsVersion = 16.2;
-					};
-					EB2705102BA9B15600983795 = {
-						CreatedOnToolsVersion = 15.3;
 					};
 					EB4410212C076D0F003F4DB5 = {
 						CreatedOnToolsVersion = 15.2;
@@ -2131,7 +2131,6 @@
 				EB4410212C076D0F003F4DB5 /* AdguardMini Builder */,
 				EB93A6762C218C14003D84A5 /* AdguardMini Prebuilder */,
 				169664D52E9FEB2A00E0B87E /* SafariExtension Builder */,
-				EB2705102BA9B15600983795 /* Build Sciter UI */,
 				16426F962DC20F94004276C0 /* Build advanced script */,
 				EB98C06B2C007875000C976B /* Generate Config Constants */,
 				EB88F5D52C00879D0033E2E8 /* Generate Sensitive Config Constants */,
@@ -2224,7 +2223,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EBE991992C173FA50099CC0E /* emptyBlockingRules.json in Resources */,
-				EC3848DF2A2DD626005AE5CD /* resources.bin in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2287,6 +2285,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/bin/bash \"${SRCROOT}/Scripts/buildSafariExtensionPhase.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A4FD96F171DE4A27ACF3C778 /* Build Web UI */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build Web UI";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "/bin/bash \"${SRCROOT}/Scripts/buildWebUIPhase.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		EB4410402C0787BC003F4DB5 /* Build And Copy Addition Resources Script */ = {
@@ -2537,7 +2555,6 @@
 			files = (
 				EB1A0DA32D81EB6D006DB3CF /* SharedSettingsStorage.swift in Sources */,
 				EB88F5D02C0084CC0033E2E8 /* BuildConfig.swift in Sources */,
-				163C981F2FB32E7A00752872 /* TelemetryEvents.swift in Sources */,
 				EB93A68F2C240B12003D84A5 /* UserDefaults.swift in Sources */,
 				EB88F5D42C00868A0033E2E8 /* SensitiveBuildConfig.swift in Sources */,
 				EB52734C2BBD65B800196F03 /* LogConfig.swift in Sources */,
@@ -2835,11 +2852,6 @@
 			isa = PBXTargetDependency;
 			target = EB98C06B2C007875000C976B /* Generate Config Constants */;
 			targetProxy = EB2041C82C00D08B0083E1DA /* PBXContainerItemProxy */;
-		};
-		EB2705162BA9B1B900983795 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = EB2705102BA9B15600983795 /* Build Sciter UI */;
-			targetProxy = EB2705152BA9B1B900983795 /* PBXContainerItemProxy */;
 		};
 		EB44102D2C076D27003F4DB5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3345,22 +3357,6 @@
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_VERSION = 5.0;
-			};
-			name = "Debug-MAS";
-		};
-		162BF3182EA2311900421157 /* Debug-MAS */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				DEBUGGING_SYMBOLS = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug-MAS";
 		};
@@ -4059,50 +4055,6 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-			};
-			name = MAS;
-		};
-		EB2705122BA9B15600983795 /* Debug-Standalone */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				DEBUGGING_SYMBOLS = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = "Debug-Standalone";
-		};
-		EB2705132BA9B15600983795 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		EB2705142BA9B15600983795 /* MAS */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = MAS;
 		};
@@ -5239,17 +5191,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EB2705112BA9B15600983795 /* Build configuration list for PBXLegacyTarget "Build Sciter UI" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				EB2705122BA9B15600983795 /* Debug-Standalone */,
-				162BF3182EA2311900421157 /* Debug-MAS */,
-				EB2705132BA9B15600983795 /* Release */,
-				EB2705142BA9B15600983795 /* MAS */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		EB4410262C076D16003F4DB5 /* Build configuration list for PBXNativeTarget "AdguardMini Builder" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -5765,6 +5706,15 @@
 			package = 160C1C102FFFB6EC00B840B9 /* XCRemoteSwiftPackageReference "sp-sentry" */;
 			productName = AGSentry;
 		};
+		173AF101003AF101007DF535 /* ProtoSchema */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ProtoSchema;
+		};
+		173AF102003AF102007DF535 /* FLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16901A842FFFC03B007DF535 /* XCRemoteSwiftPackageReference "sp-flm" */;
+			productName = FLM;
+		};
 		EB00BB872ABAF71F007FA047 /* AGSEDesignSystem */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AGSEDesignSystem;
@@ -5774,9 +5724,9 @@
 			package = EB27B01F2C762946004403BD /* XCRemoteSwiftPackageReference "Sparkle" */;
 			productName = Sparkle;
 		};
-		EC4131A52A6ED42400C93BDF /* SciterSchema */ = {
+		EC4131A52A6ED42400C93BDF /* ProtoSchema */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = SciterSchema;
+			productName = ProtoSchema;
 		};
 		EC4906212AB3120E00830379 /* ContentBlockerConverter */ = {
 			isa = XCSwiftPackageProductDependency;

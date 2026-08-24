@@ -8,15 +8,14 @@
 //
 
 import Foundation
-import SciterSchema
+import ProtoSchema
 
 extension URLFilterInfo {
     /// Maps the metadata to its Protobuf message, leaving optional fields unset when `nil`.
-    func toProto() -> SciterSchema.URLFilterInfo {
-        SciterSchema.URLFilterInfo(
+    func toProto() -> ProtoSchema.URLFilterInfo {
+        ProtoSchema.URLFilterInfo(
             rulesCount: self.rulesCount.map(UInt32.init),
-            lastUpdate: self.lastUpdate.map { Int64($0.timeIntervalSince1970) },
-            isInstalling: self.isInstalling
+            lastUpdate: self.lastUpdate.map { Int64($0.timeIntervalSince1970) }
         )
     }
 }

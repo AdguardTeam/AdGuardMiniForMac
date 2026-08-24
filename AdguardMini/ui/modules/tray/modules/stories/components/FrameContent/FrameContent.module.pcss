@@ -1,0 +1,165 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.advanced {
+    background-image: url('./images/advanced.svg');
+}
+
+.devices {
+    background-image: url('./images/devices.svg');
+}
+
+.extensions {
+    background-image: url('./images/extensions.svg');
+}
+
+.extra1 {
+    background-image: url('./images/extra1.svg');
+}
+
+.extra2 {
+    background-image: url('./images/extra2.svg');
+}
+
+.extra3 {
+    background-image: url('./images/extra3.svg');
+}
+
+.extra4 {
+    background-image: url('./images/extra4.svg');
+}
+
+.filters1 {
+    background-image: url('./images/filters1.svg');
+}
+
+.filters2 {
+    background-image: url('./images/filters2.svg');
+}
+
+.filters3 {
+    background-image: url('./images/filters3.svg');
+}
+
+.filters4 {
+    background-image: url('./images/filters4.svg');
+}
+
+.filters5 {
+    background-image: url('./images/filters5.svg');
+}
+
+.loginItem {
+    background-image: url('./images/loginItem.svg');
+}
+
+.rate {
+    background-image: url('./images/rate.svg');
+}
+
+.telemetry1 {
+    background-image: url('./images/telemetry1.svg');
+}
+
+.telemetry2 {
+    background-image: url('./images/telemetry2.svg');
+}
+
+.telemetry3 {
+    background-image: url('./images/telemetry3.svg');
+}
+
+.telemetry4 {
+    background-image: url('./images/telemetry4.svg');
+}
+
+
+.healthCheck1 {
+    background-image: url('./images/healthCheck1.svg');
+}
+
+.healthCheck2 {
+    background-image: url('./images/healthCheck2.svg');
+}
+
+.systemWide {
+    background-image: url('./images/systemWide.svg');
+}
+
+.FrameContent {
+    width: 360px;
+    height: 510px;
+    display: flex;
+    flex-direction: column;
+
+    &_image {
+        background-size: contain;
+        background-position: center;
+        max-height: 250px;
+        background-repeat: no-repeat;
+        flex: 1;
+
+        &__small {
+            max-height: 206px;
+        }
+
+        &__big {
+            max-height: 300px;
+        }
+    }
+
+    &_imageText {
+        max-height: 225px;
+        flex: 1;
+        display: flex;
+        margin-top: var(--m-xs);
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: var(--text-footer-footer-text-default);
+    }
+
+    &_title {
+        margin: var(--m-s) var(--m-s) var(--m-xs);
+        color: var(--text-footer-footer-text-default);
+        text-align: center;
+        position: relative;
+        z-index: 5;
+    }
+
+    &_description {
+        margin: 0 var(--m-s) var(--m-s);
+        color: var(--text-footer-footer-text-default);
+        text-align: center;
+        position: relative;
+        z-index: 5;
+    }
+
+    &_button {
+        box-sizing: border-box;
+        width: 328px;
+        max-width: 328px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: var(--m-xxs) auto;
+        color: #3D3D3D;
+        z-index: 5;
+        position: relative;
+    }
+
+    &_buttonText {
+        color: #FFFFFF;
+        width: auto;
+        z-index: 5;
+        position: relative;
+        margin: var(--m-xs) 0 var(--m-xxs);
+
+        &:hover {
+            color: #FFFFFF;
+        }
+    }
+}

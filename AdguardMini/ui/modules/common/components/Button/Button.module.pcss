@@ -1,0 +1,81 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.Button {
+    cursor: pointer;
+    text-decoration: none;
+    outline: 0px solid transparent;
+    padding: 0;
+    display: block;
+    text-align: center;
+    border: 0px solid transparent;
+    border-radius: var(--border-radius);
+    transition: background-color linear 0.1s,
+                border-color linear 0.1s,
+                color linear 0.1s;
+
+    &:disabled {
+        opacity: .5;
+    }
+
+    &__icon {
+        width: 24px;
+        height: 24px;
+        background: none;
+    }
+
+    &__iconSmall {
+        width: 16px;
+        height: 16px;
+    }
+
+    &__submit {
+        width: 100%;
+        min-height: 56px;
+        padding: var(--m-s);
+        border-radius: var(--border-radius);
+        text-align: center;
+        color: var(--text-buttons-primary-default);
+        max-width: 278px;
+    }
+
+    &__outlined {
+        background: none;
+        width: 100%;
+        min-height: 56px;
+        padding: var(--m-s);
+        border-radius: var(--border-radius);
+        border: 1px solid var(--stroke-buttons-secondary-default);
+        text-align: center;
+        background-color: var(--fills-buttons-secondary-button-default);
+        color: var(--text-main-text-main-default);
+        max-width: 278px;
+
+        &:hover {
+            background-color: var(--fills-backgrounds-page-background-hovered);
+        }
+    }
+
+    &__filled {
+        background: none;
+        width: 100%;
+        padding: var(--m-xxs);
+        height: 16px;
+        border-radius: var(--border-radius);
+        text-align: center;
+    }
+
+    &__text {
+        background: transparent;
+        color: var(--fills-buttons-main-button-default);
+        &:hover {
+            color: var(--fills-buttons-main-button-hovered);
+        }
+    }
+    &__small {
+        padding: var(--m-xs) var(--m-xs);
+    }
+}
+

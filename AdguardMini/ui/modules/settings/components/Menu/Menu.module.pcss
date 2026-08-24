@@ -1,0 +1,32 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.Menu {
+    background-color: var(--fills-buttons-secondary-button-hovered);
+    display: flex;
+    flex-flow: column;
+
+    &_logo {
+        margin: var(--m-s) var(--m-xxs);
+    }
+
+    &_menuItems {
+        padding-top: var(--m-s);
+        
+        &_delimiter {
+            padding: var(--m-m) 0 var(--m-xs) var(--m-xs);
+        }
+    }
+
+    &_getFullVersion {
+        margin-top: auto;
+        padding: var(--m-xxs);
+
+        &_button {
+            width: 100%;
+            min-height: 48px;
+        }
+    }
+}

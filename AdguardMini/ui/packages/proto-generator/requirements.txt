@@ -1,0 +1,18 @@
+### Install requirements for the proto-parser tool
+
+# Jinja is a fast, expressive, extensible templating engine.
+Jinja2==2.11.3
+
+# Work with json
+simplejson==3.17.2
+
+# Work with attributes
+attrs==20.3.0
+attr==0.3.1
+
+# Core of the parser
+parsy==1.3.0
+
+# Colored logger
+coloredlogs==15.0.1
+termcolor==1.1.0

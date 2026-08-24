@@ -1,0 +1,25 @@
+{
+  "name": "@adg/proto-generator",
+  "version": "1.8.0",
+  "private": true,
+  "license": "MIT",
+  "author": "AdGuard Team <devteam@adguard.com>",
+  "publishConfig": {
+    "registry": "https://art.int.agrd.dev/artifactory/api/npm/adguard-js/"
+  },
+  "files": [
+    "bin",
+    "proto-parser",
+    "README.md",
+    "requirements.txt",
+    "yarn.lock"
+  ],
+  "dependencies": {
+    "google-protobuf": "^3.19.1",
+    "protoc-gen-ts": "^0.8.1",
+    "typescript": "^4.5.5"
+  },
+  "bin": {
+    "adg-proto-generator": "./bin/index.js"
+  }
+}

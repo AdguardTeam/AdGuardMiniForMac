@@ -8,8 +8,6 @@
 	<false/>
 	<key>urlFilterIsNew</key>
 	<true/>
-	<key>urlFilterIsPageNew</key>
-	<true/>
 	<key>allowTelemetry</key>
 	<false/>
 	<key>telemetryId</key>
@@ -67,8 +65,6 @@
 	<key>didAttemptLegacyMigration</key>
 	<string>__KEY_ONLY</string>
 	<key>abTests</key>
-	<string>__KEY_ONLY</string>
-	<key>userRulesEditorGeometry</key>
 	<string>__KEY_ONLY</string>
 	<key>dismissedHealthCheckCards</key>
 	<string>__KEY_ONLY</string>

@@ -1,0 +1,100 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.Home {
+    display: flex;
+    flex-direction: column;
+    width: 360px;
+    height: 582px;
+    background: var(--fills-backgrounds-page-background-default);
+    box-shadow: var(--bs-big);
+    box-sizing: content-box;
+    overflow: hidden;
+
+    &_header {
+        display: flex;
+        width: auto;
+        padding: var(--m-m) var(--m-s);
+
+        &_logo {
+            width: 109px;
+        }
+
+        &_update {
+            margin-left: auto;
+            margin-right: var(--m-s);
+        }
+    }
+
+    &_title {
+        margin-top: var(--m-xxl);
+        margin-bottom: var(--m-xxs);
+        text-align: center;
+        display: block;
+    }
+
+    &_status {
+        text-align: center;
+        color: var(--text-description-description-default);
+        padding: 0 var(--m-xs);
+    }
+
+    &_extensionsDisabled {
+        color: var(--text-links-attention-link-default);
+    }
+
+    &_link {
+        display: inline;
+        text-decoration: underline;
+        cursor: pointer;
+        font-size: var(--ft-m) !important;
+        color: inherit;
+    }
+    &_switch {
+        margin: var(--m-xxxl) auto auto;
+    }
+
+    &_storiesControls {
+        display: flex;
+        margin-bottom: var(--m-m);
+        margin-left: var(--m-s);
+        margin-right: var(--m-s);
+        align-items: center;
+
+        &_title {
+            margin-right: auto;
+        }
+
+        &_button {
+            &__right {
+                transform: rotate(180deg);
+                margin-left: var(--m-xs);
+            }
+            &__disabled {
+                color: var(--stroke-inputs-inactive-input-stroke-default);
+            }
+        }
+
+    }
+    &_stories {
+        overflow-x: scroll;
+        align-self: baseline;
+        width: 344px;
+        margin-left: var(--m-s);
+        margin-bottom: var(--m-s);
+
+        &_container {
+            display: flex;
+        }
+    }
+
+    &_loader {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100vw;
+    }
+}

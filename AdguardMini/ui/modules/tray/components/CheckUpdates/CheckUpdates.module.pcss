@@ -1,0 +1,96 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.CheckUpdates {
+    width: 360px;
+    height: 582px;
+    background: var(--fills-backgrounds-page-background-default);
+    box-shadow: var(--bs-big);
+    box-sizing: content-box;
+
+    &_header {
+        display: flex;
+        padding: var(--m-s);
+    }
+
+    &_title {
+        text-align: center;
+        margin-top: var(--m-xxs);
+        margin-bottom: var(--m-xs);
+    }
+
+    &_desc {
+        text-align: center;
+        margin-bottom: var(--m-s);
+        color: var(--text-description-description-default);
+    }
+
+    &_element {
+        color: var(--text-description-description-default);
+
+        border-bottom: 1px solid var(--stroke-dividers-item-divider-default);
+
+        &:last-of-type {
+            border-bottom: 0;
+        }
+
+        &_arrow {
+            transform: rotate(180deg);
+            color: var(--text-description-description-default);
+            margin-left: auto;
+        }
+
+        &_title {
+            padding: var(--m-s);
+            display: flex;
+
+             &__hover {
+                cursor: pointer;
+
+                &:hover {
+                    background-color: var(--fills-backgrounds-page-background-hovered);
+                }
+            }
+
+
+            &_icon {
+                margin-right: var(--m-xs);
+                margin-top: -6px;
+
+                &__updated {
+                    color: var(--fills-buttons-main-button-default);
+                }
+
+                &__info {
+                    color: var(--text-links-attention-link-default);
+                }
+
+            }
+
+            &_text {
+                margin-bottom: var(--m-xxxs);
+                color: var(--text-main-text-main-default);
+            }
+
+            &_link {
+                display: inline;
+                cursor: pointer;
+                text-decoration: underline;
+            }
+
+            &_fix {
+                color: var(--text-links-attention-link-default);
+            }
+        }
+
+        &_button {
+            margin: var(--m-xs) auto;
+
+            &_text {
+                line-height: var(--m-m);
+            }
+        }
+    }
+}

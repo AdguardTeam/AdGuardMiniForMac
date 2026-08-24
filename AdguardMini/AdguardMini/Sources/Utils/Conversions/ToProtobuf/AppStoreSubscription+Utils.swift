@@ -11,7 +11,7 @@
 // swiftlint:disable switch_case_on_newline
 
 import Foundation
-import SciterSchema
+import ProtoSchema
 import StoreKit
 
 // MARK: - AppStore.Subscription.toProto

@@ -16,6 +16,11 @@ import AML
 
 protocol StatusBarItemControllerDelegate: AnyObject {
     func handleStatusBarClicked(_ sender: NSStatusBarButton)
+    func handleTrayContextMenuWillPresent()
+}
+
+extension StatusBarItemControllerDelegate {
+    func handleTrayContextMenuWillPresent() {}
 }
 
 // MARK: - StatusBarItemController
@@ -59,16 +64,20 @@ final class StatusBarItemControllerImpl: StatusBarItemController {
         await self.updateStatusBarIcon()
     }
 
-    /// Updates the tray icon visibility accoring to the user setting (userSettingsManager.showInMenuBar)
-    ///
-    /// It is used to update tray icon visibility from an outside service where user settings not available.
-    /// For example: updates tray icon visibility after ProtectionService.setProtectionStatus call
-    /// (ProtectionService.setProtectionStatus calls if protection status changes via Safari Extension)
+    /// Whether the tray icon may be shown at all. The icon must not appear
+    /// while onboarding is in progress (first run) — it is shown only after
+    /// onboarding completes.
+    private var isTrayIconVisibilityAllowed: Bool {
+        !self.userSettingsManager.firstRun
+    }
+
+    /// Updates the tray icon visibility according to the user setting (userSettingsManager.showInMenuBar)
     @MainActor
     func updateTrayIconVisibilityBySetting() async {
         LogDebug("Setting status bar icon visibility to \(self.userSettingsManager.showInMenuBar)")
 
-        self.statusBarItemView?.isVisible = self.userSettingsManager.showInMenuBar
+        let isVisible = self.userSettingsManager.showInMenuBar && self.isTrayIconVisibilityAllowed
+        self.statusBarItemView?.isVisible = isVisible
     }
 
     @MainActor
@@ -90,7 +99,8 @@ final class StatusBarItemControllerImpl: StatusBarItemController {
         self.statusBarItemView?.setTarget(self)
         self.statusBarItemView?.setAction(#selector(self.handleStatusBarClicked))
         self.statusBarItemView?.listenEvents([.leftMouseUp, .rightMouseUp])
-        self.statusBarItemView?.isVisible = true
+        self.statusBarItemView?.isVisible = self.userSettingsManager.showInMenuBar
+            && self.isTrayIconVisibilityAllowed
     }
 
     @MainActor
@@ -118,6 +128,7 @@ final class StatusBarItemControllerImpl: StatusBarItemController {
 
     func openContextMenu(_ sender: NSStatusBarButton) {
         LogDebug("Will open context menu")
+        self.delegate?.handleTrayContextMenuWillPresent()
         let mainMenu = AppMenu(menuType: .context)
         self.statusBarItemView?.statusItem.menu = mainMenu
         sender.performClick(sender)
@@ -127,6 +138,12 @@ final class StatusBarItemControllerImpl: StatusBarItemController {
     @objc
     func handleStatusBarClicked(_ sender: NSStatusBarButton) {
         LogDebug("Handle status bar clicked by \(sender)")
+
+        if let event = NSApp.currentEvent, event.isRightClickEquivalentEvent {
+            self.openContextMenu(sender)
+            return
+        }
+
         self.delegate?.handleStatusBarClicked(sender)
     }
 }

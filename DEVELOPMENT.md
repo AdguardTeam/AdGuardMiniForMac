@@ -60,7 +60,6 @@ served from the registry under the `mac` scope:
 - `mac.sp-backend`
 - `mac.sp-color-palette`
 - `mac.sp-flm`
-- `mac.sp-sciter-sdk`
 - `mac.sp-sentry`
 - `mac.sp-xpcgate`
 
@@ -124,17 +123,22 @@ repository.
 4. **Build the project** in Xcode: open `AdguardMini/AdguardMini.xcodeproj`
    and build the `AdguardMini` scheme.
 
-   > **Note:** Sciter UI is built automatically as an Xcode target dependency
-   > (`Build Sciter UI` legacy target). It tracks changes in `sciter-ui/` and
-   > rebuilds `resources.bin` only when needed. No manual UI build step is
-   > required.
+   > **Note:** The UI is built by webpack (`yarn build:dev` / `yarn build:prod`)
+   > into `AdguardMini/MiniResources/WebUI/` (per-module `*.html` +
+   > `*.app.js` + `*.css`). The Xcode build phase copies this folder into the
+   > app bundle; the Swift WKWebView host loads each module's HTML via
+   > `Bundle.main.url(forResource:withExtension:)`. For hot-reload
+   > development, `yarn syncUI` / `yarn watchProject` inject the freshly built
+   > bundle into the already built `.app` and relaunch it, so no Xcode rebuild
+   > is needed for UI-only changes. No manual UI build step is required for a
+   > release build that uses the committed `WebUI/` artifacts.
 
 ## Development Workflow
 
 ### Code Style
 
 - **Swift**: SwiftLint (config at `AdguardMini/.swiftlint.yml`)
-- **TypeScript**: ESLint (config at `AdguardMini/sciter-ui/scripts/lint/prod.mjs`)
+- **TypeScript**: ESLint (config at `AdguardMini/ui/scripts/lint/prod.mjs`)
 - **Pre-commit hook**: Husky runs `lint-staged` on TypeScript files automatically
 
 For code guidelines and architectural conventions, see [AGENTS.md](./AGENTS.md).
@@ -148,17 +152,15 @@ yarn build:dev
 # Watch mode — rebuilds on file changes
 yarn start
 
-# Hot-reload — rebuilds UI and restarts the app
+# One-shot hot-swap — builds the UI, injects it into the existing built .app
+# (no Xcode rebuild) and relaunches the app
+yarn syncUI
+
+# Continuous hot-swap — webpack watch + inject into the existing build
 # Terminal 1:
 yarn start
 # Terminal 2:
 yarn watchProject
-
-# Build user rules module separately
-yarn build:userRules
-
-# Webpack dev server (web build mode, for browser debugging)
-yarn devserver
 ```
 
 ### Linting
@@ -200,7 +202,7 @@ For day-to-day development, build from Xcode: open
 Sciter UI is built automatically as a target dependency.
 
 ```bash
-# Production build of Sciter UI (standalone, if needed)
+# Production build of the WKWebView UI bundle (emits AdguardMini/MiniResources/WebUI/)
 yarn build:prod
 
 # Build the app from the terminal via xcodebuild
@@ -220,10 +222,10 @@ The app uses Protobuf for Swift ↔ TypeScript communication.
 
 | Path | Description |
 |------|-------------|
-| `AdguardMini/sciter-ui/schema/` | Schema definitions (`.proto` files) |
-| `AdguardMini/sciter-ui/schema/.protocfg/` | Generator configs (swift.json, typescript.json) |
-| `AdguardMini/SciterResources/SciterSchema/Sources/` | Generated Swift code |
-| `AdguardMini/sciter-ui/modules/common/apis/` | Generated TypeScript code |
+| `AdguardMini/ui/schema/` | Schema definitions (`.proto` files) |
+| `AdguardMini/ui/schema/.protocfg/` | Generator configs (swift.json, typescript.json) |
+| `AdguardMini/MiniResources/ProtoSchema/Sources/` | Generated Swift code |
+| `AdguardMini/ui/modules/common/apis/` | Generated TypeScript code |
 
 Regenerate after modifying `.proto` files:
 
@@ -306,7 +308,7 @@ yarn theme:generate
 ```
 
 Generates CSS stylesheets from the default theme definition at
-`AdguardMini/sciter-ui/modules/common/theme/default`.
+`AdguardMini/ui/modules/common/theme/default`.
 
 ## Troubleshooting
 
@@ -332,9 +334,6 @@ If the TestFlight deployment was successful but no build is displayed for a long
 time, it may be due to validation issues with the application package. An email
 describing the problem is sent to certain categories of related users, such as
 project managers.
-
-The last known problems were related to invalid `sciter` `dylib` entitlements.
-See the `sp-sciter-sdk` repository for more information.
 
 ### Get New Updates Immediately (Sparkle)
 

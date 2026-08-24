@@ -1,0 +1,32 @@
+/// {{constants.COMMON_GENERATED_FILES_PREAMBLE}}
+
+// WKWebView-only callback bridge.
+
+// MARK: `toSciter` / WKWebView service implementation
+
+/// {{helper.wrap_string(service.description, "/// ")}}
+public class {{service.body.name}}: {{config["callback_class_name"]}}
+{
+{% for method in service.body.body %}
+	/// {{helper.wrap_string(method.description, "	/// ")}}
+	/// Dispatch callback through the attached bridge.
+	@discardableResult public func {{helper.pascal_to_camel(method.body.name)}} (_ message: {{method.body.request_message_type}}) -> {{method.body.response_message_type}} {
+		if let bridge {
+			do {
+				bridge.dispatchCallback(
+					method: "{{service.body.name}}.{{method.body.name}}",
+					data: try message.serializedData()
+				)
+			} catch {
+				BridgeLog.error("{{service.body.name}}.{{method.body.name}}: failed to serialize: \(error)")
+			}
+		} else {
+			// A nil bridge is an expected transient condition during
+			// startup (before the host attaches); debug-level avoids
+			// error-monitoring noise for a routine startup race.
+			BridgeLog.debug("{{service.body.name}}.{{method.body.name}}: bridge is nil — callback dropped")
+		}
+		return {{method.body.response_message_type}}()
+	}
+{% endfor %}
+}

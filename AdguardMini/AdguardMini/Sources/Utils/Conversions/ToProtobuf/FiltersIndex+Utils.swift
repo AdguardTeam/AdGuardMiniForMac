@@ -9,11 +9,11 @@
 
 import Foundation
 import struct FLM.FilterGroup
-import SciterSchema
+import ProtoSchema
 
 extension FilterGroup {
-    func toProto() -> SciterSchema.FilterGroup {
-        SciterSchema.FilterGroup(
+    func toProto() -> ProtoSchema.FilterGroup {
+        ProtoSchema.FilterGroup(
             groupID: Int32(self.id),
             groupName: self.name,
             displayNumber: Int32(self.displayNumber)
@@ -22,7 +22,7 @@ extension FilterGroup {
 }
 
 extension FiltersIndex {
-    func toProto() -> SciterSchema.FiltersIndex {
+    func toProto() -> ProtoSchema.FiltersIndex {
         var filtersByGroups: [Int32: FiltersIds] = [:]
         var recommendedFiltersIdsByGroupDict: [Int32: FiltersIds] = [:]
         var otherFiltersIdsByGroupDict: [Int32: FiltersIds] = [:]
@@ -39,7 +39,7 @@ extension FiltersIndex {
             otherFiltersIdsByGroupDict[Int32(key)] = FiltersIds(value.map(Int32.init))
         }
 
-        return SciterSchema.FiltersIndex(
+        return ProtoSchema.FiltersIndex(
             unblockSearchAdsFilterID: Int32(self.unblockSearchAdsFilterId),
             cookieNoticeFilterID: Int32(self.cookieNoticeFilterId),
             popUpsFilterID: Int32(self.popUpsFilterId),
@@ -50,7 +50,7 @@ extension FiltersIndex {
             filtersByGroups: filtersByGroups,
             recommendedFiltersIdsByGroupDict: recommendedFiltersIdsByGroupDict,
             otherFiltersIdsByGroupDict: otherFiltersIdsByGroupDict,
-            definedGroups: SciterSchema.FiltersDefinedGroups(
+            definedGroups: ProtoSchema.FiltersDefinedGroups(
                 adBlocking: Int32(self.definedGroups.adBlocking),
                 privacy: Int32(self.definedGroups.privacy),
                 socialWidgets: Int32(self.definedGroups.socialWidgets),

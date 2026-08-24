@@ -1,0 +1,395 @@
+// SPDX-FileCopyrightText: AdGuard Software Limited
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+import { clamp } from '@adg/webview-utils-kit';
+import { observer } from 'mobx-react-lite';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import { Fragment } from 'preact/jsx-runtime';
+
+import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
+import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SafariExtensionsService';
+import { OptionalStringValue } from 'Apis/types';
+import { getCountableEntityStatuses } from 'Common/utils/utils';
+import theme from 'Theme';
+import { useTrayStore } from 'TrayLib/hooks';
+import { TrayEvent, TrayRoute } from 'TrayStore/modules';
+import { Loader, Logo, Button, Text, Switch } from 'UILib';
+import { getColorTheme, isDarkColorTheme } from 'Utils/colorThemes';
+
+import { StoryNavigation } from '../../modules/stories/classes';
+import { StoriesLayer, StoryCard, ShowHiddenCard } from '../../modules/stories/components';
+import { FlushCompletedStories } from '../../modules/stories/components/FlushCompletedStories';
+import { useStoriesConfig } from '../../modules/stories/hooks';
+import { resolveStoryEntryFrame } from '../../modules/stories/utils/navigationBoundary';
+
+import s from './Home.module.pcss';
+
+import type { StoryId } from '../../modules/stories/model';
+
+const STORIES_CONTAINER_WIDTH = 344;
+const STORY_SWITCH_INTERACTABLE_AREA_WIDTH = 156;
+
+/**
+ * Opens Safari preferences window
+ */
+const openSafariPreferences = () => {
+    window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
+};
+
+/**
+ * Story IDs that cannot be hidden (required stories)
+ */
+const NON_HIDEABLE_STORY_IDS = new Set([
+    'statistics',
+    'statisticsPrivacy',
+]);
+
+/**
+ * Home screen of tray
+ */
+function HomeComponent() {
+    const trayStore = useTrayStore();
+    const { settings, router, telemetry } = trayStore;
+    const { settings: traySettings, effectiveTheme } = settings;
+
+    const stories = useStoriesConfig();
+    const { hiddenStories } = settings;
+    const [selectedStoryId, setSelectedStoryId] = useState<{ id: StoryId; initialFrame?: number } | null>(null);
+    // Snapshot of Home cards order used during story-session navigation.
+    const [storiesNavigationOrder, setStoriesNavigationOrder] = useState<StoryId[]>([]);
+    const [storyEntryMode, setStoryEntryMode] = useState<'first' | 'last'>('first');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const storiesById = useMemo(() => {
+        return new Map(stories.map(({ storyConfig }) => [storyConfig.id, storyConfig] as const));
+    }, [stories]);
+    const orderedStoryIds = storiesNavigationOrder.length > 0
+        ? storiesNavigationOrder
+        : stories.map(({ storyConfig }) => storyConfig.id);
+
+    const currentStoryIndex = selectedStoryId !== null
+        ? orderedStoryIds.findIndex((storyId) => storyId === selectedStoryId.id)
+        : -1;
+
+    // Finds previous/next story using the captured order, skipping stories no longer present.
+    const getAdjacentStoryId = useCallback((direction: -1 | 1) => {
+        if (currentStoryIndex < 0) {
+            return null;
+        }
+
+        for (
+            let nextIndex = currentStoryIndex + direction;
+            nextIndex >= 0 && nextIndex < orderedStoryIds.length;
+            nextIndex += direction
+        ) {
+            const candidateStoryId = orderedStoryIds[nextIndex];
+            if (storiesById.has(candidateStoryId)) {
+                return candidateStoryId;
+            }
+        }
+
+        return null;
+    }, [currentStoryIndex, orderedStoryIds, storiesById]);
+
+    // Freeze the current Home order at open time to keep in-story navigation consistent.
+    const openStory = useCallback((storyId: StoryId) => {
+        setStoriesNavigationOrder(stories.map(({ storyConfig }) => storyConfig.id));
+        setStoryEntryMode('first');
+        setSelectedStoryId({ id: storyId });
+    }, [stories]);
+
+    const moveToNextStory = useCallback(() => {
+        const nextStoryId = getAdjacentStoryId(1);
+
+        if (nextStoryId === null) {
+            setStoryEntryMode('first');
+            setStoriesNavigationOrder([]);
+            setSelectedStoryId(null);
+            return;
+        }
+
+        setStoryEntryMode('first');
+        setSelectedStoryId({ id: nextStoryId });
+    }, [getAdjacentStoryId]);
+
+    const moveToPreviousStory = useCallback(() => {
+        const previousStoryId = getAdjacentStoryId(-1);
+
+        if (previousStoryId === null) {
+            return;
+        }
+
+        setStoryEntryMode('last');
+        setSelectedStoryId({ id: previousStoryId });
+    }, [getAdjacentStoryId]);
+
+    const closeStories = useCallback(() => {
+        setStoryEntryMode('first');
+        setStoriesNavigationOrder([]);
+        setSelectedStoryId(null);
+    }, []);
+
+    useEffect(() => {
+        const isLoadingExts = settings.getSafariExtensionsLoading();
+        setIsLoading(isLoadingExts);
+    }, [settings, settings.safariExtensionsStore.safariExtensions]);
+
+    const ref = useRef<HTMLDivElement>(null);
+
+    const [scrollIsAvailable, setScrollIsAvailable] = useState({
+        left: false,
+        right: stories.length > 2,
+    });
+
+    const openSettingsWindow = useCallback(() => {
+        window.API.Execute(new OpenSettingsWindowRequest());
+        telemetry.trackEvent(TrayEvent.SettingsClick);
+    }, [telemetry]);
+
+    const handleToggleSwitch = useCallback((checked: boolean) => {
+        settings.updateSettings(checked);
+        telemetry.trackEvent(TrayEvent.MainProtectionClick);
+    }, [settings, telemetry]);
+
+    const navigateToUpdates = useCallback(() => {
+        telemetry.trackEvent(TrayEvent.UpdateClick);
+        router.changePath(TrayRoute.updates);
+    }, [router, telemetry]);
+
+    /**
+     * Handle click on arrows in stories cards box
+     */
+    const handleMoveStoriesCards = useCallback((e?: MouseEvent) => {
+        // The click may land on the icon inside the button, so resolve the
+        // direction from the button itself rather than the click target.
+        const direction = (e?.currentTarget as HTMLButtonElement | null)?.getAttribute('data-switch-direction');
+
+        if (!ref.current || !direction) {
+            return;
+        }
+
+        const position = clamp(
+            ref.current.scrollLeft + (direction === 'left' ? -STORY_SWITCH_INTERACTABLE_AREA_WIDTH : STORY_SWITCH_INTERACTABLE_AREA_WIDTH),
+            0,
+            ref.current.scrollWidth - STORIES_CONTAINER_WIDTH,
+        );
+
+        setScrollIsAvailable({
+            left: position > 0,
+            right: position < ref.current.scrollWidth - STORIES_CONTAINER_WIDTH,
+        });
+
+        ref.current.scrollTo({ left: position, behavior: 'smooth' });
+    }, []);
+
+    const handleStoriesCardsScroll = useCallback((e: UIEvent) => {
+        const target = e.target as HTMLDivElement;
+
+        setScrollIsAvailable({
+            left: target.scrollLeft > 0,
+            right: target.scrollLeft < target.scrollWidth - STORIES_CONTAINER_WIDTH,
+        });
+    }, []);
+
+    useEffect(() => {
+        if (!settings.trayWindowVisible) {
+            closeStories();
+        }
+    }, [closeStories, settings.trayWindowVisible]);
+
+    if (!traySettings) {
+        return (
+            <div className={s.Home_loader}>
+                <Loader large />
+            </div>
+        );
+    }
+
+    const { enabled } = traySettings;
+
+    const {
+        allDisabled: allExtensionsDisabled,
+        someDisabled: someExtensionsDisabled,
+        allEnabled: allExtensionsEnabled,
+    } = getCountableEntityStatuses(
+        settings.safariExtensionsStore.enabledSafariExtensionsCount,
+        settings.safariExtensionsStore.safariExtensionsCount,
+    );
+
+    const getDisabledExtensionsStatus = () => {
+        if (someExtensionsDisabled) {
+            return translate('tray.home.title.protection.extensions.disabled', {
+                link: (text: string) => {
+                    return (
+                        <div
+                            className={s.Home_link}
+                            onClick={() => {
+                                telemetry.trackEvent(TrayEvent.FixItClick);
+                                openSafariPreferences();
+                            }}
+                        >
+                            {text}
+                        </div>
+                    );
+                },
+            });
+        }
+
+        if (allExtensionsDisabled) {
+            return translate('tray.home.title.protection.extensions.all.disabled', {
+                link: (text: string) => (<div className={s.Home_link} onClick={openSafariPreferences}>{text}</div>),
+            });
+        }
+    };
+
+    const currentStoryConfig = selectedStoryId !== null
+        ? storiesById.get(selectedStoryId.id)
+        : undefined;
+    const currentStory = currentStoryConfig
+        ? new StoryNavigation(currentStoryConfig, selectedStoryId!.initialFrame)
+        : undefined;
+
+    if (currentStory && storyEntryMode === 'last') {
+        // Enter previous story from its last visible frame.
+        const entryIndex = resolveStoryEntryFrame(currentStory.length, 'last');
+        currentStory.setIndex(entryIndex);
+    }
+
+    return (
+        <Fragment>
+            {currentStory && (
+                <FlushCompletedStories currentStory={currentStory}>
+                    {({ addCompletedStory }) => (
+                        <StoriesLayer
+                            key={currentStory!.id}
+                            addCompletedStory={addCompletedStory}
+                            closeStories={closeStories}
+                            hasPreviousStory={getAdjacentStoryId(-1) !== null}
+                            minFrameIndex={selectedStoryId!.initialFrame}
+                            moveToNextStory={moveToNextStory}
+                            moveToPreviousStory={moveToPreviousStory}
+                            story={currentStory!}
+                        />
+                    )}
+                </FlushCompletedStories>
+            )}
+            <div className={s.Home}>
+                <div className={s.Home_header}>
+                    <Logo
+                        className={s.Home_header_logo}
+                        isDarkTheme={effectiveTheme !== null && isDarkColorTheme(getColorTheme(effectiveTheme))}
+                    />
+                    <Button
+                        className={cx(theme.button.greenIcon, s.Home_header_update)}
+                        icon="update"
+                        type="icon"
+                        onClick={navigateToUpdates}
+                    />
+                    <Button
+                        className={theme.button.greenIcon}
+                        icon="settings"
+                        type="icon"
+                        onClick={openSettingsWindow}
+                    />
+                </div>
+                {isLoading ? (
+                    <>
+                        <Text className={s.Home_title} type="h4">
+                            {translate('tray.home.title.converting')}
+                        </Text>
+                        <Text className={cx(s.Home_status)} type="t2">
+                            {translate('tray.home.title.converting.desc')}
+                        </Text>
+                    </>
+                ) : (
+                    <>
+                        <Text className={s.Home_title} type="h4">
+                            {enabled ? translate('tray.home.title.protection.enabled') : translate('tray.home.title.protection.disabled')}
+                        </Text>
+                        <Text className={cx(s.Home_status, !allExtensionsEnabled && s.Home_extensionsDisabled)} type="t2" div>
+                            {allExtensionsEnabled && (enabled ? translate('tray.home.title.protection.enabled.desc') : translate('tray.home.title.protection.disabled.desc'))}
+                            {getDisabledExtensionsStatus()}
+                        </Text>
+                    </>
+                )}
+                <Switch
+                    checked={enabled}
+                    className={s.Home_switch}
+                    icon
+                    onChange={handleToggleSwitch}
+                />
+                {stories.length > 0 && (
+                    <>
+                        <div className={s.Home_storiesControls}>
+                            <Text className={s.Home_storiesControls_title} type="t2">
+                                {translate('tray.home.stories.title')}
+                            </Text>
+                            {stories.length > 2 && (
+                                <>
+                                    <Button
+                                        className={s.Home_storiesControls_button}
+                                        data-switch-direction="left"
+                                        icon="arrow_left"
+                                        iconClassName={!scrollIsAvailable.left
+                                            ? s.Home_storiesControls_button__disabled : theme.button.grayIcon}
+                                        type="icon"
+                                        onClick={handleMoveStoriesCards}
+                                    />
+                                    <Button
+                                        className={cx(
+                                            s.Home_storiesControls_button,
+                                            s.Home_storiesControls_button__right,
+                                        )}
+                                        data-switch-direction="right"
+                                        icon="arrow_left"
+                                        iconClassName={!scrollIsAvailable.right
+                                            ? s.Home_storiesControls_button__disabled : theme.button.grayIcon}
+                                        type="icon"
+                                        onClick={handleMoveStoriesCards}
+                                    />
+                                </>
+                            )}
+                        </div>
+                        <div
+                            ref={ref}
+                            className={s.Home_stories}
+                            onScroll={handleStoriesCardsScroll}
+                        >
+                            <div className={s.Home_stories_container}>
+                                {stories.map((props) => (
+                                    <StoryCard
+                                        {...props}
+                                        key={props.storyConfig.id}
+                                        setSelectedStoryId={openStory}
+                                        storyId={props.storyConfig.id}
+                                        onHide={NON_HIDEABLE_STORY_IDS.has(props.storyConfig.id)
+                                            ? undefined
+                                            : () => {
+                                                if (props.storyHideFrameId !== undefined) {
+                                                    setStoriesNavigationOrder(stories.map(({
+                                                        storyConfig,
+                                                    }) => storyConfig.id));
+                                                    setSelectedStoryId({
+                                                        id: props.storyConfig.id,
+                                                        initialFrame: props.storyHideFrameId,
+                                                    });
+                                                } else {
+                                                    settings.setHiddenStory(props.storyConfig.id);
+                                                }
+                                            }}
+                                    />
+                                ))}
+                                {hiddenStories.size > 0 && (
+                                    <ShowHiddenCard onShowHidden={() => settings.showAllHiddenStories()} />
+                                )}
+                            </div>
+                        </div>
+                    </>
+                )}
+            </div>
+        </Fragment>
+    );
+}
+
+export const Home = observer(HomeComponent);

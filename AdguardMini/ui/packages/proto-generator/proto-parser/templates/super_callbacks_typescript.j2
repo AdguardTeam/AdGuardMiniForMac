@@ -1,0 +1,31 @@
+/* {{constants.COMMON_GENERATED_FILES_PREAMBLE}} */
+{% for service in types %}
+{% set s = helper.camel_to_pascal(service) %}
+import { I{{s}}, I{{s}}Internal, {{s}} } from './{{service}}';
+import { {{s}}Internal } from './{{service}}Internal';
+{% endfor %}
+
+export class API_CALLBACK {
+{% for service in types %}
+    {{helper.pascal_to_camel(service)}}: I{{helper.camel_to_pascal(service)}};
+{% endfor %}
+
+    constructor(
+{% for service in types %}
+        {{helper.pascal_to_camel(service)}}Internal: I{{helper.camel_to_pascal(service)}}Internal,
+{% endfor %}
+    )
+    {
+{% for service in types %}
+        this.{{helper.pascal_to_camel(service)}} = new {{helper.camel_to_pascal(service)}}({{helper.pascal_to_camel(service)}}Internal);
+{% endfor %}
+    }
+}
+
+export {
+    {% for service in types %}
+    {% set s = helper.camel_to_pascal(service) %}
+    I{{s}}, I{{s}}Internal, {{s}}, {{s}}Internal,
+    {% endfor %}
+};
+

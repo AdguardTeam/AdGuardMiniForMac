@@ -1,0 +1,85 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+:root {
+    --wrapperWidth: 640px;
+}
+
+.Template {
+    &_container {
+        padding: var(--m-s) var(--m-m) var(--m-l);
+        height: 640px;
+        width: auto;
+        display: flex;
+        flex-flow: column;
+    }
+
+    &_img {
+        width: auto;
+        height: 256px;
+        overflow: hidden;
+        margin-bottom: var(--m-l);
+
+        &_source {
+            width: auto;
+            height: auto;
+        }
+
+        &_png {
+            width: 600px;
+            height: auto;
+            margin: 0 auto;
+        }
+    }
+
+    &_imgBig {
+        width: auto;
+        height: 340px;
+        overflow: hidden;
+        margin-top: auto;
+        margin-bottom: var(--m-l);
+    }
+
+    &_gap {
+        height: 40px;
+
+        &__center {
+            height: 0;
+            margin-bottom: auto;
+        }
+    }
+
+    &_content {
+        width: var(--wrapperWidth);
+        margin: 0 auto;
+
+        &_title {
+            margin-bottom: var(--m-xs);
+            text-align: center;
+        }
+
+        &_desc {
+            color: var(--text-description-description-default);
+            text-align: center;
+            padding: 0 var(--m-s);
+
+            &_text {
+                color: var(--text-description-description-default);
+                font-weight: var(--fw-bold);
+                display: inline-block;
+            }
+        }
+    }
+
+    &_buttons {
+        margin: auto 0 var(--m-xxs);
+        display: flex;
+        width: auto;
+        align-items: center;
+        justify-content: center;
+        padding: 0 auto;
+        gap: var(--m-l);
+    }
+}

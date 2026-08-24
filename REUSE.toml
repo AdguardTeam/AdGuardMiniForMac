@@ -22,7 +22,7 @@ path = ["AdguardMini/SciterResources/**"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "AdGuard Software Limited"
 SPDX-License-Identifier = "GPL-3.0-or-later"
-SPDX-FileComment = "Sciter resources"
+SPDX-FileComment = "Generated Protobuf Swift schema + built WKWebView UI bundle (historically hosted the Sciter runtime resources; later migrated to WKWebView)"
 
 [[annotations]]
 path = [
@@ -45,11 +45,10 @@ path = [
     ".lintstagedrc.js",
     ".husky/**",
     "**/*.html",
-    "AdguardMini/sciter-ui/modules/inline/**",
+    "AdguardMini/ui/modules/inline/**",
     "AdguardMini/AdguardMini/Resources/ThirdPartyDependencies.md",
     "docs/safari-filters-update-flow.md",
     "AdguardMini/AdguardMiniTests/UrlFilteringCheckerTests/Filter1.txt",
-    "AdguardMini/sciter-js-sdk/**",
     "AdguardMini/WebExtension/Resources/**",
     "AdguardMini/PopupExtension/ContentScript/rollup.config.ts",
     "AdguardMini/PopupExtension/ContentScript/src/index.ts",
@@ -77,14 +76,18 @@ SPDX-FileCopyrightText = "AdGuard Software Limited"
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
-path = ["AdguardMini/sciter-ui/schema/**/*.proto"]
+path = [
+    "AdguardMini/ui/schema/**/*.proto"
+]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "AdGuard Software Limited"
 SPDX-License-Identifier = "GPL-3.0-or-later"
 SPDX-FileComment = "Protocol Buffers schema definitions"
 
 [[annotations]]
-path = ["AdguardMini/SciterResources/SciterSchema/Sources/**/*.swift"]
+path = [
+    "AdguardMini/MiniResources/ProtoSchema/Sources/**/*.swift"
+]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "AdGuard Software Limited"
 SPDX-License-Identifier = "GPL-3.0-or-later"
@@ -92,9 +95,9 @@ SPDX-FileComment = "Generated from proto schemas"
 
 [[annotations]]
 path = [
-    "AdguardMini/sciter-ui/modules/common/apis/types/**/*.ts",
-    "AdguardMini/sciter-ui/modules/common/apis/requests/**/*.ts",
-    "AdguardMini/sciter-ui/modules/common/apis/callbacks/**/*.ts",
+    "AdguardMini/ui/modules/common/apis/types/**/*.ts",
+    "AdguardMini/ui/modules/common/apis/requests/**/*.ts",
+    "AdguardMini/ui/modules/common/apis/callbacks/**/*.ts"
 ]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "AdGuard Software Limited"
@@ -113,3 +116,36 @@ path = [
 SPDX-FileCopyrightText = "NONE"
 SPDX-License-Identifier = "CC0-1.0"
 SPDX-FileComment = "Dependency files"
+
+[[annotations]]
+path = [
+    "AdguardMini/ui/packages/proto-generator/**",
+]
+SPDX-FileCopyrightText = "AdGuard Software Limited"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+SPDX-FileComment = "Internal proto codegen tool, sample fixtures and generated cache"
+
+[[annotations]]
+path = [
+    "AdguardMini/ui/packages/webview-utils-kit/**",
+]
+SPDX-FileCopyrightText = "AdGuard Software Limited"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+SPDX-FileComment = "Vendored third-party TypeScript type declarations"
+
+[[annotations]]
+path = [
+    "AdguardMini/ui/tests/codegen/fixtures/**",
+]
+SPDX-FileCopyrightText = "AdGuard Software Limited"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+SPDX-FileComment = "Codegen test fixtures"
+
+[[annotations]]
+path = [
+    "docs/security-hardening-summary.md",
+    "main",
+]
+SPDX-FileCopyrightText = "AdGuard Software Limited"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+SPDX-FileComment = "Build artifacts and documentation"

@@ -1,0 +1,25 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.ProgressBarElement {
+    margin-top: 10px;
+    height: 4px;
+    width: auto;
+    position: relative;
+    background: rgba(255, 255, 255, 0.30);
+    margin-right: var(--m-xxxs);
+    border-radius: 2px;
+    z-index: 5;
+    flex: 1;
+
+    &_bar {
+        height: 4px;
+        background: #FFFFFF;
+        border-radius: 2px;
+        cursor: pointer;
+        z-index: 5;
+        width: 0;
+    }
+} 

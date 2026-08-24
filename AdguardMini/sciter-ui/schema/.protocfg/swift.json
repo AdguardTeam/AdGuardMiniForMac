@@ -1,9 +1,0 @@
-{
-    "namespace" : "Sciter",
-    "lib_name" : "SciterSwift",
-    "service_class_name" : "SciterBridge",
-    "callback_class_name" : "SwiftBridge",
-    "service_protocol" : "Service",
-    "types_package" : "AdguardMini.Types",
-    "omit_lang_postfix_in_output_path": true
-}

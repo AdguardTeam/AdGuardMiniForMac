@@ -12,7 +12,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 - [Project Structure](#project-structure)
 - [Build And Test Commands](#build-and-test-commands)
     - [Project Setup](#project-setup)
-    - [Frontend (TypeScript/Sciter UI)](#frontend-typescriptsciter-ui)
+    - [Frontend (TypeScript)](#frontend-typescript)
     - [Platform (Swift/Xcode)](#platform-swiftxcode)
     - [Testing](#testing)
     - [Linting](#linting)
@@ -36,7 +36,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 AdGuard Mini (formerly AdGuard for Safari) is a macOS ad-blocking application
 for Safari. It consists of a platform layer written in Swift (main app + Safari
 extensions) and a UI layer written in TypeScript (Preact/MobX modules rendered
-via Sciter runtime). The app uses Safari Content Blocker and Web Extension APIs
+via WKWebView). The app uses Safari Content Blocker and Web Extension APIs
 to block ads, trackers, and annoyances. It also includes a Safari popup
 extension for in-browser controls and a Protobuf-based schema for Swift/TS data
 synchronization.
@@ -46,13 +46,14 @@ synchronization.
 - **Language/Version**: Swift 5.9+ (platform), TypeScript 5.x (UI)
 - **Primary Dependencies**:
     - Swift: Sparkle (updates), XMLCoder, FilterListManager (AdGuardFLM),
-      Sciter SDK, Sentry
+      Sentry
     - TypeScript: Preact, MobX, Webpack, google-protobuf,
-      @adguard/rules-editor, @adg/sciter-utils-kit, classix, date-fns,
-      lodash
+      @adguard/rules-editor, @adg/webview-utils-kit (internally-vendored
+      fork at `AdguardMini/ui/packages/webview-utils-kit/`; Sciter-coupled
+      APIs replaced with W3C/WebKit equivalents), classix, date-fns, lodash
 - **Storage**: UserDefaults, file-based storage (JSON/plist), Safari Content
   Blocker rules (JSON)
-- **Testing**: XCTest (Swift), Jest (TypeScript)
+- **Testing**: XCTest (Swift), node:test (TypeScript)
 - **Target Platform**: macOS 12+ (deployment), macOS 13+ (development machine),
   Safari extensions
 - **Project Type**: single (Xcode project with multiple targets)
@@ -71,33 +72,34 @@ adguard-mini/
 │   ├── AdguardMini/                      # Main app target
 │   │   ├── DI/                           # Dependency injection containers
 │   │   ├── Sources/                      # App source code
-│   │   │   ├── main.swift                # Process entry point
 │   │   │   ├── AppDelegate.swift         # App lifecycle entry
-│   │   │   ├── ProtectionService.swift   # Enables/disables protection
-│   │   │   ├── ServiceSupervisor.swift   # Actor starting/stopping services
-│   │   │   ├── Backend/                  # Backend API, licensing, web flows
-│   │   │   ├── Core/                     # Core services, protocols, DTOs
-│   │   │   ├── Filters/                  # Filter management, Safari conversion
-│   │   │   ├── Sciter/                   # Sciter bridge (windows, services)
-│   │   │   ├── BrowserApi/               # Safari / XPC API providers
-│   │   │   ├── SafariExtensions/         # Safari extension management
-│   │   │   ├── URLFilter/                # URL-filtering configuration
-│   │   │   ├── Settings/                 # User settings management
-│   │   │   ├── Licensing/                # License management
-│   │   │   ├── AppStore/                 # App Store / in-app purchase (MAS)
-│   │   │   ├── AppUpdater/               # Sparkle-based app updates
 │   │   │   ├── AppLifecycle/             # Lifecycle, reset, watchdog
-│   │   │   ├── Migration/                # Versioned + legacy migrations
-│   │   │   ├── Legacy/                   # AdGuard for Safari legacy mappers
-│   │   │   ├── ImportExport/             # Settings import/export
+│   │   │   ├── AppStore/                 # App Store / in-app purchase
+│   │   │   ├── AppUpdater/               # Sparkle-based app updates
+│   │   │   ├── Backend/                  # Backend API, licensing, web flows
+│   │   │   ├── BrowserApi/               # Safari / XPC API providers
+│   │   │   ├── Core/                     # Core services, protocols, DTOs
 │   │   │   ├── CustomUrlSchemes/         # URL scheme / deep link handling
-│   │   │   ├── Telemetry/                # Telemetry event definitions
+│   │   │   ├── Filters/                  # Filter management and Safari conversion
+│   │   │   ├── ImportExport/             # Settings import/export
+│   │   │   ├── Legacy/                   # AdGuard for Safari legacy mappers
+│   │   │   ├── Licensing/                # License management
 │   │   │   ├── LoginItem/                # Launch-at-login management
 │   │   │   ├── Mail/                     # Mail Tracking Protection
+│   │   │   ├── Migration/                # Versioned + legacy migrations
+│   │   │   ├── ProtectionService.swift   # Enables/disables protection
+│   │   │   ├── SafariExtensions/         # Safari extension management
 │   │   │   ├── Sentry/                   # Sentry crash reporting setup
+│   │   │   ├── ServiceSupervisor.swift   # Actor starting/stopping services
+│   │   │   ├── Settings/                 # User settings management
 │   │   │   ├── Support/                  # Support contact entry point
+│   │   │   ├── Telemetry/                # Telemetry event definitions
 │   │   │   ├── UI/                       # Native UI (status bar, menus, alerts)
-│   │   │   └── Utils/                    # Utility extensions
+│   │   │   ├── URLFilter/                # URL-filtering configuration
+│   │   │   ├── Utils/                    # Utility extensions
+│   │   │   ├── WebView/                  # WebView app glue: Services/ bridge impls + WebViewCallbackCoordinator
+│   │   │   ├── WebViewAdapter/           # WKWebView hosting/adapter machinery (hosts, windows, message handlers, security)
+│   │   │   └── main.swift                # Process entry point
 │   │   ├── Resources/                    # Assets, plists, configs
 │   │   └── Localization/                 # Swift localization strings
 │   ├── PopupExtension/                   # Safari popup extension (toolbar UI)
@@ -126,8 +128,10 @@ adguard-mini/
 │   │   ├── Storages/                     # Shared keychain / storage
 │   │   ├── URLFilter/                    # URL filtering shared contracts
 │   │   └── Utils/                        # Shared utilities
-│   ├── SciterResources/                  # Compiled Sciter UI resources
-│   │   └── SciterSchema/                 # Generated Protobuf Swift schema
+│   ├── MiniResources/                  # Generated Protobuf Swift schema + built WKWebView UI bundle
+│   │   ├── ProtoSchema/                   # Generated Protobuf Swift schema (local SPM package)
+│   │   └── WebUI/                         # Built WKWebView UI bundle injected into the app
+│   ├── SciterResources/                   # Legacy Sciter resources (SciterSchema/), slated for removal
 │   ├── AdguardMini Builder/              # Build-time code generation
 │   ├── AdguardMini Prebuilder/           # Pre-build scripts (deps, defaults)
 │   ├── SafariExtension Builder/          # Safari extension build-time scripts
@@ -135,38 +139,21 @@ adguard-mini/
 │   ├── Scripts/                          # Shell scripts for build pipeline
 │   ├── Helper/                           # Helper app target
 │   ├── Watchdog/                         # Watchdog target
-│   ├── sciter-ui/                        # TypeScript UI source
-│   │   ├── @types/                       # Custom TypeScript type definitions
-│   │   ├── modules/                      # UI modules
-│   │   │   ├── common/                   # Shared components, hooks, utils, intl
-│   │   │   │   └── lib/number/            # Localized number formatting library
-│   │   │   ├── tray/                     # System tray menu UI
-│   │   │   ├── settings/                 # Settings window UI
-│   │   │   ├── onboarding/               # Onboarding flow UI
-│   │   │   ├── userrules/                # User rules editor (runs in WebView)
-│   │   │   ├── webview/                  # WebView integration module
-│   │   │   ├── inline/                   # Inline element blocking UI
-│   │   │   └── lottie/                   # Lottie animations
-│   │   ├── schema/                       # Protobuf schema definitions
-│   │   ├── tests/                        # Shared TypeScript node:test suites
-│   │   └── scripts/                      # Webpack configs, lint, build scripts
-│   └── sciter-js-sdk/                    # Sciter JS SDK (vendored)
-├── fastlane/                             # Fastlane automation (Ruby)
-│   ├── Updating/                         # Dependency update automation
-│   ├── Sciter                            # Sciter UI build lanes
-│   ├── Config.rb                         # Build configuration constants
-│   ├── Fastfile                          # Main lane definitions
-│   ├── Matchfile                         # Certificate match configuration
-│   ├── Pluginfile                        # Fastlane plugin dependencies
-│   └── .env.default                      # Default environment settings
-├── Support/Scripts/                      # Developer utility scripts
-├── bamboo-specs/                         # CI/CD pipeline definitions
-├── .windsurf/workflows/                  # AI agent workflow definitions
+│   └── ui/                               # TypeScript UI source
+├── bin/                                  # Toolchain wrappers generated by configure.sh
+├── Support/Scripts/                      # Developer utility scripts (locales, proto schema, deps)
+│   └── webview-screenshots/              # Live WebView screenshot tool (tray/settings)
+├── .github/skills/                       # Copilot skills (figma-webview-diff, …)
+├── docs/                                 # Technical docs (production build & deploy)
+├── support-scripts/                      # Internal developer scripts (localization, workflows)
+├── sciter-adguard-mini-private-template/ # Private repo template (Sciter era)
 ├── configure.sh                          # Project setup script
 ├── package.json                          # Node.js dependencies (UI)
 ├── tsconfig.json                         # TypeScript configuration
-├── Gemfile                               # Ruby dependencies (Fastlane)
+├── Gemfile                               # Ruby dependencies
 ├── REUSE.toml                            # REUSE/SPDX licensing metadata
+├── LICENSE.txt                           # Project license
+├── LICENSES/                             # SPDX license texts
 ├── README.md                             # Project readme
 └── DEVELOPMENT.md                        # Development setup guide
 ```
@@ -179,26 +166,27 @@ adguard-mini/
   generates wrappers in `bin/`, installs protoc tools, sets up dependencies)
 - `yarn` - Install frontend dependencies
 
-### Frontend (TypeScript/Sciter UI)
+### Frontend (TypeScript)
 
-- `yarn build:dev` - Development build of Sciter UI
-- `yarn build:prod` - Production build of Sciter UI
+- `yarn build:dev` - Development build of UI
+- `yarn build:prod` - Production build of UI
 - `yarn start` - Webpack watch mode for hot-reload development
-- `yarn watchProject` - Rebuild and restart app on file changes
+- `yarn syncUI` - Rebuild the UI bundle, inject it into the **existing** built
+  `.app` (no Xcode rebuild) and relaunch the app
+  (`AdguardMini/Scripts/syncWebUI.sh`)
+- `yarn watchProject` - Watch the webpack output and hot-swap it into the
+  existing built `.app` on every change (run together with `yarn start`)
 - `yarn lint` - Run ESLint on TypeScript sources
 - `yarn lint:fix` - Auto-fix ESLint issues
-- `yarn build:userRules` - Build user rules module separately
 - `yarn theme:generate` - Generate theme stylesheets from design tokens
-- `yarn devserver` - Start webpack dev server (web build mode)
 
 ### Platform (Swift/Xcode)
 
 - **Preferred (Xcode MCP)**: Use `BuildProject` with
   `tabIdentifier` from `XcodeListWindows`. Requires the Xcode project to be
   open.
-- **Fallback (terminal)**: `bin/fastlane build` or
+- **Fallback (terminal)**:
   `xcodebuild -project AdguardMini/AdguardMini.xcodeproj -scheme AdguardMini build`
-- Sciter UI is built automatically as an Xcode target dependency.
 
 ### Testing
 
@@ -206,14 +194,21 @@ adguard-mini/
   `tabIdentifier` from `XcodeListWindows`. Note: the active scheme's test plan
   must include `AdguardMiniTests`; if `GetTestList` returns 0 tests, fall back
   to the terminal method.
-- **Fallback (terminal)**: `bin/fastlane test`
+- **Fallback (terminal)**:
+  `xcodebuild test -project AdguardMini/AdguardMini.xcodeproj -scheme AdguardMini`
+- **TypeScript (node:test)**: `yarn test:node` runs the TypeScript test
+  suite (Node's built-in `node:test` runner — not Jest). Set `RUN_BUILD=1`
+  (`RUN_BUILD=1 yarn test:node`) to also run the slow integration tests that
+  shell out to webpack + `generateUI.sh`; these self-skip by default so
+  lint-staged pre-commit stays fast. No CI lane sets `RUN_BUILD=1`
+  automatically; the slow suite is developer-invoked.
 
 ### Linting
 
 - Swift: `swiftlint lint --config .swiftlint.yml --working-directory AdguardMini`
   (config: `AdguardMini/.swiftlint.yml`)
 - TypeScript: `yarn lint`
-  (config: `AdguardMini/sciter-ui/scripts/lint/prod.mjs`)
+  (config: `AdguardMini/ui/scripts/lint/prod.mjs`)
 - Pre-commit hook via Husky runs `lint-staged` on TypeScript files
 
 ### Localization
@@ -228,15 +223,21 @@ adguard-mini/
 
 - `./Support/Scripts/update_proto_schema.sh` - Regenerate Swift and TypeScript
   schema from Protobuf definitions
+- `AdguardMini/ui/packages/proto-generator` - Vendored (local) fork of the
+  `@adg/proto-generator` codegen, trimmed to the Swift and TypeScript
+  converters (the C# converter/templates were removed — this project only
+  generates Swift + TypeScript). It is symlinked into `node_modules`
+  (`node_modules/@adg/proto-generator`), which is how
+  `AdguardMini/Scripts/updateProtoSchema.sh` resolves it.
 
 ### Dependency Updates
 
-- `bundle exec ruby Support/Scripts/update_third_party_deps.rb` - Update all
+- `bin/ruby Support/Scripts/update_third_party_deps.rb` - Update all
   third-party dependencies
-- `bundle exec ruby Support/Scripts/update_third_party_deps.rb`
+- `bin/ruby Support/Scripts/update_third_party_deps.rb`
   `--packages=assistant,safariconverterlib` - Update specific packages
-- `bundle exec ruby Support/Scripts/update_third_party_deps.rb --dry-run` -
-  Check for updates without applying
+- `bin/ruby Support/Scripts/update_third_party_deps.rb --dry-run` - Check
+  for updates without applying
 
 ### Production Build And Deploy
 
@@ -250,6 +251,52 @@ variants and publishes them to the static storage and
 TestFlight respectively. For the full pipeline map, variant table, and
 release checklist, see `docs/production-build-and-deploy.md`.
 
+### WebView Screenshot Tool
+
+- Live-capture screenshots of the **running** app's WKWebView modules (tray
+  popover and settings window) without a dev server. Attaches to the live app
+  (usually the DEBUG build launched from Xcode).
+- Location: `Support/Scripts/webview-screenshots/` (`webview_screenshot.py` +
+  `webview-screenshot` wrapper + `README.md`).
+- Requirements: macOS, Python 3 (standard library only), and the **Screen
+  Recording** + **Accessibility** privacy permissions granted.
+- Commands (run from anywhere; the wrapper resolves the script path):
+  - `./Support/Scripts/webview-screenshots/webview-screenshot list` — list
+    AdGuard Mini CoreGraphics windows with their ids, titles, and geometry.
+  - `./Support/Scripts/webview-screenshots/webview-screenshot capture tray [out.png]` —
+    capture the tray popover (defaults to `.screenShotsReview/tray.png`).
+  - `./Support/Scripts/webview-screenshots/webview-screenshot capture settings [out.png]` —
+    capture the settings window (defaults to `.screenShotsReview/settings.png`).
+  - `./Support/Scripts/webview-screenshots/webview-screenshot open tray|settings` —
+    open a module via native UI (status-item click for tray, `Cmd+,` for
+    settings). Best-effort.
+- Notes: Synthetic clicks do NOT reach the tray WebView (non-key status panel),
+  so the tool only screenshots/opens modules; use the Web Inspector to drive the
+  UI. Window capture is coordinate-independent (`screencapture -l <CGWindowID>`)
+  and robust to multi-display / negative-Y layouts.
+
+### Figma ↔ WebView Visual Diff Skill
+
+- Human-in-the-loop skill that compares a **live WKWebView module screenshot**
+  (tray/settings) against its **Figma design render** and fixes **layout**
+  discrepancies — element placement, sizes, spacing, and colors — rather than
+  chasing pixel-perfect parity.
+- Location: `.github/skills/figma-webview-diff/SKILL.md` (with `references/`
+  docs: a diff-prompt template and a discrepancy→source map).
+- Requires: the Figma MCP (`get_screenshot`, `get_design_context`,
+  `get_variable_defs`) and Visor MCP (`ui_diff_check`) servers connected, plus
+  the WebView Screenshot Tool prerequisites above.
+- Invoke: provide a Figma selection URL (must include `node-id`) and the module,
+  e.g. `/figma-webview-diff https://www.figma.com/design/<key>/<name>?node-id=1-2 tray`.
+- Loop: render the Figma reference (`get_screenshot`) → capture the live WebView
+  (`webview-screenshot capture`) → `ui_diff_check` → if differences, use
+  `get_design_context`/`get_variable_defs` to fix the Preact/TS source →
+  `yarn build:dev` → STOP and ask the user to reopen the exact screen before
+  re-capturing. Never trust a stale capture. Apply quality gates (`yarn lint`,
+  SwiftLint if Swift touched) before declaring done.
+- Scope: only `tray` and `settings` are targetable today; for other modules use
+  `webview-screenshot list` + manual `screencapture -l <id>`.
+
 ## Contribution Instructions
 
 You MUST follow the following rules for EVERY task that you perform:
@@ -257,7 +304,7 @@ You MUST follow the following rules for EVERY task that you perform:
 - PR title format: `AG-<task number>: <commit title in lowercase English>`.
 
 - Before analyzing any TypeScript files, check custom type definitions at
-  `AdguardMini/sciter-ui/@types`.
+  `AdguardMini/ui/@types`.
 
 - You MUST run `yarn lint` and verify no new ESLint errors are introduced in
   changed TypeScript files.
@@ -300,13 +347,13 @@ You MUST follow the following rules for EVERY task that you perform:
 ### System Design
 
 AdGuard Mini is a long-running macOS desktop application composed of a Swift
-platform layer and a Sciter/TypeScript UI. Design for a resource-rich but
+platform layer and a WebView/TypeScript UI. Design for a resource-rich but
 long-lived environment:
 
 - The app runs as a long-lived process — release resources (file handles, XPC
   connections, timers, `NotificationCenter` observers) proactively; do not
   rely on process exit to free them.
-- Handle multiple Sciter windows (tray, settings, onboarding) and concurrent
+- Handle multiple WKWebView windows (tray, settings, onboarding) and concurrent
   user actions safely; use Swift Concurrency and `@MainActor` rather than raw
   shared-state mutation (see the Concurrency guideline in Other).
 - Persist user preferences and window geometry across restarts via
@@ -326,7 +373,7 @@ long-lived environment:
 The codebase should follow these universal design principles:
 
 - **Separation of Concerns** — each module owns one aspect of the system
-  (filters, licensing, Sciter bridge, storage).
+  (filters, licensing, WebView bridge, storage).
 - **Single Responsibility Principle** — every file, class, or function has one
   reason to change.
 - **Dependency Direction** — dependencies point downward: UI → services →
@@ -348,9 +395,9 @@ The easiest way to achieve these principles is **layered architecture**.
 This project's layers, from top to bottom:
 
 ```text
-Native UI (status bar, menus, alerts) + Sciter UI (TypeScript/Preact/MobX)
+Native UI (status bar, menus, alerts) + WebView UI (TypeScript/Preact/MobX)
      ↓
-Sciter Bridge (Protobuf services + callbacks, window lifecycle)
+WebView Bridge (Protobuf services + callbacks, window lifecycle)
      ↓
 Service Layer (ProtectionService, UserSettingsService, SafariExtensions,
                Mail, URLFilter, LoginItem, AppLifecycle, Migration, Telemetry)
@@ -387,39 +434,88 @@ Blocker JSON consumed by the extension targets.
    avoids duplication while respecting target boundaries.
 
 3. **Protobuf schema sync**: Swift and TypeScript communicate via Protobuf.
-   Schema definitions live in `AdguardMini/sciter-ui/schema/`. Generated Swift
-   code goes to `AdguardMini/SciterResources/SciterSchema/Sources/`, generated
+   Schema definitions live in `AdguardMini/ui/schema/`. Generated Swift
+   code goes to `AdguardMini/MiniResources/ProtoSchema/Sources/`, generated
    TypeScript stays in the schema directory.
 
    **Rationale**: Ensures type-safe communication between Swift platform layer
    and TypeScript UI layer.
 
+4. **UI modules**: Each UI module (`tray`, `settings`, `onboarding`,
+   `userrules`) runs independently in its own WKWebView window. Shared
+   code lives in `modules/common/`. The `userrules` module opens as a
+   Swift-owned child `NSWindow` + `WKWebView` (invoked from either the
+   tray or settings modules), unlike the other three modules which open
+   as top-level windows.
+
    The Protobuf bridge is deployed atomically: the Swift platform and the
-   Sciter UI ship in a single app bundle, and the schema is an in-memory wire
-   only — messages are never serialized to durable storage. Consequently,
-   removing or renaming fields does not require reserving their tag numbers
-   and names; deleted tags may be freely reused in later schema revisions.
+   WebView UI ship in a single app bundle, and the schema is an in-memory
+   wire only — messages are never serialized to durable storage.
+   Consequently, removing or renaming fields does not require reserving
+   their tag numbers and names; deleted tags may be freely reused in later
+   schema revisions.
 
    **Exception**: if a message is ever persisted (UserDefaults, files,
    CoreData) or crosses a version boundary, mark deleted tags and names as
    `reserved` to prevent silent wire corruption.
 
-4. **Sciter UI modules**: Each UI module (`tray`, `settings`, `onboarding`,
-   `userrules`, `inline`) runs independently in its own Sciter window. Shared
-   code lives in `modules/common/`. The `userrules` module runs in a WebView,
-   not Sciter.
-
    **Rationale**: Module isolation prevents coupling and allows independent
    loading.
+
+5. **Observable window state over custom events**: In TypeScript UI modules,
+   window-level state such as visibility or the effective theme SHOULD be
+   modeled as MobX observable fields on the module's store rather than
+   hand-rolled event/action classes. When a value has multiple sources (for
+   example, the theme preference in the settings proto and the platform's
+   `OnEffectiveThemeChanged` callback), merge them into the single observable
+   in the store (`setSettings` applies explicit preferences immediately and
+   resolves `system` against the platform). `observer` components and hooks
+   then re-render automatically when the state changes.
+
+   **Rationale**: MobX already drives component updates across these modules;
+   custom pub/sub events duplicate that machinery and require manual
+   subscribe/unsubscribe wiring. A single merged source of truth keeps
+   consumers trivial (`useTheme` becomes a one-line effect on the observable).
+
+6. **Declarative story-frame navigation**: Story frames MUST declare navigation
+   and buttons as data (`nextFrameId`, `buttons`) rather than imperative
+   navigation callbacks or button components. Back navigation follows the path
+   the user took via a per-story history stack; when the stack is empty it
+   falls back to the previous linear frame, then the story boundary. Frame
+   image sizing is derived from the declared button count (0 → large,
+   1 → medium, ≥2 → small), never from the presence of a `component` field.
+
+   **Rationale**: Keeps story configuration declarative and unit-testable;
+   history-based back preserves the user's actual journey across non-linear
+   jumps, and button-count sizing keeps layouts correct as button counts vary.
+
+7. **WebView adapter vs. app glue separation**: WKWebView hosting/runtime
+   machinery (`WKWebViewAppHost`, window controllers, message handlers,
+   navigation/security, timeout monitoring, failure presenter) MUST live in
+   `Sources/WebViewAdapter/`, structurally separated from the app-domain
+   WebView bridge glue that stays in `Sources/WebView/` (the `Services/`
+   bridge implementations and `WebViewCallbackCoordinator`). New WebView
+   machinery goes in `WebViewAdapter/`; new service bridges go in
+   `WebView/Services/`. Both folders are plain (non-package) app-target
+   sources today — the separation mirrors the former
+   `mac.sp-sciter-sdk`/`SciterSwift` package boundary and keeps a clean
+   on-ramp to promoting `WebViewAdapter/` into a local SPM package later.
+
+   **Rationale**: Explicitly separates reusable adapter code from
+   application-specific glue so the module boundary is visible in the
+   project tree (per PR AG-57496 review), keeps the adapter free of
+   app-domain dependencies (`AML`, `FLM`, app services), and eases a
+   future package extraction.
 
 **Known exclusions** (acceptable today, to be improved over time):
 
 - `ServiceLocator` is a large Service Locator / God Object that lazily builds
   and injects ~30 services, hiding the real dependency graph
   (`AdguardMini/AdguardMini/DI/ServiceLocator/ServiceLocator.swift`).
-- Sciter `*ServiceImpl` bridge classes (e.g., `SettingsServiceImpl`) conform
-  to many `*Dependent` protocols and hold business logic, violating Interface
-  Segregation and mixing the bridge and service layers.
+- `WebView/Services/` `*ServiceImpl` bridge classes (e.g.,
+  `SettingsServiceImpl`) conform to many `*Dependent` protocols and hold
+  business logic, violating Interface Segregation and mixing the bridge and
+  service layers.
 - `SharedDIContainer.shared` is a global mutable singleton with fixed
   implementations, which complicates testing and isolation.
 - Legacy "AdGuard for Safari" migration code lives in the main target without
@@ -461,11 +557,20 @@ Blocker JSON consumed by the extension targets.
      // Labeled parameter makes the role of the closure explicit.
      // swiftlint:disable:next trailing_closure
      ```
+   - The `excluded` list in `AdguardMini/.swiftlint.yml` MUST stay in sync
+     with the project layout. It currently covers the generated Protobuf
+     schema and built WebView bundle (`MiniResources/**`, `**/*.pb.swift`),
+     the UI package sources (`ui/packages/**`), Xcode and SPM build products
+     (`build/**`, `**/.build`), vendored dependencies (`.bundle/**`), and
+     Xcode file templates (`Support/XcodeTemplates/**`). When the layout
+     changes — renamed or moved build output directories, new vendored
+     dependencies, a new generated-sources location — update the exclusions
+     in the same change.
 
    **Rationale**: Enforces consistent code style and prevents common issues.
 
 2. **ESLint compliance**: All TypeScript code MUST pass ESLint with the
-   configuration at `AdguardMini/sciter-ui/scripts/lint/prod.mjs`.
+   configuration at `AdguardMini/ui/scripts/lint/prod.mjs`.
 
    **Rationale**: Ensures consistent TypeScript code style.
 
@@ -496,7 +601,63 @@ Blocker JSON consumed by the extension targets.
   **Rationale**: Keeps code understandable during maintenance and review,
   and makes API usage clearer for all contributors.
 
-5. **Card-based UI composition**: In TypeScript UI modules, card collections
+5. **Issue references in comments**: Comments MUST NOT carry a JIRA issue
+   number, with exactly one exception: a `TODO`, where it is required (see
+   the `todo_jira` SwiftLint rule above). Describe what the code does and
+   why; the ticket that prompted the change belongs in the commit message
+   and the pull request.
+   ```swift
+   // Good: the reason stands on its own.
+   // `orderOut` alone frees nothing — AppKit still owns an ordered-out
+   // Window — so teardown closes it instead.
+
+   // Bad: a ticket number readers cannot act on.
+   // Close the window on teardown (AG-12345).
+
+   // The one place a ticket belongs:
+   // TODO: AG-1234 Validate the icon rect instead of sleeping.
+   ```
+
+   **Rationale**: A ticket number in a comment ages badly — it points at a
+   tracker many readers cannot open, goes stale when the issue is closed or
+   migrated, and records the history of a change rather than the behavior of
+   the code. `git blame` already ties every line to its commit and ticket, so
+   the reference is not lost. A `TODO` is different: it is a promise about
+   work not yet done, so it needs somewhere to track that work.
+
+6. **Explicit `self` in Swift**: Inside a class, every reference to an
+   instance method or stored property MUST be written with `self.` — not
+   only in escaping closures, where the compiler already demands it.
+   ```swift
+   // Good: the receiver is visible on every line.
+   private func armIdleTimer() {
+       guard self.idleBlocker() == nil else {
+           self.cancelIdleTimer()
+           return
+       }
+       self.idleTask?.cancel()
+   }
+
+   // Bad: `idleTask` could be a property, a local, or a captured variable.
+   private func armIdleTimer() {
+       guard idleBlocker() == nil else {
+           cancelIdleTimer()
+           return
+       }
+       idleTask?.cancel()
+   }
+   ```
+
+   **Rationale**: An unqualified name says nothing about what it refers to —
+   instance state, a local, a shadowed parameter, a free function — so a
+   reader must hold the enclosing scope in their head to know what a line
+   touches, and a new local that shadows a property reads as correct. It also
+   matches escaping closures, where `self.` is mandatory anyway, so code does
+   not change shape when it moves into one. SwiftLint can enforce this with
+   the `explicit_self` analyzer rule (`swiftlint analyze`), which is
+   correctable and currently not enabled.
+
+7. **Card-based UI composition**: In TypeScript UI modules, card collections
   (for example, health/status cards) SHOULD be split so each card is a
   separate component file in the local `components/` folder. Card-specific
   text, actions, and visual configuration SHOULD live inside that card
@@ -505,7 +666,7 @@ Blocker JSON consumed by the extension targets.
   **Rationale**: Keeps orchestration components small and makes card behavior
   easier to maintain, test, and reuse.
 
-6. **Specification and design fidelity**: When writing feature specifications
+8. **Specification and design fidelity**: When writing feature specifications
   or implementation plans, every requirement, UI element, and design detail
   MUST trace back to an authoritative source: JIRA description, Figma design,
   explicit user confirmation, or a documented assumption. Never invent UX
@@ -587,12 +748,14 @@ Blocker JSON consumed by the extension targets.
    **Rationale**: Avoids bypassing access control, keeps the test build honest,
    and mirrors real client usage of the code under test.
 
-2. **Jest for TypeScript**: Jest is configured for TypeScript tests. Test files
-   SHOULD follow the `*.test.ts` / `*.test.tsx` naming convention.
+3. **node:test for TypeScript**: TypeScript tests use Node's built-in
+   `node:test` runner (NOT Jest — see "Build And Test Commands" section).
+   Test files SHOULD follow the `*.test.ts` / `*.test.tsx` naming convention.
 
-   **Rationale**: Ensures UI logic correctness.
+   **Rationale**: Ensures UI logic correctness and uses the same runtime as
+   the production `node` toolchain captured by `configure.sh`.
 
-3. **Lint-staged test triggers**: When adding new TypeScript tests, the
+4. **Lint-staged test triggers**: When adding new TypeScript tests, the
    `.lintstagedrc.js` file MUST be updated to include glob patterns for the
    tested source files and the test files themselves, mapping them to
    `yarn test:node`. This ensures tests run automatically on pre-commit when
@@ -643,15 +806,14 @@ ranges for all runtime and dev dependencies rather than exact pins.
 1. **Build configuration** lives in `.xcconfig` files (`AppConfig.xcconfig`,
    `CommonConfig.xcconfig`, `ConfigMAS.xcconfig`, `ConfigNative.xcconfig`).
    `UserDefaults` defaults are generated by `AdguardMini Prebuilder`, and
-   Fastlane reads settings from `fastlane/.env.default`.
+   build settings are provided by CI and xcodebuild build arguments.
 
 2. **Version and build number** come from external sources (CI / xcodebuild
    arguments), never hardcoded — see the External version management guideline
    in Other.
 
 3. **No hardcoded secrets** — API keys, certificates, and credentials MUST NOT
-   be committed. Use Fastlane match, the keychain, and CI-provided environment
-   variables.
+   be committed. Use the keychain and CI-provided environment variables.
 
 4. **Keep docs in sync with code** — when you change build commands, the
    project layout, or the Protobuf schema, update `AGENTS.md` (and
@@ -724,11 +886,11 @@ humans and AI agents that consume project documentation.
    caused by unmanaged task lifecycles and mixed concurrency patterns.
 
 4. **Toolchain wrappers**: All Ruby and Node.js tools MUST be invoked via `bin/`
-   wrappers (e.g., `bin/fastlane`, `bin/yarn`, `bin/ruby`, `bin/node`). Never
-   hardcode tool paths (e.g., `/opt/homebrew/opt/ruby/bin/ruby`) or use
-   `bundle exec` in scripts. The `configure.sh` script captures the toolchain
-   and generates wrappers that ensure consistent tool versions across all
-   environments (Xcode Build Phases, Fastlane, Terminal, CI).
+   wrappers (e.g., `bin/yarn`, `bin/ruby`, `bin/node`). Never hardcode tool
+   paths (e.g., `/opt/homebrew/opt/ruby/bin/ruby`) or use `bundle exec` in
+   scripts. The `configure.sh` script captures the toolchain and generates
+   wrappers that ensure consistent tool versions across all environments
+   (Xcode Build Phases, Terminal, CI).
 
    **Rationale**: Eliminates PATH-dependent behavior, removes reliance on shell
    init files and version managers (nvm, rbenv), and ensures reproducible builds
@@ -753,7 +915,19 @@ humans and AI agents that consume project documentation.
    **Rationale**: Eliminates magic numbers, makes intent clear, and simplifies
    future changes.
 
-8. **External version management**: Version and build number MUST come from
+8. **First-run auto-termination guard**: When `applicationShouldTerminateAfterLastWindowClosed`
+   is used to quit the app when the first-run onboarding window closes, it MUST
+   also verify that the onboarding host has actually been created (e.g.
+   `webViewAppsController.host(for: .onboarding) != nil`). AppKit consults this
+   method whenever the app's last window closes — including transient startup
+   windows such as the `checkAppLocation()` alert, which closes before the
+   onboarding host exists. Without the guard the app terminates during startup,
+   before `startAppStep0` runs, so the onboarding window never appears.
+
+   **Rationale**: Prevents AppKit's terminate-after-last-window-closed check from
+   killing the app while it still has no windows at startup (first run).
+
+9. **External version management**: Version and build number MUST come from
    external sources (CI, xcodebuild arguments), not hardcoded in
    `CommonConfig.xcconfig`. The xcconfig contains placeholder values
    (`AG_VERSION = 99.9.9`, `AG_BUILD = 999999`) that are overridden at build
@@ -773,25 +947,76 @@ humans and AI agents that consume project documentation.
    **Rationale**: Keeps version truth in CI/CD (git tags, KV store) rather than
    requiring manual edits to xcconfig for every release.
 
-#### Sciter runtime
+10. **Onboarding tray suppression**: The tray (status-bar icon) MUST NOT appear
+    while onboarding is in progress (`firstRun == true`). Tray icon visibility
+    is derived from `firstRun` in `StatusBarItemControllerImpl` (`updateStatusBarIcon`
+    and `updateTrayIconVisibilityBySetting`), so every code path that touches the
+    icon — launch, protection-status changes — keeps it hidden during onboarding.
+    Making it visible happens only after onboarding completes
+    (`OnboardingServiceImpl.onboardingDidComplete`) or when first run skips
+    onboarding via a successful legacy migration (`startAppStep2`), both of which
+    refresh the icon after clearing `firstRun`.
 
-1. **Hidden Sciter windows do not process idle.** In the Sciter engine
-   (`wing::ET_WINDOW_IDLE`), windows whose state is `WINDOW_HIDDEN` skip
-   `request_idle()`, so `html::view::process_posted_things` is never run while a
-   window is hidden. DOM-mutating work delivered to a hidden Sciter view (for
-   example a Swift→Sciter callback that updates a MobX store and triggers a
-   re-render) is therefore queued and only drained on the first idle after the
-   window is shown. Processing that stale work can dereference invalidated
-   elements and crash inside `process_posted_things` (`EXC_BAD_ACCESS`,
-   byte write at 0x0).
+    **Rationale**: The tray must not be reachable before onboarding finishes;
+    deriving visibility from `firstRun` in one place keeps all code paths
+    consistent and prevents the icon from reappearing mid-onboarding.
 
-   - Do NOT deliver DOM-mutating callback data into a Sciter view while its
-     window is hidden. Gate delivery on window visibility (for example
-     `SciterApp.isAppHidden()`), invoked on the main actor.
-   - When a callback is gated off because the window was hidden, the window MUST
-     re-fetch the corresponding data when it becomes visible (for example in
-     `OnWindowDidBecomeMain`) so the freshly shown view is not stale.
+11. **Logging subsystem (Swift)**: `os.Logger` writes to the unified OS log
+    only — it never flows through AML's `Logger.shared` handlers (the app's
+    log file, OSLog, and last-error store), which is what the app's exported
+    diagnostics are built from. To reach the app's logs, route through the
+    project-wide `LogDebug`/`LogInfo`/`LogWarn`/`LogError` helpers (AML
+    `Logger.shared`). App-target code that MUST use plain `os.Logger` (e.g.
+    `JsLogMessageHandler`, which must also compile without AML in the
+    `AdguardMiniTests` target) MUST pass `Subsystem.mainApp.name` (equal to
+    `BuildConfig.AG_APP_ID`) as the subsystem — not a hardcoded string — so
+    it stays reachable in the unified log. Code compiled into a separate
+    module that cannot reference `Subsystem`/`BuildConfig`/AML (the
+    `ProtoSchema` package) MUST not log on its own: it MUST route bridge
+    diagnostics through the `BridgeLog` static sink instead. The app installs
+    `BridgeLog.sink` once in `AppLogConfig.setup()` forwarding into
+    `LogDebug`/`LogInfo`/`LogWarn`/`LogError`; with no sink configured
+    (tests, build tools) the calls are no-ops.
 
-   **Rationale**: Prevents the accumulate-then-crash pattern observed when
-   user-rules updates were pushed into the hidden settings window and the window
-   was subsequently opened from the tray.
+    **Rationale**: Deriving a subsystem alone does not make an `os.Logger`
+    call reach the app's log file or last-error store — only AML
+    `Logger.shared` handlers do. `BridgeLog.sink` is the configured-callback
+    seam that funnels ProtoSchema's codegen-emitted bridge log lines (which
+    physically live in the package and cannot call `LogError`) back into the
+    app's single logging pipeline.
+
+12. **Renderer-supplied path confinement (Swift)**: Every path-bearing RPC
+    that reads or writes the filesystem MUST confine the renderer-supplied
+    path via `PathConfiner.isConfinable` against `PathGrantStore.shared` and
+    `PathConfiner.containerRoots(appGroupIdentifier: BuildConfig.AG_APP_ID)`
+    before touching the filesystem (see `UserRulesServiceImpl`,
+    `FiltersServiceImpl.checkCustomFilter`, `InternalServiceImpl.showInFinder`,
+    and the `SettingsServiceImpl` export/import/logs methods). Resolve `..`
+    and symlinks (`standardizedFileURL.resolvingSymlinksInPath()`) before the
+    check, and reject with an error + log when the path is not confinable.
+    This matters even though the release sandbox rejects arbitrary paths,
+    because DEBUG builds bypass the sandbox via the
+    `temporary-exception.files.absolute-path.read-write` entitlement.
+
+    **Rationale**: A compromised WebView page could otherwise read or overwrite
+    arbitrary files in DEBUG builds; picker-granted and container-root paths
+    are the only legitimate destinations, so the check is applied uniformly
+    across every path-bearing service method.
+
+13. **Non-fatal WebView diagnostics (Swift)**: Diagnostics that do not
+    represent a WebView load failure MUST NOT surface the native
+    `AppAlert.webViewLoadFailureRequest` alert. The `jsRuntimeError` channel
+    carries a `kind` classifier: posts tagged `csp-violation` (blocked inline
+    styles, e.g. from third-party animation libraries on macOS 12) are routed
+    to `WKWebViewFailurePresenter.handleCSPViolation`, which logs and records
+    telemetry but presents no modal alert (mirroring the telemetry-only
+    `handleRecurringRpcTimeout` surface). New non-fatal diagnostic classes
+    MUST follow the same pattern: log + telemetry, never the fatal alert.
+
+    **Rationale**: A CSP violation is not a load failure; presenting the
+    "Report issue / Restart" dialog for one interrupts onboarding and
+    misleads users. Relaxing the strict module CSPs (which forbid
+    `'unsafe-inline'` per the PRD "Web Content Policy") is not an acceptable
+    alternative because third-party animation libraries legitimately apply
+    inline styles.
+

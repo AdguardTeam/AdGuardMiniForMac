@@ -8,9 +8,9 @@
 //
 
 import Foundation
-import SciterSchema
+import ProtoSchema
 
-extension SciterSchema.QuitReaction {
+extension ProtoSchema.QuitReaction {
     func toQuitReaction() -> QuitReaction {
         switch self {
         case .ask:                    .ask
@@ -21,7 +21,7 @@ extension SciterSchema.QuitReaction {
     }
 }
 
-extension SciterSchema.Theme {
+extension ProtoSchema.Theme {
     func toTheme() -> Theme {
         switch self {
         case .system:                 .system

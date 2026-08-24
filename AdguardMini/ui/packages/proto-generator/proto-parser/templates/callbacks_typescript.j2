@@ -1,0 +1,58 @@
+{% set empty_type_name = constants.EMPTY_VALUE_TYPE %}
+/* {{constants.COMMON_GENERATED_FILES_PREAMBLE}} */
+{% set types = [] %}
+{% for method in service.body.body %}
+{% do types.append(method.body.request_message_type) %}
+{% do types.append(method.body.response_message_type) %}
+{% endfor %}
+import {
+{%- for type in types | unique %}
+ {{type}}{{ ' ' if loop.last else ',' }}
+{%- endfor %}
+} from '../types'
+
+/* {{helper.wrap_string(service.description, " * ")}}- public part for external platform calls with methods for {{config["array_buffer_type_name"]}} */
+export interface I{{service.body.name}} {
+{% for method in service.body.body %}
+	/* {{helper.wrap_string(method.description, "	 * ")}} */
+	{{method.body.name}}({{config["param_name"]}}: {{config["array_buffer_type_name"]}}): Promise<{{method.body.response_message_type}}>;
+{% endfor %}
+}
+
+/* {{helper.wrap_string(service.description, " * ")}}- private part for operations with unmarshalled params */
+export interface I{{service.body.name}}Internal {
+{% for method in service.body.body %}
+	/* {{helper.wrap_string(method.description, "	 * ")}}*/
+	{{method.body.name}}({{config["param_name"]}}: {{method.body.request_message_type}}): Promise<{{method.body.response_message_type}}>;
+{% endfor %}
+}
+
+{% set serviceInternalFieldName = helper.pascal_to_camel(service.body.name) + "Internal" %}
+/* {{helper.wrap_string(service.description, " * ")}} */
+export class {{service.body.name}} implements I{{service.body.name}} {
+	{{serviceInternalFieldName}}: I{{service.body.name}}Internal;
+
+	constructor({{serviceInternalFieldName}}: I{{service.body.name}}Internal) {
+		this.{{serviceInternalFieldName}} = {{serviceInternalFieldName}}
+	}
+
+{% for method in service.body.body %}
+	/**
+	 * {{helper.wrap_string(method.description, "	 * ")}}
+	 * @param {{config["array_buffer_type_name"]}} {{config["param_name"]}}
+	 * @returns {{method.body.response_message_type}} {{config["param_name"]}}
+	 */
+	{{method.body.name}} = async ({{config["param_name"]}}: {{config["array_buffer_type_name"]}}): Promise<{{method.body.response_message_type}}> => {
+		const bytes = new Uint8Array({{config["param_name"]}});
+		const arg = {{method.body.request_message_type}}.deserializeBinary(bytes);
+
+		if (!arg) {
+			throw new Error(`Empty parameter in {{service.body.name}}.{{method.body.name}}: ${ {{config["param_name"]}} }`);
+		}
+		log.dbg('Callback data', '{{service.body.name}}.{{method.body.name}}', arg.toObject());
+		await this.{{serviceInternalFieldName}}.{{method.body.name}}(arg);
+		return new {{method.body.response_message_type}}();
+	};
+{% endfor %}
+}
+

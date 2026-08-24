@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option optimize_for = CODE_SIZE;
+
+// Message used to transfer an import/export path
+message Path {
+    string path = 1;
+}
+
+message OptionalError {
+    bool hasError = 1;
+    optional string message = 2;
+}
+
+/* Parameters for the native open/save file panel */
+message SelectFileParams {
+    /* true = NSSavePanel, false = NSOpenPanel */
+    bool isSave = 1;
+    /* Panel caption */
+    string title = 2;
+    /* Comma-separated allowed extensions, e.g. "txt,zip"; empty = any file */
+    string allowedExtensions = 3;
+    /* Initial directory (absolute); empty = system default */
+    string initialPath = 4;
+}
+
+/* Result of the native open/save file panel */
+message SelectFilePath {
+    /* Absolute picked path; empty when the user cancelled */
+    string path = 1;
+}

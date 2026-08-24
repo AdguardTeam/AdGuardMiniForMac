@@ -8,9 +8,9 @@
 //
 
 import Foundation
-import SciterSchema
+import ProtoSchema
 
-extension SciterSchema.AdvancedBlocking {
+extension ProtoSchema.AdvancedBlocking {
     func toDTO() -> AdvancedBlockingDTO {
         AdvancedBlockingDTO(
             advancedRules: self.advancedRules,

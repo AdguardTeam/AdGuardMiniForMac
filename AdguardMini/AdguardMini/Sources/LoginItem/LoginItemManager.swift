@@ -12,6 +12,12 @@ import ServiceManagement
 import Combine
 import AML
 
+// `SMCopyAllJobDictionaries` is deprecated in macOS 10.10 but is the only way
+// To query login-item status on macOS < 13. Re-declared via `@_silgen_name`
+// (without the deprecated attribute) so the call below does not warn.
+@_silgen_name("SMCopyAllJobDictionaries")
+private func legacyCopyAllJobDictionaries(_ domain: CFString) -> Unmanaged<CFArray>?
+
 // MARK: - LoginItemManager
 
 protocol LoginItemManager {
@@ -84,7 +90,8 @@ final class LoginItemManagerImpl: LoginItemManager {
     private func legacyCheckHelperStatus() -> LoginItemManagerRegisterStatus {
         // `SMCopyAllJobDictionaries` is the only way to query login item status.
         // It is deprecated, but there is no alternative on macOS < 13.
-        guard let jobs = SMCopyAllJobDictionaries(kSMDomainUserLaunchd)?.takeRetainedValue() as? [[String: Any]] else {
+        guard let jobs = legacyCopyAllJobDictionaries(kSMDomainUserLaunchd)?
+            .takeRetainedValue() as? [[String: Any]] else {
             return .notRegistered
         }
         let isEnabled = jobs.contains { ($0["Label"] as? String) == BuildConfig.AG_HELPER_ID }

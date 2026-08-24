@@ -1,0 +1,39 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.Checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+
+    &__disabled {
+        cursor: default;
+    }
+
+    &_input {
+        display: none;
+        outline: none;
+    }
+
+    &_handler {
+        width: 24px;
+        height: 24px;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    &_input:disabled + &_handler {
+        opacity: 0.4;
+    }
+
+    &_label {
+        user-select: none;
+        text-align: left;
+        margin-left: var(--m-xs);
+    }
+}

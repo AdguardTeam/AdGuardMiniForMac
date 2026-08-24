@@ -6,7 +6,7 @@
 install_protoc_tools() {
     local PROJECT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
     local TOOLS_DIR="$PROJECT_ROOT/build/protoc-tools"
-    local PACKAGE_SWIFT="$PROJECT_ROOT/AdguardMini/SciterResources/SciterSchema/Package.swift"
+    local PACKAGE_SWIFT="$PROJECT_ROOT/AdguardMini/MiniResources/ProtoSchema/Package.swift"
     local SWIFT_PROTOBUF_VERSION
     local PROTOC_MAJOR
     local PROTOC_VERSION

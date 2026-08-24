@@ -8,10 +8,10 @@
 //
 
 import Foundation
-import SciterSchema
+import ProtoSchema
 
 extension ReleaseVariant {
-    func toProto() -> SciterSchema.ReleaseVariants {
+    func toProto() -> ProtoSchema.ReleaseVariants {
         switch self {
         case .MAS:        .mas
         case .standalone: .standAlone

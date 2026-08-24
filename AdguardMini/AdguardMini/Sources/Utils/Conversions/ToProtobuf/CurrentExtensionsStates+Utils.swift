@@ -7,7 +7,7 @@
 //  AdguardMini
 //
 
-import SciterSchema
+import ProtoSchema
 
 extension CurrentExtensionsStates {
     func toProto() -> SafariExtensions {

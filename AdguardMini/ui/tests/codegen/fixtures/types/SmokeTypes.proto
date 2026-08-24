@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option optimize_for = CODE_SIZE;
+
+message EchoRequest {
+    bytes payload = 1;
+}
+
+message EchoResponse {
+    bytes payload = 1;
+}
+
+message UpdateMessage {
+    string text = 1;
+}

@@ -9,7 +9,7 @@
 
 import Foundation
 import FLM
-import SciterSchema
+import ProtoSchema
 
 extension FilterInfo {
     func toFilterProto(rulesCount: Int) -> Filter {

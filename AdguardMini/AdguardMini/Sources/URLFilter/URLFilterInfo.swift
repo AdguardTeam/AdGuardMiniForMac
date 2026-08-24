@@ -21,13 +21,8 @@ struct URLFilterInfo: Equatable {
     var rulesCount: Int?
     /// Timestamp of the last prefilter update, if known.
     var lastUpdate: Date?
-    /// Whether a first-time installation is currently in progress.
-    var isInstalling: Bool
+}
 
-    /// Creates URL filter metadata.
-    init(rulesCount: Int? = nil, lastUpdate: Date? = nil, isInstalling: Bool = false) {
-        self.rulesCount = rulesCount
-        self.lastUpdate = lastUpdate
-        self.isInstalling = isInstalling
-    }
+extension URLFilterInfo {
+    static let empty: Self = .init(rulesCount: nil, lastUpdate: nil)
 }

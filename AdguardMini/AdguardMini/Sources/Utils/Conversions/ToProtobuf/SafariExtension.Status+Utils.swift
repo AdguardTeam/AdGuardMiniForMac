@@ -9,7 +9,7 @@
 
 // swiftlint:disable switch_case_on_newline
 
-import SciterSchema
+import ProtoSchema
 
 extension SafariExtension.Status {
     func toProto() -> SafariExtensionStatus {

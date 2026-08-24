@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+option optimize_for = CODE_SIZE;
+
+/* Derived, user-facing URL filter status. */
+enum URLFilterStatus {
+    URLFilterStatus_unknown = 0;
+    URLFilterStatus_error = 1;
+    URLFilterStatus_loading = 2;
+    URLFilterStatus_running = 3;
+}
+
+/* Protection level applied to the URL filter. */
+enum URLFilterProtectionLevel {
+    URLFilterProtectionLevel_essential = 0;
+    URLFilterProtectionLevel_safe = 1;
+    URLFilterProtectionLevel_family = 2;
+}
+
+/* Read-only URL filter metadata. */
+message URLFilterInfo {
+    optional uint32 rules_count = 1;
+    optional int64 last_update = 2;
+}
+
+/* Aggregate URL filter state exchanged with the UI. */
+message URLFilterState {
+    bool enabled = 1;
+    URLFilterProtectionLevel protection_level = 2;
+    URLFilterStatus status = 3;
+    URLFilterInfo info = 4;
+    bool is_installed = 5;
+}
+
+message URLFilterProtectionLevelUpdate {
+    URLFilterProtectionLevel protection_level = 1;
+}

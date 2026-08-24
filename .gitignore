@@ -181,16 +181,14 @@ playground.xcworkspace
 
 # End of https://www.gitignore.io/api/xcode,swift,macos,appcode,cocoapods,objective-c
 
-### Sciter ###
+### Node.js / Webpack UI build ###
 
 node_modules
 yarn-error.log
-sciter-js-sdk/*
-!sciter-js-sdk/mac
-sciter-js-sdk/mac/usciterjs.app
 metadata.json
-resources.bin
-
+AdguardMini/MiniResources/WebUI/
+AdguardMini/ui/packages/proto-generator/proto-parser/src/__pycache__/
+AdguardMini/ui/packages/proto-generator/proto-parser/logs
 ### Additional ###
 
 *.profraw
@@ -205,6 +203,10 @@ specs/
 .sdd/
 
 support-scripts
+
+# Figma ↔ WebView visual diff: captured screenshots (webview-screenshot, figma-webview-diff skill)
+.screenShotsReview/
+Support/Scripts/webview-screenshots/__pycache__
 
 # Ignore all Package.resolved files except the main Xcode project one.
 **/Package.resolved

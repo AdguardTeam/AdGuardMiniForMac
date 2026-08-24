@@ -1,0 +1,23 @@
+{
+  "originHash" : "8686c92b3d996660f77cff2d75c6435e3a930f3da6d8807ae38f7d4f0dfe8113",
+  "pins" : [
+    {
+      "identity" : "mac.sp-color-palette",
+      "kind" : "registry",
+      "location" : "",
+      "state" : {
+        "version" : "2025.5.1"
+      }
+    },
+    {
+      "identity" : "swiftlintplugins",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SimplyDanny/SwiftLintPlugins.git",
+      "state" : {
+        "revision" : "ecafb5b056cb7995324f0d310a61f30661d00cad",
+        "version" : "0.62.2"
+      }
+    }
+  ],
+  "version" : 3
+}

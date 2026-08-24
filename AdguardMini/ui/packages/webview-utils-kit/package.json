@@ -1,0 +1,10 @@
+{
+  "name": "@adg/webview-utils-kit",
+  "version": "0.7.0",
+  "description": "AdGuard internal fork of @adg/webview-utils-kit — Sciter-coupled APIs replaced with W3C/WebKit equivalents.",
+  "license": "GPL-3.0-or-later",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "vendor/index.d.ts",
+  "files": ["src", "vendor"]
+}

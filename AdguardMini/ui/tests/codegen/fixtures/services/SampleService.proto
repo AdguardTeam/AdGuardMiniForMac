@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+import "SmokeTypes.proto";
+
+/* Sample service for codegen smoke test */
+service SampleService {
+    /* Echo request bytes back */
+    rpc Echo(EchoRequest) returns (EchoResponse);
+}

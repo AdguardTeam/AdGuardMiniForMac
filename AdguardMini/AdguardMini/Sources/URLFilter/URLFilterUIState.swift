@@ -16,18 +16,33 @@ import Foundation
 /// Produced by ``URLFilterStateAssembler`` and converted to the Protobuf
 /// `URLFilterState` by an app-target-only `toProto()` extension.
 struct URLFilterUIState: Equatable {
-    /// Derived URL filter status.
-    var status: URLFilterStatus
     /// Whether the filter is currently enabled.
     var enabled: Bool
+    /// Derived URL filter status.
+    var status: URLFilterUIStatus
     /// Selected protection level.
     var protectionLevel: URLFilterProtectionLevel
     /// Whether the settings card is still marked as new.
-    var isNew: Bool
-    /// Whether the settings page is still marked as new.
-    var isPageNew: Bool
+    var isInstalled: Bool
     /// Read-only metadata.
     var info: URLFilterInfo
-    /// Error text derived from ``status``, if any.
-    var errorMessage: String?
+}
+
+extension URLFilterUIState {
+    static let error: Self = .init(
+        enabled: false,
+        status: .error,
+        protectionLevel: .essential,
+        isInstalled: false,
+        info: .empty
+    )
+}
+
+// MARK: - URLFilterUIStatus
+
+/// UI-facing status of URLFiltering extension
+enum URLFilterUIStatus: Equatable {
+    case error
+    case loading
+    case running
 }

@@ -1,0 +1,99 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.Modal {
+    position: fixed;
+    inset: 0;
+    z-index: var(--zi-modal-background);
+    box-sizing: content-box;
+
+    &_loader {
+        margin-right: var(--m-s);
+        margin-left: auto;
+    }
+
+    &_loaderText {
+        line-height: var(--m-m);
+        margin-right: auto;
+    }
+
+    &_descWrapper {
+        display: flex;
+    }
+
+    &_modalBackdrop {
+        position: absolute;
+        inset: 0;
+        background-color: var(--modal-background);
+        z-index: var(--zi-modal-background);
+    }
+
+    &_modalContent {
+        width: 460px;
+        position: absolute;
+        height: max-content;
+        min-width: min-content;
+        max-height: 600px;
+        overflow: auto;
+        text-align: center;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        background-color: var(--fills-backgrounds-page-background-default);
+        cursor: default;
+        padding-top: var(--m-l);
+        padding-bottom: var(--m-l);
+        border-radius: var(--border-radius);
+        z-index: var(--zi-modal);
+
+        &__horizontalPadding {
+            padding-left: var(--m-s);
+            padding-right: var(--m-s);
+        }
+
+        & > * {
+            z-index: var(--zi-modal);
+        }
+    }
+
+    &_children {
+        margin-top: var(--m-m);
+        height: auto;
+        box-sizing: content-box;
+        max-height: max-content;
+        overflow-y: auto;
+    }
+
+    &_buttons {
+        width: auto;
+        padding-top: var(--m-m);
+    }
+    
+
+    &_modalClose {
+        position: absolute;
+        top: var(--m-s);
+        right: var(--m-s);
+        cursor: pointer;
+    }
+
+    &_header {
+        padding: 0;
+    }
+
+    &_desc {
+        margin-top: var(--m-xs);
+        color: var(--text-main-text-main-default);
+    }
+
+    &_button {
+        max-width: 100%;
+        margin-bottom: var(--m-s);
+
+        &:last-of-type {
+            margin: 0;
+        }
+    }
+}

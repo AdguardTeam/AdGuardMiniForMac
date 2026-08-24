@@ -1,0 +1,32 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.StepHeader {
+    &_container {
+        height: 40px;
+        display: flex;
+        align-items: center;
+    }
+
+    &_progress {
+        display: flex;
+        margin: 0 auto;
+            gap: var(--m-xxs);
+        &_step {
+            width: 32px;
+            height: 4px;
+            border-radius: var(--border-radius);
+            background-color: var(--fills-backgrounds-page-background-additional-hovered);
+        
+            &__active {
+                background-color: var(--fills-buttons-main-button-default);
+            }
+        }
+    }
+
+    &_skip {
+        color: var(--text-breadcrumbs-default);
+    }
+}

@@ -7,7 +7,7 @@
 //  AdguardMini
 //
 
-import SciterSchema
+import ProtoSchema
 
 extension ImportStatusDTO {
     func toProto() -> ImportStatus {

@@ -1,0 +1,595 @@
+// SPDX-FileCopyrightText: AdGuard Software Limited
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+import noop from 'lodash/noop';
+
+import { RequestSubscribeRequest } from 'Apis/requests/AccountService';
+import { UpdateAllowTelemetryRequest } from 'Apis/requests/ConsentService';
+import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
+import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SafariExtensionsService';
+import { RequestOpenSettingsPageRequest } from 'Apis/requests/SystemService';
+import { OptionalStringValue, Subscription } from 'Apis/types';
+import { formatLocalizedNumber } from 'Common/lib/number';
+import { provideTrialDaysParam } from 'Common/utils/translate';
+import { getTdsLink, TDS_PARAMS } from 'Modules/common/utils/links';
+import { TrayEvent } from 'Modules/tray/store/modules';
+import { RouteName as RouteNameSettings } from 'SettingsStore/modules/SettingsRouter';
+import theme from 'Theme';
+import { useTrayStore } from 'TrayLib/hooks';
+import { ExternalLink, Text } from 'UILib';
+
+import {
+    HEALTH_CHECK_DEFAULT_STORY_ID,
+    isHealthCheckDefaultStoryEligible,
+} from '../../utils/healthCheckDefaultStory';
+import {
+    HEALTH_CHECK_WARNING_STORY_ID,
+    isHealthCheckWarningStoryEligible,
+} from '../../utils/healthCheckWarningStory';
+
+import s from './StoriesConfig.module.pcss';
+
+import type { IStoryFrame, StoryFrameImage, StoryInfo } from '../../model';
+
+const openSafariPref = () => {
+    window.API.Execute(new OpenSafariExtensionPreferencesRequest(new OptionalStringValue()));
+};
+
+/**
+ * "From" component value for TDS links
+ */
+const STORIES_TDS_LINK_FROM = 'storyConstructor';
+
+/**
+ * Hook that returns stories config
+ * Implements logic for sorting and filtering stories
+ */
+export function useStoriesConfig(): StoryInfo[] {
+    const { settings, safariProtection, telemetry } = useTrayStore();
+
+    const requiredStories: StoryInfo[] = [];
+    const stories: StoryInfo[] = [];
+
+    const {
+        settings: traySettings,
+        loginItemEnabled,
+        isLicenseOrTrialActive,
+        isLicenseBind,
+        isLicenseActive,
+        trialAvailableDays,
+        storyCompleted,
+        hiddenStories,
+        advancedBlocking,
+        safariExtensionsStore,
+        urlFilterState,
+        license,
+        statistics,
+        lastUpdateMoreSevenDays,
+    } = settings;
+
+    const { allowTelemetry, language: currentLanguage } = traySettings || {};
+    const language = currentLanguage || 'en';
+
+    const openHealthCheckPage = () => {
+        window.API.Execute(new OpenSettingsWindowRequest());
+    };
+
+    const healthCheckWarning = isHealthCheckWarningStoryEligible({
+        allExtensionsEnabled: safariExtensionsStore.allExtensionsEnabled,
+        loginItemEnabled,
+        effectiveExtensionsList: safariExtensionsStore.effectiveExtensionsList,
+    });
+
+    if (healthCheckWarning && !hiddenStories.has(HEALTH_CHECK_WARNING_STORY_ID)) {
+        requiredStories.push({
+            style: 'warning',
+            icon: 'info',
+            storyHideFrameId: 1,
+            text: translate('tray.story.health.check'),
+            storyConfig: {
+                id: HEALTH_CHECK_WARNING_STORY_ID,
+                totalFrames: 1,
+                frames: [
+                    {
+                        title: translate('tray.story.health.check'),
+                        description: translate('tray.story.health.check.desc'),
+                        image: 'healthCheck1',
+                        buttons: [{
+                            title: translate('tray.story.health.check.action'),
+                            type: 'primary',
+                            action: openHealthCheckPage,
+                        }],
+                        frameId: 'healthWarning1',
+                    },
+                    {
+                        title: translate('tray.story.health.check.hide'),
+                        description: translate('tray.story.health.check.desc.hide'),
+                        image: 'healthCheck2',
+                        buttons: [{
+                            title: translate('tray.story.health.check.action'),
+                            type: 'primary',
+                            action: openHealthCheckPage,
+                            closesStory: false,
+                        }, {
+                            title: translate('tray.story.health.check.action.hide'),
+                            type: 'secondary',
+                            action: () => {
+                                settings.setHiddenStory(HEALTH_CHECK_WARNING_STORY_ID);
+                            },
+                            closesStory: true,
+                        }],
+                        frameId: 'healthWarning2',
+                    },
+                ],
+                backgroundColor: 'orange',
+            },
+            telemetryEvent: TrayEvent.StoryHealthCheckWarningClick,
+        });
+    }
+
+    const statisticsEmptyDesc = (
+        <div className={s.StoriesConfig_statistics}>
+            <Text type="t1">{translate('tray.story.statistics.desc.empty1')}</Text>
+            <ul className={s.StoriesConfig_statistics_list}>
+                {translate('tray.story.statistics.desc.empty2', {
+                    li: (text: string) => <li><Text type="t1">{text}</Text></li>,
+                })}
+            </ul>
+        </div>
+    );
+
+    const getStatisticsDescriptionContent = (blocked: number, description: string) => {
+        if (blocked === 0) {
+            return { descriptionElement: statisticsEmptyDesc };
+        }
+        return { description };
+    };
+
+    // Statistics story — ads blocked
+    const blockerStatistics = statistics.statistics as typeof statistics.statistics | undefined;
+    if (blockerStatistics && typeof blockerStatistics.adsBlocked === 'number') {
+        const adsBlocked = blockerStatistics.adsBlocked;
+
+        // Ads blocked card — always a single frame
+        requiredStories.push({
+            icon: 'adblocking',
+            style: 'redIcon',
+            text: translate.plural('tray.story.statistics', adsBlocked),
+            content: <Text className={cx(theme.color.red, theme.layout.marginBottomXxs)} type="h5">{formatLocalizedNumber(adsBlocked, language)}</Text>,
+            storyConfig: {
+                id: 'statistics',
+                frames: [{
+                    ...getStatisticsDescriptionContent(adsBlocked, translate('tray.story.statistics.desc')),
+                    imageText: (
+                        <div className={s.StoriesConfig_imageText}>
+                            <Text type="h0">{formatLocalizedNumber(adsBlocked, language)}</Text>
+                            <Text type="h4">{translate.plural('tray.story.statistics', adsBlocked)}</Text>
+                        </div>
+                    ),
+                    buttons: adsBlocked === 0 ? [{
+                        title: translate('tray.story.statistics.action'),
+                        type: 'primary',
+                        action: openSafariPref,
+                    }] : undefined,
+                    frameId: 'statistics1',
+                }],
+                backgroundColor: 'red',
+            },
+            telemetryEvent: TrayEvent.StoryStatisticsClick,
+        });
+    }
+    if (blockerStatistics && typeof blockerStatistics.privacyBlocked === 'number') {
+        const privacyBlocked = blockerStatistics.privacyBlocked;
+        // Privacy blocked card — always a single frame
+        requiredStories.push({
+            icon: 'tracking',
+            style: 'orangeIcon',
+            text: translate.plural('tray.story.statistics.privacy', privacyBlocked),
+            content: <Text className={cx(theme.color.orange, theme.layout.marginBottomXxs)} type="h5">{formatLocalizedNumber(privacyBlocked, language)}</Text>,
+            storyConfig: {
+                id: 'statisticsPrivacy',
+                frames: [{
+                    ...getStatisticsDescriptionContent(privacyBlocked, translate('tray.story.statistics.privacy.desc')),
+                    imageText: (
+                        <div className={s.StoriesConfig_imageText}>
+                            <Text type="h0">{formatLocalizedNumber(privacyBlocked, language)}</Text>
+                            <Text type="h4">{translate.plural('tray.story.statistics.privacy', privacyBlocked)}</Text>
+                        </div>
+                    ),
+                    buttons: privacyBlocked === 0 ? [{
+                        title: translate('tray.story.statistics.action'),
+                        type: 'primary',
+                        action: openSafariPref,
+                    }] : undefined,
+                    frameId: 'statisticsPrivacy1',
+                }],
+                backgroundColor: 'orange',
+            },
+            telemetryEvent: TrayEvent.StoryStatisticSlideClick,
+        });
+    }
+
+    if (isHealthCheckDefaultStoryEligible({
+        lastUpdateMoreSevenDays,
+        blockAds: safariProtection.blockAds,
+        blockSocialButtons: safariProtection.blockSocialButtons,
+        blockCookieNotice: safariProtection.blockCookieNotice,
+        blockPopups: safariProtection.blockPopups,
+        blockWidgets: safariProtection.blockWidgets,
+        blockOtherAnnoyance: safariProtection.blockOtherAnnoyance,
+    }) && !healthCheckWarning) {
+        stories.push({
+            icon: 'info',
+            style: 'default',
+            text: translate('tray.story.health.check'),
+            storyHideFrameId: 1,
+            storyConfig: {
+                id: HEALTH_CHECK_DEFAULT_STORY_ID,
+                totalFrames: 1,
+                frames: [
+                    {
+                        title: translate('tray.story.health.check'),
+                        description: translate('tray.story.health.check.desc'),
+                        image: 'healthCheck1',
+                        buttons: [{
+                            title: translate('tray.story.health.check.action'),
+                            type: 'primary',
+                            action: openHealthCheckPage,
+                        }],
+                        frameId: 'healthDefault1',
+                    },
+                    {
+                        title: translate('tray.story.health.check.hide'),
+                        description: translate('tray.story.health.check.desc.hide'),
+                        image: 'healthCheck2',
+                        buttons: [{
+                            title: translate('tray.story.health.check.action'),
+                            type: 'primary',
+                            action: openHealthCheckPage,
+                            closesStory: false,
+                        }, {
+                            title: translate('tray.story.health.check.action.hide'),
+                            type: 'secondary',
+                            action: () => {
+                                settings.setHiddenStory(HEALTH_CHECK_DEFAULT_STORY_ID);
+                            },
+                            closesStory: true,
+                        }],
+                        frameId: 'healthDefault2',
+                    },
+                ],
+                backgroundColor: 'orange',
+            },
+            telemetryEvent: TrayEvent.StoryHealthCheckDefaultClick,
+        });
+    }
+
+    if (!isLicenseOrTrialActive || !urlFilterState?.enabled) {
+        let actionButtonTitle = '';
+        let actionButton = noop;
+        if (!isLicenseOrTrialActive && trialAvailableDays > 0) {
+            actionButtonTitle = translate.plural('tray.story.system.wide.action.trial', trialAvailableDays, provideTrialDaysParam(trialAvailableDays));
+            actionButton = () => {
+                telemetry.trackEvent(TrayEvent.TrayStorySystemWideTryFreeClick);
+                settings.requestOpenPaywallScreen();
+            };
+        } else if (!isLicenseOrTrialActive) {
+            actionButtonTitle = translate('tray.story.system.wide.action');
+            actionButton = () => {
+                telemetry.trackEvent(TrayEvent.TrayStorySystemWideBuyClick);
+                settings.requestOpenPaywallScreen();
+            };
+        } else {
+            actionButtonTitle = translate('enable');
+            actionButton = () => {
+                telemetry.trackEvent(TrayEvent.TrayStorySystemWideEnableClick);
+                settings.enableSystemWideProtection();
+            };
+        }
+        stories.push({
+            icon: 'apps',
+            text: translate('tray.story.system.wide.card'),
+            storyConfig: {
+                id: 'systemWide',
+                frames: [{
+                    title: translate('tray.story.system.wide.title'),
+                    description: translate('tray.story.system.wide.desc'),
+                    image: 'systemWide',
+                    buttons: [{
+                        title: actionButtonTitle,
+                        type: 'primary',
+                        action: actionButton,
+                    }],
+                    frameId: 'systemWide1',
+                }],
+                backgroundColor: 'purple',
+            },
+            telemetryEvent: TrayEvent.TrayStorySystemWideClick,
+        });
+    }
+
+    if (!isLicenseOrTrialActive) {
+        stories.push({
+            icon: 'quality',
+            text: translate('tray.story.advanced.features'),
+            storyConfig: {
+                id: 'advanced',
+                frames: [{
+                    title: translate('tray.story.advanced.features'),
+                    description: translate('tray.story.advanced.features.desc'),
+                    image: 'advanced',
+                    buttons: [{
+                        title: trialAvailableDays > 0 ? translate.plural('tray.story.advanced.features.action.trial', trialAvailableDays, provideTrialDaysParam(trialAvailableDays)) : translate('tray.story.advanced.features.action'),
+                        type: 'primary',
+                        action: settings.requestOpenPaywallScreen,
+                    }],
+                    frameId: 'advanced1',
+                }],
+                backgroundColor: 'green',
+            },
+            telemetryEvent: TrayEvent.StoryUnlockFeaturesClick,
+        });
+    }
+
+    if (!isLicenseBind && isLicenseActive) {
+        stories.push({
+            icon: 'phone',
+            text: translate('tray.story.other.devices'),
+            storyConfig: {
+                id: 'devices',
+                frames: [{
+                    title: translate('tray.story.other.devices'),
+                    description: translate('tray.story.other.devices.desc'),
+                    image: 'devices',
+                    buttons: [{
+                        title: translate('tray.story.other.devices.action'),
+                        type: 'primary',
+                        action: () => {
+                            window.API.Execute(new OpenSettingsWindowRequest());
+                            window.API.Execute(new RequestOpenSettingsPageRequest({
+                                value: RouteNameSettings.license,
+                            }));
+                        },
+                    }],
+                    frameId: 'devices1',
+                }],
+                backgroundColor: 'sandBlue',
+            },
+            telemetryEvent: TrayEvent.StoreUseLicenseClick,
+        });
+    }
+
+    if (!allowTelemetry) {
+        stories.push({
+            icon: 'rocket',
+            text: translate('telemetry.story.title'),
+            storyConfig: {
+                id: 'telemetry',
+                totalFrames: 3,
+                onBeforeClose: () => {
+                    settings.getSettings();
+                },
+                frames: [{
+                    frameId: 'telemetry1',
+                    title: translate('telemetry.story.frame.1.title'),
+                    description: translate('telemetry.story.frame.1.desc'),
+                    image: 'telemetry1',
+                    buttons: [{
+                        title: translate('telemetry.story.frame.button.share'),
+                        type: 'primary',
+                        action: () => {
+                            window.API.Execute(new UpdateAllowTelemetryRequest({ value: true }));
+                        },
+                        nextFrameId: 'telemetry4',
+                    }, {
+                        title: translate('telemetry.story.frame.button.learn'),
+                        type: 'secondary',
+                        nextFrameId: 'telemetry2',
+                    }],
+                }, {
+                    frameId: 'telemetry2',
+                    title: translate('telemetry.story.frame.2.title'),
+                    description: translate('telemetry.story.frame.2.desc', { link: (text: string) => <ExternalLink color="inheritColor" href={getTdsLink(TDS_PARAMS.privacy)}>{text}</ExternalLink> }),
+                    image: 'telemetry2',
+                    buttons: [{
+                        title: translate('telemetry.story.frame.button.share'),
+                        type: 'primary',
+                        action: () => {
+                            window.API.Execute(new UpdateAllowTelemetryRequest({ value: true }));
+                        },
+                        nextFrameId: 'telemetry4',
+                    }],
+                }, {
+                    frameId: 'telemetry3',
+                    title: translate('telemetry.story.frame.3.title'),
+                    description: translate('telemetry.story.frame.3.desc'),
+                    image: 'telemetry3',
+                    buttons: [{
+                        title: translate('telemetry.story.frame.button.settings'),
+                        type: 'primary',
+                        action: () => {
+                            window.API.Execute(new OpenSettingsWindowRequest());
+                            window.API.Execute(new RequestOpenSettingsPageRequest({
+                                value: RouteNameSettings.settings,
+                            }));
+                        },
+                        closesStory: true,
+                    }],
+                }, {
+                    frameId: 'telemetry4',
+                    title: translate('telemetry.story.frame.4.title'),
+                    description: translate('telemetry.story.frame.4.desc'),
+                    image: 'telemetry4',
+                }],
+                backgroundColor: 'sandGreen',
+            },
+            telemetryEvent: TrayEvent.TelemetryClick,
+        });
+    }
+
+    stories.push({
+        icon: 'custom_filter',
+        text: translate('tray.story.filters'),
+        storyConfig: {
+            id: 'filters',
+            frames: [{
+                title: translate('tray.story.filters'),
+                description: translate('tray.story.filters.desc.1'),
+                image: 'filters1',
+                frameId: 'filters1',
+            }, {
+                title: translate('tray.story.filters.title.2'),
+                description: translate('tray.story.filters.desc.2'),
+                image: 'filters2',
+                frameId: 'filters2',
+            }, {
+                title: translate('tray.story.filters.title.3'),
+                description: translate('tray.story.filters.desc.3'),
+                image: 'filters3',
+                frameId: 'filters3',
+            }, {
+                title: translate('tray.story.filters.title.4'),
+                description: translate('tray.story.filters.desc.4', { i: (text: string) => <i id="tray.story.filters.desc.4">{text}</i> }),
+                image: 'filters4',
+                frameId: 'filters4',
+            }, {
+                title: translate('tray.story.filters.title.5'),
+                description: translate('tray.story.filters.desc.5'),
+                image: 'filters5',
+                buttons: [{
+                    title: translate('tray.story.filters.action.5'),
+                    type: 'primary',
+                    action: () => {
+                        window.OpenLinkInBrowser(getTdsLink(TDS_PARAMS.what_filters, STORIES_TDS_LINK_FROM));
+                    },
+                }],
+                frameId: 'filters5',
+            }],
+            backgroundColor: 'blue',
+        },
+        telemetryEvent: TrayEvent.StoryWhatFilterClick,
+    });
+
+    // AG-49352 stories.push({
+    //     icon: 'star',
+    //     text: translate('tray.story.rate.adguard'),
+    //     storyConfig: {
+    //         id: 'rate',
+    //         frames: [{
+    //             title: translate('tray.story.rate.adguard'),
+    //             description: translate('tray.story.rate.adguard.desc'),
+    //             image: 'rate',
+    //             component: StarStoryMainFrameButtons,
+    //             frameId: 'rate',
+    //         }],
+    //         backgroundColor: 'emerald',
+    //     },
+    //     telemetryEvent: TrayEvent.StoryLoveHearYouClick,
+    // });
+
+    const extraFrames: IStoryFrame[] = [
+        {
+            title: translate('tray.story.adguard.extra'),
+            description: translate('tray.story.adguard.extra.desc'),
+            image: 'extra1',
+            frameId: 'extra1',
+        }, {
+            title: translate('tray.story.adguard.extra.title.2'),
+            description: translate('tray.story.adguard.extra.desc.2'),
+            image: 'extra2',
+            frameId: 'extra2',
+        },
+    ];
+
+    let extraTitle = '';
+    let extraDescription = '';
+    let extraButtonTitle = '';
+    let extraButtonAction = noop;
+    let extraImage: StoryFrameImage = 'extra3';
+    if (trialAvailableDays > 0) {
+        extraTitle = translate('tray.story.adguard.extra.title.3');
+        extraDescription = translate('tray.story.adguard.extra.desc.3');
+        extraButtonTitle = translate.plural('tray.story.adguard.extra.action.3.trial', trialAvailableDays, provideTrialDaysParam(trialAvailableDays));
+        extraButtonAction = () => {
+            window.API.Execute(new OpenSettingsWindowRequest());
+            window.API.Execute(new RequestOpenSettingsPageRequest
+            ({
+                value: RouteNameSettings.license,
+            }));
+        };
+    }
+    if (isLicenseOrTrialActive) {
+        extraTitle = translate('tray.story.adguard.extra.title.4');
+        extraDescription = translate('tray.story.adguard.extra.desc.4');
+        extraButtonTitle = translate('tray.story.adguard.extra.action.4');
+        extraButtonAction = () => {
+            window.API.Execute(new OpenSettingsWindowRequest());
+            window.API.Execute(new RequestOpenSettingsPageRequest
+            ({
+                value: RouteNameSettings.advanced_blocking,
+            }));
+        };
+        extraImage = 'extra4';
+    }
+
+    if (!trialAvailableDays && !isLicenseOrTrialActive) {
+        extraTitle = translate('tray.story.adguard.extra.title.3');
+        extraDescription = translate('tray.story.adguard.extra.desc.3');
+        extraButtonTitle = translate('tray.story.adguard.extra.action.3');
+        extraButtonAction = () => {
+            window.API.Execute(new OpenSettingsWindowRequest());
+            window.API.Execute(new RequestOpenSettingsPageRequest({
+                value: RouteNameSettings.license,
+            }));
+            if (license.license?.appStoreSubscription || (settings.isMASReleaseVariant)) {
+                settings.requestOpenPaywallScreen();
+            } else {
+                window.API.Execute(new RequestSubscribeRequest(
+                    { subscriptionType: Subscription.standalone },
+                ));
+            }
+        };
+    }
+
+    /*
+        Last frame should be show in cases:
+            1) User has no license or trial
+            2) User has any license, but extra is disabled
+    */
+    const lastExtraScreenShouldBeShown = !isLicenseOrTrialActive || !advancedBlocking?.adguardExtra;
+
+    if (lastExtraScreenShouldBeShown) {
+        extraFrames.push({
+            title: extraTitle,
+            description: extraDescription,
+            image: extraImage,
+            buttons: [{
+                title: extraButtonTitle,
+                type: 'primary',
+                action: extraButtonAction,
+            }],
+            frameId: 'extra3',
+        });
+    }
+
+    stories.push({
+        icon: 'advanced',
+        text: translate('tray.story.adguard.extra'),
+        storyConfig: {
+            id: 'extra',
+            frames: extraFrames,
+            backgroundColor: 'purple',
+        },
+        telemetryEvent: TrayEvent.StoryWhatIsExtraClick,
+    });
+
+    // Keep incomplete stories first and completed stories last.
+    // Equal groups keep their relative order from construction above.
+    stories.sort((a, b) => Number(storyCompleted.has(a.storyConfig.id)) - Number(storyCompleted.has(b.storyConfig.id)));
+
+    // Filter out hidden stories
+    const visibleStories = stories.filter((story) => !hiddenStories.has(story.storyConfig.id));
+
+    return [...requiredStories, ...visibleStories];
+}

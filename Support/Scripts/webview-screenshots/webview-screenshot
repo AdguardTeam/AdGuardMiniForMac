@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: AdGuard Software Limited
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# Convenience wrapper that runs the Python screenshot tool with the same
+# interpreter discovered by configure.sh (falls back to /usr/bin/env python3).
+set -euo pipefail
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec "${PYTHON:-python3}" "$DIR/webview_screenshot.py" "$@"

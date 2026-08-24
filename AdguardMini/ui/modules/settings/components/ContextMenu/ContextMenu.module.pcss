@@ -1,0 +1,50 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.ContextMenu {
+    position: relative;
+    width: 24px;
+    height: 24px;
+
+
+    &_context {
+        z-index: var(--zi-above-extra);
+        position: absolute;
+        width: 240px;
+        border-radius: var(--border-radius);
+        background-color: var(--fills-backgrounds-page-background-default);
+        right: 0px;
+        top: 30px;
+        box-shadow: var(--bs-big);
+        overflow: hidden;
+
+        &__tooltip {
+            background-color: var(--fills-menus-dropdown-menu-background-default);
+            width: max-content;
+
+            .ContextMenu_action:hover {
+                background: inherit;
+            }
+        }
+    }
+
+    &_action {
+        border-bottom: 1px solid var(--stroke-dividers-item-divider-default);
+        padding: var(--m-s) var(--m-m);
+        box-sizing: content-box;
+        cursor: pointer;
+        min-height: 26px;
+        display: flex;
+        align-items: center;
+
+        &:hover {
+            background: var(--fills-menus-dropdown-menu-background-hovered);
+        }
+
+        &:last-of-type {
+            border-bottom: 0;
+        }
+    }
+}

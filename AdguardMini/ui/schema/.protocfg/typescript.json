@@ -1,0 +1,9 @@
+{
+    "param_name" : "param",
+    "res_name" : "res",
+    "xcall_method_name" : "postMessage",
+    "store_value_method_name" : "store",
+    "array_buffer_type_name" : "ArrayBuffer",
+    "service_postfixes" : ["", "Internal"],
+    "omit_lang_postfix_in_output_path": true
+}

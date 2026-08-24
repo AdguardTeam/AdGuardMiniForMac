@@ -108,6 +108,21 @@ extension String.localized
         /** Request user about restarting AdGuard Mini */
         static public let restarting_request_message_text : String = { .localized.string ("restarting_request_message_text", in: "Localizable") }()
 
+        /** `"Report issue"` */
+        /** */
+        /** WebView failure alert - "Report issue" button title */
+        static public let report_issue_button : String = { .localized.string ("report_issue_button", in: "Localizable") }()
+
+        /** `"AdGuard Mini cannot load its interface"` */
+        /** */
+        /** WebView failure alert - Title */
+        static public let webview_load_failure_message_title : String = { .localized.string ("webview_load_failure_message_title", in: "Localizable") }()
+
+        /** `"Something went wrong while loading the AdGuard Mini window. You can restart the app or report the issue."` */
+        /** */
+        /** WebView failure alert - Informative text */
+        static public let webview_load_failure_message_text : String = { .localized.string ("webview_load_failure_message_text", in: "Localizable") }()
+
         /** `"Close"` */
         /** */
         /** Title on Close button in error message */
@@ -137,5 +152,10 @@ extension String.localized
         /** */
         /** Notify the user that the application should be moved to the Applications folder. */
         static public let error_running_app_message : String = { .localized.string ("error_running_app_message", in: "Localizable") }()
+
+        /** `"User rules editor"` */
+        /** */
+        /** User rules editor window title. */
+        static public let user_rules_editor_title : String = { .localized.string ("user_rules_editor_title", in: "Localizable") }()
     }
 }

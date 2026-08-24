@@ -1,0 +1,74 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+:root {
+    --wrapperWidth: 640px;
+}
+
+.Step {
+    &_container {
+        padding: var(--m-s) var(--m-m) var(--m-l);
+    }
+
+    &_imageSmall {
+        max-width: 752px;
+        max-height: 319px;
+        margin-bottom: var(--m-l);
+
+        /* The web Lottie renderer injects an <svg> into the container;
+           scale it to the container width, keeping the aspect ratio. */
+        svg {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+    }
+
+    &_image {
+        margin-bottom: var(--m-l);
+        max-width: 752px;
+        max-height: 256px;
+
+        svg {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+    }
+
+    &_lottie {
+        height: 308px;
+    }
+
+    &_content {
+        width: var(--wrapperWidth);
+        margin: 0 auto;
+        display: flex;
+        flex-flow: column;
+        height: 204px;
+
+        &_title {
+            margin-bottom: var(--m-xs);
+            text-align: center;
+        }
+
+        &_checkbox {
+            margin: var(--m-l) auto;
+            min-width: max-content;
+        }
+
+        &_desc {
+            color: var(--text-description-description-default);
+            text-align: center;
+        }
+
+        &_buttons {
+            display: flex;
+            width: auto;
+            justify-content: space-evenly;
+            margin: auto 0 0;
+        }
+    }
+}

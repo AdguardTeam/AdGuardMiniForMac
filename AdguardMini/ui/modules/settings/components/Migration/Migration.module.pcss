@@ -1,0 +1,49 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.Migration {
+    display: flex;
+    flex-flow: column;
+
+    &_container {
+        display: flex;
+        /* padding: 134px 50px; */
+        align-items: center;
+        justify-content: center;
+        margin: auto;
+
+
+        &_text {
+            width: 400px;
+            padding: var(--m-xxxl) var(--m-s) 0;
+        }
+
+        &__title {
+            margin-bottom: var(--m-xs);
+        }
+
+        &__description {
+            margin-bottom: var(--m-m);
+        }
+
+        &_image {
+            width: 300px;
+            height: 255px;
+        }
+    }
+
+    &_buttons {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 56px;
+        margin-bottom: var(--m-xl);
+        gap: var(--m-l);
+
+        > button {
+            width: 278px;
+        }
+    }
+}

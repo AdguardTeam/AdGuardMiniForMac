@@ -22,11 +22,9 @@ protocol UserSettingsService: AnyObject {
     var userConsent:               [Int] { get set }
     var userActionLastDirectory:   String { get set }
     var allowTelemetry:            Bool { get set }
-    var userRulesEditorGeometry:   WindowGeometryDTO? { get set }
     var showSafariToolbarBadge:    Bool { get set }
     var urlFilterProtectionLevel:  URLFilterProtectionLevel { get set }
     var urlFilterIsNew:            Bool { get set }
-    var urlFilterIsPageNew:        Bool { get set }
     var dismissedHealthCheckCards: [String] { get set }
     var dismissedPromoCards:       [String] { get set }
     var hiddenStories:             [String] { get set }
@@ -67,9 +65,6 @@ final class UserSettingsServiceImpl {
 
     @UserDefault(key: .lastFiltersUpdateTime, defaultValue: Date.distantPast)
     var lastFiltersUpdateTime: Date
-
-    @UserDefault(key: .userRulesEditorGeometry, defaultValue: nil)
-    private var userRulesEditorGeometryData: Data?
 
     @UserDefault(key: .dismissedHealthCheckCards, defaultValue: [])
     private var dismissedHealthCheckCardsData: [String]
@@ -162,11 +157,6 @@ extension UserSettingsServiceImpl: UserSettingsService {
         set { self.userSettingsManager.urlFilterIsNew = newValue }
     }
 
-    var urlFilterIsPageNew: Bool {
-        get { self.userSettingsManager.urlFilterIsPageNew }
-        set { self.userSettingsManager.urlFilterIsPageNew = newValue }
-    }
-
     var dismissedHealthCheckCards: [String] {
         get { self.dismissedHealthCheckCardsData }
         set { self.dismissedHealthCheckCardsData = newValue }
@@ -180,22 +170,6 @@ extension UserSettingsServiceImpl: UserSettingsService {
     var hiddenStories: [String] {
         get { self.hiddenStoriesData }
         set { self.hiddenStoriesData = newValue }
-    }
-
-    var userRulesEditorGeometry: WindowGeometryDTO? {
-        get {
-            guard let data = self.userRulesEditorGeometryData else {
-                return nil
-            }
-            return try? JSONDecoder().decode(WindowGeometryDTO.self, from: data)
-        }
-        set {
-            self.userRulesEditorGeometryData = if let newValue {
-                try? JSONEncoder().encode(newValue)
-            } else {
-                nil
-            }
-        }
     }
 
     // MARK: Properties with side effects and special setters

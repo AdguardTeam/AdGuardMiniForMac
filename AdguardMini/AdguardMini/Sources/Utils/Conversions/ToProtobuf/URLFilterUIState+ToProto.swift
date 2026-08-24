@@ -8,21 +8,17 @@
 //
 
 import Foundation
-import SciterSchema
+import ProtoSchema
 
 extension URLFilterUIState {
     /// Converts the pure Swift UI aggregate to its Protobuf message.
-    func toProto() -> SciterSchema.URLFilterState {
-        SciterSchema.URLFilterState(
+    func toProto() -> ProtoSchema.URLFilterState {
+        ProtoSchema.URLFilterState(
+            enabled: self.enabled,
+            protectionLevel: self.protectionLevel.toProto(),
             status: self.status.toProto(),
-            configuration: SciterSchema.URLFilterConfiguration(
-                enabled: self.enabled,
-                protectionLevel: self.protectionLevel.toProto()
-            ),
-            info: self.info.toProto(),
-            errorMessage: self.errorMessage,
-            isNew: self.isNew,
-            isPageNew: self.isPageNew
+            isInstalled: self.isInstalled,
+            info: self.info.toProto()
         )
     }
 }

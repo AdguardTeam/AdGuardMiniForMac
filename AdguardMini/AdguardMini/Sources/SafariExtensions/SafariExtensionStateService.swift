@@ -21,6 +21,16 @@ enum SafariExtensionActivity {
         case end
     }
 
+    /// Whether an `onSafariExtensionUpdate` push should be dropped. 
+    var shouldIgnore: Bool {
+        switch self {
+        case .conversion(let processPhase):
+            processPhase == .end
+        case .reload(let processPhase):
+            processPhase == .start
+        }
+    }
+
     enum DictKey: String {
         case state
         case activity

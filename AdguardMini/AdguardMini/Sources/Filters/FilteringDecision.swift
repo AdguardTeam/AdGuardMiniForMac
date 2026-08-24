@@ -21,11 +21,6 @@ enum FilteringDecision {
 
         /// Rule text to add, or `nil` for no addition.
         let ruleToAdd: String?
-
-        init(rulesToRemove: [String], ruleToAdd: String?) {
-            self.rulesToRemove = rulesToRemove
-            self.ruleToAdd = ruleToAdd
-        }
     }
 
     /// Resolves the rules update for enabling protection on a host.

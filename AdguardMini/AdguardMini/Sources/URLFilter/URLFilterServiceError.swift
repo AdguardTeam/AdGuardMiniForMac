@@ -51,17 +51,3 @@ enum URLFilterServiceError: Error, LocalizedError, CustomStringConvertible {
         }
     }
 }
-
-extension URLFilterStatus {
-    /// The error text carried by the status, if any.
-    /// Surfaced on `URLFilterState.error_message` because proto enums cannot
-    /// hold payloads.
-    var errorMessage: String? {
-        switch self {
-        case let .unknown(errorMessage):  errorMessage
-        case let .stopped(errorMessage):  errorMessage
-        case let .stopping(errorMessage): errorMessage
-        case .disabled, .invalid, .starting, .running: nil
-        }
-    }
-}

@@ -10,7 +10,7 @@
 import Foundation
 import StoreKit
 
-import SciterSchema
+import ProtoSchema
 
 extension AppStoreProductInfo {
     func toProto(introOfferTitle: String? = nil, introOfferSubtitle: String? = nil) -> AppStoreSubscriptionInfo {

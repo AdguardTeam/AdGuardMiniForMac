@@ -9,31 +9,56 @@
 
 import XCTest
 
+/// Builds a ``URLFilterState`` with readable defaults so tests only
+/// override the fields they care about.
+private func makeState(
+    enabled: Bool = true,
+    status: URLFilterRawStatus = .running,
+    serverURL: URL? = URL(string: "https://server.example"),
+    issuerURL: URL? = URL(string: "https://issuer.example"),
+    lastDisconnectError: URLFilterError? = nil
+) -> URLFilterState {
+    URLFilterState(
+        enabled: enabled,
+        status: status,
+        serverURL: serverURL,
+        issuerURL: issuerURL,
+        lastDisconnectError: lastDisconnectError
+    )
+}
+
 private final class FakeURLFilterService: URLFilterService {
-    var status: URLFilterStatus = .running
-    var configuration: URLFilterConfiguration?
+    var state = makeState()
+    var getStateError: Error?
 
     func start() async {}
-    func loadConfiguration() async throws -> URLFilterConfiguration? { self.configuration }
-    func save(configuration _: URLFilterConfiguration) async throws {}
+    func loadConfiguration() async throws -> URLFilterConfiguration? { nil }
     func removeConfiguration() async throws {}
     func setEnabled(_: Bool) async throws {}
-    func getStatus() async -> URLFilterStatus { self.status }
+    func setProtectionLevel(_: URLFilterProtectionLevel) async throws {}
+    func getState() async throws -> URLFilterState {
+        if let error = self.getStateError {
+            throw error
+        }
+        return self.state
+    }
     func resetCache() async throws {}
+}
+
+private enum FakeError: Error {
+    case stateUnavailable
 }
 
 private func makeAssembler(
     service: FakeURLFilterService,
     protectionLevel: URLFilterProtectionLevel = .essential,
     isNew: Bool = false,
-    isPageNew: Bool = false,
     bloomMetadata: URLFilterBloomMetadata? = nil
 ) -> URLFilterStateAssembler {
     URLFilterStateAssembler(
         urlFilterService: service,
         protectionLevelProvider: { protectionLevel },
         isNewProvider: { isNew },
-        isPageNewProvider: { isPageNew },
         bloomMetadataProvider: { bloomMetadata }
     )
 }
@@ -41,40 +66,107 @@ private func makeAssembler(
 final class URLFilterStateAssemblerTests: XCTestCase {
     // MARK: State assembly
 
-    func testAssemblesRunningStateWithLevel() async {
+    func testRunningStatusAssemblesRunningAndEnabled() async {
         let service = FakeURLFilterService()
-        service.status = .running
-        service.configuration = URLFilterConfiguration(protectionLevel: .safe, enabled: true)
-        let assembler = makeAssembler(service: service, protectionLevel: .safe, isPageNew: true)
+        service.state = makeState(status: .running)
+        let assembler = makeAssembler(service: service, protectionLevel: .safe)
 
         let state = await assembler.makeState()
 
         XCTAssertEqual(state.status, .running)
         XCTAssertTrue(state.enabled)
         XCTAssertEqual(state.protectionLevel, .safe)
-        XCTAssertFalse(state.isNew)
-        XCTAssertTrue(state.isPageNew)
-        XCTAssertFalse(state.info.isInstalling)
-        XCTAssertNil(state.errorMessage)
     }
 
-    func testErrorMessageSurfaced() async {
+    func testStartingAndStoppingMapToLoading() async {
         let service = FakeURLFilterService()
-        service.status = .stopped(errorMessage: "net down")
-        let assembler = makeAssembler(service: service, isNew: true, isPageNew: true)
+        let assembler = makeAssembler(service: service)
+
+        service.state = makeState(status: .starting)
+        var state = await assembler.makeState()
+        XCTAssertEqual(state.status, .loading)
+
+        service.state = makeState(status: .stopping)
+        state = await assembler.makeState()
+        XCTAssertEqual(state.status, .loading)
+    }
+
+    func testStoppedWithoutErrorMapsToLoading() async {
+        let service = FakeURLFilterService()
+        service.state = makeState(status: .stopped, lastDisconnectError: nil)
+        let assembler = makeAssembler(service: service)
 
         let state = await assembler.makeState()
 
-        XCTAssertEqual(state.status, .stopped(errorMessage: "net down"))
-        XCTAssertEqual(state.errorMessage, "net down")
+        XCTAssertEqual(state.status, .loading)
+    }
+
+    func testStoppedWithDisconnectErrorMapsToErrorAndDisables() async {
+        let service = FakeURLFilterService()
+        service.state = makeState(status: .stopped, lastDisconnectError: .configurationDisabled)
+        let assembler = makeAssembler(service: service)
+
+        let state = await assembler.makeState()
+
+        XCTAssertEqual(state.status, .error)
         XCTAssertFalse(state.enabled)
+    }
+
+    func testInvalidAndUnknownMapToError() async {
+        let service = FakeURLFilterService()
+        let assembler = makeAssembler(service: service)
+
+        service.state = makeState(status: .invalid)
+        var state = await assembler.makeState()
+        XCTAssertEqual(state.status, .error)
+        XCTAssertFalse(state.enabled)
+
+        service.state = makeState(status: .unknown)
+        state = await assembler.makeState()
+        XCTAssertEqual(state.status, .error)
+    }
+
+    func testStateFetchFailureMapsToError() async {
+        let service = FakeURLFilterService()
+        service.getStateError = FakeError.stateUnavailable
+        let assembler = makeAssembler(service: service)
+
+        let state = await assembler.makeState()
+
+        XCTAssertEqual(state.status, .error)
+        XCTAssertFalse(state.enabled)
+    }
+
+    // MARK: Installation state
+
+    func testIsInstalledWhenServerAndIssuerURLsAreSet() async {
+        let service = FakeURLFilterService()
+        service.state = makeState(
+            serverURL: URL(string: "https://server.example"),
+            issuerURL: URL(string: "https://issuer.example")
+        )
+        let assembler = makeAssembler(service: service)
+
+        let state = await assembler.makeState()
+
+        XCTAssertTrue(state.isInstalled)
+    }
+
+    func testNotInstalledWhenServerURLIsMissing() async {
+        let service = FakeURLFilterService()
+        service.state = makeState(serverURL: nil)
+        let assembler = makeAssembler(service: service)
+
+        let state = await assembler.makeState()
+
+        XCTAssertFalse(state.isInstalled)
     }
 
     // MARK: Bloom metadata
 
     func testBloomMetadataPopulatesInfo() async {
         let service = FakeURLFilterService()
-        service.status = .running
+        service.state = makeState(status: .running)
         let metadata = URLFilterBloomMetadata(
             rulesCount: 181_379,
             timeUpdated: Date(timeIntervalSince1970: 1_786_395_773),
@@ -86,105 +178,16 @@ final class URLFilterStateAssemblerTests: XCTestCase {
 
         XCTAssertEqual(state.info.rulesCount, 181_379)
         XCTAssertEqual(state.info.lastUpdate, Date(timeIntervalSince1970: 1_786_395_773))
-        XCTAssertFalse(state.info.isInstalling)
     }
 
     func testAbsentBloomMetadataLeavesInfoFieldsNil() async {
         let service = FakeURLFilterService()
-        service.status = .running
+        service.state = makeState(status: .running)
         let assembler = makeAssembler(service: service, bloomMetadata: nil)
 
         let state = await assembler.makeState()
 
         XCTAssertNil(state.info.rulesCount)
         XCTAssertNil(state.info.lastUpdate)
-    }
-
-    // MARK: Install flow
-
-    func testIsInstallingTrueWhileStartingAfterInstallRequest() async {
-        let service = FakeURLFilterService()
-        service.status = .starting
-        let assembler = makeAssembler(service: service, isNew: true, isPageNew: true)
-
-        await assembler.markInstallRequested()
-        let state = await assembler.makeState()
-
-        XCTAssertTrue(state.info.isInstalling)
-    }
-
-    func testInstallFlagClearsOnceRunning() async {
-        let service = FakeURLFilterService()
-        service.status = .starting
-        let assembler = makeAssembler(service: service, isNew: true, isPageNew: true)
-
-        await assembler.markInstallRequested()
-        service.status = .running
-        let state = await assembler.makeState()
-
-        XCTAssertFalse(state.info.isInstalling)
-    }
-
-    func testInstallFlagClearsOnInvalidStatus() async {
-        let service = FakeURLFilterService()
-        service.status = .starting
-        let assembler = makeAssembler(service: service)
-
-        await assembler.markInstallRequested()
-        service.status = .invalid
-        let state = await assembler.makeState()
-
-        XCTAssertFalse(state.info.isInstalling)
-        XCTAssertEqual(state.status, .invalid)
-    }
-
-    func testInstallFlagClearsOnStoppedStatus() async {
-        let service = FakeURLFilterService()
-        service.status = .starting
-        let assembler = makeAssembler(service: service)
-
-        await assembler.markInstallRequested()
-        service.status = .stopped(errorMessage: "provider failed")
-        let state = await assembler.makeState()
-
-        XCTAssertFalse(state.info.isInstalling)
-        XCTAssertEqual(state.status, .stopped(errorMessage: "provider failed"))
-    }
-
-    func testInstallFlagClearsOnDisabledStatus() async {
-        // The user turned protection off on purpose — not a failure.
-        let service = FakeURLFilterService()
-        service.status = .starting
-        let assembler = makeAssembler(service: service)
-
-        await assembler.markInstallRequested()
-        service.status = .disabled
-        let state = await assembler.makeState()
-
-        XCTAssertFalse(state.info.isInstalling)
-        XCTAssertEqual(state.status, .disabled)
-    }
-
-    func testInstallFlagFalseOnFreshAssemblerWhileStarting() async {
-        // Simulates an app restart: the flag lives only in memory (FR-006).
-        let service = FakeURLFilterService()
-        service.status = .starting
-        let assembler = makeAssembler(service: service)
-
-        let state = await assembler.makeState()
-
-        XCTAssertFalse(state.info.isInstalling)
-    }
-
-    func testInstallFlagClearsOnConfigurationRemoval() async {
-        let service = FakeURLFilterService()
-        service.status = .starting
-        let assembler = makeAssembler(service: service)
-
-        await assembler.markInstallRequested()
-        await assembler.markConfigurationRemoved()
-        let state = await assembler.makeState()
-
-        XCTAssertFalse(state.info.isInstalling)
     }
 }

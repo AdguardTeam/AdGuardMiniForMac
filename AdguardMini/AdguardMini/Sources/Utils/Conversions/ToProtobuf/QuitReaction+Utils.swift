@@ -10,10 +10,10 @@
 // swiftlint:disable switch_case_on_newline
 
 import Foundation
-import SciterSchema
+import ProtoSchema
 
 extension QuitReaction {
-    func toProto() -> SciterSchema.QuitReaction {
+    func toProto() -> ProtoSchema.QuitReaction {
         switch self {
         case .ask:          .ask
         case .keepRunning:  .keepRunning

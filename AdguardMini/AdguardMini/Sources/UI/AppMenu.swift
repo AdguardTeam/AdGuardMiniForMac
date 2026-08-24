@@ -15,12 +15,12 @@ enum MenuType {
     case context
 }
 
-extension AppMenu: SciterAppControllerDependent, EventBusDependent, UserSettingsManagerDependent {}
+extension AppMenu: WebViewAppsControllerDependent, EventBusDependent, UserSettingsManagerDependent {}
 
 final class AppMenu: NSMenu, NSMenuItemValidation, NSMenuDelegate {
     // MARK: DI
 
-    var sciterAppController: SciterAppsController!
+    var webViewAppsController: WebViewAppsController!
     var userSettingsManager: UserSettingsManager!
     var eventBus: EventBus!
 
@@ -153,7 +153,7 @@ final class AppMenu: NSMenu, NSMenuItemValidation, NSMenuDelegate {
 
     @objc
     private func preferencesHandler(_ sender: Any?) {
-        self.sciterAppController.showApp(.settings)
+        self.webViewAppsController.show(.settings)
         self.eventBus.post(event: .settingsWindowOpened, userInfo: nil)
     }
 

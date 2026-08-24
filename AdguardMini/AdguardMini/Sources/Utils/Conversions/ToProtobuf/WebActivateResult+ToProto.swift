@@ -7,12 +7,12 @@
 //  AdguardMini
 //
 
-import SciterSchema
+import ProtoSchema
 
 // swiftlint:disable switch_case_on_newline
 
 extension WebActivateResult {
-    func toProto() -> SciterSchema.WebActivateResult {
+    func toProto() -> ProtoSchema.WebActivateResult {
         switch self {
         case .cancelled:                .cancelled
         case .userRedirectedToPurchase: .userRedirectedToPurchase

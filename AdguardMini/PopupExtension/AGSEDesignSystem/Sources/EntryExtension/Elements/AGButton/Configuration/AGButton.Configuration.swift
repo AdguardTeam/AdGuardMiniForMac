@@ -15,17 +15,5 @@ extension AGButton {
         var appearance: Appearance
         var buttonAppearance: SEButtonConfiguration.Appearance
         var state: State
-
-        init(
-            content: Content,
-            appearance: Appearance,
-            buttonAppearance: SEButtonConfiguration.Appearance,
-            state: State
-        ) {
-            self.content = content
-            self.appearance = appearance
-            self.buttonAppearance = buttonAppearance
-            self.state = state
-        }
     }
 }

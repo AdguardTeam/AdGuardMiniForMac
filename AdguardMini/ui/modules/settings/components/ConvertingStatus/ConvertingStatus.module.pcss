@@ -1,0 +1,38 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+@keyframes runner { 
+    from {
+        left: -200px;
+    } 
+    to {
+        left: 700px;
+    }
+}
+
+.ConvertingStatus {
+    &_tooltipContainer {
+        height: 4px;
+        position: relative;
+        width: auto;
+        overflow: hidden;
+        display: flex;
+    }
+
+    &_background {
+        &:hover {
+            background: var(--fills-backgrounds-page-background-additional-hovered);
+        }
+        
+    }
+
+    &_runner {
+        width: 200px;
+        height: 4px;
+        position: relative;
+        background: var(--fills-buttons-main-button-default);
+        animation: 4s infinite linear runner
+    }
+}

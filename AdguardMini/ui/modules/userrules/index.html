@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+    User-rules editor needs WebAssembly compilation for inlined `onigasm.wasm`.
+    Keep CSP strict and allow only `script-src 'wasm-unsafe-eval'` here.
+    Do not use `'unsafe-eval'`.
+    Older WebKit may ignore this token; editor then degrades gracefully.
+    -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' <%= criticalCssHash %>; img-src 'self'; font-src 'self'; connect-src 'none'; frame-src 'none'; child-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <title>AdGuard Mini</title>
+    <style><%= criticalCss %></style>
+</head>
+<body>
+    <div id="app"></div>
+    <div id="notify"></div>
+    <div id="tooltip"></div>
+</body>
+</html>

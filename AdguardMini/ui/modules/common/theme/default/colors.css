@@ -1,0 +1,25 @@
+/*
+ * SPDX-FileCopyrightText: AdGuard Software Limited
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+ 
+:root {
+    --permanent-white: #FFFFFF;
+    --permanent-black: #000000;
+    /* Light-theme default: the modal backdrop must still render if the
+       `theme` attribute is missing (before the async theme RPC resolves). */
+    --modal-background: rgba(0, 0, 0, 0.5);
+}
+
+html[theme="light"] {
+    --scrollbar-color: rgba(0, 0, 0, 0.15);
+    --scrollbar-color-hover: rgba(0, 0, 0, 0.30);
+    --modal-background: rgba(0, 0, 0, 0.5); 
+}
+
+html[theme="dark"] {
+    --scrollbar-color: rgba(255, 255, 255, 0.15);
+    --scrollbar-color-hover: rgba(255, 255, 255, 0.30);
+    --modal-background: rgba(0, 0, 0, 0.75);
+}

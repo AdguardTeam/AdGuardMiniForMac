@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+/* Service used by the proto-parser smoke test. */
+service TestService {
+    /* Ping the service */
+    rpc Ping(EmptyValue) returns (EmptyValue);
+}

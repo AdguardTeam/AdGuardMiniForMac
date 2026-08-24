@@ -7,7 +7,7 @@
 //  AdguardMini
 //
 
-import SciterSchema
+import ProtoSchema
 
 extension OptionalError {
     static var noError: OptionalError {

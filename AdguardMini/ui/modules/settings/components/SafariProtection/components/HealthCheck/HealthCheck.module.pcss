@@ -1,0 +1,30 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.HealthCheck {
+    padding: 0 var(--m-s);
+
+    &_listitem {
+        margin-top: var(--m-m);
+    }
+    
+    &_showMore {
+        margin: var(--m-xs) 0;
+        display: flex;
+        align-items: center;
+
+        &_icon {
+            margin-left: var(--m-xxxs);
+            transform: rotate(-90deg);
+            transition: transform 0.3s ease;
+
+            &__active {
+                transform: rotate(90deg);
+            }
+        }
+
+    }
+}
+

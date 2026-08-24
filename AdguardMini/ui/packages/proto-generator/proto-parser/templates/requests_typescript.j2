@@ -1,0 +1,39 @@
+/* {{constants.COMMON_GENERATED_FILES_PREAMBLE}} */
+
+import { PlatformRequest } from '@adg/webview-utils-kit';
+import { {{method.body.response_message_type}} as ReturnValue, {{method.body.request_message_type}} as RequestMessage{% if method.body.request_message_type == constants.EMPTY_VALUE_TYPE %}, EmptyValue as EmptyMessageImpl{% endif %} } from '../../types'
+
+/**
+ * {{helper.wrap_string(method.description, " * ")}}
+ */
+export class {{method.body.name}}Request extends PlatformRequest<ReturnValue, RequestMessage> {
+    /**
+     * Constructs a new request instance
+{% if method.body.request_message_type != constants.EMPTY_VALUE_TYPE %}
+     * @param requestMessage The request message or its constructor parameters
+{% endif %}
+     */
+    public constructor({% if method.body.request_message_type != constants.EMPTY_VALUE_TYPE %}requestMessage: RequestMessage | ConstructorParameters<typeof RequestMessage>[0]{% endif %}) {
+        super();
+{% if method.body.request_message_type != constants.EMPTY_VALUE_TYPE %}
+        this.requestMessage = requestMessage instanceof RequestMessage
+            ? requestMessage
+            : new RequestMessage(requestMessage);
+{% else %}
+        this.requestMessage = new EmptyMessageImpl();
+{% endif %}
+    }
+
+    /**
+     * Fully qualified method name to be called on the backend
+     * @returns The fully qualified method name
+     */
+    public get FQN() { return '{{service.body.name}}.{{method.body.name}}'; }
+
+    /**
+     * Processes the response bytes received from the backend
+     * @param bytes The response bytes
+     * @returns The deserialized response
+     */
+    public processResponse(bytes: Uint8Array) { return ReturnValue.deserializeBinary(bytes); }
+};

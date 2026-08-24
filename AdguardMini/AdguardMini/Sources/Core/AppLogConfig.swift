@@ -9,6 +9,7 @@
 
 import Foundation
 import AML
+import ProtoSchema
 
 enum AppLogConfig {
     static func setup() {
@@ -27,6 +28,21 @@ enum AppLogConfig {
         #else
         Logger.shared.logLevel = Keychain.debugLogging ? .debug : .info
         #endif
+
+        // Route the WKWebView bridge diagnostics (`BridgeLog`, declared in the
+        // ProtoSchema package, which cannot reference AML) through the app's
+        // Logger. Codegen-emitted service and callback log lines land in the
+        // Log file and OSLog, and in the last-error store, right from the
+        // Very first RPC. Installed before any host builds a bridge, so the
+        // BridgeLog sink is in place before the first bridge message arrives.
+        BridgeLog.sink = { level, message in
+            switch level {
+            case .debug:   LogDebug(message)
+            case .info:    LogInfo(message)
+            case .warning: LogWarn(message)
+            case .error:   LogError(message)
+            }
+        }
     }
 
     static func saveLastErrorMessage(_ msg: String) {

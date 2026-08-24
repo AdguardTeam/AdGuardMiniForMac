@@ -8,7 +8,7 @@
 //
 
 import AppBackend
-import SciterSchema
+import ProtoSchema
 
 extension ActivationResponse.ApplicationKeyStatus {
     func toProto() -> EnterActivationCodeResult {

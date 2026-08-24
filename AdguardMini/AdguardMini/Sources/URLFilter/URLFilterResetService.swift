@@ -76,8 +76,6 @@ final class URLFilterResetServiceImpl: URLFilterResetService {
             resetError = error
         }
 
-        await self.urlFilterStateAssembler.markConfigurationRemoved()
-
         self.sharedKeychainStorage.reset()
         self.bloomMetadataStorage.remove()
         await removePrefilterFile()

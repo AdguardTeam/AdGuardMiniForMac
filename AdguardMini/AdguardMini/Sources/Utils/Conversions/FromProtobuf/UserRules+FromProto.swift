@@ -8,7 +8,7 @@
 //
 
 import FLM
-import SciterSchema
+import ProtoSchema
 
 extension UserRule {
     func fromProto() -> FilterRule {

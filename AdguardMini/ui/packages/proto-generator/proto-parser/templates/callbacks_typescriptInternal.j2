@@ -1,0 +1,20 @@
+{% set empty_type_name  = constants.EMPTY_VALUE_TYPE %}
+/* {{constants.COMMON_GENERATED_FILES_PREAMBLE}} */
+import { {{config["store_value_method_name"]}} } from 'Store';
+import { I{{service.body.name}}Internal } from './{{service.body.name}}';
+{% set types = [] %}
+{% for method in service.body.body %}
+{% do types.append(method.body.request_message_type) %}
+{% do types.append(method.body.response_message_type) %}
+{% endfor %}
+import {
+{%- for type in types | unique %}
+ {{type}}{{ ' ' if loop.last else ',' }}
+{%- endfor %}
+} from '../types'
+
+/* {{helper.wrap_string(service.description, " * ")}}  */
+export class {{service.body.name}}Internal  implements I{{service.body.name}}Internal {
+
+}
+

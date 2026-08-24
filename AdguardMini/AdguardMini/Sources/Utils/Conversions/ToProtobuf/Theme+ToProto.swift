@@ -7,10 +7,10 @@
 //  AdguardMini
 //
 
-import SciterSchema
+import ProtoSchema
 
 extension Theme {
-    func toProto() -> SciterSchema.Theme {
+    func toProto() -> ProtoSchema.Theme {
         switch self {
         case .system: .system
         case .light:  .light

@@ -7,7 +7,7 @@
 //  AdguardMini
 //
 
-import BaseSciterSchema
+import BaseProtoSchema
 import AML
 
 extension EffectiveThemeValue {

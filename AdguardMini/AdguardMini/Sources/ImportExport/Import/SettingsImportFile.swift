@@ -77,7 +77,11 @@ final class SettingsImportFile: SettingsImportBase {
                 throw Error.createExportFolder(error)
             }
 
-            progress.undoManager.beginUndoGrouping()
+            // UndoManager is main-actor-isolated in the modern SDK; open the
+            // Group on the main actor (closed by `stopImport`, also on main).
+            await MainActor.run {
+                progress.undoManager.beginUndoGrouping()
+            }
 
             defer {
                 // Delete build folder

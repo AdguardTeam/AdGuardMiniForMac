@@ -41,6 +41,38 @@ extension AppAlert {
         )
     }
 
+    /// Configured alert that appears when a WKWebView cannot load its
+    /// entry.
+    ///
+    /// Buttons:
+    /// - First button is for **"Report issue"**.
+    /// - Second button is for **"Restart"**.
+    static func webViewLoadFailureRequest(
+        moduleName: String,
+        errorMessage: String
+    ) async -> AppAlert {
+        await createAlert(
+            firstButtonText:  .localized.base.report_issue_button,
+            secondButtonText: .localized.base.restart_button,
+            messageText:      .localized.base.webview_load_failure_message_title,
+            informativeText:  "\(String.localized.base.webview_load_failure_message_text) [module=\(moduleName), error=\(Self.sanitized(errorMessage))]"
+        )
+    }
+
+    /// Collapses whitespace/newlines and bounds an unbounded error string so
+    /// it cannot garble the alert layout.
+    private static func sanitized(_ errorMessage: String) -> String {
+        let singleLine = errorMessage
+            .replacingOccurrences(of: "\n", with: " ")
+            .replacingOccurrences(of: "\r", with: " ")
+        let trimmed = singleLine.trimmingCharacters(in: .whitespacesAndNewlines)
+        let maxErrorLength = 200
+        guard trimmed.count > maxErrorLength else {
+            return trimmed
+        }
+        return String(trimmed.prefix(maxErrorLength)) + "…"
+    }
+
     /// Configured alert that appears when user tries to quit an app.
     ///
     /// Buttons:

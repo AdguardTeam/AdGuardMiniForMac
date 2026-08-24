@@ -7,7 +7,7 @@
 //  AdguardMini
 //
 
-import SciterSchema
+import ProtoSchema
 
 extension CurrentExtensionState {
     func toProto() -> SafariExtensionUpdate {
@@ -17,8 +17,8 @@ extension CurrentExtensionState {
         )
     }
 
-    func toProto() -> SciterSchema.SafariExtension {
-        SciterSchema.SafariExtension(
+    func toProto() -> ProtoSchema.SafariExtension {
+        ProtoSchema.SafariExtension(
             id: self.type.bundleId,
             rulesEnabled: Int32(self.state.rulesInfo.safariRulesCount),
             rulesTotal: Int32(self.state.rulesInfo.sourceSafariCompatibleRulesCount),

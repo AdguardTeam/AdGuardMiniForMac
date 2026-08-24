@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+import "PrimitivesWrappers.proto";
+import "Helpers.proto";
+import "Settings.proto";
+import "EffectiveTheme.proto";
+import "Statistics.proto";
+
+/* Service that handles settings */
+service SettingsService {
+    /* Get Settings settings */
+    rpc GetSettings(EmptyValue) returns (Settings);
+    /* Update LaunchOnStartup setting */
+    rpc UpdateLaunchOnStartup(BoolValue) returns (EmptyValue);
+    /* Update ShowInMenuBar setting */
+    rpc UpdateShowInMenuBar(BoolValue) returns (EmptyValue);
+    /* Update HardwareAcceleration setting */
+    rpc UpdateHardwareAcceleration(BoolValue) returns (EmptyValue);
+    /* Force restart on hardware acceleration import */
+    rpc ForceRestartOnHardwareAccelerationImport(EmptyValue) returns (EmptyValue);
+    /* Update DebugLogging setting */
+    rpc UpdateDebugLogging(BoolValue) returns (EmptyValue);
+    /* Update quit reaction setting */
+    rpc UpdateQuitReaction(UpdateQuitReactionMessage) returns (EmptyValue);
+    /* Update AutoFiltersUpdate setting */
+    rpc UpdateAutoFiltersUpdate(BoolValue) returns (EmptyValue);
+    /* Export Settings settings */
+    rpc ExportSettings(Path) returns (OptionalError);
+    /* Import Settings settings */
+    rpc ImportSettings(Path) returns (EmptyValue);
+    /* Confirm Settings import with consent */
+    rpc ImportSettingsConfirm(ImportSettingsConfirmation) returns (EmptyValue);
+    /* Reset Settings to default settings */
+    rpc ResetSettings(EmptyValue) returns (Settings);
+    /* Get limit on the number of rules for content blockers */
+    rpc GetContentBlockersRulesLimit(EmptyValue) returns (Int32Value);
+    /* Export Logs archive */
+    rpc ExportLogs(Path) returns (OptionalError);
+    /* Send message to Support */
+    rpc SendFeedbackMessage(SupportMessage) returns (OptionalError);
+    /* Get user action last directory */
+    rpc GetUserActionLastDirectory(EmptyValue) returns (StringValue);
+    /* Update user action last directory */
+    rpc UpdateUserActionLastDirectory(StringValue) returns (EmptyValue);
+    /* Update theme setting */
+    rpc UpdateTheme(UpdateThemeMessage) returns (EmptyValue);
+    /* Reset all statistics */
+    rpc ResetStatistics(EmptyValue) returns (EmptyValue);
+    /* Present the native open or save panel and return the picked path */
+    rpc SelectFile(SelectFileParams) returns (SelectFilePath);
+    /* Updates Safari toolbar badge visibility */
+    rpc UpdateShowSafariToolbarBadge(BoolValue) returns (EmptyValue);
+    /* Get dismissed Safari Protection health check cards */
+    rpc GetHealthCheckDismissedCards(EmptyValue) returns (StringValueArray);
+    /* Update dismissed Safari Protection health check cards */
+    rpc UpdateHealthCheckDismissedCards(StringValueArray) returns (EmptyValue);
+    /* Get dismissed Safari Protection promo cards */
+    rpc GetPromoDismissedCards(EmptyValue) returns (StringValueArray);
+    /* Update dismissed Safari Protection promo cards */
+    rpc UpdatePromoDismissedCards(StringValueArray) returns (EmptyValue);
+}

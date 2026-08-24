@@ -114,10 +114,14 @@ final class SettingsExport: NSObject, SettingsExportProtocol {
                 return .failure(SettingsExportError.createExportFolder(error))
             }
 
-            progress.undoManager.beginUndoGrouping()
+            // UndoManager is main-actor-isolated in the modern SDK. The group
+            // Is opened here (and closed below) on the main actor, while the
+            // `defer` only cleans up the build folder (it cannot `await`).
+            await MainActor.run {
+                progress.undoManager.beginUndoGrouping()
+            }
 
             defer {
-                progress.undoManager.endUndoGrouping()
                 // Delete build folder
                 try? FileManager.default.removeItem(at: buildFolder)
                 LogInfo("Temp folder removed: \(buildFolder.path)")
@@ -127,6 +131,7 @@ final class SettingsExport: NSObject, SettingsExportProtocol {
             LogInfo("AdGuard settings export destination: \(fileUrl.path)")
             LogInfo("AdGuard settings export build folder: \(buildFolder.path)")
 
+            let outcome: Result<URL, Error>
             do {
                 try self.preferences(folderUrl: buildFolder, progress: progress)
                 if progress.isCancelled {
@@ -139,18 +144,27 @@ final class SettingsExport: NSObject, SettingsExportProtocol {
                 }
 
                 try self.compressFolder(buildFolder, targetUrl: fileUrl)
-                return .success(fileUrl)
+                outcome = .success(fileUrl)
             } catch {
-                return .failure(error)
+                outcome = .failure(error)
             }
+
+            await MainActor.run {
+                progress.undoManager.endUndoGrouping()
+            }
+            return outcome
         }.value
 
         switch result {
         case .success:
-            progress.undoManager.removeAllActions()
+            await MainActor.run {
+                progress.undoManager.removeAllActions()
+            }
             LogInfo("AdGuard Mini settings export finished")
         case .failure(let error):
-            progress.undoManager.undo()
+            await MainActor.run {
+                progress.undoManager.undo()
+            }
             if !(error is SettingsExportError) {
                 LogError("Error occurred: \(error)")
             }

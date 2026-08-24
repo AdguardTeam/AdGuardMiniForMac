@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+import "SmokeTypes.proto";
+
+/* Sample callback service for codegen smoke test */
+service SampleCallbackService {
+    /* OnUpdate callback */
+    rpc OnUpdate(UpdateMessage) returns (EchoResponse);
+}

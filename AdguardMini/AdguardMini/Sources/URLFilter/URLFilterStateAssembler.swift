@@ -22,9 +22,7 @@ actor URLFilterStateAssembler {
     private let urlFilterService: URLFilterService
     private let protectionLevelProvider: @Sendable () -> URLFilterProtectionLevel
     private let isNewProvider: @Sendable () -> Bool
-    private let isPageNewProvider: @Sendable () -> Bool
     private let bloomMetadataProvider: @Sendable () -> URLFilterBloomMetadata?
-    private var installRequested = false
 
     /// Creates the assembler.
     /// - Parameters:
@@ -37,62 +35,41 @@ actor URLFilterStateAssembler {
         urlFilterService: URLFilterService,
         protectionLevelProvider: @escaping @Sendable () -> URLFilterProtectionLevel,
         isNewProvider: @escaping @Sendable () -> Bool,
-        isPageNewProvider: @escaping @Sendable () -> Bool,
         bloomMetadataProvider: @escaping @Sendable () -> URLFilterBloomMetadata?
     ) {
         self.urlFilterService = urlFilterService
         self.protectionLevelProvider = protectionLevelProvider
         self.isNewProvider = isNewProvider
-        self.isPageNewProvider = isPageNewProvider
         self.bloomMetadataProvider = bloomMetadataProvider
-    }
-
-    /// Records that a first-time installation was requested.
-    ///
-    /// Reflected in ``URLFilterInfo/isInstalling`` while the status is
-    /// `.starting`. Once the status leaves `.starting`, the flag is cleared:
-    /// `.running` means the install succeeded, `.invalid` / `.stopped` mean
-    /// it failed (observable through the status itself), and `.disabled`
-    /// means the user turned protection off on purpose.
-    func markInstallRequested() {
-        self.installRequested = true
-    }
-
-    /// Clears the install-requested flag after the configuration was removed.
-    ///
-    /// Bloom metadata is intentionally kept (it may still describe the last
-    /// installed prefilter); only the in-memory flag is cleared.
-    func markConfigurationRemoved() {
-        self.installRequested = false
     }
 
     /// Builds the current aggregate state.
     func makeState() async -> URLFilterUIState {
-        let status = await self.urlFilterService.getStatus()
-        let configuration = await self.loadConfiguration()
-
-        let isStarting = status == .starting
-        if !isStarting {
-            self.installRequested = false
+        guard let state = try? await self.urlFilterService.getState() else {
+            return .error
         }
-        let isInstalling = self.installRequested && isStarting
-
         // Re-read the metadata on every assembly: it is written by the
         // URL filter extension process and may appear at any time.
         let bloomMetadata = self.bloomMetadataProvider()
 
+        let status: URLFilterUIStatus = switch state.status {
+        case .invalid, .unknown:   .error
+        case .stopped:             state.lastDisconnectError.isNil ? .loading : .error
+        case .starting, .stopping: .loading
+        case .running:             .running
+        }
+
+        let isEnabled = state.enabled && status != .error
+
         return URLFilterUIState(
+            enabled: isEnabled,
             status: status,
-            enabled: configuration?.enabled ?? false,
             protectionLevel: self.protectionLevelProvider(),
-            isNew: self.isNewProvider(),
-            isPageNew: self.isPageNewProvider(),
+            isInstalled: state.serverURL != nil && state.issuerURL != nil,
             info: URLFilterInfo(
                 rulesCount: bloomMetadata?.rulesCount,
-                lastUpdate: bloomMetadata?.timeUpdated,
-                isInstalling: isInstalling
-            ),
-            errorMessage: status.errorMessage
+                lastUpdate: bloomMetadata?.timeUpdated
+            )
         )
     }
 

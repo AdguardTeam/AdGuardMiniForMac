@@ -10,11 +10,11 @@
 // swiftlint:disable switch_case_on_newline
 
 import Foundation
-import SciterSchema
+import ProtoSchema
 
 extension URLFilterProtectionLevel {
     /// Maps the Swift protection level to its Protobuf enum value.
-    func toProto() -> SciterSchema.URLFilterProtectionLevel {
+    func toProto() -> ProtoSchema.URLFilterProtectionLevel {
         switch self {
         case .essential: .essential
         case .safe:      .safe

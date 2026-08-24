@@ -1,0 +1,87 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.Settings {
+    &_sectionTitle {
+        box-sizing: content-box;
+        padding: var(--m-l) var(--m-s) var(--m-s);
+    }
+
+    &_testIcon {
+        transform: rotate(-90deg);
+        margin-left: var(--m-xs);
+    }
+
+    &_pseudoSelect {
+        display: flex;
+    }
+
+    &_enabled {
+        color: var(--text-description-description-default);
+        font-weight: var(--fw-semibold);
+
+        &_warning {
+            color: var(--text-links-attention-link-default);
+            cursor: pointer;
+        }
+    }
+
+    &_text {
+        line-height: 24px;
+    }
+
+    &_container {
+        padding: var(--m-s);
+    }
+
+    &_firstLine {
+        display: flex;
+        height: 28px;
+    }
+
+    &_updateInterval {
+        color: var(--text-links-attention-link-default);
+        > div {
+            display: inline;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    }
+
+    &_button {
+        display: inline;
+        text-decoration: underline;
+        text-decoration-color: var(--stroke-icons-attention-icon-default);
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+
+    &_resetWarning {
+        padding-top: var(--m-xs);
+    }
+
+    &_telemetryModalLink {
+        text-decoration-line: underline;
+        cursor: pointer;
+        display: inline;
+        width: max-content;
+        color: var(--fills-buttons-main-button-default);
+        text-decoration-color: var(--fills-buttons-main-button-default);
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+
+    &_underline {
+        text-decoration: underline;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+}

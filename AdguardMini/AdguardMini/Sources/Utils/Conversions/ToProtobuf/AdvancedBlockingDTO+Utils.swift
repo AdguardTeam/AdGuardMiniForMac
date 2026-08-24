@@ -8,7 +8,7 @@
 //
 
 import Foundation
-import SciterSchema
+import ProtoSchema
 
 extension AdvancedBlockingDTO {
     func toProto(realTimeFiltersUpdate: Bool) -> AdvancedBlocking {

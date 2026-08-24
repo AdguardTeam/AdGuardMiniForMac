@@ -55,6 +55,15 @@
 /* Request user about restarting AdGuard Mini */
 "restarting_request_message_text" = "The settings were reset. Please restart AdGuard Mini to restore its functionality";
 
+/* WebView failure alert - "Report issue" button title */
+"report_issue_button" = "Report issue";
+
+/* WebView failure alert - Title */
+"webview_load_failure_message_title" = "AdGuard Mini cannot load its interface";
+
+/* WebView failure alert - Informative text */
+"webview_load_failure_message_text" = "Something went wrong while loading the AdGuard Mini window. You can restart the app or report the issue.";
+
 /* Title on Close button in error message */
 "close_button" = "Close";
 
@@ -72,3 +81,6 @@
 
 /* Notify the user that the application should be moved to the Applications folder. */
 "error_running_app_message" = "AdGuard Mini needs to be in the Applications folder to run.\nPlease move it there and try again";
+
+/* User rules editor window title. */
+"user_rules_editor_title" = "User rules editor";

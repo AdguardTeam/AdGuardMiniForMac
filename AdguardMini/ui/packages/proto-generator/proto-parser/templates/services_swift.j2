@@ -1,0 +1,63 @@
+/// {{constants.COMMON_GENERATED_FILES_PREAMBLE}}
+
+import Foundation
+// WKWebView-only service bridge.
+
+// MARK: Protocol definition
+
+/// {{helper.wrap_string(service.description, "/// ")}}
+/// YOU MUST IMPLEMENT THIS PROTOCOL USING CLASS WITH TYPE `{{service.body.name}}.ServiceType` IN SEPARATE SOURCE FILE
+public protocol {{service.body.name}}Protocol
+{
+{% for method in service.body.body %}
+	/// {{helper.wrap_string(method.description, "	/// ")}}
+	func {{helper.pascal_to_camel(method.body.name)}} (
+						_ message: {{method.body.request_message_type}},
+						_ promise: @escaping ({{method.body.response_message_type}}) -> Void) -> Void
+{% endfor %}
+}
+
+// MARK: Protobuf Bridge definition
+// Base class for `{{service.body.name}}.ServiceType`.
+
+/// {{helper.wrap_string(service.description, "	/// ")}}
+open class {{service.body.name}}: {{config["service_class_name"]}}
+{
+	public override var serviceName: String { "{{service.body.name}}" }
+	public typealias ServiceType = {{service.body.name}} & {{config["service_protocol"]}} & {{service.body.name}}Protocol
+
+	/// WKWebView dispatch entry.
+	public override func handleRequest(method: String, bytes: Data, promise: @escaping (Data) -> Void) {
+		switch method {
+{% for method in service.body.body %}
+		case "{{method.body.name}}":
+			do {
+				let input = try {{method.body.request_message_type}}(serializedBytes: bytes)
+				cast.{{helper.pascal_to_camel(method.body.name)}}(input) { result in
+					do {
+						promise(try result.serializedData())
+					} catch {
+						BridgeLog.error("{{service.body.name}}.{{method.body.name}}: failed to serialize reply: \(error)")
+						promise(Data())
+					}
+				}
+			} catch {
+				BridgeLog.error("{{service.body.name}}.{{method.body.name}}: failed to deserialize request: \(error)")
+				promise(Data())
+			}
+{% endfor %}
+		default:
+			BridgeLog.error("{{service.body.name}}.handleRequest: unknown method \"\(method)\"")
+			promise(Data())
+		}
+	}
+
+	private var cast : ServiceType
+	{
+		if let service = self as? ServiceType {
+			return service
+		}
+
+		fatalError("{{service.body.name}} instance must conform to its ServiceType protocol")
+	}
+}

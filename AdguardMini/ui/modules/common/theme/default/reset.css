@@ -1,0 +1,50 @@
+/*
+ * SPDX-FileCopyrightText: AdGuard Software Limited
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+ 
+/*
+    1. Use a more-intuitive box-sizing model, remove default margin
+*/
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+/*
+    2. Allow percentage-based heights in the application
+*/
+html, body {
+    height: 100%;
+}
+/*
+    4. Improve media defaults
+*/
+img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+}
+/*
+    5. Remove built-in form typography styles
+*/
+input, button, textarea, select {
+    font: inherit;
+}
+
+/*
+    Font in input type number changes when hover, styles below fix this issue
+*/
+input[type="number"] {
+    font-family: system-ui;
+    font-size: 14px;
+}
+/*
+    6. Avoid text overflows
+*/
+p, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+}
+
+b, i, strong, s, tt {
+    color: inherit;
+}

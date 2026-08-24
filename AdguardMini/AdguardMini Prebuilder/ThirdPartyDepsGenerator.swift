@@ -14,8 +14,7 @@ private enum Constants {
     static let spmMapping: [String: (caseName: String, displayName: String)] = [
         "sparkle": ("sparkle", "Sparkle"),
         "xmlcoder": ("xmlCoder", "XMLCoder"),
-        "filterlistmanager": ("adguardFlm", "AdGuardFLM"),
-        "mac.sp-sciter-sdk": ("sciter", "Sciter")
+        "filterlistmanager": ("adguardFlm", "AdGuardFLM")
     ]
 }
 

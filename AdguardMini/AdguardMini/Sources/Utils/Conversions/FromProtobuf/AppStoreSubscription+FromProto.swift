@@ -9,7 +9,7 @@
 
 import StoreKit
 
-import SciterSchema
+import ProtoSchema
 import AML
 
 extension AppStoreSubscription {

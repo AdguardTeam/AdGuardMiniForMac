@@ -25,8 +25,6 @@ private enum Constants {
 /// few Keychain-backed values (e.g. URL filter properties) do not have to pull
 /// in the full ``SharedSettingsStorage`` and its dependencies.
 protocol SharedKeychainStorage: AnyObject {
-    /// Whether the URL filter is enabled.
-    var urlFilterEnabled: Bool { get set }
     /// Raw integer value of the selected protection level.
     var urlFilterProtectionLevelOption: Int { get set }
 
@@ -37,17 +35,6 @@ protocol SharedKeychainStorage: AnyObject {
 // MARK: - SharedKeychainStorageImpl
 
 final class SharedKeychainStorageImpl: SharedKeychainStorage {
-    var urlFilterEnabled: Bool {
-        get {
-            let value: String? = Keychain.getValueShared(for: KeychainKey.Base.urlFilterEnabled.key)
-            guard let value else { return Constants.defaultUrlFilterEnabled }
-            return value == "true"
-        }
-        set {
-            Keychain.setShared(key: KeychainKey.Base.urlFilterEnabled.key, data: Data("\(newValue)".utf8))
-        }
-    }
-
     var urlFilterProtectionLevelOption: Int {
         get {
             let value: String? = Keychain.getValueShared(

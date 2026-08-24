@@ -1,0 +1,31 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.StoriesConfig {
+    &_statistics {
+        color: var(--text-footer-footer-text-default);
+        padding: var(--m-s);
+
+        &_list {
+            color: inherit;
+            list-style: disc;
+            padding-left: 0;
+            margin: 0;
+
+            > li {
+                margin-inline-start: var(--m-m);
+                padding-left: 0;
+                color: inherit;
+            }
+        }
+    }
+
+    &_imageText {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--m-xxs);
+    }
+}

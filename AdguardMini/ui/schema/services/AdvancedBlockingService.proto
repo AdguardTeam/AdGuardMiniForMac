@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "PrimitivesWrappers.proto";
+import "AdvancedBlocking.proto";
+import "URLFilter.proto";
+import "Helpers.proto";
+
+/* Service handles Advanced blocking page */
+service AdvancedBlockingService {
+    /* Get AdvancedBlocking settings  */
+    rpc GetAdvancedBlocking(EmptyValue) returns (AdvancedBlocking);
+    /* Update AdvancedBlocking */
+    rpc UpdateAdvancedBlocking(AdvancedBlocking) returns (EmptyValue);
+    /* Update RealTimeFiltersUpdate setting */
+    rpc UpdateRealTimeFiltersUpdate(BoolValue) returns (EmptyValue);
+    /* Get URLFilter state */
+    rpc GetURLFilterState(EmptyValue) returns (URLFilterState);
+    /* Set URLFilter enabled state */
+    rpc SetURLFilterEnabled(BoolValue) returns (OptionalError);
+    /* Update URLFilter protection level */
+    rpc UpdateURLFilterProtectionLevel(URLFilterProtectionLevelUpdate) returns (OptionalError);
+    /* Reset URLFilter prefilter cache */
+    rpc ResetURLFilterCache(EmptyValue) returns (OptionalError);
+    /* Remove URLFilter configuration */
+    rpc RemoveURLFilter(EmptyValue) returns (OptionalError);
+    /* Get URLFilter seen */
+    rpc GetURLFilterSeen(EmptyValue) returns (BoolValue);
+    /* Update URLFilterSeen state */
+    rpc UpdateURLFilterSeen(BoolValue) returns (EmptyValue);
+}

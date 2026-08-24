@@ -12,13 +12,11 @@ import XCTest
 // MARK: - Fakes
 
 private final class FakeURLFilterService: URLFilterService {
-    var status: URLFilterStatus = .running
     var removeConfigurationError: Error?
     var removeConfigurationCalls = 0
 
     func start() async {}
     func loadConfiguration() async throws -> URLFilterConfiguration? { nil }
-    func save(configuration _: URLFilterConfiguration) async throws {}
     func removeConfiguration() async throws {
         self.removeConfigurationCalls += 1
         if let error = self.removeConfigurationError {
@@ -26,12 +24,20 @@ private final class FakeURLFilterService: URLFilterService {
         }
     }
     func setEnabled(_: Bool) async throws {}
-    func getStatus() async -> URLFilterStatus { self.status }
+    func setProtectionLevel(_: URLFilterProtectionLevel) async throws {}
+    func getState() async throws -> URLFilterState {
+        URLFilterState(
+            enabled: true,
+            status: .running,
+            serverURL: URL(string: "https://server.example"),
+            issuerURL: URL(string: "https://issuer.example"),
+            lastDisconnectError: nil
+        )
+    }
     func resetCache() async throws {}
 }
 
 private final class FakeKeychainStorage: SharedKeychainStorage {
-    var urlFilterEnabled = false
     var urlFilterProtectionLevelOption = 0
     var resetCalls = 0
 
@@ -94,7 +100,6 @@ private func makeResetService(
         urlFilterService: urlFilterService,
         protectionLevelProvider: { .essential },
         isNewProvider: { false },
-        isPageNewProvider: { false },
         bloomMetadataProvider: { nil }
     )
     let resetService = URLFilterResetServiceImpl(
@@ -173,24 +178,6 @@ final class URLFilterResetServiceTests: XCTestCase {
         XCTAssertNotNil(error)
         XCTAssertEqual(keychainStorage.resetCalls, 1)
         XCTAssertEqual(bloomMetadataStorage.removeCalls, 1)
-    }
-
-    func testResetClearsInstallRequestedFlag() async {
-        let urlFilterService = FakeURLFilterService()
-        urlFilterService.status = .starting
-        let (resetService, assembler) = makeResetService(
-            urlFilterService: urlFilterService,
-            keychainStorage: FakeKeychainStorage(),
-            bloomMetadataStorage: FakeBloomMetadataStorage(),
-            fileService: FakeGroupFolderFileService()
-        )
-        await assembler.markInstallRequested()
-
-        let error = await resetService.reset()
-        let state = await assembler.makeState()
-
-        XCTAssertNil(error)
-        XCTAssertFalse(state.info.isInstalling)
     }
 
     func testResetSkipsPrefilterRemovalWhenFileMissing() async {

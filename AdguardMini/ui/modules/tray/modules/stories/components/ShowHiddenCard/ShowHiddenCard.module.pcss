@@ -1,0 +1,53 @@
+/*
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.ShowHiddenCard {
+    width: 108px;
+    height: 116px;
+    box-sizing: content-box;
+    display: flex;
+    flex-shrink: 0;
+    flex-direction: column;
+    vertical-align: middle;
+    text-align: center;
+    border-radius: var(--border-radius);
+    border: 1px var(--stroke-icons-product-icon-default);
+    border-style: dashed;
+    padding: var(--m-s);
+    margin-bottom: var(--m-xxs);
+    margin-right: var(--m-s);
+    box-shadow: var(--bs-small);
+    cursor: pointer;
+    background: var(--fills-backgrounds-cards-background-default);
+
+    &:hover {
+        background: var(--fills-backgrounds-cards-background-hovered);
+    }
+
+    &:active {
+        background: var(--fills-backgrounds-cards-background-pressed);
+    }
+}
+
+.ShowHiddenCard_header {
+    display: flex;
+    margin-top: auto;
+}
+
+.ShowHiddenCard_body {
+    display: flex;
+    flex-direction: column;
+    margin-top: var(--m-xs);
+    margin-bottom: auto;
+}
+
+.ShowHiddenCard_icon {
+    margin: 0 auto;
+    color: var(--stroke-icons-product-icon-default);
+}
+
+.ShowHiddenCard_text {
+    color: var(--text-buttons-tertiary-default);
+}

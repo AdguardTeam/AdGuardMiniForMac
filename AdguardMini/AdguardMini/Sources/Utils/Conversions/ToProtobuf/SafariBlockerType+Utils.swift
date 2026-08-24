@@ -7,7 +7,7 @@
 //  AdguardMini
 //
 
-import SciterSchema
+import ProtoSchema
 
 extension SafariBlockerType {
     // swiftlint:disable switch_case_on_newline

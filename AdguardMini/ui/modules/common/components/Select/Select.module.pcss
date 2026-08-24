@@ -1,0 +1,108 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.Select {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--m-s);
+    padding: var(--m-s);
+    border: 1px solid var(--stroke-inputs-inactive-input-stroke-default);
+    border-radius: var(--border-radius);
+    background-color: var(--fills-inputs-input-background-default);
+    cursor: pointer;
+
+    /* The border acts as the focus indicator, matching the Input component. */
+    outline: none;
+
+    &:hover,
+    &:focus,
+    &__active {
+        border-color: var(--stroke-inputs-active-input-stroke-default);
+    }
+
+    &_label {
+        display: block;
+        color: var(--text-lables-labels-default);
+        margin-bottom: var(--m-xxs);
+    }
+
+    &_value {
+        flex: 1 0 0;
+        min-width: 1px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--text-main-text-main-default);
+    }
+
+    &_arrow {
+        flex-shrink: 0;
+        width: 24px;
+        height: 24px;
+        transform: rotate(-90deg);
+        color: var(--stroke-icons-gray-icons-default);
+    }
+
+    &_options {
+        visibility: hidden;
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        background: var(--fills-menus-dropdown-menu-background-default);
+        border-radius: var(--border-radius);
+        box-shadow: var(--bs-big);
+        z-index: var(--zi-tooltip);
+        max-height: 300px;
+        overflow-y: auto;
+
+        &__show {
+            visibility: visible;
+        }
+    }
+
+    &_option {
+        display: flex;
+        align-items: center;
+        gap: var(--m-s);
+        padding: var(--m-s);
+        cursor: pointer;
+
+        &:not(:first-child) {
+            border-top: 1px solid var(--stroke-dividers-item-divider-default);
+        }
+
+        &__highlighted {
+            background: var(--fills-menus-dropdown-menu-background-hovered);
+        }
+
+        &__selected {
+            background: var(--fills-menus-dropdown-menu-background-hovered);
+
+            & .Select_optionLabel {
+                font-weight: var(--fw-semibold);
+            }
+        }
+    }
+
+    &_optionLabel {
+        flex: 1 0 0;
+        min-width: 1px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--text-main-text-main-default);
+    }
+
+    &_check {
+        flex-shrink: 0;
+        width: 24px;
+        height: 24px;
+        color: var(--stroke-icons-product-icon-default);
+    }
+}

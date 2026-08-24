@@ -1,0 +1,129 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.UserRules {
+    position: relative;
+    box-sizing: content-box;
+    min-width: 512px;
+    width: auto;
+    min-height: 632px;
+    height: auto;
+    padding: 0 var(--m-m);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+
+    &__padding {
+        min-height: 578px;
+        padding-bottom: 56px;
+    }
+
+    &_howTo {
+        margin-top: var(--m-s);
+    }
+
+    &_mainControl {
+        margin-bottom: var(--m-s);
+    }
+
+    &_search {
+        margin: var(--m-m) var(--m-s);
+
+        &__scroll {
+            margin-top: 0;
+        }
+    }
+
+    &_addRule {
+        display: flex;
+        color: var(--fills-buttons-main-button-default);
+        cursor: pointer;
+        padding: var(--m-xxs) var(--m-s);
+
+        &:hover {
+            color: var(--fills-buttons-main-button-hovered);
+            cursor: pointer;
+        }
+        
+
+        &_icon {
+            vertical-align: top;
+            height: 24px;
+            width: 24px;
+        }
+
+        &_text {
+            margin-left: var(--m-xs);
+            margin-top: 2px;
+            line-height: 24px;
+        }
+
+        &__scroll {
+            margin-bottom: var(--m-xs);
+        }
+    }
+
+    &_shadow {
+        height: 16px;
+        margin-left: -24px;
+        width: calc(100% + 48px);
+        position: fixed;
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.05) 100%);
+    }
+
+    &_scrollableContainer {
+        overflow-y: auto;
+        padding-right: var(--m-m);
+        height: auto;
+        width: calc(100% + var(--m-m));
+    }
+    &_emptyResult {
+        height: auto;
+        width: auto;
+        margin: auto 0;
+
+        &_icon {
+            width: 64px;
+            height: 64px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: auto;
+        }
+
+        &_text {
+            color: var(--text-description-description-default);
+            text-align: center;
+            margin-bottom: auto;
+        }
+    }
+
+    &_pagination {
+        position: fixed;
+        bottom: 0px;
+        margin-left: -24px;
+        box-sizing: content-box;
+        background-color: rgba(0, 0, 0, 0.00);
+        width: calc(100vw - 240px);
+        z-index: var(--zi-above-extra);
+        display: flex;
+        flex-direction: column;
+
+        &__bg {
+            width: calc(100vw - 240px);
+            background: var(--fills-backgrounds-page-background-default);
+        }
+
+        &_shadowBottom {
+            height: 16px;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.00) 100%);
+            width: auto;
+        }
+
+        &_placement {
+            width: max-content;
+            margin: var(--m-xs) auto;
+        }
+    }
+}

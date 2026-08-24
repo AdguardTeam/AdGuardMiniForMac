@@ -13,13 +13,46 @@
         "sourceMap": false,
         "skipLibCheck": true,
         "paths": {
-            "Apis/*": ["AdguardMini/sciter-ui/modules/common/apis/*"]
+            "Apis/*": ["AdguardMini/ui/modules/common/apis/*"],
+            "Common/*": ["AdguardMini/ui/modules/common/*"],
+            "Modules/*": ["AdguardMini/ui/modules/*"],
+            "Utils/*": ["AdguardMini/ui/modules/common/utils/*"],
+            "Intl": ["AdguardMini/ui/tests/mocks/intl"],
+            "@adg/webview-utils-kit": ["AdguardMini/ui/tests/mocks/webview-utils-kit"],
+            "SettingsStore": ["AdguardMini/ui/tests/mocks/settingsStore"],
+            "SettingsStore/*": ["AdguardMini/ui/tests/mocks/settingsStore/*"],
+            "SettingsLib/*": ["AdguardMini/ui/tests/mocks/settingsLib/*"],
+            "OnboardingStore": ["AdguardMini/ui/tests/mocks/onboardingStore"],
+            "OnboardingStore/*": ["AdguardMini/ui/tests/mocks/onboardingStore/*"],
+            "TrayStore": ["AdguardMini/ui/tests/mocks/trayStore"],
+            "TrayStore/*": ["AdguardMini/ui/tests/mocks/trayStore/*"]
         }
     },
     "include": [
-        "AdguardMini/sciter-ui/tests/**/*.ts",
-        "AdguardMini/sciter-ui/modules/common/apis/types/**/*.ts",
-        "AdguardMini/sciter-ui/modules/common/stores/SafariExtensionsStore.ts",
-        "AdguardMini/sciter-ui/modules/common/stores/NotificationsQueue.ts"
+        "AdguardMini/ui/tests/**/*.ts",
+        "AdguardMini/ui/@types/**/*.d.ts",
+        "AdguardMini/ui/modules/common/apis/types/**/*.ts",
+        "AdguardMini/ui/modules/common/stores/SafariExtensionsStore.ts",
+        "AdguardMini/ui/modules/common/stores/NotificationsQueue.ts",
+        "AdguardMini/ui/modules/common/apis/rpcPostMessage.ts",
+        "AdguardMini/ui/modules/common/apis/apiWindow.ts",
+        "AdguardMini/ui/modules/common/webViewBootstrap.ts",
+        "AdguardMini/ui/modules/common/policyViolationReporter.ts",
+        "AdguardMini/ui/modules/common/apis/callbackDispatch.ts",
+        "AdguardMini/ui/modules/tray/lib/webViewTrayBootstrap.ts",
+        "AdguardMini/ui/modules/settings/lib/webViewSettingsBootstrap.ts",
+        "AdguardMini/ui/modules/common/apis/callbacks/SettingsCallbackServiceInternal.ts",
+        "AdguardMini/ui/modules/common/apis/callbacks/AccountCallbackServiceInternal.ts",
+        "AdguardMini/ui/modules/common/apis/callbacks/FiltersCallbackServiceInternal.ts",
+        "AdguardMini/ui/modules/common/apis/callbacks/UserRulesCallbackServiceInternal.ts",
+        "AdguardMini/ui/modules/common/apis/callbacks/OnboardingCallbackServiceInternal.ts",
+        "AdguardMini/ui/modules/tray/store/modules/TrayCallbackServiceImpl.ts",
+        "AdguardMini/ui/modules/userrules/lib/webViewUserrulesBootstrap.ts",
+        "AdguardMini/ui/tests/userrules/**/*.ts",
+        "AdguardMini/ui/modules/onboarding/lib/webViewOnboardingBootstrap.ts",
+        "AdguardMini/ui/modules/onboarding/lib/hooks/useLottieElementAdapter.ts",
+        "AdguardMini/ui/tests/onboarding/**/*.ts",
+        "AdguardMini/ui/tests/settings/**/*.ts",
+        "AdguardMini/ui/packages/webview-utils-kit/src/replacements/*.ts"
     ]
 }

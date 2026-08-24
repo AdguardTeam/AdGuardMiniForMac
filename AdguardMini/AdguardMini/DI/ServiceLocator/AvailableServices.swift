@@ -29,7 +29,6 @@ protocol StatisticsServiceDependent: ServiceDependent { var statisticsService: S
 protocol MailFiltersUpdaterDependent: ServiceDependent { var mailFiltersUpdater: MailFiltersUpdater! { get set } }
 protocol AppLifecycleServiceDependent: ServiceDependent { var appLifecycleService: AppLifecycleService! { get set } }
 protocol ImportExportServiceDependent: ServiceDependent { var importExportService: ImportExportService! { get set } }
-protocol SciterAppControllerDependent: ServiceDependent { var sciterAppController: SciterAppsController! { get set } }
 protocol UserSettingsServiceDependent: ServiceDependent { var userSettingsService: UserSettingsService! { get set } }
 protocol UserSettingsManagerDependent: ServiceDependent { var userSettingsManager: UserSettingsManager! { get set } }
 protocol LicenseStateProviderDependent: ServiceDependent { var licenseStateProvider: LicenseStateProvider! { get set } }
@@ -42,12 +41,6 @@ protocol URLFilterStateAssemblerDependent: ServiceDependent {
     var urlFilterStateAssembler: URLFilterStateAssembler! { get set }
 }
 
-protocol SciterCallbackServiceDependent:  ServiceDependent {
-    var sciterCallbackService: SciterCallbackService! { get set }
-}
-protocol SciterOnboardingCallbackServiceDependent: ServiceDependent {
-    var sciterOnboardingCallbackService: SciterOnboardingCallbackService! { get set }
-}
 protocol LegacyMigrationServiceDependent: ServiceDependent {
     var legacyMigrationService: LegacyMigrationService! { get set }
 }
