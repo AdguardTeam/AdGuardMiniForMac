@@ -126,6 +126,13 @@ final class WebViewAppsController: ChildWindowControlling {
             existing.onIdleActivity = nil
             host = nil
         }
+        // A windowed module takes over the screen, so the tray popover must
+        // Close with it: the tray's outside-click monitor does not fire for
+        // The click inside the tray that opens the window, and without this
+        // The popover would linger over it.
+        if module != .tray {
+            self.hosts[.tray]?.hide()
+        }
         let live = host ?? self.makeHost(module)
         self.hosts[module] = live
         live.show()

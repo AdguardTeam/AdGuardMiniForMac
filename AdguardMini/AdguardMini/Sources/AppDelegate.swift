@@ -340,6 +340,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return true
         }
 
+        // Since macOS 15, activation from the Dock can switch the policy to
+        // `.regular`. Restore the accessory policy to prevent a stuck Dock icon.
+        // This keeps the app running quietly from the menu bar.
+        if NSApplication.shared.activationPolicy() == .regular && !UIUtils.hasOpenedWindows {
+            UIUtils.setActivationPolicy(.accessory)
+        }
+
         if self.userSettingsManager.firstRun {
             self.webViewAppsController.show(.onboarding)
         } else {
@@ -482,7 +489,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func continueStartAppStep1() {
         NSApplication.shared.mainMenu = AppMenu()
 
-        NSApplication.shared.setActivationPolicy(.accessory)
+        // `UIUtils` stores the desired activation policy internally.
+        // It restores `.accessory` in `removeWindow` once the last window closes.
+        // The app returns to the menu bar, so its Dock icon is not left behind.
+        UIUtils.setActivationPolicy(.accessory)
 
         // The KVO handler fires on an arbitrary thread.
         // NotificationCenter delivers synchronously on the posting thread.

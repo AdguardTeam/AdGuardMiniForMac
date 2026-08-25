@@ -81,7 +81,7 @@ final class TerminationListener: NSObject {
         Task {
             do {
                 let openConfiguration = NSWorkspace.OpenConfiguration()
-                openConfiguration.activates = true
+                openConfiguration.activates = false
                 openConfiguration.addsToRecentItems = false
                 openConfiguration.hides = false
                 try await NSWorkspace.shared.openApplication(at: self.executable, configuration: openConfiguration)

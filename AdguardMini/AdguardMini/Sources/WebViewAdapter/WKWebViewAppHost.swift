@@ -11,6 +11,7 @@ import Foundation
 import WebKit
 import AppKit
 import os
+import AML
 import ProtoSchema  // WKWebViewBridge (the RPC dispatcher lives in ProtoSchema)
 
 // MARK: - Host lifecycle state
@@ -255,7 +256,7 @@ final class WKWebViewAppHost: NSObject {
         // `.shown` host whose WKWebView is dead — the
         // EXC_BAD_ACCESS / kill-on-reopen bug. `NSWindow.delegate` is weak,
         // So this adds no retain cycle.
-        window.delegate = self
+        self.window.delegate = self
 
         let systemHandler = SystemActionsMessageHandler(
             externalLinkGate: linkGate,
@@ -278,8 +279,8 @@ final class WKWebViewAppHost: NSObject {
         // Failure surfacing handlers — registered unconditionally so
         // The TS shim's posts surface native alerts in both Debug and
         // Release builds.
-        let rpcTimeoutAlert = RpcTimeoutAlertMessageHandler(presenter: failurePresenter)
-        let jsRuntimeError = JsRuntimeErrorMessageHandler(presenter: failurePresenter)
+        let rpcTimeoutAlert = RpcTimeoutAlertMessageHandler(presenter: self.failurePresenter)
+        let jsRuntimeError = JsRuntimeErrorMessageHandler(presenter: self.failurePresenter)
         webView.configuration.userContentController.add(
             rpcTimeoutAlert,
             name: Constants.rpcTimeoutAlertMessageName
@@ -293,7 +294,7 @@ final class WKWebViewAppHost: NSObject {
 
         // DIAG-only: mirror `window.log` (TS) into the host log stream so
         // JS and Swift diagnostic logs appear together in one console.
-        let jsLog = JsLogMessageHandler(module: module)
+        let jsLog = JsLogMessageHandler(module: self.module)
         webView.configuration.userContentController.add(
             jsLog,
             name: Constants.jsLogMessageName
@@ -309,8 +310,8 @@ final class WKWebViewAppHost: NSObject {
     /// After a reap means something still retains it and the memory is not
     /// Coming back.
     deinit {
-        let moduleName = module.rawValue
-        logger.info("host.deinit module=\(moduleName, privacy: .public)")
+        let moduleName = self.module.rawValue
+        self.logger.info("host.deinit module=\(moduleName, privacy: .public)")
     }
 
     // MARK: - Public methods
@@ -321,13 +322,13 @@ final class WKWebViewAppHost: NSObject {
      * `.error` state.
      */
     func loadEntryIfNeeded() {
-        guard state == .unloaded || state == .error else { return }
-        state = .loading
+        guard self.state == .unloaded || self.state == .error else { return }
+        self.state = .loading
 
-        let allowedDir = entryURL.deletingLastPathComponent()
-        lastLoadFileURLAllowingReadAccessTo = allowedDir
-        webView.loadFileURL(
-            entryURL,
+        let allowedDir = self.entryURL.deletingLastPathComponent()
+        self.lastLoadFileURLAllowingReadAccessTo = allowedDir
+        self.webView.loadFileURL(
+            self.entryURL,
             allowingReadAccessTo: allowedDir
         )
     }
@@ -337,12 +338,12 @@ final class WKWebViewAppHost: NSObject {
      * `didFinishNavigation()` when the page is still `.loading`.
      */
     func show() {
-        guard state != .tearingDown, state != .destroyed else { return }
-        loadEntryIfNeeded()
-        let moduleName = module.rawValue
-        let stateDesc = String(describing: state)
-        logger.info("host.show module=\(moduleName, privacy: .public) state=\(stateDesc, privacy: .public)")
-        lastShownTime = Date()
+        guard self.state != .tearingDown, self.state != .destroyed else { return }
+        self.loadEntryIfNeeded()
+        let moduleName = self.module.rawValue
+        let stateDesc = String(describing: self.state)
+        self.logger.info("host.show module=\(moduleName, privacy: .public) state=\(stateDesc, privacy: .public)")
+        self.lastShownTime = Date()
         // The app runs with `.accessory` activation policy. Without
         // Activating the app, the window server leaves windows marked
         // Occluded, so the WebContent process suspends layer compositing —
@@ -351,31 +352,37 @@ final class WKWebViewAppHost: NSObject {
         // (`markAllLayersVolatile` warnings). Activating the app makes the
         // Window server treat all module windows as actively rendered and
         // Interactive.
-        if module == .tray {
-            window.hidesOnDeactivate = false
+        if self.windowConfiguration.windowKind == .window {
+            // Windowed modules register with `UIUtils`, which switches the
+            // App to `.regular` (Dock icon) and activates it.
+            UIUtils.windowWillBeVisible(self.window)
+        } else {
+            self.activateApp()
         }
-        activateApp()
-        window.makeKeyAndOrderFront(nil)
+        if self.module == .tray {
+            self.window.hidesOnDeactivate = false
+        }
+        self.window.makeKeyAndOrderFront(nil)
         // `activate()` on macOS 14+ completes asynchronously, so the ordering
         // Above can land before activation takes effect. For `.accessory`-policy
         // Apps the window server then leaves a `.normal`-level window (settings)
         // Behind the previously-active app's windows. Force the window to the
         // Front of its level regardless of activation state so module windows
         // Always appear on top of other apps.
-        window.orderFrontRegardless()
-        switch state {
+        self.window.orderFrontRegardless()
+        switch self.state {
         case .ready, .hidden:
-            state = .shown
-            onVisibilityChange?(true)
+            self.state = .shown
+            self.onVisibilityChange?(true)
         case .loading:
-            pendingVisibilityChange = true
+            self.pendingVisibilityChange = true
         default:
             break
         }
-        installOutsideClickMonitor()
-        installWindowMainObserver()
+        self.installOutsideClickMonitor()
+        self.installWindowMainObserver()
         // Cancels any pending idle teardown for the whole module group.
-        onIdleActivity?(module, true)
+        self.onIdleActivity?(self.module, true)
     }
 
     /**
@@ -383,70 +390,78 @@ final class WKWebViewAppHost: NSObject {
      * dead host cannot be resurrected from `.hidden`.
      */
     func hide() {
-        guard state != .tearingDown, state != .destroyed else { return }
-        let moduleName = module.rawValue
-        let stateDesc = String(describing: state)
-        logger.info("host.hide module=\(moduleName, privacy: .public) state=\(stateDesc, privacy: .public)")
-        removeOutsideClickMonitor()
-        window.orderOut(nil)
-        state = .hidden
+        guard self.state != .tearingDown, self.state != .destroyed else { return }
+        let moduleName = self.module.rawValue
+        let stateDesc = String(describing: self.state)
+        self.logger.info("host.hide module=\(moduleName, privacy: .public) state=\(stateDesc, privacy: .public)")
+        self.removeOutsideClickMonitor()
+        self.window.orderOut(nil)
+        self.state = .hidden
+        // The window is no longer visible; `UIUtils` restores the
+        // Menu-bar-only policy when this was the last registered window.
+        if self.windowConfiguration.windowKind == .window {
+            UIUtils.removeWindow(self.window)
+        }
         // Clear any deferred visibility change: if the page was still loading,
         // `didFinishNavigation` must not later deliver `.visible` for a window
         // The user already hid.
-        pendingVisibilityChange = false
-        onVisibilityChange?(false)
+        self.pendingVisibilityChange = false
+        self.onVisibilityChange?(false)
         // Arms the idle countdown; the reaper re-checks every module before
         // Destroying anything, so a hide with another window still up is safe.
-        onIdleActivity?(module, false)
+        self.onIdleActivity?(self.module, false)
     }
 
     /**
      * Tear down the window and bridge. Idempotent.
      */
     func teardown() {
-        state = .tearingDown
+        self.state = .tearingDown
 
-        removeOutsideClickMonitor()
-        if let windowMainObserver {
+        self.removeOutsideClickMonitor()
+        if let windowMainObserver = self.windowMainObserver {
             NotificationCenter.default.removeObserver(windowMainObserver)
             self.windowMainObserver = nil
         }
 
-        webView.configuration.userContentController.removeScriptMessageHandler(
+        self.webView.configuration.userContentController.removeScriptMessageHandler(
             forName: Constants.rpcMessageName
         )
-        webView.configuration.userContentController.removeScriptMessageHandler(
+        self.webView.configuration.userContentController.removeScriptMessageHandler(
             forName: Constants.openLinkMessageName
         )
-        webView.configuration.userContentController.removeScriptMessageHandler(
+        self.webView.configuration.userContentController.removeScriptMessageHandler(
             forName: Constants.clipboardMessageName
         )
 
         // Teardown mirrors the registration block above.
-        webView.configuration.userContentController.removeScriptMessageHandler(
+        self.webView.configuration.userContentController.removeScriptMessageHandler(
             forName: Constants.rpcTimeoutAlertMessageName
         )
-        webView.configuration.userContentController.removeScriptMessageHandler(
+        self.webView.configuration.userContentController.removeScriptMessageHandler(
             forName: Constants.jsRuntimeErrorMessageName
         )
-        webView.configuration.userContentController.removeScriptMessageHandler(
+        self.webView.configuration.userContentController.removeScriptMessageHandler(
             forName: Constants.jsLogMessageName
         )
 
         // Nulling the reaper hook first: nothing below may re-arm the
         // Countdown from inside a teardown.
-        onIdleActivity = nil
+        self.onIdleActivity = nil
 
-        window.orderOut(nil)
-        webView.stopLoading()
+        self.window.orderOut(nil)
+        if self.windowConfiguration.windowKind == .window {
+            UIUtils.removeWindow(self.window)
+        }
+        self.webView.stopLoading()
 
         // Detach the delegates before the window closes so no AppKit or
         // WebKit callback lands in a half-destroyed host. Both properties are
         // Weak, so this is about ordering, not about breaking a cycle.
-        window.delegate = nil
-        webView.navigationDelegate = nil
-        webView.uiDelegate = nil
-        interfaceRequestDenier = nil
+        self.window.delegate = nil
+        self.webView.navigationDelegate = nil
+        self.webView.uiDelegate = nil
+        self.interfaceRequestDenier = nil
 
         // Take the web view out of the view hierarchy and close the window.
         // `orderOut` alone frees nothing: AppKit still owns an ordered-out
@@ -456,11 +471,11 @@ final class WKWebViewAppHost: NSObject {
         // Reference as the last one — which dies with the host. `close()`
         // Does not consult `windowShouldClose(_:)` (only `performClose(_:)`
         // Does), so this cannot recurse back into the delegate.
-        window.contentView = nil
-        webView.removeFromSuperview()
-        window.close()
+        self.window.contentView = nil
+        self.webView.removeFromSuperview()
+        self.window.close()
 
-        state = .destroyed
+        self.state = .destroyed
     }
 
     // MARK: - Window main observer (settings)
@@ -472,10 +487,10 @@ final class WKWebViewAppHost: NSObject {
     /// `OnWindowDidBecomeMain` recovery, which re-fetches settings so the
     /// Health check card reflects the current helper status. Idempotent.
     private func installWindowMainObserver() {
-        guard module == .settings, windowMainObserver == nil else { return }
-        windowMainObserver = NotificationCenter.default.addObserver(
+        guard self.module == .settings, self.windowMainObserver == nil else { return }
+        self.windowMainObserver = NotificationCenter.default.addObserver(
             forName: NSWindow.didBecomeMainNotification,
-            object: window,
+            object: self.window,
             queue: .main
         ) { [weak self] _ in
             self?.handleWindowBecameMain()
@@ -485,25 +500,25 @@ final class WKWebViewAppHost: NSObject {
     /// Re-runs the "shown" visibility callback when the settings window
     /// Becomes main again while it is already shown.
     private func handleWindowBecameMain() {
-        guard state == .shown else { return }
-        onVisibilityChange?(true)
+        guard self.state == .shown else { return }
+        self.onVisibilityChange?(true)
     }
 
     // MARK: - Outside-click close (tray panel)
     private func installOutsideClickMonitor() {
-        guard module == .tray else { return }
-        removeOutsideClickMonitor()
+        guard self.module == .tray else { return }
+        self.removeOutsideClickMonitor()
 
         // Local monitor: mouse-downs that occur inside this app's windows
         // But outside the tray panel (e.g. clicking another window).
-        outsideClickLocalMonitor = NSEvent.addLocalMonitorForEvents(
+        self.outsideClickLocalMonitor = NSEvent.addLocalMonitorForEvents(
             matching: [.leftMouseDown, .rightMouseDown, .otherMouseDown]
         ) { [weak self] event in
             self?.handleOutsideClick(event: event) ?? event
         }
 
         // Global monitor: mouse-downs anywhere on the system (other apps).
-        outsideClickGlobalMonitor = NSEvent.addGlobalMonitorForEvents(
+        self.outsideClickGlobalMonitor = NSEvent.addGlobalMonitorForEvents(
             matching: [.leftMouseDown, .rightMouseDown, .otherMouseDown]
         ) { [weak self] _ in
             guard let self else { return }
@@ -515,13 +530,13 @@ final class WKWebViewAppHost: NSObject {
 
     /// Removes the outside-click monitors.
     private func removeOutsideClickMonitor() {
-        if let local = outsideClickLocalMonitor {
+        if let local = self.outsideClickLocalMonitor {
             NSEvent.removeMonitor(local)
-            outsideClickLocalMonitor = nil
+            self.outsideClickLocalMonitor = nil
         }
-        if let global = outsideClickGlobalMonitor {
+        if let global = self.outsideClickGlobalMonitor {
             NSEvent.removeMonitor(global)
-            outsideClickGlobalMonitor = nil
+            self.outsideClickGlobalMonitor = nil
         }
     }
 
@@ -531,22 +546,22 @@ final class WKWebViewAppHost: NSObject {
     /// Opened from the tray — hides the tray and passes the event through so
     /// The click still reaches its target.
     private func handleOutsideClick(event: NSEvent) -> NSEvent? {
-        guard module == .tray, state == .shown else { return event }
+        guard self.module == .tray, self.state == .shown else { return event }
         // Ignore the click that just opened the tray: its mouse-down may
         // Arrive right after `show()`, and closing on it would make the
         // Panel unusable.
-        if shouldIgnoreOutsideClick() {
+        if self.shouldIgnoreOutsideClick() {
             return event
         }
         let location = NSEvent.mouseLocation
-        if window.frame.contains(location) {
+        if self.window.frame.contains(location) {
             return event
         }
-        if isInStatusBarStrip(location) {
+        if self.isInStatusBarStrip(location) {
             return event
         }
-        logger.error("host.outsideClick local — hiding tray")
-        hide()
+        self.logger.error("host.outsideClick local — hiding tray")
+        self.hide()
         return event
     }
 
@@ -566,7 +581,7 @@ final class WKWebViewAppHost: NSObject {
     /// True when an outside-click event should be ignored because the tray
     /// Was shown very recently. Prevents the opening click from closing it.
     private func shouldIgnoreOutsideClick() -> Bool {
-        Date().timeIntervalSince(lastShownTime) < Constants.outsideClickGraceSeconds
+        Date().timeIntervalSince(self.lastShownTime) < Constants.outsideClickGraceSeconds
     }
 
     /// Activates the app so module windows are treated as actively
@@ -594,13 +609,13 @@ final class WKWebViewAppHost: NSObject {
         // Buffered by `beginLoad()`. Called unconditionally — including the
         // `.hidden` case (host hidden mid-load) — so pushes after that are
         // Not buffered forever.
-        bridge.markPageReady()
-        guard state == .loading else { return }
-        state = .ready
-        if pendingVisibilityChange {
-            pendingVisibilityChange = false
-            state = .shown
-            onVisibilityChange?(true)
+        self.bridge.markPageReady()
+        guard self.state == .loading else { return }
+        self.state = .ready
+        if self.pendingVisibilityChange {
+            self.pendingVisibilityChange = false
+            self.state = .shown
+            self.onVisibilityChange?(true)
         }
     }
 
@@ -613,17 +628,17 @@ final class WKWebViewAppHost: NSObject {
         // Pending navigation keeps running and can still fail. Handling it
         // Here guarantees the next `show()` reloads instead of presenting a
         // Dead page (and the failure is still surfaced).
-        guard state == .loading || state == .hidden else { return }
-        logger.error(
+        guard self.state == .loading || self.state == .hidden else { return }
+        self.logger.error(
             "WKWebView provisional navigation failed: \(error.localizedDescription, privacy: .public)"
         )
-        pendingVisibilityChange = false
-        state = .error
+        self.pendingVisibilityChange = false
+        self.state = .error
         // Route to the failure presenter for telemetry + native alert
         // + (optional) app restart.
-        let moduleName = module.rawValue
+        let moduleName = self.module.rawValue
         Task { @MainActor in
-            await failurePresenter.handleLoadFailure(module: moduleName, error: error)
+            await self.failurePresenter.handleLoadFailure(module: moduleName, error: error)
         }
     }
 
@@ -812,7 +827,7 @@ extension WKWebViewAppHost: WKNavigationDelegate {
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
         decisionHandler(
-            navigationPolicy.decidePolicy(
+            self.navigationPolicy.decidePolicy(
                 forNavigationTo: navigationAction.request.url
             )
         )
@@ -841,7 +856,7 @@ extension WKWebViewAppHost: WKNavigationDelegate {
         // `didFailProvisionalNavigation(error:)` already routes to it,
         // So an additional call here would double-fire the alert
         // (review Finding 5).
-        didFailProvisionalNavigation(error: error)
+        self.didFailProvisionalNavigation(error: error)
     }
 }
 
@@ -861,7 +876,7 @@ extension WKWebViewAppHost: NSWindowDelegate {
         // Permit the real close during teardown and after destruction.
         // `teardown()` itself uses `orderOut`, so this branch is only hit
         // When `close()` is invoked on a host that is already tearing down.
-        guard state != .tearingDown, state != .destroyed else {
+        guard self.state != .tearingDown, self.state != .destroyed else {
             return true
         }
 
@@ -872,24 +887,24 @@ extension WKWebViewAppHost: NSWindowDelegate {
         // `CloseUserRulesWindow` RPC (which tears the host down) once the
         // User resolves (Save / Discard) or immediately if clean. Returning
         // False cancels the AppKit close; the host stays alive until the RPC.
-        if module == .userrules {
+        if self.module == .userrules {
             // `window.__closeRequested` is only installed once the React page
             // Mounts. While still loading/errored/dead, `evaluateJavaScript`
             // Is a silent no-op, which would trap the user with an
             // Unclosable window — fall back to the native hide path instead.
-            if state == .ready || state == .shown {
-                webView.evaluateJavaScript(
+            if self.state == .ready || self.state == .shown {
+                self.webView.evaluateJavaScript(
                     "window.__closeRequested && window.__closeRequested()",
                     completionHandler: nil
                 )
                 return false
             }
-            hide()
+            self.hide()
             return false
         }
 
         // Top-level modules hide on close (keeps the WKWebView process alive).
-        hide()
+        self.hide()
         return false
     }
 }

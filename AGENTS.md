@@ -500,12 +500,16 @@ Blocker JSON consumed by the extension targets.
    sources today — the separation mirrors the former
    `mac.sp-sciter-sdk`/`SciterSwift` package boundary and keeps a clean
    on-ramp to promoting `WebViewAdapter/` into a local SPM package later.
+   The adapter MAY use the generic AML utility `UIUtils` (window
+   registration and activation policy are host-level concerns), but MUST
+   stay free of app-domain services (`FLM`, app services) and app-specific
+   glue.
 
    **Rationale**: Explicitly separates reusable adapter code from
    application-specific glue so the module boundary is visible in the
    project tree (per PR AG-57496 review), keeps the adapter free of
-   app-domain dependencies (`AML`, `FLM`, app services), and eases a
-   future package extraction.
+   app-domain services (`FLM`, app services) — with the sole generic-utility
+   exception of AML `UIUtils` — and eases a future package extraction.
 
 **Known exclusions** (acceptable today, to be improved over time):
 
@@ -670,8 +674,8 @@ Blocker JSON consumed by the extension targets.
   or implementation plans, every requirement, UI element, and design detail
   MUST trace back to an authoritative source: JIRA description, Figma design,
   explicit user confirmation, or a documented assumption. Never invent UX
-  details (counts, icons, text content, layout elements) that are not present
-  in the source materials.
+  details (counts, icons, button text, spacing, layout elements) that are not
+  present in the source materials.
 
   - Design details (icons, button text, spacing, colors) MUST come from Figma.
     If Figma tools are unavailable, use the REST API or flag the gap.
@@ -1019,4 +1023,3 @@ humans and AI agents that consume project documentation.
     `'unsafe-inline'` per the PRD "Web Content Policy") is not an acceptable
     alternative because third-party animation libraries legitimately apply
     inline styles.
-

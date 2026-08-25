@@ -94,4 +94,34 @@ final class WebViewAppsControllerTests: XCTestCase {
         XCTAssertNotEqual(rebuilt?.state, .destroyed)
         XCTAssertNotEqual(rebuilt?.state, .tearingDown)
     }
+
+    /// Opening a windowed module must close the tray popover: the click that
+    /// Opens the window lands inside the tray, so the outside-click monitor
+    /// Does not fire and the popover would linger over the new window.
+    func testShowSettings_HidesTrayHost() {
+        let controller = makeController()
+        controller.show(.tray)
+        let trayHost = controller.host(for: .tray)
+        // The fake entry URL never loads, so drive the host to `.shown` via
+        // The `didFinishNavigation` test seam.
+        trayHost?.didFinishNavigation()
+        XCTAssertEqual(trayHost?.state, .shown)
+
+        controller.show(.settings)
+
+        XCTAssertEqual(trayHost?.state, .hidden)
+    }
+
+    /// Showing the tray must not hide any other module window.
+    func testShowTray_DoesNotHideSettingsHost() {
+        let controller = makeController()
+        controller.show(.settings)
+        let settingsHost = controller.host(for: .settings)
+        settingsHost?.didFinishNavigation()
+        XCTAssertEqual(settingsHost?.state, .shown)
+
+        controller.show(.tray)
+
+        XCTAssertEqual(settingsHost?.state, .shown)
+    }
 }
