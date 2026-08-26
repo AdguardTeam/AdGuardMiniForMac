@@ -112,18 +112,55 @@ final class URLFilterStateAssemblerTests: XCTestCase {
         XCTAssertFalse(state.enabled)
     }
 
-    func testInvalidAndUnknownMapToError() async {
+    func testInvalidAndUnknownWithoutErrorMapToLoading() async {
         let service = FakeURLFilterService()
         let assembler = makeAssembler(service: service)
 
         service.state = makeState(status: .invalid)
         var state = await assembler.makeState()
-        XCTAssertEqual(state.status, .error)
-        XCTAssertFalse(state.enabled)
+        XCTAssertEqual(state.status, .loading)
+        XCTAssertTrue(state.enabled)
 
         service.state = makeState(status: .unknown)
         state = await assembler.makeState()
+        XCTAssertEqual(state.status, .loading)
+    }
+
+    func testEnabledInvalidWithDisconnectErrorMapsToError() async {
+        let service = FakeURLFilterService()
+        service.state = makeState(status: .invalid, lastDisconnectError: .extensionFailedToLoad)
+        let assembler = makeAssembler(service: service)
+
+        let state = await assembler.makeState()
+
         XCTAssertEqual(state.status, .error)
+        XCTAssertFalse(state.enabled)
+    }
+
+    func testDisabledWithInvalidStatusDoesNotSurfaceError() async {
+        let service = FakeURLFilterService()
+        service.state = makeState(enabled: false, status: .invalid)
+        let assembler = makeAssembler(service: service)
+
+        let state = await assembler.makeState()
+
+        XCTAssertEqual(state.status, .loading)
+        XCTAssertFalse(state.enabled)
+    }
+
+    func testDisabledWithInvalidStatusAndErrorStaysLoading() async {
+        let service = FakeURLFilterService()
+        service.state = makeState(
+            enabled: false,
+            status: .invalid,
+            lastDisconnectError: .extensionFailedToLoad
+        )
+        let assembler = makeAssembler(service: service)
+
+        let state = await assembler.makeState()
+
+        XCTAssertEqual(state.status, .loading)
+        XCTAssertFalse(state.enabled)
     }
 
     func testStateFetchFailureMapsToError() async {

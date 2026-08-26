@@ -22,8 +22,8 @@ private enum Constants {
         // TODO: AG-57473 - Restore prod host below.
         // Commented-out code.
         // swiftlint:disable:next comments_capitalized_ignore_possible_code
-        // return URL(string: "https://pir-service.adtidy.org")!
-        return URL(string: "https://pirgateway.service.agrd.dev")!
+        // return URL(string: "https://pirgateway.service.agrd.dev")!
+        return URL(string: "https://pir-service.adtidy.org")!
         #endif
     }()
 
@@ -34,8 +34,8 @@ private enum Constants {
         // TODO: AG-57473 - Restore prod issuer below.
         // Commented-out code.
         // swiftlint:disable:next comments_capitalized_ignore_possible_code
-        // return URL(string: "https://pir-issuer.adtidy.org")!
-        return URL(string: "https://pirgateway.service.agrd.dev")!
+        // return URL(string: "https://pirgateway.service.agrd.dev")!
+        return URL(string: "https://pir-issuer.adtidy.org")!
         #endif
     }()
 

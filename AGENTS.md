@@ -186,7 +186,12 @@ adguard-mini/
   `tabIdentifier` from `XcodeListWindows`. Requires the Xcode project to be
   open.
 - **Fallback (terminal)**:
-  `xcodebuild -project AdguardMini/AdguardMini.xcodeproj -scheme AdguardMini build`
+  `xcodebuild -project AdguardMini/AdguardMini.xcodeproj -scheme AdguardMini
+  -configuration Debug-Standalone build`
+  `Debug-Standalone` is the native debug variant (backed by
+  `ConfigNative.xcconfig`); the project's build configurations are
+  `Debug-Standalone`, `Debug-MAS`, `Release`, and `MAS` — `Debug` alone is not
+  a valid configuration name.
 
 ### Testing
 

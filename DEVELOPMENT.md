@@ -205,8 +205,10 @@ Sciter UI is built automatically as a target dependency.
 # Production build of the WKWebView UI bundle (emits AdguardMini/MiniResources/WebUI/)
 yarn build:prod
 
-# Build the app from the terminal via xcodebuild
-xcodebuild -project AdguardMini/AdguardMini.xcodeproj -scheme AdguardMini build
+# Build the native debug app from the terminal via xcodebuild.
+# `Debug-Standalone` is the native debug configuration (backed by
+# ConfigNative.xcconfig); `Debug` is not a valid configuration name.
+xcodebuild -project AdguardMini/AdguardMini.xcodeproj -scheme AdguardMini -configuration Debug-Standalone build
 ```
 
 Release, Standalone (Developer ID), and MAS builds are produced in CI via

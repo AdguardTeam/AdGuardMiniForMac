@@ -23,7 +23,7 @@ private enum Constants {
 /// The PIR server URL, token, and bloom-parameter URL are no longer stored
 /// directly in this struct. Instead each ``URLFilterProtectionLevel`` carries
 /// its own set of endpoints via ``URLFilterLevelConfiguration/defaultLevels``.
-/// ``URLFilterService`` picks the right one when saving the configuration.
+/// ``URLFilterService`` picks the right one when creating the configuration.
 struct URLFilterConfiguration: Equatable {
     /// Chosen protection level. Determines which token and endpoints are used.
     var protectionLevel: URLFilterProtectionLevel

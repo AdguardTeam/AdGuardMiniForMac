@@ -26,16 +26,21 @@ test('OnFiltersUpdate re-fetches the filters metadata', async () => {
     assert.equal(filtersCalls, 1);
 });
 
-test('OnFiltersIndexUpdate stores the new index', async () => {
+test('OnFiltersIndexUpdate stores the new index and re-fetches metadata', async () => {
     __resetSettingsTestStore();
     const received: unknown[] = [];
-    store.filters = { setIndex: (i: unknown) => { received.push(i); } };
+    let filtersCalls = 0;
+    store.filters = {
+        setIndex: (i: unknown) => { received.push(i); },
+        getFilters: () => { filtersCalls++; },
+    };
 
     const service = new FiltersCallbackServiceInternal();
     const param = new FiltersIndex();
     await service.OnFiltersIndexUpdate(param);
 
     assert.deepEqual(received, [param]);
+    assert.equal(filtersCalls, 1);
 });
 
 test('OnCustomFiltersSubscribe navigates to the custom group and stores the URL', async () => {

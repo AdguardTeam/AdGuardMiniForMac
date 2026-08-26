@@ -57,8 +57,9 @@ export function AdvancedBlockingControlComponent() {
             account.showPaywall();
             return;
         }
-        if (!isInstalled) {
+        if (!isInstalled && value) {
             setShowInstallModal(true);
+            return;
         }
         advancedBlocking.updateSystemWideProtection(value);
     };
