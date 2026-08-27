@@ -553,7 +553,6 @@ final class ServiceLocator {
             self.filtersSupervisor,
             self.userSettingsService,
             self.serviceSupervisor,
-            self.statisticsService,
             self.urlFilterResetService
         )
     }()

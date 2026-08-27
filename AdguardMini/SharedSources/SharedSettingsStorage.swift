@@ -34,6 +34,11 @@ protocol SharedSettingsStorage: AnyObject {
     var statisticsResetToken: String? { get }
 
     func updateStatisticsResetToken()
+
+    /// Resets shared settings to their defaults.
+    ///
+    /// The statistics reset token is preserved: statistics survive a settings
+    /// reset, and only an explicit statistics reset updates the token.
     func resetStorage()
 }
 
@@ -103,14 +108,17 @@ final class SharedSettingsStorageImpl: SharedSettingsStorage {
     }
 
     func resetStorage() {
-        self.sharedUserDefaults.setPersistentDomain(
-            [
-                SharedSettingsKey.protectionEnabled.rawValue: true,
-                SharedSettingsKey.launchOnStartup.rawValue: Constants.defaultLaunchOnStartup,
-                SharedSettingsKey.advancedRulesEnabled.rawValue: true,
-                SharedSettingsKey.showSafariToolbarBadge.rawValue: Constants.defaultShowSafariToolbarBadge
-            ],
-            forName: BuildConfig.AG_GROUP
-        )
+        var resetDomain: [String: Any] = [
+            SharedSettingsKey.protectionEnabled.rawValue: true,
+            SharedSettingsKey.launchOnStartup.rawValue: Constants.defaultLaunchOnStartup,
+            SharedSettingsKey.advancedRulesEnabled.rawValue: true,
+            SharedSettingsKey.showSafariToolbarBadge.rawValue: Constants.defaultShowSafariToolbarBadge
+        ]
+
+        if let resetToken = self.statisticsResetToken {
+            resetDomain[SharedSettingsKey.statisticsResetToken.rawValue] = resetToken
+        }
+
+        self.sharedUserDefaults.setPersistentDomain(resetDomain, forName: BuildConfig.AG_GROUP)
     }
 }
