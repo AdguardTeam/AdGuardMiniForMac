@@ -207,6 +207,10 @@ adguard-mini/
   shell out to webpack + `generateUI.sh`; these self-skip by default so
   lint-staged pre-commit stays fast. No CI lane sets `RUN_BUILD=1`
   automatically; the slow suite is developer-invoked.
+- **CI**: `yarn lint --quiet` and `yarn test:node` also run on every pull
+  request via the `ts-lint` and `ts-test` jobs in
+  `.github/workflows/pr-check.yml` (Linux `team-sciter` pool, Node per
+  `.nvmrc`), so TypeScript regressions fail PR checks like the Swift lanes do.
 
 ### Linting
 

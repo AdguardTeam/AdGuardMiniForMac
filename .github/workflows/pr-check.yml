@@ -135,3 +135,67 @@ jobs:
       results-path: build/test-reports/AdguardMiniTests.junit
       artifact-name: test-results
     secrets: inherit
+
+  # ---------------------------------------------------------------------------
+  # TypeScript UI lint & node tests
+  # ---------------------------------------------------------------------------
+
+  # ESLint gate matching the local pre-commit hook (yarn lint --quiet).
+  ts-lint:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: TS lint
+    runs-on: [team-sciter]
+    permissions:
+      contents: read
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up Node from .nvmrc
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+
+      - name: Enable Corepack (yarn)
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: ESLint
+        run: yarn lint --quiet
+
+  # node:test gate matching the local pre-commit hook (yarn test:node).
+  ts-test:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: TS tests
+    runs-on: [team-sciter]
+    permissions:
+      contents: read
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up Node from .nvmrc
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+
+      - name: Enable Corepack (yarn)
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: TypeScript tests (node:test)
+        run: yarn test:node
