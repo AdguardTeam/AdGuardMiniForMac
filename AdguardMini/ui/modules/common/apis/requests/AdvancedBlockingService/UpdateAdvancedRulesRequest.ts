@@ -1,12 +1,12 @@
 /* This code was generated automatically by proto-parser tool version 1 */
 
 import { PlatformRequest } from '@adg/webview-utils-kit';
-import { EmptyValue as ReturnValue, AdvancedBlocking as RequestMessage } from '../../types'
+import { EmptyValue as ReturnValue, BoolValue as RequestMessage } from '../../types'
 
 /**
- * Update AdvancedBlocking
+ * Update AdvancedRules
  */
-export class UpdateAdvancedBlockingRequest extends PlatformRequest<ReturnValue, RequestMessage> {
+export class UpdateAdvancedRulesRequest extends PlatformRequest<ReturnValue, RequestMessage> {
     /**
      * Constructs a new request instance
      * @param requestMessage The request message or its constructor parameters
@@ -22,7 +22,7 @@ export class UpdateAdvancedBlockingRequest extends PlatformRequest<ReturnValue, 
      * Fully qualified method name to be called on the backend
      * @returns The fully qualified method name
      */
-    public get FQN() { return 'AdvancedBlockingService.UpdateAdvancedBlocking'; }
+    public get FQN() { return 'AdvancedBlockingService.UpdateAdvancedRules'; }
 
     /**
      * Processes the response bytes received from the backend

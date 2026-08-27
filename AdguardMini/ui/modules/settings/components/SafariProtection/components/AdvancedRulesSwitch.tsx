@@ -16,7 +16,7 @@ export function AdvancedRulesSwitchComponent() {
     const { advancedBlocking, telemetry } = useSettingsStore();
     const {
         advancedRules,
-    } = advancedBlocking.advancedBlocking;
+    } = advancedBlocking;
     const onAdvancedRulesChange = (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.AdvancedRulesClick);
         advancedBlocking.updateAdvancedRules(value);

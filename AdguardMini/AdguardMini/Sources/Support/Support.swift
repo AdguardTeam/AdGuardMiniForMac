@@ -147,7 +147,8 @@ final class SupportImpl {
         }
 
         let settings = self.userSettings.settings
-        let advancedBlockingState = self.userSettings.advancedBlockingState
+        let advancedRules = self.userSettings.advancedRules
+        let adguardExtra = self.userSettings.adguardExtra
 
         let appStatusInfo = await self.keychain.getAppStatusInfo()
         let licenseSection = self.formatLicenseSection(appStatusInfo: appStatusInfo)
@@ -187,8 +188,8 @@ final class SupportImpl {
             Debug logging: \(settings.debugLogging ? "Enabled" : "Disabled")
 
         Filtration: \(self.sharedSettings.protectionEnabled ? "Enabled" : "Disabled")
-            Advanced rules: \(advancedBlockingState.advancedRules ? "Enabled" : "Disabled")
-            AdGuard Extra: \(advancedBlockingState.adguardExtra ? "Enabled" : "Disabled")
+            Advanced rules: \(advancedRules ? "Enabled" : "Disabled")
+            AdGuard Extra: \(adguardExtra ? "Enabled" : "Disabled")
             Filters last updated: \(updateTimeString)
 
         \(safariExtensionsSection)
@@ -350,11 +351,9 @@ extension SupportImpl: ReportSiteProtocol {
             }
         }
 
-        let advancedBlockingState = self.userSettings.advancedBlockingState
+        let advancedRules = self.userSettings.advancedRules
+        let isExtraEnabled = self.userSettings.adguardExtra
 
-        let advancedRules = advancedBlockingState.advancedRules
-
-        let isExtraEnabled = advancedBlockingState.adguardExtra
         let extensions: [ReportsWebAPI.Extension] = [
             Constants.agExtraExtension
         ]

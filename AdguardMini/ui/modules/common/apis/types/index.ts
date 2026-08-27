@@ -6,7 +6,6 @@ export * from './Helpers';
 export * from './URLFilter';
 export * from './Telemetry';
 export * from './SupportMessage';
-export * from './AdvancedBlocking';
 export * from './Settings';
 export * from './License';
 export * from './EffectiveTheme';

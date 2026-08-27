@@ -2,22 +2,24 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, flow } from 'mobx';
 
 import {
-    GetAdvancedBlockingRequest,
     GetURLFilterStateRequest,
     GetURLFilterSeenRequest,
     SetURLFilterEnabledRequest,
     UpdateURLFilterSeenRequest,
     UpdateURLFilterProtectionLevelRequest,
-    UpdateAdvancedBlockingRequest,
     UpdateRealTimeFiltersUpdateRequest,
     ResetURLFilterCacheRequest,
     RemoveURLFilterRequest,
+    GetRealTimeFiltersUpdateRequest,
+    GetAdguardExtraRequest,
+    GetAdvancedRulesRequest,
+    UpdateAdvancedRulesRequest,
+    UpdateAdguardExtraRequest,
 } from 'Apis/requests/AdvancedBlockingService';
 import {
-    AdvancedBlocking as AdvancedBlockingEnt,
     URLFilterState,
 } from 'Apis/types';
 import {
@@ -25,29 +27,18 @@ import {
     NotificationsQueueIconType,
     NotificationsQueueType,
 } from 'Common/stores/NotificationsQueue';
-import { withLast } from 'Common/utils/queue';
 import {
     notifySingleActive,
 } from 'Common/utils/urlFilterState';
 import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
 
-import type { EmptyValue, URLFilterProtectionLevel } from 'Apis/types';
+import type { BoolValue, URLFilterProtectionLevel } from 'Apis/types';
 import type { NotificationsQueue } from 'Common/stores/NotificationsQueue';
 
 /**
  *  AdvancedBlocking store
  */
 export class AdvancedBlocking {
-    /**
-     * Commit advanced blocking settings on platform-side
-     */
-    private readonly commitAdvancedBlocking = withLast<AdvancedBlockingEnt, EmptyValue>(
-        async (data: AdvancedBlockingEnt) => {
-            return window.API.Execute(new UpdateAdvancedBlockingRequest(data));
-        },
-        'commitAdvancedBlocking',
-    );
-
     /**
      * Active URL-filter failure notification id used to deduplicate toasts.
      */
@@ -58,10 +49,21 @@ export class AdvancedBlocking {
      */
     private readonly notification: NotificationsQueue;
 
+
     /**
-     * Advanced blocking settings
+     * Advanced rules state
      */
-    public advancedBlocking = new AdvancedBlockingEnt();
+    public advancedRules = false;
+
+    /**
+     * AdGuard Extra state
+     */
+    public adguardExtra = false;
+
+    /**
+     * Real-time filters update state
+     */
+    public realTimeFiltersUpdate = false;
 
     /**
      * URL filter state for system-wide protection settings.
@@ -80,7 +82,11 @@ export class AdvancedBlocking {
      */
     public constructor(notification: NotificationsQueue) {
         this.notification = notification;
-        makeAutoObservable(this, undefined, { autoBind: true });
+        makeAutoObservable(this, {
+            getAdvancedRules: flow,
+            getAdguardExtra: flow,
+            getRealTimeFiltersUpdate: flow,
+        }, { autoBind: true });
     }
 
     /**
@@ -103,22 +109,6 @@ export class AdvancedBlocking {
         );
     }
 
-    /**
-     * private update helper
-     */
-    private updateHelper() {
-        return new AdvancedBlockingEnt({
-            advancedRules: this.advancedBlocking.advancedRules,
-            adguardExtra: this.advancedBlocking.adguardExtra,
-        });
-    }
-
-    /**
-     * private setter
-     */
-    private setAdvancedBlocking(data: AdvancedBlockingEnt) {
-        this.advancedBlocking = data;
-    }
 
     /**
      * URL filter state setter
@@ -135,11 +125,61 @@ export class AdvancedBlocking {
     }
 
     /**
-     * Get AdvancedBlocking from swift
+     * Get all advanced blocking settings from swift
      */
-    public async getAdvancedBlocking() {
-        const resp = await window.API.Execute(new GetAdvancedBlockingRequest());
-        this.setAdvancedBlocking(resp);
+    public getAdvancedBlocking() {
+        this.getAdguardExtra();
+        this.getAdvancedRules();
+        this.getRealTimeFiltersUpdate();
+    }
+
+    /**
+     * Get advancedRules state
+     */
+    public *getAdvancedRules() {
+        const resp: BoolValue = yield window.API.Execute(new GetAdvancedRulesRequest());
+        this.advancedRules = resp.value;
+    }
+
+    /**
+     * Get adguardExtra state
+     */
+    public *getAdguardExtra() {
+        const resp: BoolValue = yield window.API.Execute(new GetAdguardExtraRequest());
+        this.adguardExtra = resp.value;
+    }
+
+    /**
+     * Get realTimeFiltersUpdate state
+     */
+    public *getRealTimeFiltersUpdate() {
+        const resp: BoolValue = yield window.API.Execute(new GetRealTimeFiltersUpdateRequest());
+        this.realTimeFiltersUpdate = resp.value;
+    }
+
+
+    /**
+     * Update AdvancedRules setting
+     */
+    public *updateAdvancedRules(value: boolean) {
+        this.advancedRules = value;
+        window.API.Execute(new UpdateAdvancedRulesRequest({ value }));
+    }
+
+    /**
+     * Update AdguardExtra setting
+     */
+    public *updateAdguardExtra(value: boolean) {
+        this.adguardExtra = value;
+        window.API.Execute(new UpdateAdguardExtraRequest({ value }));
+    }
+
+    /**
+     * Update realTimeFiltersUpdate setting
+     */
+    public *updateRealTimeFiltersUpdate(value: boolean) {
+        this.realTimeFiltersUpdate = value;
+        window.API.Execute(new UpdateRealTimeFiltersUpdateRequest({ value }));
     }
 
     /**
@@ -156,37 +196,6 @@ export class AdvancedBlocking {
     public async getURLFilterSeen() {
         const resp = await window.API.Execute(new GetURLFilterSeenRequest());
         this.setURLFilterSeen(resp.value);
-    }
-
-    /**
-     * Update AdvancedRules setting
-     */
-    public updateAdvancedRules(value: boolean) {
-        const newValue = this.updateHelper();
-        newValue.advancedRules = value;
-        this.setAdvancedBlocking(newValue);
-        this.commitAdvancedBlocking(newValue);
-    }
-
-    /**
-     * Update AdguardExtra setting
-     */
-    public updateAdguardExtra(value: boolean) {
-        // TODO: add premium check
-        const newValue = this.updateHelper();
-        newValue.adguardExtra = value;
-        this.setAdvancedBlocking(newValue);
-        this.commitAdvancedBlocking(newValue);
-    }
-
-    /**
-     * Update realTimeFiltersUpdate setting
-     */
-    public updateRealTimeFiltersUpdate(data: boolean) {
-        const newValue = this.updateHelper();
-        newValue.realTimeFiltersUpdate = data;
-        window.API.Execute(new UpdateRealTimeFiltersUpdateRequest({ value: data }));
-        this.commitAdvancedBlocking(newValue);
     }
 
     /**

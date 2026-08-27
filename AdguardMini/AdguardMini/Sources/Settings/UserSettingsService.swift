@@ -31,7 +31,8 @@ protocol UserSettingsService: AnyObject {
 
     // MARK: Properties with side effects
 
-    var advancedBlockingState: AdvancedBlockingDTO { get set }
+    var advancedRules: Bool { get set }
+    var adguardExtra: Bool { get set }
     var autoFiltersUpdate: Bool { get }
     var realTimeFiltersUpdate: Bool { get }
     var settings: SettingsDTO { get }
@@ -174,16 +175,21 @@ extension UserSettingsServiceImpl: UserSettingsService {
 
     // MARK: Properties with side effects and special setters
 
-    var advancedBlockingState: AdvancedBlockingDTO {
+    var advancedRules: Bool {
         get {
-            AdvancedBlockingDTO(
-                advancedRules: self.sharedSettingsStorage.advancedRules,
-                adguardExtra: self.userSettingsManager.adguardExtra
-            )
+            self.sharedSettingsStorage.advancedRules
         }
         set(state) {
-            self.sharedSettingsStorage.advancedRules = state.advancedRules
-            self.userSettingsManager.adguardExtra = state.adguardExtra
+            self.sharedSettingsStorage.advancedRules = state
+        }
+    }
+
+    var adguardExtra: Bool {
+        get {
+            self.userSettingsManager.adguardExtra
+        }
+        set(state) {
+            self.userSettingsManager.adguardExtra = state
         }
     }
 

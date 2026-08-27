@@ -26,17 +26,41 @@ final class AdvancedBlockingServiceImpl: AdvancedBlockingService.ServiceType {
         self.setupServices()
     }
 
-    func getAdvancedBlocking(_ message: EmptyValue,
-                             _ promise: @escaping (AdvancedBlocking) -> Void) {
-        promise(self.userSettingsService.advancedBlockingState.toProto(
-            realTimeFiltersUpdate: self.userSettingsService.realTimeFiltersUpdate
-        ))
+    func getAdvancedRules(_ message: EmptyValue,
+                          _ promise: @escaping (BoolValue) -> Void) {
+        promise(BoolValue(self.userSettingsService.advancedRules))
     }
 
-    func updateAdvancedBlocking(_ message: AdvancedBlocking,
-                                _ promise: @escaping (EmptyValue) -> Void) {
-        self.userSettingsService.advancedBlockingState = message.toDTO()
+    func updateAdvancedRules(_ message: BoolValue,
+                             _ promise: @escaping (EmptyValue) -> Void) {
+        self.userSettingsService.advancedRules = message.value
         promise(EmptyValue())
+    }
+
+    func getAdguardExtra(_ message: EmptyValue,
+                         _ promise: @escaping (BoolValue) -> Void) {
+        promise(BoolValue(self.userSettingsService.adguardExtra))
+    }
+
+    func updateAdguardExtra(_ message: BoolValue,
+                            _ promise: @escaping (EmptyValue) -> Void) {
+        self.userSettingsService.adguardExtra = message.value
+        promise(EmptyValue())
+    }
+
+    func getMailProtection(_ message: EmptyValue,
+                           _ promise: @escaping (BoolValue) -> Void) {
+        promise(BoolValue(false))
+    }
+
+    func updateMailProtection(_ message: BoolValue,
+                              _ promise: @escaping (EmptyValue) -> Void) {
+        promise(EmptyValue())
+    }
+
+    func getRealTimeFiltersUpdate(_ message: EmptyValue,
+                                  _ promise: @escaping (BoolValue) -> Void) {
+        promise(BoolValue(self.userSettingsService.realTimeFiltersUpdate))
     }
 
     func updateRealTimeFiltersUpdate(_ message: BoolValue,

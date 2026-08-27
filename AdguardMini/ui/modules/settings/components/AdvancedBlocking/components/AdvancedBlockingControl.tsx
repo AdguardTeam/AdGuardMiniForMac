@@ -25,7 +25,7 @@ import { SystemWideProtectionSwitch } from './SystemWideProtectionSwitch';
 export function AdvancedBlockingControlComponent() {
     const { advancedBlocking, account, telemetry, settings } = useSettingsStore();
     const {
-        advancedBlocking: { adguardExtra, realTimeFiltersUpdate },
+        adguardExtra, realTimeFiltersUpdate,
         urlFilterState: { enabled: systemWideProtectionEnabled, isInstalled },
         urlFilterNew: isSystemWideProtectionNew,
     } = advancedBlocking;

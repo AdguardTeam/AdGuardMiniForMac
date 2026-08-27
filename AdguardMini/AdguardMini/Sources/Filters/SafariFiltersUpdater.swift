@@ -148,7 +148,7 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
                     let updatedBlockers = self.safariConverter.convertRulesAndSave(
                         filters: rawFilters,
                         // Actually this paramter is ignored due do perfomance optimizations
-                        advanced: self.userSettingsService.advancedBlockingState.advancedRules,
+                        advanced: self.userSettingsService.advancedRules,
                         progress: progress
                     )
                     progress.completedUnitCount += 1

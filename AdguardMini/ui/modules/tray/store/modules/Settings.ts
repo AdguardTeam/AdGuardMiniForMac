@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { LogLevel } from '@adg/webview-utils-kit';
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, flow } from 'mobx';
 
 import { GetTrayLicenseRequest, GetTrialAvailableDaysRequest } from 'Apis/requests/AccountService';
-import { GetAdvancedBlockingRequest, GetURLFilterStateRequest, SetURLFilterEnabledRequest } from 'Apis/requests/AdvancedBlockingService';
+import { GetAdguardExtraRequest, GetURLFilterStateRequest, SetURLFilterEnabledRequest } from 'Apis/requests/AdvancedBlockingService';
 import { CheckApplicationVersionRequest } from 'Apis/requests/AppUpdateService';
 import { GetFiltersMetadataRequest, RequestFiltersUpdateRequest } from 'Apis/requests/FiltersService';
 import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
@@ -18,7 +18,7 @@ import { GlobalSettings, LicenseStatus, ReleaseVariants, StatisticsPeriod, Stati
 import { SafariExtensionsStore } from 'Common/stores/SafariExtensionsStore';
 import { updateLanguage } from 'Intl';
 
-import type { Filters, Filter, FilterUpdateStatus, SafariExtensionUpdate, SafariExtensions, AdvancedBlocking, EffectiveTheme } from 'Apis/types';
+import type { Filters, Filter, FilterUpdateStatus, SafariExtensionUpdate, SafariExtensions, EffectiveTheme, BoolValue } from 'Apis/types';
 import type { StoryId } from 'Modules/tray/modules/stories/model';
 
 /**
@@ -81,9 +81,9 @@ export class SettingsStore {
     public lastUpdateMoreSevenDays = false;
 
     /**
-     * Advanced blocking status, used in What is Extra story
+     * AdGuard Extra status, used in What is Extra story
      */
-    public advancedBlocking: AdvancedBlocking | null = null;
+    public adguardExtra = false;
 
     /**
      * User License
@@ -182,13 +182,13 @@ export class SettingsStore {
      * Ctor
      */
     public constructor() {
-        makeAutoObservable(this, undefined, { autoBind: true });
+        makeAutoObservable(this, { getAdguardExtra: flow }, { autoBind: true });
         this.getSettings();
         this.getStatistics();
         this.getTrayLicense();
         this.getSafariExtensions();
         this.getTrialAvailability();
-        this.getAdvancedBlocking();
+        this.getAdguardExtra();
         this.getURLFilterState();
     }
 
@@ -273,9 +273,9 @@ export class SettingsStore {
     /**
      * Get status of Advanced blocking
      */
-    public async getAdvancedBlocking() {
-        const data = await window.API.Execute(new GetAdvancedBlockingRequest());
-        this.setAdvancedBlocking(data);
+    public *getAdguardExtra() {
+        const data: BoolValue = yield window.API.Execute(new GetAdguardExtraRequest());
+        this.adguardExtra = data.value;
     }
 
     /**
@@ -384,13 +384,6 @@ export class SettingsStore {
      */
     public setStatistics(statistics: StatisticsResponse) {
         this.statistics = statistics;
-    }
-
-    /**
-     * Setter for AdvancedBlocking
-     */
-    public setAdvancedBlocking(advancedBlocking: AdvancedBlocking) {
-        this.advancedBlocking = advancedBlocking;
     }
 
     /**

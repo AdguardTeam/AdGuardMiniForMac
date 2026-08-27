@@ -1,17 +1,26 @@
 syntax = "proto3";
 
 import "PrimitivesWrappers.proto";
-import "AdvancedBlocking.proto";
 import "URLFilter.proto";
 import "Helpers.proto";
 
 /* Service handles Advanced blocking page */
 service AdvancedBlockingService {
-    /* Get AdvancedBlocking settings  */
-    rpc GetAdvancedBlocking(EmptyValue) returns (AdvancedBlocking);
-    /* Update AdvancedBlocking */
-    rpc UpdateAdvancedBlocking(AdvancedBlocking) returns (EmptyValue);
-    /* Update RealTimeFiltersUpdate setting */
+    /* Get AdvancedRules */
+    rpc GetAdvancedRules(EmptyValue) returns (BoolValue);
+    /* Update AdvancedRules */
+    rpc UpdateAdvancedRules(BoolValue) returns (EmptyValue);
+     /* Get AdguardExtra */
+    rpc GetAdguardExtra(EmptyValue) returns (BoolValue);
+    /* Update AdguardExtra */
+    rpc UpdateAdguardExtra(BoolValue) returns (EmptyValue);
+     /* Get MailProtection */
+    rpc GetMailProtection(EmptyValue) returns (BoolValue);
+    /* Update MailProtection */
+    rpc UpdateMailProtection(BoolValue) returns (EmptyValue);
+     /* Get RealTimeFiltersUpdate */
+    rpc GetRealTimeFiltersUpdate(EmptyValue) returns (BoolValue);
+    /* Update RealTimeFiltersUpdate */
     rpc UpdateRealTimeFiltersUpdate(BoolValue) returns (EmptyValue);
     /* Get URLFilter state */
     rpc GetURLFilterState(EmptyValue) returns (URLFilterState);

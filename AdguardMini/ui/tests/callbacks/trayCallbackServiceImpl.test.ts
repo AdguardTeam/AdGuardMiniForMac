@@ -31,7 +31,7 @@ interface FakeSettings {
     getSafariExtensions: () => Promise<void>;
     getTrayLicense: () => Promise<void>;
     checkApplicationVersion: () => void;
-    getAdvancedBlocking: () => Promise<void>;
+    getAdguardExtra: () => Promise<void>;
     getURLFilterState: () => Promise<void>;
     setLoginItem: (v: boolean) => void;
     setNewVersionAvailable: (v: boolean) => void;
@@ -71,7 +71,7 @@ const makeFakes = () => {
         getSafariExtensions: () => Promise.resolve(),
         getTrayLicense: () => Promise.resolve(),
         checkApplicationVersion: () => {},
-        getAdvancedBlocking: () => Promise.resolve(),
+        getAdguardExtra: () => Promise.resolve(),
         getURLFilterState: () => Promise.resolve(),
         setLoginItem: () => {},
         setNewVersionAvailable: () => {},
@@ -134,7 +134,7 @@ test('OnTrayWindowVisibilityChange(true) runs the full recovery sequence', () =>
     const getSafariExtensions = spy(settings, 'getSafariExtensions');
     const getTrayLicense = spy(settings, 'getTrayLicense');
     const checkApplicationVersion = spy(settings, 'checkApplicationVersion');
-    const getAdvancedBlocking = spy(settings, 'getAdvancedBlocking');
+    const getAdguardExtra = spy(settings, 'getAdguardExtra');
     const getURLFilterState = spy(settings, 'getURLFilterState');
     const getEnabledFilters = spy(filtersData, 'getEnabledFilters');
     const getFilters = spy(filtersData, 'getFilters');
@@ -150,7 +150,7 @@ test('OnTrayWindowVisibilityChange(true) runs the full recovery sequence', () =>
     assert.equal(getSafariExtensions.getCalls(), 1);
     assert.equal(getTrayLicense.getCalls(), 1);
     assert.equal(checkApplicationVersion.getCalls(), 1);
-    assert.equal(getAdvancedBlocking.getCalls(), 1);
+    assert.equal(getAdguardExtra.getCalls(), 1);
     assert.equal(getURLFilterState.getCalls(), 1);
     assert.equal(getEnabledFilters.getCalls(), 1);
     assert.equal(getFilters.getCalls(), 1);
@@ -240,20 +240,20 @@ test('OnSafariExtensionUpdate forwards to updateSafariExtension', () => {
     assert.deepEqual(received, [update]);
 });
 
-test('OnLicenseUpdate stores the license and refreshes advanced blocking + URL filter', () => {
+test('OnLicenseUpdate stores the license and refreshes adguard extra + URL filter', () => {
     const { settings, service } = makeFakes();
     const received: unknown[] = [];
-    let advancedCalls = 0;
+    let adguardExtraCalls = 0;
     let urlFilterCalls = 0;
     settings.setLicense = (l) => { received.push(l); };
-    settings.getAdvancedBlocking = () => { advancedCalls++; return Promise.resolve(); };
+    settings.getAdguardExtra = () => { adguardExtraCalls++; return Promise.resolve(); };
     settings.getURLFilterState = () => { urlFilterCalls++; return Promise.resolve(); };
     const license = {} as never;
 
     void service.OnLicenseUpdate(license);
 
     assert.deepEqual(received, [license]);
-    assert.equal(advancedCalls, 1);
+    assert.equal(adguardExtraCalls, 1);
     assert.equal(urlFilterCalls, 1);
 });
 

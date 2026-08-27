@@ -60,7 +60,7 @@ export function useStoriesConfig(): StoryInfo[] {
         trialAvailableDays,
         storyCompleted,
         hiddenStories,
-        advancedBlocking,
+        adguardExtra,
         safariExtensionsStore,
         urlFilterState,
         license,
@@ -557,7 +557,7 @@ export function useStoriesConfig(): StoryInfo[] {
             1) User has no license or trial
             2) User has any license, but extra is disabled
     */
-    const lastExtraScreenShouldBeShown = !isLicenseOrTrialActive || !advancedBlocking?.adguardExtra;
+    const lastExtraScreenShouldBeShown = !isLicenseOrTrialActive || !adguardExtra;
 
     if (lastExtraScreenShouldBeShown) {
         extraFrames.push({

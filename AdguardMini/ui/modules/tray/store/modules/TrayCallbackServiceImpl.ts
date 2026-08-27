@@ -51,7 +51,7 @@ export class TrayCallbackServiceImpl {
             this.settings.getSafariExtensions();
             this.settings.getTrayLicense();
             this.settings.checkApplicationVersion();
-            this.settings.getAdvancedBlocking();
+            this.settings.getAdguardExtra();
             this.settings.getURLFilterState();
             this.filters.getEnabledFilters();
             this.filters.getFilters();
@@ -109,7 +109,7 @@ export class TrayCallbackServiceImpl {
      */
     public OnLicenseUpdate(param: TrayLicenseOrError) {
         this.settings.setLicense(param);
-        this.settings.getAdvancedBlocking();
+        this.settings.getAdguardExtra();
         this.settings.getURLFilterState();
     }
 

@@ -13,15 +13,35 @@ import Foundation
 /// YOU MUST IMPLEMENT THIS PROTOCOL USING CLASS WITH TYPE `AdvancedBlockingService.ServiceType` IN SEPARATE SOURCE FILE
 public protocol AdvancedBlockingServiceProtocol
 {
-	/// Get AdvancedBlocking settings
-	func getAdvancedBlocking (
+	/// Get AdvancedRules
+	func getAdvancedRules (
 						_ message: EmptyValue,
-						_ promise: @escaping (AdvancedBlocking) -> Void) -> Void
-	/// Update AdvancedBlocking
-	func updateAdvancedBlocking (
-						_ message: AdvancedBlocking,
+						_ promise: @escaping (BoolValue) -> Void) -> Void
+	/// Update AdvancedRules
+	func updateAdvancedRules (
+						_ message: BoolValue,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void
-	/// Update RealTimeFiltersUpdate setting
+	/// Get AdguardExtra
+	func getAdguardExtra (
+						_ message: EmptyValue,
+						_ promise: @escaping (BoolValue) -> Void) -> Void
+	/// Update AdguardExtra
+	func updateAdguardExtra (
+						_ message: BoolValue,
+						_ promise: @escaping (EmptyValue) -> Void) -> Void
+	/// Get MailProtection
+	func getMailProtection (
+						_ message: EmptyValue,
+						_ promise: @escaping (BoolValue) -> Void) -> Void
+	/// Update MailProtection
+	func updateMailProtection (
+						_ message: BoolValue,
+						_ promise: @escaping (EmptyValue) -> Void) -> Void
+	/// Get RealTimeFiltersUpdate
+	func getRealTimeFiltersUpdate (
+						_ message: EmptyValue,
+						_ promise: @escaping (BoolValue) -> Void) -> Void
+	/// Update RealTimeFiltersUpdate
 	func updateRealTimeFiltersUpdate (
 						_ message: BoolValue,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void
@@ -67,34 +87,109 @@ open class AdvancedBlockingService: WebViewBridge
 	/// WKWebView dispatch entry.
 	public override func handleRequest(method: String, bytes: Data, promise: @escaping (Data) -> Void) {
 		switch method {
-		case "GetAdvancedBlocking":
+		case "GetAdvancedRules":
 			do {
 				let input = try EmptyValue(serializedBytes: bytes)
-				cast.getAdvancedBlocking(input) { result in
+				cast.getAdvancedRules(input) { result in
 					do {
 						promise(try result.serializedData())
 					} catch {
-						BridgeLog.error("AdvancedBlockingService.GetAdvancedBlocking: failed to serialize reply: \(error)")
+						BridgeLog.error("AdvancedBlockingService.GetAdvancedRules: failed to serialize reply: \(error)")
 						promise(Data())
 					}
 				}
 			} catch {
-				BridgeLog.error("AdvancedBlockingService.GetAdvancedBlocking: failed to deserialize request: \(error)")
+				BridgeLog.error("AdvancedBlockingService.GetAdvancedRules: failed to deserialize request: \(error)")
 				promise(Data())
 			}
-		case "UpdateAdvancedBlocking":
+		case "UpdateAdvancedRules":
 			do {
-				let input = try AdvancedBlocking(serializedBytes: bytes)
-				cast.updateAdvancedBlocking(input) { result in
+				let input = try BoolValue(serializedBytes: bytes)
+				cast.updateAdvancedRules(input) { result in
 					do {
 						promise(try result.serializedData())
 					} catch {
-						BridgeLog.error("AdvancedBlockingService.UpdateAdvancedBlocking: failed to serialize reply: \(error)")
+						BridgeLog.error("AdvancedBlockingService.UpdateAdvancedRules: failed to serialize reply: \(error)")
 						promise(Data())
 					}
 				}
 			} catch {
-				BridgeLog.error("AdvancedBlockingService.UpdateAdvancedBlocking: failed to deserialize request: \(error)")
+				BridgeLog.error("AdvancedBlockingService.UpdateAdvancedRules: failed to deserialize request: \(error)")
+				promise(Data())
+			}
+		case "GetAdguardExtra":
+			do {
+				let input = try EmptyValue(serializedBytes: bytes)
+				cast.getAdguardExtra(input) { result in
+					do {
+						promise(try result.serializedData())
+					} catch {
+						BridgeLog.error("AdvancedBlockingService.GetAdguardExtra: failed to serialize reply: \(error)")
+						promise(Data())
+					}
+				}
+			} catch {
+				BridgeLog.error("AdvancedBlockingService.GetAdguardExtra: failed to deserialize request: \(error)")
+				promise(Data())
+			}
+		case "UpdateAdguardExtra":
+			do {
+				let input = try BoolValue(serializedBytes: bytes)
+				cast.updateAdguardExtra(input) { result in
+					do {
+						promise(try result.serializedData())
+					} catch {
+						BridgeLog.error("AdvancedBlockingService.UpdateAdguardExtra: failed to serialize reply: \(error)")
+						promise(Data())
+					}
+				}
+			} catch {
+				BridgeLog.error("AdvancedBlockingService.UpdateAdguardExtra: failed to deserialize request: \(error)")
+				promise(Data())
+			}
+		case "GetMailProtection":
+			do {
+				let input = try EmptyValue(serializedBytes: bytes)
+				cast.getMailProtection(input) { result in
+					do {
+						promise(try result.serializedData())
+					} catch {
+						BridgeLog.error("AdvancedBlockingService.GetMailProtection: failed to serialize reply: \(error)")
+						promise(Data())
+					}
+				}
+			} catch {
+				BridgeLog.error("AdvancedBlockingService.GetMailProtection: failed to deserialize request: \(error)")
+				promise(Data())
+			}
+		case "UpdateMailProtection":
+			do {
+				let input = try BoolValue(serializedBytes: bytes)
+				cast.updateMailProtection(input) { result in
+					do {
+						promise(try result.serializedData())
+					} catch {
+						BridgeLog.error("AdvancedBlockingService.UpdateMailProtection: failed to serialize reply: \(error)")
+						promise(Data())
+					}
+				}
+			} catch {
+				BridgeLog.error("AdvancedBlockingService.UpdateMailProtection: failed to deserialize request: \(error)")
+				promise(Data())
+			}
+		case "GetRealTimeFiltersUpdate":
+			do {
+				let input = try EmptyValue(serializedBytes: bytes)
+				cast.getRealTimeFiltersUpdate(input) { result in
+					do {
+						promise(try result.serializedData())
+					} catch {
+						BridgeLog.error("AdvancedBlockingService.GetRealTimeFiltersUpdate: failed to serialize reply: \(error)")
+						promise(Data())
+					}
+				}
+			} catch {
+				BridgeLog.error("AdvancedBlockingService.GetRealTimeFiltersUpdate: failed to deserialize request: \(error)")
 				promise(Data())
 			}
 		case "UpdateRealTimeFiltersUpdate":

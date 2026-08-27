@@ -669,6 +669,7 @@
 				Filters/Safari/FiltersConverter.swift,
 				Filters/Safari/SafariUserRulesDistributor.swift,
 				Filters/UrlFilteringChecker.swift,
+				Mail/MailExtensionReloader.swift,
 				Mail/MailProtectionStatusProvider.swift,
 				Mail/Models/MailExtension/MailConversionInfo.swift,
 				Mail/Models/MailExtension/MailExtension.State.ExtensionError.swift,
@@ -677,7 +678,6 @@
 				Mail/Models/MailExtension/MailExtension.swift,
 				Mail/Models/MailRulesetConversionOutcome.swift,
 				Mail/Models/MailRulesetConversionResult.swift,
-				Mail/MailExtensionReloader.swift,
 				SafariExtensions/Models/CurrentExtensionsStates.swift,
 				SafariExtensions/Models/CurrentExtensionState.swift,
 				SafariExtensions/Models/ReloadExtensionResult.swift,
@@ -686,8 +686,8 @@
 				SafariExtensions/Models/SafariExtension/SafariExtension.State.swift,
 				SafariExtensions/Models/SafariExtension/SafariExtension.swift,
 				SafariExtensions/SafariError.swift,
-				SafariExtensions/SafariExtensionManager/SafariExtensionManagerProtocol.swift,
 				SafariExtensions/SafariExtensionManager/SafariExtensionManagerImpl.swift,
+				SafariExtensions/SafariExtensionManager/SafariExtensionManagerProtocol.swift,
 				SafariExtensions/SafariExtensionStateService.swift,
 				SafariExtensions/SafariExtensionStateStorage.swift,
 				SafariExtensions/SafariExtensionStatusManager/SafariExtensionStatusManagerProtocol.swift,
@@ -706,8 +706,10 @@
 				URLFilter/URLFilterStateAssembler.swift,
 				URLFilter/URLFilterStatus.swift,
 				URLFilter/URLFilterUIState.swift,
+				"Utils/Date+Utils.swift",
 				"Utils/EffectiveThemeValue+Utils.swift",
 				Utils/LogTag.swift,
+				"Utils/NSExceptions+Utils.swift",
 				WebView/Services/FilePanelPresenter.swift,
 				WebView/Services/UserRulesValidator.swift,
 				WebViewAdapter/ChildWindow.swift,
@@ -728,17 +730,15 @@
 				WebViewAdapter/WebViewAppsController.swift,
 				WebViewAdapter/WKWebViewAppHost.swift,
 				WebViewAdapter/WKWebViewFailurePresenter.swift,
-				"Utils/Date+Utils.swift",
-				"Utils/NSExceptions+Utils.swift",
 			);
 			target = EB843F052B90ED15009179E0 /* AdguardMiniTests */;
 		};
 		163C1C492FB4860E00752872 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				RetryPolicy.swift,
 				"Task+sleep.swift",
 				Throttler.swift,
-				RetryPolicy.swift,
 			);
 			target = EB843F052B90ED15009179E0 /* AdguardMiniTests */;
 		};

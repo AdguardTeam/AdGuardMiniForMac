@@ -219,7 +219,7 @@ extension SafariApiProvider: MainAppApi {
         Task {
             let isProtectionEnabled = self.protectionService.isProtectionEnabled
             let isPaid = await self.keychain.getAppStatusInfo()?.isPaid ?? false
-            let isExtraActive = self.userSettingsService.advancedBlockingState.adguardExtra
+            let isExtraActive = self.userSettingsService.adguardExtra
             let isProtectionEnabledForUrl = await !self.checkIsUrlInAllowList(url: url)
             reply(isProtectionEnabled && isProtectionEnabledForUrl && isPaid && isExtraActive, nil)
         }

@@ -4,9 +4,9 @@ import { PlatformRequest } from '@adg/webview-utils-kit';
 import { EmptyValue as ReturnValue, BoolValue as RequestMessage } from '../../types'
 
 /**
- * Update RealTimeFiltersUpdate
+ * Update AdguardExtra
  */
-export class UpdateRealTimeFiltersUpdateRequest extends PlatformRequest<ReturnValue, RequestMessage> {
+export class UpdateAdguardExtraRequest extends PlatformRequest<ReturnValue, RequestMessage> {
     /**
      * Constructs a new request instance
      * @param requestMessage The request message or its constructor parameters
@@ -22,7 +22,7 @@ export class UpdateRealTimeFiltersUpdateRequest extends PlatformRequest<ReturnVa
      * Fully qualified method name to be called on the backend
      * @returns The fully qualified method name
      */
-    public get FQN() { return 'AdvancedBlockingService.UpdateRealTimeFiltersUpdate'; }
+    public get FQN() { return 'AdvancedBlockingService.UpdateAdguardExtra'; }
 
     /**
      * Processes the response bytes received from the backend
