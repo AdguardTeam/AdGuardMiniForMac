@@ -149,6 +149,17 @@ final class AppMenu: NSMenu, NSMenuItemValidation, NSMenuDelegate {
     @objc
     private func aboutHandler(_ sender: Any?) {
         NSApplication.shared.orderFrontStandardAboutPanel()
+        // Activate the app so the panel reaches the foreground: with the
+        // `.accessory` policy the app is inactive when the panel opens from
+        // The tray menu, and ordering alone leaves it behind other apps'
+        // Windows. The `NSRunningApplication` call mirrors `UIUtils`, where
+        // A single activation call is not enough on every system.
+        if #available(macOS 14.0, *) {
+            NSApplication.shared.activate()
+        } else {
+            NSApp.activate(ignoringOtherApps: true)
+        }
+        NSRunningApplication.current.activate(options: .activateIgnoringOtherApps)
     }
 
     @objc
