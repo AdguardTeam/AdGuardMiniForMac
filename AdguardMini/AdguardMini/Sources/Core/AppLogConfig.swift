@@ -61,7 +61,9 @@ enum AppLogConfig {
 final class LastErrorLogHandler: LogHandlerProtocol {
     func log(level: LogLevel, date: Date, _ msg: String) {
         if level == .error {
-            AppLogConfig.saveLastErrorMessage(msg)
+            // Save the timestamp with the message for the Support report.
+            let timestamp = FileLogHandler.dateFormatter.string(from: date)
+            AppLogConfig.saveLastErrorMessage("\(timestamp) \(msg)")
         }
     }
 }

@@ -68,7 +68,7 @@ final class NetworkReachabilityImpl: NetworkReachability {
             let isCurrentlyReachable: Bool = (path.status == .satisfied)
 
             // Logging current snapshot
-            LogInfo("PathUpdateHandler: iface=\(iface ?? "nil"), reachable=\(isCurrentlyReachable)")
+            LogDebug("PathUpdateHandler: iface=\(iface ?? "nil"), reachable=\(isCurrentlyReachable)")
 
             var notifyNetworkChanged = false
 

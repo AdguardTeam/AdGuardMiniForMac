@@ -163,7 +163,6 @@ final class SafariFiltersUpdaterImpl: RestartableServiceBase, SafariFiltersUpdat
                     LogInfo("\(LogTag.safari) reloadContentBlockers start (ID: \(updateId))")
                     var blockersToReload: [SafariBlockerType] = []
                     for await blocker in updatedBlockers {
-                        LogDebug("Blocker \(blocker.blockerType) conversion info: \(blocker.conversionInfo)")
                         blockersToReload.append(blocker.blockerType)
                     }
                     try self.checkCancellation(progress)

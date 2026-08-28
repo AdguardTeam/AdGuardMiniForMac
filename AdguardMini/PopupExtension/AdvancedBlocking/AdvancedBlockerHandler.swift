@@ -46,7 +46,7 @@ final class AdvancedBlockerHandlerImpl {
 
 extension AdvancedBlockerHandlerImpl: AdvancedBlockerHandler {
     func messageReceived(withName messageName: String, from page: SFSafariPage, userInfo: [String: Any]) {
-        LogInfo("AdvancedBlocking received a message: \(messageName)")
+        LogDebug("AdvancedBlocking received a message: \(messageName)")
 
         guard messageName == Constants.contentScriptMessage,
               self.sharedSettingsStorage.protectionEnabled,

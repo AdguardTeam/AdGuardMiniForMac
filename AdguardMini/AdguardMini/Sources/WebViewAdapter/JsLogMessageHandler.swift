@@ -9,18 +9,26 @@
 
 import Foundation
 import WebKit
-import os
+import AML
 import ProtoSchema // ScriptMessageHandling test seam (same module).
 
-/// Handles JS log posts.
+/// JS log level posted by `window.log`; unknown values map to `.info`.
+enum JsLogLevel: String {
+    case info
+    case dbg
+    case warn
+    case error
+
+    static func from(_ raw: String) -> JsLogLevel {
+        JsLogLevel(rawValue: raw) ?? .info
+    }
+}
+
+/// Handles JS log posts, routing them through AML `Logger.shared`.
 final class JsLogMessageHandler: NSObject, WKScriptMessageHandler {
     private enum Constants {
         static let messageBodyLevelKey = "level"
         static let messageBodyMessageKey = "message"
-        static let defaultLevel = "info"
-        /// Levels the TS side emits (`logBridge.ts`); anything else falls
-        /// back to `defaultLevel`.
-        static let knownLevels: Set<String> = ["info", "dbg", "warn", "error"]
         /// Cap for forwarded log text, so a single oversized `postMessage`
         /// cannot degrade log performance/readability.
         static let maxMessageLength = 4096
@@ -34,38 +42,21 @@ final class JsLogMessageHandler: NSObject, WKScriptMessageHandler {
 
     private let rateLimiter: TokenBucketLimiter
 
-    /// Logging seam for tests and production.
-    private let route: (String, String) -> Void
+    /// Log sink: inlined by the host, injected by tests.
+    private let route: (JsLogLevel, String, String) -> Void
 
-    /// Logger.
-    private let logger = Logger(
-        subsystem: Subsystem.mainApp.name,
-        category: "JsLogMessageHandler"
-    )
-
-    /// Creates handler.
+    /// Creates a handler.
     init(
         module: ModuleId,
         rateLimiter: TokenBucketLimiter? = nil,
-        route: ((String, String) -> Void)? = nil
+        route: @escaping (JsLogLevel, String, String) -> Void
     ) {
         self.module = module
         self.rateLimiter = rateLimiter ?? TokenBucketLimiter(
             capacity: Constants.capacity,
             refillPerSecond: Constants.refillPerSecond
         )
-        if let route {
-            self.route = route
-        } else {
-            let logger = Logger(
-                subsystem: Subsystem.mainApp.name,
-                category: "JsLogMessageHandler"
-            )
-            self.route = { tag, text in
-                // Log content originates from the (remotely updatable) page
-                logger.error("\(tag, privacy: .public): \(text, privacy: .private)")
-            }
-        }
+        self.route = route
         super.init()
     }
 
@@ -81,37 +72,36 @@ final class JsLogMessageHandler: NSObject, WKScriptMessageHandler {
         handle(message: message)
     }
 
-    /// Handles message via test seam.
+    /// Handles a message via the test seam.
     func handle(message: ScriptMessageHandling) {
         // Support both dictionary payloads and plain-string messages.
-        let level: String
+        let level: JsLogLevel
         let text: String
         switch message.body {
         case let body as [String: Any]:
             let rawLevel = (body[Constants.messageBodyLevelKey] as? String) ?? ""
-            // Allowlist the level so a malformed/abused page cannot pollute
-            level = Constants.knownLevels.contains(rawLevel) ? rawLevel : Constants.defaultLevel
+            level = JsLogLevel.from(rawLevel)
             if let msg = body[Constants.messageBodyMessageKey] as? String {
                 text = Self.truncate(msg)
             } else {
                 text = Self.truncate(String(describing: body[Constants.messageBodyMessageKey] ?? ""))
             }
         case let body as String:
-            level = Constants.defaultLevel
+            level = .info
             text = Self.truncate(body)
         default:
-            level = Constants.defaultLevel
+            level = .info
             text = Self.truncate(String(describing: message.body))
         }
 
-        // Route to logger stream.
-        let tag = "[JS:\(module.rawValue)] \(level.uppercased())"
+        // Route to the log stream.
+        let tag = "[JS:\(module.rawValue)] \(level.rawValue.uppercased())"
         switch rateLimiter.tryConsume() {
         case .allowed:
-            route(tag, text)
+            self.route(level, tag, text)
         case .limited(let shouldLog):
             if shouldLog {
-                logger.error("jsLog: rate limited — dropping log posts")
+                LogWarn("jsLog: rate limited — dropping log posts")
             }
         }
     }

@@ -127,6 +127,21 @@ final class SafariConverterImpl {
         return true
     }
 
+    /// Logs the aggregate Safari rules conversion outcome in a single line.
+    private static func logConversionResult(_ result: Result<ConversionInfo, BlockerConversionError>) {
+        switch result {
+        case .success(let info):
+            LogInfo(
+                "\(LogTag.safari) conversion end: " +
+                "source=\(info.sourceRulesCount), safari=\(info.safariRulesCount), " +
+                "advanced=\(info.advancedRulesCount), discarded=\(info.discardedSafariRules), " +
+                "errors=\(info.errorsCount)"
+            )
+        case .failure(let error):
+            LogError("\(LogTag.safari) conversion failed: \(error)")
+        }
+    }
+
     private func convertAndSaveGroups(
         groups: [ContentBlockerType: [String]],
         progress: Progress
@@ -141,14 +156,14 @@ final class SafariConverterImpl {
                         taskGroup.addTask {
                             await delegate?.onStartConversion(blockerType: safariBlockerType)
                             let convStart = Date()
-                            LogInfo("\(LogTag.safari) convertAndSave(\(safariBlockerType)) start")
+                            LogDebug("\(LogTag.safari) convertAndSave(\(safariBlockerType)) start")
                             let result = await self.convertAndSave(
                                 safariBlockerType: safariBlockerType,
                                 rules: rules,
                                 isAdvancedBlocking: true,
                                 progress: progress
                             )
-                            LogInfo("\(LogTag.safari) convertAndSave(\(safariBlockerType)) end, \(convStart.elapsedMs())")
+                            LogDebug("\(LogTag.safari) convertAndSave(\(safariBlockerType)) end, \(convStart.elapsedMs())")
                             return .init(blockerType: safariBlockerType, conversionInfo: result)
                         }
                     }
@@ -250,6 +265,8 @@ extension SafariConverterImpl: SafariConverter {
                 } catch {
                     conversionResult = .failure(.cantBuildAdvancedRules(error))
                 }
+
+                Self.logConversionResult(conversionResult)
 
                 continuation.yield(
                     .init(

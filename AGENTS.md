@@ -979,11 +979,13 @@ humans and AI agents that consume project documentation.
     log file, OSLog, and last-error store), which is what the app's exported
     diagnostics are built from. To reach the app's logs, route through the
     project-wide `LogDebug`/`LogInfo`/`LogWarn`/`LogError` helpers (AML
-    `Logger.shared`). App-target code that MUST use plain `os.Logger` (e.g.
-    `JsLogMessageHandler`, which must also compile without AML in the
-    `AdguardMiniTests` target) MUST pass `Subsystem.mainApp.name` (equal to
+    `Logger.shared`). App-target code that uses plain `os.Logger` (e.g.
+    `WKWebViewAppHost`) MUST pass `Subsystem.mainApp.name` (equal to
     `BuildConfig.AG_APP_ID`) as the subsystem — not a hardcoded string — so
-    it stays reachable in the unified log. Code compiled into a separate
+    it stays reachable in the unified log. `JsLogMessageHandler` routes JS
+    `window.log` posts through AML `Logger.shared` (never plain `os.Logger`),
+    so TS diagnostics land in the app log file, OSLog stream and last-error
+    store alongside Swift lines. Code compiled into a separate
     module that cannot reference `Subsystem`/`BuildConfig`/AML (the
     `ProtoSchema` package) MUST not log on its own: it MUST route bridge
     diagnostics through the `BridgeLog` static sink instead. The app installs

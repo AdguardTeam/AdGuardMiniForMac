@@ -12,7 +12,7 @@ import WebKit
 import AppKit
 import os
 import AML
-import ProtoSchema  // WKWebViewBridge (the RPC dispatcher lives in ProtoSchema)
+import ProtoSchema
 
 // MARK: - Host lifecycle state
 
@@ -292,9 +292,15 @@ final class WKWebViewAppHost: NSObject {
         self.rpcTimeoutAlertHandler = rpcTimeoutAlert
         self.jsRuntimeErrorHandler = jsRuntimeError
 
-        // DIAG-only: mirror `window.log` (TS) into the host log stream so
-        // JS and Swift diagnostic logs appear together in one console.
-        let jsLog = JsLogMessageHandler(module: self.module)
+        let jsLog = JsLogMessageHandler(module: self.module) { level, tag, text in
+            let message = "\(tag): \(text)"
+            switch level {
+            case .info: LogInfo(message)
+            case .dbg: LogDebug(message)
+            case .warn: LogWarn(message)
+            case .error: LogError(message)
+            }
+        }
         webView.configuration.userContentController.add(
             jsLog,
             name: Constants.jsLogMessageName

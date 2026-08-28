@@ -8,6 +8,7 @@
 //
 
 import Foundation
+import AppKit
 import AML
 import XPCGateLib
 
@@ -37,13 +38,23 @@ final class ExtensionSafariApiClientImpl {
     private let workQueue: DispatchQueue
     private var gateClient: XPCGateClient!
 
+    /// Returns whether the main app process is currently running.
+    /// Injected so the XPC-unavailability noise reduction can be tested
+    /// without observing the real process list.
+    private let mainAppRunningProvider: () -> Bool
+
     // MARK: - Init
 
-    init() {
+    init(
+        mainAppRunningProvider: @escaping () -> Bool = {
+            !NSRunningApplication.runningApplications(withBundleIdentifier: BuildConfig.AG_APP_ID).isEmpty
+        }
+    ) {
         self.workQueue = DispatchQueue(
             label: "SafariPopupApi.queue.\(UUID().uuidString)",
             autoreleaseFrequency: .workItem
         )
+        self.mainAppRunningProvider = mainAppRunningProvider
         self.gateClient = XPCGateClient(gate: BuildConfig.AG_HELPER_ID,
                                         privileged: false,
                                         protocolID: ExtensionSafariApiProtocolId,
@@ -89,6 +100,16 @@ final class ExtensionSafariApiClientImpl {
 
             if let api = proxy as? MainAppApi {
                 block(api)
+                return
+            }
+
+            // The XPC gate is unreachable by design while the main app is not running.
+            // Fail fast with a debug note instead of spamming connection errors.
+            guard self.mainAppRunningProvider() else {
+                self.workQueue.async {
+                    LogDebug("XPC request skipped: main app is not running")
+                    failHandler()
+                }
                 return
             }
 
