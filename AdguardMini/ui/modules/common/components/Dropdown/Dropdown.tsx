@@ -134,17 +134,18 @@ export function Dropdown<T>({
                             ? !!currentValue.find((co) => co.value === option.value)
                             : option === currentValue;
 
+                        const handleChange = () => {
+                            onChange(option);
+                            if (!isMulti) {
+                                setIsOpen(false);
+                            }
+                        }
+
                         return (
                             <li
                                 key={option.value}
                                 className={cx(s.Dropdown_option)}
-                                onClick={() => {
-                                    onChange(option);
-
-                                    if (!isMulti) {
-                                        setIsOpen(false);
-                                    }
-                                }}
+                                onClick={handleChange}
                             >
                                 {renderOptionLabel
                                     ? (
@@ -154,7 +155,7 @@ export function Dropdown<T>({
                                     ) : (
                                         <Checkbox
                                             checked={selected}
-                                            onChange={() => {}}
+                                            onChange={handleChange}
                                         >
                                             <Text className={s.Dropdown_text} type="t1">
                                                 {option.label}

@@ -10,7 +10,7 @@
  */
 export function getCountableEntityStatuses(enabledCount: number, totalCount: number) {
     return {
-        allDisabled: enabledCount === 0,
+        allDisabled: enabledCount === 0 && totalCount > 0,
         someDisabled: enabledCount > 0 && enabledCount < totalCount,
         allEnabled: enabledCount === totalCount,
     };

@@ -87,7 +87,6 @@
     &::before {
         content: "";
         display: block;
-        z-index: var(--zi-above-extra);
         position: absolute;
         top: 1px;
         width: 26px;
@@ -101,6 +100,10 @@
 .labelDisabled {
     background-color: var(--fills-switch-all-off-default);
 
+    &:hover {
+        background-color: var(--fills-switch-all-off-hovered);
+    }
+
     &::before {
         left: 1px;
     }
@@ -108,7 +111,10 @@
 
 .labelEnabled {
     background-color: var(--fills-buttons-main-button-default);
-    border-color: var(--fills-buttons-main-button-default);
+
+    &:hover {
+        background-color: var(--fills-buttons-main-button-hovered);
+    }
 
     &::before {
         left: 21px;
