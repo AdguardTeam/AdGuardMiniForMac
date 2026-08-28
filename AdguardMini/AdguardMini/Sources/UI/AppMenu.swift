@@ -102,6 +102,20 @@ final class AppMenu: NSMenu, NSMenuItemValidation, NSMenuDelegate {
         ]
     }
 
+    private var editMenuItems: [NSMenuItem] {
+        EditMenuBuilder.makeItems(
+            titles: EditMenuTitles(
+                undo: .localized.base.app_menu_undo_title,
+                redo: .localized.base.app_menu_redo_title,
+                cut: .localized.base.app_menu_cut_title,
+                copy: .localized.base.app_menu_copy_title,
+                paste: .localized.base.app_menu_paste_title,
+                delete: .localized.base.app_menu_delete_title,
+                selectAll: .localized.base.app_menu_select_all_title
+            )
+        )
+    }
+
     private var contextMenuItems: [NSMenuItem] {
         [
             self.aboutItem,
@@ -118,6 +132,20 @@ final class AppMenu: NSMenu, NSMenuItemValidation, NSMenuDelegate {
         return mainMenu
     }
 
+    /// The Edit menu carries the standard editing key equivalents (Cmd+C,
+    /// Cmd+V, Cmd+X, Cmd+A, Cmd+Z). WKWebView implements the `copy:`/`paste:`
+    /// responder actions, but AppKit only recognizes the shortcuts when a
+    /// matching menu item exists; without it Cmd+C/Cmd+V are swallowed
+    /// everywhere in the WebView UI (paste still worked from WebKit's own
+    /// context menu, which bypasses the app menu). Nil targets route each
+    /// action through the responder chain to the focused WKWebView.
+    private var editMenu: NSMenuItem {
+        let editMenu = NSMenuItem()
+        editMenu.submenu = NSMenu()
+        editMenu.submenu?.items = self.editMenuItems
+        return editMenu
+    }
+
     // MARK: Init
 
     init(title: String = .localized.base.app_displayed_name, menuType: MenuType = .main) {
@@ -127,7 +155,7 @@ final class AppMenu: NSMenu, NSMenuItemValidation, NSMenuDelegate {
         self.delegate = self
         switch menuType {
         case .main:
-            self.items = [self.mainMenu]
+            self.items = [self.mainMenu, self.editMenu]
         case .context:
             self.items = self.contextMenuItems
         }

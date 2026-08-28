@@ -692,6 +692,7 @@
 				SafariExtensions/SafariExtensionStateStorage.swift,
 				SafariExtensions/SafariExtensionStatusManager/SafariExtensionStatusManagerProtocol.swift,
 				Settings/UserSettingsManager.swift,
+				UI/EditMenuBuilder.swift,
 				UI/UIElements/Alerts.swift,
 				"URLFilter/SharedSettingsStorage+URLFilter.swift",
 				URLFilter/URLFilterConfiguration.swift,

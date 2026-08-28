@@ -22,6 +22,27 @@
 /* App Menu - "Quit AdGuard Mini" title. */
 "app_menu_quit_title" = "Quit AdGuard Mini";
 
+/* App Menu - "Undo" title. */
+"app_menu_undo_title" = "Undo";
+
+/* App Menu - "Redo" title. */
+"app_menu_redo_title" = "Redo";
+
+/* App Menu - "Cut" title. */
+"app_menu_cut_title" = "Cut";
+
+/* App Menu - "Copy" title. */
+"app_menu_copy_title" = "Copy";
+
+/* App Menu - "Paste" title. */
+"app_menu_paste_title" = "Paste";
+
+/* App Menu - "Delete" title. */
+"app_menu_delete_title" = "Delete";
+
+/* App Menu - "Select All" title. */
+"app_menu_select_all_title" = "Select All";
+
 /* Terminating app Alert - Message text "Quit AdGuard Mini?" */
 "terminate_app_alert_message_text" = "Quit AdGuard Mini?";
 

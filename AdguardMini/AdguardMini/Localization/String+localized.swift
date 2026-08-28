@@ -53,6 +53,41 @@ extension String.localized
         /** App Menu - "Quit AdGuard Mini" title. */
         static public let app_menu_quit_title : String = { .localized.string ("app_menu_quit_title", in: "Localizable") }()
 
+        /** `"Undo"` */
+        /** */
+        /** App Menu - "Undo" title. */
+        static public let app_menu_undo_title : String = { .localized.string ("app_menu_undo_title", in: "Localizable") }()
+
+        /** `"Redo"` */
+        /** */
+        /** App Menu - "Redo" title. */
+        static public let app_menu_redo_title : String = { .localized.string ("app_menu_redo_title", in: "Localizable") }()
+
+        /** `"Cut"` */
+        /** */
+        /** App Menu - "Cut" title. */
+        static public let app_menu_cut_title : String = { .localized.string ("app_menu_cut_title", in: "Localizable") }()
+
+        /** `"Copy"` */
+        /** */
+        /** App Menu - "Copy" title. */
+        static public let app_menu_copy_title : String = { .localized.string ("app_menu_copy_title", in: "Localizable") }()
+
+        /** `"Paste"` */
+        /** */
+        /** App Menu - "Paste" title. */
+        static public let app_menu_paste_title : String = { .localized.string ("app_menu_paste_title", in: "Localizable") }()
+
+        /** `"Delete"` */
+        /** */
+        /** App Menu - "Delete" title. */
+        static public let app_menu_delete_title : String = { .localized.string ("app_menu_delete_title", in: "Localizable") }()
+
+        /** `"Select All"` */
+        /** */
+        /** App Menu - "Select All" title. */
+        static public let app_menu_select_all_title : String = { .localized.string ("app_menu_select_all_title", in: "Localizable") }()
+
         /** `"Quit AdGuard Mini?"` */
         /** */
         /** Terminating app Alert - Message text "Quit AdGuard Mini?" */
