@@ -197,7 +197,7 @@ function PaywallComponent() {
                             <>
                                 <div className={s.Paywall_footer_link}>
                                     <ExternalLink
-                                        className={cx(s.Paywall_footer_btn)}
+                                        className={s.Paywall_footer_btn}
                                         href={getTdsLink(TDS_PARAMS.eula, RouteName.license)}
                                         textType="t3"
                                         noLineHeight
@@ -208,7 +208,7 @@ function PaywallComponent() {
                                 </div>
                                 <div className={s.Paywall_footer_link}>
                                     <ExternalLink
-                                        className={cx(s.Paywall_footer_btn)}
+                                        className={s.Paywall_footer_btn}
                                         href={getTdsLink(TDS_PARAMS.privacy, RouteName.license)}
                                         textType="t3"
                                         noLineHeight

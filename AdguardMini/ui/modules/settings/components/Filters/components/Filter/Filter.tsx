@@ -85,7 +85,7 @@ function FilterComponent({
             <SettingsItemSwitch
                 additionalText={(
                     <>
-                        <Text className={cx(s.Filter_desc, theme.typo.lhCustom)} type="t2">
+                        <Text className={s.Filter_desc} type="t2">
                             {translate('filters.version', { version: serverFilter?.version || filter.version || ' ' })}
                             {' '}
                             (
@@ -93,17 +93,17 @@ function FilterComponent({
                             )
                         </Text>
                         {serverFilter?.rulesCount !== 0 && (
-                            <Text className={cx(s.Filter_desc, theme.typo.lhCustom)} type="t2">{translate('filters.rules', { rules: serverFilter?.rulesCount })}</Text>
+                            <Text className={s.Filter_desc} type="t2">{translate('filters.rules', { rules: serverFilter?.rulesCount })}</Text>
                         )}
                         <ExternalLink
-                            className={cx(s.Filter_homepage, theme.typo.lhCustom)}
+                            className={s.Filter_homepage}
                             href={filter.homepage}
                             textType="t2"
                         >
                             {translate('filters.official.website')}
                         </ExternalLink>
                         {showLanguageSpecificDisabled && (
-                            <Text className={cx(s.Filter_warning, theme.typo.lhCustom, theme.color.orange)} type="t2">
+                            <Text className={cx(s.Filter_warning, theme.color.orange)} type="t2">
                                 {translate('filters.language.specific.disabled', {
                                     btn: (text: string) => (
                                         <span

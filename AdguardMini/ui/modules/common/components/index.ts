@@ -22,4 +22,5 @@ export * from './Pagination';
 export * from './ConsentModal';
 export * from './Radio';
 export * from './NavigationHeader';
+export * from './NotificationsRenderer';
 export * from './AppUsageDataModal';

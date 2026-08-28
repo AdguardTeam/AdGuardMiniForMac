@@ -22,8 +22,6 @@ export function NotSupportedModal({ setShowNotSupportedModal }: NotSupportedModa
     const descParams = {
         link: (text: string) => (
             <ExternalLink
-                className={s.NotSupportedModal_descLink}
-                color="inheritColor"
                 href={getTdsLink(TDS_PARAMS.system_wide_protection)}
                 textType="t1"
             >

@@ -100,9 +100,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 case .tray:
                     let locator = ServiceLocator.shared
                     let trayCallbackService = WKWebViewAppResolver.trayCallbackService
+                    let userSettingsManager = self.userSettingsManager!
                     return self.makeWebViewAppHostProduction(
                         module: .tray,
                         onVisibilityChange: { [weak self] visible in
+                            if visible {
+                                trayCallbackService.onEffectiveThemeChanged(
+                                    EffectiveThemeValue.resolve(userSettingsManager.theme)
+                                )
+                            }
                             // Fires the recovery sequence via the bridge — ungated.
                             trayCallbackService.onTrayWindowVisibilityChange(BoolValue(visible))
                             if !visible {

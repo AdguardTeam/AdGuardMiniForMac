@@ -90,7 +90,7 @@ function CustomFilterComponent({
                         </div>
                     )}
                 </Text>
-                <Text className={cx(s.CustomFilter_text_desc, theme.typo.lhCustom)} type="t2">
+                <Text className={s.CustomFilter_text_desc} type="t2">
                     {translate('filters.version', { version: isInitializedString(version) ? version : '—' })}
                     {' '}
                     (
@@ -98,11 +98,11 @@ function CustomFilterComponent({
                     )
                 </Text>
                 {rulesCount && rulesCount !== 0 && (
-                    <Text className={cx(s.CustomFilter_text_desc, theme.typo.lhCustom)} type="t2">{translate('filters.rules', { rules: rulesCount })}</Text>
+                    <Text className={s.CustomFilter_text_desc} type="t2">{translate('filters.rules', { rules: rulesCount })}</Text>
                 )}
                 {homepage && (
                     <ExternalLink
-                        className={cx(s.CustomFilter_text_homepage, theme.typo.lhCustom)}
+                        className={s.CustomFilter_text_homepage}
                         href={homepage}
                         textType="t2"
                     >

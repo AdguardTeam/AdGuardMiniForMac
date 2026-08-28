@@ -33,6 +33,7 @@ interface FakeSettings {
     checkApplicationVersion: () => void;
     getAdguardExtra: () => Promise<void>;
     getURLFilterState: () => Promise<void>;
+    getEffectiveTheme: () => Promise<void>;
     setLoginItem: (v: boolean) => void;
     setNewVersionAvailable: (v: boolean) => void;
     setFiltersStatus: (s: unknown) => void;
@@ -73,6 +74,7 @@ const makeFakes = () => {
         checkApplicationVersion: () => {},
         getAdguardExtra: () => Promise.resolve(),
         getURLFilterState: () => Promise.resolve(),
+        getEffectiveTheme: () => Promise.resolve(),
         setLoginItem: () => {},
         setNewVersionAvailable: () => {},
         setFiltersStatus: () => {},
@@ -136,6 +138,7 @@ test('OnTrayWindowVisibilityChange(true) runs the full recovery sequence', () =>
     const checkApplicationVersion = spy(settings, 'checkApplicationVersion');
     const getAdguardExtra = spy(settings, 'getAdguardExtra');
     const getURLFilterState = spy(settings, 'getURLFilterState');
+    const getEffectiveTheme = spy(settings, 'getEffectiveTheme');
     const getEnabledFilters = spy(filtersData, 'getEnabledFilters');
     const getFilters = spy(filtersData, 'getFilters');
     const getFiltersIndex = spy(filtersData, 'getFiltersIndex');
@@ -152,6 +155,7 @@ test('OnTrayWindowVisibilityChange(true) runs the full recovery sequence', () =>
     assert.equal(checkApplicationVersion.getCalls(), 1);
     assert.equal(getAdguardExtra.getCalls(), 1);
     assert.equal(getURLFilterState.getCalls(), 1);
+    assert.equal(getEffectiveTheme.getCalls(), 1);
     assert.equal(getEnabledFilters.getCalls(), 1);
     assert.equal(getFilters.getCalls(), 1);
     assert.equal(getFiltersIndex.getCalls(), 1);

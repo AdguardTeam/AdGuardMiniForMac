@@ -7,6 +7,7 @@
     text-decoration-line: underline;
     display: inline-block;
     width: max-content;
+    transition: color linear 0.3s, text-decoration-color linear 0.3s;
 
     &:hover {
         text-decoration: none;
@@ -26,13 +27,23 @@
     }
 
     &__green {
-        color: var(--fills-buttons-main-button-default);
-        text-decoration-color: var(--fills-buttons-main-button-default);
+        color: var(--text-links-link-default);
+        text-decoration-color: var(--text-links-link-default);
+
+        &:hover {
+            color: var(--text-links-link-hovered);
+            text-decoration-color: var(--text-links-link-hovered);
+        }
     }
 
     &__red {
         color: var(--text-links-error-link-default);
         text-decoration-color: var(--text-links-error-link-default);
+
+        &:hover {
+            color: var(--text-links-error-link-hovered);
+            text-decoration-color: var(--text-links-error-link-hovered);
+        }
     }
 
     &__noUnderline {

@@ -53,6 +53,7 @@ export class TrayCallbackServiceImpl {
             this.settings.checkApplicationVersion();
             this.settings.getAdguardExtra();
             this.settings.getURLFilterState();
+            this.settings.getEffectiveTheme();
             this.filters.getEnabledFilters();
             this.filters.getFilters();
             this.filters.getFiltersIndex();

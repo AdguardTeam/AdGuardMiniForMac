@@ -174,9 +174,10 @@ export function AboutComponent() {
                 {LINKS.map(({ label, href }) => (
                     <ExternalLink
                         key={href}
-                        className={cx(s.About_link)}
+                        className={s.About_link}
                         href={href}
                         textType="t1"
+                        noUnderline
                     >
                         {label}
                     </ExternalLink>

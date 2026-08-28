@@ -5,7 +5,7 @@
 import { observer } from 'mobx-react-lite';
 import { createPortal, useEffect } from 'preact/compat';
 
-import { NotificationsRenderer } from 'Common/components/NotificationsRenderer';
+import { NotificationsRenderer, Loader } from 'Common/components';
 import { useTheme, useTrayStore } from 'TrayLib/hooks';
 import { applyThemeAttribute } from 'Utils/colorThemes';
 
@@ -19,20 +19,23 @@ const notifyContainer = document.getElementById('notify')!;
  * App entry
  */
 export function AppComponent() {
-    const { notification, settings } = useTrayStore();
+    const { notification, settings, settings: { settings: traySettings } } = useTrayStore();
 
     useEffect(() => {
-        // Attach a catch so a rejected RPC (timeout/unavailable bridge)
-        // cannot surface as an unhandled rejection.
-        settings.getEffectiveTheme().catch((err) => {
-            // eslint-disable-next-line no-console
-            console.error('[tray] getEffectiveTheme failed:', err);
-        });
+        settings.getEffectiveTheme();
     }, [settings]);
 
     useTheme((th) => {
         applyThemeAttribute(th);
     });
+
+    if (settings.effectiveTheme === null || !traySettings) {
+        return (
+            <div className="Loader">
+                <Loader large />
+            </div>
+        );
+    }
 
     return (
         <>
