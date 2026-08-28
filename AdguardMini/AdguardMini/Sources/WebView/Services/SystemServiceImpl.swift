@@ -12,6 +12,8 @@ import ProtoSchema
 import AppKit
 import ServiceManagement
 
+import AML
+
 private enum Constants {
     static var loginItemUrl: URL {
         URL(string: "x-apple.systempreferences:com.apple.LoginItems-Settings.extension")!
@@ -19,11 +21,11 @@ private enum Constants {
 }
 
 extension SystemServiceImpl:
-    WebViewAppsControllerDependent,
+    TrayWindowControllerDependent,
     EventBusDependent {}
 
 final class SystemServiceImpl: SystemService.ServiceType {
-    var webViewAppsController: WebViewAppsController!
+    var trayWindowController: WebViewTrayWindowController!
     var eventBus: EventBus!
 
     override init() {
@@ -36,8 +38,16 @@ final class SystemServiceImpl: SystemService.ServiceType {
         // Main actor (the RPC arrives on a background delivery queue).
         Task { @MainActor in
             if message.value == "tray_updates" {
-                self.webViewAppsController.show(.tray)
-                self.eventBus.post(event: .trayPageRequested, userInfo: "updates")
+                // The tray popover has no stable "default" frame — a raw
+                // `show(.tray)` would place a fresh host at the corner frame.
+                // Route through the positioned show (anchored under the
+                // Status-bar icon), then navigate the tray to its updates page.
+                if let trayWindowController = self.trayWindowController {
+                    await trayWindowController.showTrayWindow()
+                    self.eventBus.post(event: .trayPageRequested, userInfo: "updates")
+                } else {
+                    LogError("SystemService: tray window controller not set, tray show skipped")
+                }
             } else {
                 self.eventBus.post(event: .settingsPageRequested, userInfo: message.value)
             }

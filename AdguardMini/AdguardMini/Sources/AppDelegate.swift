@@ -331,6 +331,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             webViewAppsController: self.webViewAppsController,
             statusBarItemController: self.statusBarItemController
         )
+        ServiceLocator.shared.trayWindowController = self.trayWindowController
         Task { @MainActor in await self.trayWindowController?.start() }
     }
 

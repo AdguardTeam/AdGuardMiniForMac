@@ -50,6 +50,9 @@ protocol TrayIconUpdatesHandlerDependent: ServiceDependent {
 protocol StatusBarItemControllerDependent: ServiceDependent {
     var statusBarItemController: StatusBarItemController! { get set }
 }
+protocol TrayWindowControllerDependent: ServiceDependent {
+    var trayWindowController: WebViewTrayWindowController! { get set }
+}
 protocol SafariExtensionStateServiceDependent: ServiceDependent {
     var safariExtensionStateService: SafariExtensionStateService! { get set }
 }

@@ -59,6 +59,7 @@ extension ServiceLocator {
         (client as? TrayIconUpdatesHandlerDependent)?.trayIconUpdatesHandler = self.appSettingUpdateHandler
         (client as? StatusBarItemControllerDependent)?.statusBarItemController = self.statusBarItemController
         (client as? WebViewAppsControllerDependent)?.webViewAppsController = self.webViewAppsController
+        (client as? TrayWindowControllerDependent)?.trayWindowController = self.trayWindowController
 
         (client as? SafariExtensionStateServiceDependent)?
             .safariExtensionStateService = self.safariExtensionStateService
@@ -336,6 +337,13 @@ final class ServiceLocator {
     /// `ServiceLocator.shared.injectDependencies` per the `WebViewAppsControllerDependent`
     /// protocol at `WKWebViewAppLocator.swift:34-36`.
     var webViewAppsController: WebViewAppsController!
+
+    /// Set by `AppDelegate.applicationDidFinishLaunching` right after the
+    /// Tray window controller is created. `SystemService` is registered on
+    /// Both the tray and settings hosts, so any host creation triggers
+    /// `SystemServiceImpl` initialization; this property must be set before
+    /// The first such host is built.
+    var trayWindowController: WebViewTrayWindowController!
 
     // MARK: Injectable properties
 
