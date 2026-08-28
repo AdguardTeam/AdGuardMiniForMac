@@ -40,7 +40,6 @@ export function Checkbox({
             ref={ref}
             className={cx(s.Checkbox, disabled && s.Checkbox__disabled, className)}
             htmlFor={id}
-            onClick={() => onChange(!checked)}
         >
             <input
                 checked={checked}
