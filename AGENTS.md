@@ -895,6 +895,19 @@ humans and AI agents that consume project documentation.
    Use `@MainActor` for UI-bound code. Do not mix `DispatchQueue.main` with
    `@MainActor` in the same component.
 
+   Mutable state shared between delegate callbacks and background tasks MUST
+   be guarded by a single synchronization primitive such as `UnfairLock`;
+   hopping
+   through `MainActor.run` does not isolate callbacks that arrive from other
+   queues. When a framework reads a value synchronously right after a
+   delegate callback returns (e.g. Sparkle reads `feedURLString(for:)`
+   immediately after `mayPerform`), the value MUST be resolved in advance so
+   the callback returns it without blocking the main thread: probe in the
+   background (at startup and before each check), cache the resolved value
+   under the lock, and return the cached value from the callback. Only if a
+   value cannot be resolved in advance may the callback wait, and then with
+   a short bounded timeout.
+
    **Rationale**: Prevents EXC_BAD_ACCESS crashes in Swift Concurrency runtime
    caused by unmanaged task lifecycles and mixed concurrency patterns.
 
