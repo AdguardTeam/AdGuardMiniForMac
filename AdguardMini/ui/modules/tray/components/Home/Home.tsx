@@ -29,6 +29,7 @@ import type { StoryId } from '../../modules/stories/model';
 
 const STORIES_CONTAINER_WIDTH = 344;
 const STORY_SWITCH_INTERACTABLE_AREA_WIDTH = 156;
+const STORIES_CARDS_COUNT_BEFORE_SCROLL = 2;
 
 /**
  * Opens Safari preferences window
@@ -256,6 +257,10 @@ function HomeComponent() {
         currentStory.setIndex(entryIndex);
     }
 
+    const showHiddenStories = hiddenStories.size > 0;
+    const showStoriesNavigationArrows = (stories.length + (showHiddenStories ? 1 : 0))
+        > STORIES_CARDS_COUNT_BEFORE_SCROLL;
+
     return (
         <Fragment>
             {currentStory && (
@@ -325,7 +330,7 @@ function HomeComponent() {
                             <Text className={s.Home_storiesControls_title} type="t2">
                                 {translate('tray.home.stories.title')}
                             </Text>
-                            {stories.length > 2 && (
+                            {showStoriesNavigationArrows && (
                                 <>
                                     <Button
                                         className={s.Home_storiesControls_button}
@@ -380,7 +385,7 @@ function HomeComponent() {
                                             }}
                                     />
                                 ))}
-                                {hiddenStories.size > 0 && (
+                                {showHiddenStories && (
                                     <ShowHiddenCard onShowHidden={() => settings.showAllHiddenStories()} />
                                 )}
                             </div>
