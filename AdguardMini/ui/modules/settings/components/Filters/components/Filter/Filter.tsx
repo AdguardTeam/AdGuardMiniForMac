@@ -113,9 +113,7 @@ function FilterComponent({
                                                 router.changePath(RouteName.language_specific);
                                             }}
                                         >
-                                            <Text type="t2">
-                                                {text}
-                                            </Text>
+                                            {text}
                                         </span>
                                     ),
                                 })}
