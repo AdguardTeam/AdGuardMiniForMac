@@ -567,6 +567,8 @@
     "tray.story.system.wide.card": "Block ads in apps",
     "tray.story.system.wide.title": "Block ads and trackers in apps, too",
     "tray.story.system.wide.desc": "Enable system-wide protection to remove ads and trackers from most apps",
+    "tray.story.system.wide.action": "Buy full version",
+    "tray.story.system.wide.action.trial": "| Try %trialDays% day for free | Try %trialDays% days for free",
     "tray.story.login.item": "Enable Login Items",
     "tray.story.login.item.desc": "AdGuard Mini isn’t working properly. To fix this, enable AdGuard Mini in <b>Login Items → Allow in the Background</b>",
     "tray.story.login.item.action": "Open Settings",
