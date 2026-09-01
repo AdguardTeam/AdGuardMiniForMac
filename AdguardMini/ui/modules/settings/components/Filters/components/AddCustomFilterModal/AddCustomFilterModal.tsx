@@ -174,7 +174,7 @@ function AddCustomFilterModalComponent({
                             onClick={onSubmit}
                         >
                             <div className={s.AddCustomFilterModal_buttonContent}>
-                                <Text className={s.AddCustomFilterModal_buttonContent_text} lineHeight="none" type="t1">{translate('next')}</Text>
+                                <Text className={s.AddCustomFilterModal_buttonContent_text} type="t1">{translate('next')}</Text>
                                 {loading && <Loader className={s.AddCustomFilterModal_buttonContent_loader} />}
                             </div>
                         </Button>
@@ -245,7 +245,7 @@ function AddCustomFilterModalComponent({
                             onClick={onSubmit}
                         >
                             <div className={s.AddCustomFilterModal_buttonContent}>
-                                <Text className={s.AddCustomFilterModal_buttonContent_text} lineHeight="none" type="t1">{translate('add')}</Text>
+                                <Text className={s.AddCustomFilterModal_buttonContent_text} type="t1">{translate('add')}</Text>
                                 {loading && <Loader className={s.AddCustomFilterModal_buttonContent_loader} />}
                             </div>
                         </Button>

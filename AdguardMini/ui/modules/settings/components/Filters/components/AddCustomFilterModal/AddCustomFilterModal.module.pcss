@@ -17,12 +17,10 @@
         text-align: left;
         padding-top: var(--m-xxs);
         padding-bottom: var(--m-m);
-        width: 408px;
 
         &_desk {
             color: var(--text-main-text-main-default);
             display: inline;
-            width: 408px;
             text-wrap: wrap;
         }
     }
@@ -30,13 +28,12 @@
     &_input {
         text-align: left;
         margin: var(--m-s) 0;
-        width: 408px;
     }
 
 
     &_button {
         margin-bottom: var(--m-s);
-        max-width: 408px;
+        max-width: 100%;
 
         &:last-of-type {
             margin: 0;
@@ -50,6 +47,7 @@
 
     &_buttonContent {
         display: flex;
+        align-items: center;
         position: relative;
 
         &_text {
@@ -58,9 +56,6 @@
 
         &_loader {
             color: var(--text-buttons-primary-default);
-            position: absolute;
-            right: 0px;
-            top: -6px;
         }
     }
 }
