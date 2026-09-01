@@ -39,6 +39,7 @@ final class WKWebViewAppHost: NSObject {
         static let rpcMessageName = "rpc"
         static let openLinkMessageName = "openLinkInBrowser"
         static let clipboardMessageName = "systemClipboard"
+        static let clipboardReadMessageName = "systemClipboardRead"
 
         // WKWebView runtime-error + recurring-timeout routing — names of
         // The message handlers registered on `userContentController`.
@@ -260,7 +261,9 @@ final class WKWebViewAppHost: NSObject {
 
         let systemHandler = SystemActionsMessageHandler(
             externalLinkGate: linkGate,
-            pasteboard: NSPasteboardWriter()
+            pasteboard: NSPasteboardWriter(),
+            pasteboardReader: NSPasteboardReader(),
+            webViewEvaluator: webView
         )
         webView.configuration.userContentController.add(
             bridge,
@@ -273,6 +276,10 @@ final class WKWebViewAppHost: NSObject {
         webView.configuration.userContentController.add(
             systemHandler,
             name: Constants.clipboardMessageName
+        )
+        webView.configuration.userContentController.add(
+            systemHandler,
+            name: Constants.clipboardReadMessageName
         )
         self.systemActionsHandler = systemHandler
 
@@ -438,6 +445,9 @@ final class WKWebViewAppHost: NSObject {
         )
         self.webView.configuration.userContentController.removeScriptMessageHandler(
             forName: Constants.clipboardMessageName
+        )
+        self.webView.configuration.userContentController.removeScriptMessageHandler(
+            forName: Constants.clipboardReadMessageName
         )
 
         // Teardown mirrors the registration block above.

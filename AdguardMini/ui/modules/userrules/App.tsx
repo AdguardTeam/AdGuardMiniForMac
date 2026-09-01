@@ -20,6 +20,7 @@ import { Editor } from './Editor';
 import { editorStore } from './editorStore';
 import { FaqIcon } from './FaqIcon';
 import { FlagIcon } from './FlagIcon';
+import { debouncedEditorSync } from './lib/debouncedEditorSync';
 import { useTheme } from './lib/hooks/useTheme';
 import { Loader } from './Loader';
 import { UnsavedChangesModal } from './UnsavedChangesModal';
@@ -52,7 +53,19 @@ function AppComponent() {
      */
     const saveChanges = async (): Promise<boolean> => {
         setIsSaving(true);
+        // Let the spinner paint before the synchronous protobuf serialization
+        // + `postMessage` block the main thread. Preact's default diff flush
+        // is a microtask, which runs before the browser paints, so wait for
+        // the next animation frame before doing the heavy work. (WebKit
+        // suspends rAF while the window is hidden, but saves are always
+        // user-initiated from a visible window.)
+        await new Promise<void>((resolve) => {
+            requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+        });
         try {
+            // Flush a pending debounced parse so the saved working set matches
+            // the latest editor content (see the Editor's `onChange`).
+            debouncedEditorSync.flush();
             const userRules = new UserRules({ enabled: editorStore.enabled, rules: editorStore.rules });
             const result = await window.API.Execute(new UpdateUserRulesRequest(userRules));
             setIsSaving(false);
@@ -178,7 +191,13 @@ function AppComponent() {
                     </div>
                 </div>
             </div>
-            <Editor className={s.App_editor} onSave={saveChanges} />
+            {editorStore.loading ? (
+                <div className={s.App_loader}>
+                    <Loader />
+                </div>
+            ) : (
+                <Editor className={s.App_editor} onSave={saveChanges} />
+            )}
             <div className={s.App_row}>
                 <button
                     className={cx(s.App_row_btn, isSaving && s.App_row_btn__loading)}

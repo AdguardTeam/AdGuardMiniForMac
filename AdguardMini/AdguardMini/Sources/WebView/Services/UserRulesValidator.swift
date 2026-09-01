@@ -21,8 +21,8 @@ enum UserRulesValidator {
     }
 
     private enum Constants {
-        static let maxRuleLengthChars = 5000
-        static let maxTotalBytes = 64 * 1024 * 1024
+        static let maxRuleLengthChars = 65_536
+        static let maxTotalBytes = 32 * 1024 * 1024
     }
 
     /// Validates user rules against configured caps.

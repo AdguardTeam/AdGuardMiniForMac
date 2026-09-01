@@ -35,6 +35,25 @@ const isExternalHref = (href: string): boolean => {
     return EXTERNAL_SCHEMES.has(match[1].toLowerCase());
 };
 
+/** Selectors whose native right-click menu (copy/paste) must stay available. */
+const EDITABLE_TARGET_SELECTOR = [
+    'input',
+    'textarea',
+    '[contenteditable=""]',
+    '[contenteditable="true"]',
+    '[contenteditable="plaintext-only"]',
+    // The rules editor draws its text in a `.CodeMirror` div (not an
+    // input/textarea), so include it to keep the native Cut/Copy/Paste menu.
+    '.CodeMirror',
+].join(',');
+
+/** Whether the context-menu target sits inside an editable field.
+ *  Explicit `contenteditable="false"` elements are intentionally excluded:
+ *  they are marked non-editable and keep the suppressed default menu.
+ */
+const isEditableTarget = (target: Element | null): boolean =>
+    Boolean(target?.closest(EDITABLE_TARGET_SELECTOR));
+
 /** Bootstrap options. */
 export interface WebViewBootstrapOptions {
     env?: {
@@ -85,5 +104,17 @@ export function webViewBootstrap({ env }: WebViewBootstrapOptions = {}): void {
         // through the same gate a second time (double-open in the browser).
         evt.preventDefault();
         window.OpenLinkInBrowser(href);
+    });
+
+    // Suppress the native right-click context menu (Reload, Back/Forward,
+    // image actions) outside editable fields, where the native copy/paste
+    // menu stays desirable. On macOS, WebKit fires the DOM `contextmenu`
+    // event before presenting its system menu, so `preventDefault` keeps
+    // only the page's own in-app menus reachable on empty areas.
+    document.addEventListener('contextmenu', (evt: MouseEvent) => {
+        if (isEditableTarget(evt.target as Element | null)) {
+            return;
+        }
+        evt.preventDefault();
     });
 }

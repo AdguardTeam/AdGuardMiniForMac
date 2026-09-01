@@ -12,6 +12,7 @@ import { UserRule } from 'Common/apis/types';
 
 import { editorStore } from '../editorStore';
 import { dataUrlToBytes } from '../lib/dataUrlToBytes';
+import { debouncedEditorSync } from '../lib/debouncedEditorSync';
 
 import s from './Editor.module.pcss';
 import './Editor.pcss';
@@ -21,6 +22,27 @@ import type { EditorFromTextArea } from '@adguard/rules-editor';
 type EditorProps = {
     className: string;
     onSave(): void;
+};
+
+/** Minimal CodeMirror surface the clipboard-paste path uses. Kept structural
+ *  (not the `EditorFromTextArea` subtype) because CodeMirror's keymap
+ *  handlers pass the base `Editor` type, which is assignable to this shape. */
+type PasteEditor = {
+    getSelection(): string;
+    getCursor(end?: 'from' | 'to'): { line: number; ch: number };
+    getCursor(): { line: number; ch: number };
+    replaceRange(
+        replacement: string,
+        from: { line: number; ch: number },
+        to: { line: number; ch: number },
+    ): void;
+    lineInfo(line: number): { text: string } | undefined;
+    setGutterMarker(
+        line: number,
+        gutterID: string,
+        value: HTMLElement | null,
+    ): unknown;
+    operation<T>(callback: () => T): T;
 };
 
 const MARKER_COLOR = 'var(--stroke-icons-product-icon-default)';
@@ -80,6 +102,58 @@ function EditorComponent({
         setRules(rules.map((r) => new UserRule({ rule: r.rule, enabled: r.enabled })));
     };
 
+    /**
+     * Pastes text read through the Swift `NSPasteboard` bridge at the
+     * cursor / selection, marking pasted rules as enabled. This mirrors the
+     * rules-editor's `onPaste` — but the rules-editor reads
+     * `navigator.clipboard.readText()`, which WKWebView never grants (every
+     * read rejected with a NotAllowedError, breaking Cmd+V), so the editor
+     * routes the read through `window.SystemClipboard.read()` instead.
+     */
+    const pasteFromClipboard = async (cm: PasteEditor) => {
+        const text = await window.SystemClipboard.read();
+        if (!text) {
+            return;
+        }
+        const lines = text.split('\n');
+        const makeMarker = () => {
+            const marker = document.createElement('div');
+            marker.style.color = MARKER_COLOR;
+            marker.style.marginLeft = '-12px';
+            marker.style.marginTop = '4px';
+            marker.innerHTML = MARKER_HTML;
+            return marker;
+        };
+        const markPastedLines = (startLine: number) => {
+            lines.forEach((_, index) => {
+                const lineNumber = startLine + index;
+                const info = cm.lineInfo(lineNumber);
+                if (info?.text && RulesBuilder.getRuleType(info.text) !== 'comment') {
+                    cm.setGutterMarker(lineNumber, 'breakpoints', makeMarker());
+                }
+            });
+        };
+        if (cm.getSelection()) {
+            const positionFrom = cm.getCursor('from');
+            const positionTo = cm.getCursor('to');
+            // Replace an in-line selection with a single-line paste in place.
+            if (positionFrom.line === positionTo.line && lines.length === 1) {
+                cm.replaceRange(text, positionFrom, positionTo);
+                return;
+            }
+            cm.operation(() => {
+                cm.replaceRange(text, positionFrom, positionTo);
+                markPastedLines(positionFrom.line);
+            });
+            return;
+        }
+        const head = cm.getCursor();
+        cm.operation(() => {
+            cm.replaceRange(text, head, head);
+            markPastedLines(head.line);
+        });
+    };
+
     useEffect(() => {
         let cancelled = false;
         const init = async () => {
@@ -128,8 +202,11 @@ function EditorComponent({
                             }
                         }
                         configureEditorMode(editor);
-                        // Persist the editor content as proto UserRule[] (working set).
-                        syncRulesFromEditor();
+                        // Re-parse the editor content into the working set. Parsing
+                        // walks every line, so it is debounced and flushed before Save —
+                        // running it per keystroke blocks the main thread for large
+                        // rule sets.
+                        debouncedEditorSync.schedule(syncRulesFromEditor);
                     },
                     editor: {
                         gutters: ['CodeMirror-linenumbers', 'breakpoints'],
@@ -148,14 +225,22 @@ function EditorComponent({
 
             editorRef.current.setOption('extraKeys', {
                 ...editorRef.current.getOption('extraKeys') as Record<string, () => void>,
-                Enter: (cm) => {
+                'Enter': (cm) => {
                     lineChangedByEnter.current = cm.getCursor().line + 1;
                     cm.execCommand('newlineAndIndent');
+                },
+                // Replace the rules-editor's `Cmd-V`, whose
+                // `navigator.clipboard.readText()` is denied in WKWebView.
+                'Cmd-V': (cm) => {
+                    void pasteFromClipboard(cm);
                 },
             });
 
             // Seed the editor with the loaded rules (if the RPC load already resolved).
             if (editorStore.rules.length) {
+                // Seeding fires a `change` event whose scheduled parse must not run
+                // afterwards — the store already holds the loaded set.
+                debouncedEditorSync.cancel();
                 syncEditorFromStore();
                 setIsDirty(false);
             }
@@ -163,6 +248,7 @@ function EditorComponent({
         void init();
         return () => {
             cancelled = true;
+            debouncedEditorSync.cancel();
         };
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -173,6 +259,9 @@ function EditorComponent({
      * does NOT fire on the editor's own `onChange` mutations.
      */
     useEffect(() => {
+        // A scheduled parse from a prior `change` event is stale once the editor
+        // is re-seeded; the store already holds the freshly loaded set.
+        debouncedEditorSync.cancel();
         syncEditorFromStore();
         setIsDirty(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps

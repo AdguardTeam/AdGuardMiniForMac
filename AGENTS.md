@@ -1047,3 +1047,30 @@ humans and AI agents that consume project documentation.
     `'unsafe-inline'` per the PRD "Web Content Policy") is not an acceptable
     alternative because third-party animation libraries legitimately apply
     inline styles.
+
+14. **Native clipboard for WKWebView (Swift + TS)**: The WebKit async
+    clipboard *read* API (`navigator.clipboard.readText`) is not granted to
+    `WKWebView` pages — every read rejects with a `NotAllowedError` ("The
+    request is not allowed by the user agent or the platform in the current
+    context..."), which broke the user-rules editor's `Cmd+V`. Reads MUST
+    route through the Swift `systemClipboardRead` message handler, which
+    uses `NSPasteboard` directly and never `navigator.clipboard`. The read
+    path is request/response with a JS-generated correlation id and a
+    `window.__resolveSystemClipboardRead(id, text)` reply delivered via
+    `callAsyncJavaScript`; a pasteboard without string content replies empty
+    so callers never hang. Code in third-party packages (e.g.
+    `@adguard/rules-editor`'s `onPaste`) that reads
+    `navigator.clipboard.readText()` MUST be rerouted — override the key
+    binding in our module to read via `window.SystemClipboard.read()`.
+    Clipboard *writes* are different: `navigator.clipboard.writeText` is
+    allowed in WKWebView when triggered by a user gesture, so the editor's
+    copy/cut (`Cmd-C` / `Cmd-X`) keep working and are not rerouted. The
+    Swift `systemClipboard` write bridge stays the preferred path for
+    gesture-less programmatic copies.
+
+    **Rationale**: WebKit offers no permission grant for *reading* the async
+    clipboard in embedded `WKWebView` hosts — unlike writes, reads require
+    the platform paste callout that an embedded page never shows. Routing
+    reads through the `systemClipboardRead` bridge keeps a single Swift-owned
+    paste seam; writes triggered by a gesture are permitted by WebKit, so the
+    standard copy/cut behavior needs no rerouting.

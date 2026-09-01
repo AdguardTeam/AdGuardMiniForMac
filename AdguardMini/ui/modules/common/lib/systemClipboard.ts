@@ -12,17 +12,44 @@ export interface SystemClipboardBridge {
     read(): Promise<string>;
 }
 
+/** Time after which a pending clipboard read resolves empty if Swift never
+ *  replies (the reply must not hang the caller forever). */
+const READ_REPLY_TIMEOUT_MS = 5000;
+
+let nextReadRequestId = 1;
+const pendingReads = new Map<number, { resolve(text: string): void; timer: ReturnType<typeof setTimeout> }>();
+
+/** Test helper: drop pending reads and reset the id counter. */
+export const __resetSystemClipboardBridgeForTests = (): void => {
+    for (const pending of pendingReads.values()) {
+        clearTimeout(pending.timer);
+    }
+    pendingReads.clear();
+    nextReadRequestId = 1;
+};
+
 /** Install Swift-backed `window.SystemClipboard`; falls back to `navigator.clipboard`
- *  when the Swift message handler is unavailable.
+ *  when the Swift message handlers are unavailable.
  */
 export function installSystemClipboardBridge(): SystemClipboardBridge {
+    // Swift delivers reads via `window.__resolveSystemClipboardRead(id, text)`.
+    window.__resolveSystemClipboardRead = (id, text) => {
+        const pending = pendingReads.get(id);
+        if (pending) {
+            clearTimeout(pending.timer);
+            pendingReads.delete(id);
+            pending.resolve(text);
+        }
+    };
+
     // Guard webkit-absent hosts.
-    const handler = window.webkit?.messageHandlers?.systemClipboard;
+    const writeHandler = window.webkit?.messageHandlers?.systemClipboard;
+    const readHandler = window.webkit?.messageHandlers?.systemClipboardRead;
 
     const bridge: SystemClipboardBridge = {
         write(text: string) {
-            if (handler) {
-                handler.postMessage(text);
+            if (writeHandler) {
+                writeHandler.postMessage(text);
                 return;
             }
             // `navigator.clipboard` may be absent (non-secure context, older
@@ -36,17 +63,29 @@ export function installSystemClipboardBridge(): SystemClipboardBridge {
             // stays in a single place and cannot diverge.
             this.write(text);
         },
-        async read() {
-            // Guard availability + rejection (non-secure context, older
-            // WKWebView, test runners) so a missing clipboard cannot throw.
+        read: async (): Promise<string> => {
+            // Prefer the Swift pasteboard: the WebKit async clipboard API
+            // (`navigator.clipboard.readText`) is not granted to WKWebView
+            // pages, so it rejects with NotAllowedError on every read.
+            if (readHandler) {
+                return new Promise<string>((resolve) => {
+                    const id = nextReadRequestId++;
+                    const timer = setTimeout(() => {
+                        const pending = pendingReads.get(id);
+                        if (pending) {
+                            pendingReads.delete(id);
+                            resolve('');
+                        }
+                    }, READ_REPLY_TIMEOUT_MS);
+                    pendingReads.set(id, { resolve, timer });
+                    readHandler.postMessage({ id });
+                });
+            }
+            // Fallback for non-Swift hosts (dev env, tests).
             if (!navigator.clipboard?.readText) {
                 return '';
             }
-            try {
-                return await navigator.clipboard.readText();
-            } catch {
-                return '';
-            }
+            return navigator.clipboard.readText().catch(() => '');
         },
     };
 

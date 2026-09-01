@@ -14,7 +14,7 @@ class EditorStore {
 
     private $loadedRules: UserRule[] = [];
 
-    private $loading = false;
+    private $loading = true;
 
     private $isDirty = false;
 
@@ -77,6 +77,26 @@ class EditorStore {
     /** Update working rules from editor changes. */
     public setRules(rules: UserRule[]) {
         this.$rules = rules;
+    }
+
+    /** Whether `candidate` equals the current working set (same order, rule
+     *  text, and enabled flag). Cheap O(n) compare used to skip re-seeding
+     *  the editor when a callback echoes the rules it just saved — re-seeding
+     *  rebuilds the whole CodeMirror document synchronously and blocks the
+     *  WebContent main thread for large rule sets.
+     */
+    public hasSameRules(candidate: UserRule[]): boolean {
+        const current = this.$rules;
+        if (current.length !== candidate.length) {
+            return false;
+        }
+        for (let i = 0; i < current.length; i += 1) {
+            if (current[i].rule !== candidate[i].rule
+                || current[i].enabled !== candidate[i].enabled) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** Update loading flag. */

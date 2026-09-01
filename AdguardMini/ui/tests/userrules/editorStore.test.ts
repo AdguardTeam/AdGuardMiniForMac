@@ -13,6 +13,10 @@ beforeEach(() => {
     editorStore.setRules([]);
 });
 
+test('store starts in the loading state so the editor shows a spinner', () => {
+    assert.equal(editorStore.loading, true);
+});
+
 test('loadRules sets both the load signal and the working set', () => {
     const rules = [new UserRule({ rule: '||example.com^', enabled: true })];
     editorStore.loadRules(rules);
@@ -47,4 +51,40 @@ test('setRules([]) sets isEmpty true', () => {
     assert.equal(editorStore.rules.length, 0);
     // Load signal unchanged by the editor mutation.
     assert.equal(editorStore.loadedRules.length, 1);
+});
+
+test('hasSameRules matches identical rule sets and rejects changed ones', () => {
+    const a = [
+        new UserRule({ rule: '||a.com^', enabled: true }),
+        new UserRule({ rule: '||b.com^', enabled: false }),
+    ];
+    editorStore.setRules(a);
+
+    assert.equal(editorStore.hasSameRules([
+        new UserRule({ rule: '||a.com^', enabled: true }),
+        new UserRule({ rule: '||b.com^', enabled: false }),
+    ]), true);
+
+    // Fewer rules.
+    assert.equal(editorStore.hasSameRules([
+        new UserRule({ rule: '||a.com^', enabled: true }),
+    ]), false);
+
+    // Different rule text.
+    assert.equal(editorStore.hasSameRules([
+        new UserRule({ rule: '||a.com^', enabled: true }),
+        new UserRule({ rule: '||other.com^', enabled: false }),
+    ]), false);
+
+    // Different enabled flag.
+    assert.equal(editorStore.hasSameRules([
+        new UserRule({ rule: '||a.com^', enabled: true }),
+        new UserRule({ rule: '||b.com^', enabled: true }),
+    ]), false);
+
+    // Same rules, different order.
+    assert.equal(editorStore.hasSameRules([
+        new UserRule({ rule: '||b.com^', enabled: false }),
+        new UserRule({ rule: '||a.com^', enabled: true }),
+    ]), false);
 });

@@ -43,10 +43,10 @@ final class UserRulesValidatorTests: XCTestCase {
     }
 
     func testOverPerRuleLength_IsRejected() {
-        let long = UserRules(rules: [UserRule(rule: String(repeating: "b", count: 5001), enabled: true)])
+        let long = UserRules(rules: [UserRule(rule: String(repeating: "b", count: 65_537), enabled: true)])
         XCTAssertEqual(
             failureOf(UserRulesValidator.validate(long, maxRules: 150_000)),
-            .ruleTooLong(maxLength: 5000)
+            .ruleTooLong(maxLength: 65_536)
         )
     }
 
@@ -56,14 +56,14 @@ final class UserRulesValidatorTests: XCTestCase {
         })
         XCTAssertEqual(
             failureOf(UserRulesValidator.validate(big, maxRules: 150_000)),
-            .payloadTooLarge(maxBytes: 67_108_864)
+            .payloadTooLarge(maxBytes: 32 * 1024 * 1024)
         )
     }
 
     /// The per-rule cap counts CHARACTERS, not UTF-8 bytes: a multibyte rule
     /// (e.g. CJK) under the character cap must not be wrongly rejected.
     func testMultibyteRule_WithinCharacterCap_IsAccepted() {
-        // 3000 CJK characters = 9000 UTF-8 bytes, but 3000 characters < 5000.
+        // 3000 CJK characters = 9000 UTF-8 bytes, but 3000 characters < 65 536.
         let cjk = String(repeating: "中", count: 3000)
         let multibyte = UserRules(rules: [UserRule(rule: cjk, enabled: true)])
         XCTAssertNil(
@@ -74,11 +74,11 @@ final class UserRulesValidatorTests: XCTestCase {
 
     /// A multibyte rule past the character cap is still rejected.
     func testMultibyteRule_OverCharacterCap_IsRejected() {
-        let cjk = String(repeating: "中", count: 5001)
+        let cjk = String(repeating: "中", count: 65_537)
         let multibyte = UserRules(rules: [UserRule(rule: cjk, enabled: true)])
         XCTAssertEqual(
             failureOf(UserRulesValidator.validate(multibyte, maxRules: 150_000)),
-            .ruleTooLong(maxLength: 5000)
+            .ruleTooLong(maxLength: 65_536)
         )
     }
 }

@@ -110,6 +110,40 @@ describe('webViewUserrulesBootstrap', () => {
         assert.equal(editorStore.rules[0].rule, '||user-typing.com^');
     });
 
+    it('onUserFilterChange skips reload when the push matches the working set', async () => {
+        const { w } = setupFakeWindow();
+        setupUserrulesWebViewBridge();
+        const rules = [new UserRule({ rule: '||example.com^', enabled: true })];
+        editorStore.setRules(rules);
+        editorStore.setIsDirty(false);
+        const workingRef = editorStore.rules;
+        const state = new UserRulesCallbackState({ rules });
+        await getDispatch(w)(
+            'UserRulesCallbackService.onUserFilterChange',
+            Buffer.from(state.serializeBinary()).toString('base64'),
+        );
+        // `loadRules` copies the working set; an unchanged push (the save
+        // echo) must skip it so the editor is never re-seeded for large sets.
+        assert.equal(editorStore.rules, workingRef);
+        assert.equal(editorStore.rules.length, 1);
+    });
+
+    it('onUserFilterChange reloads when the push differs from the working set', async () => {
+        const { w } = setupFakeWindow();
+        setupUserrulesWebViewBridge();
+        editorStore.setRules([new UserRule({ rule: '||example.com^', enabled: true })]);
+        editorStore.setIsDirty(false);
+        const state = new UserRulesCallbackState({
+            rules: [new UserRule({ rule: '||external.com^', enabled: true })],
+        });
+        await getDispatch(w)(
+            'UserRulesCallbackService.onUserFilterChange',
+            Buffer.from(state.serializeBinary()).toString('base64'),
+        );
+        assert.equal(editorStore.rules.length, 1);
+        assert.equal(editorStore.rules[0].rule, '||external.com^');
+    });
+
     it('OnEffectiveThemeChanged applies the theme attribute', async () => {
         const { w } = setupFakeWindow();
         const doc = (globalThis as Record<string, unknown>).document as unknown as {

@@ -79,6 +79,30 @@ test('installs a link-click delegation handler via standard addEventListener', (
     assert.ok((listeners.click?.length ?? 0) >= 1);
 });
 
+test('suppresses the native context menu only outside editable fields', () => {
+    const { listeners } = setupFakeWindow();
+    webViewBootstrap({ env: { launch: () => {} } });
+    const handlers = listeners.contextmenu ?? [];
+    assert.ok(handlers.length >= 1, 'must install a contextmenu listener');
+
+    // In non-editable areas the native menu (Reload) must be suppressed.
+    let prevented = false;
+    handlers[0]({
+        target: { closest: () => null },
+        preventDefault: () => { prevented = true; },
+    });
+    assert.equal(prevented, true, 'must suppress the native menu outside editable fields');
+
+    // Inside editable fields (input/textarea/contenteditable) the native
+    // copy/paste menu must remain available.
+    prevented = false;
+    handlers[0]({
+        target: { closest: () => ({ editable: true }) },
+        preventDefault: () => { prevented = true; },
+    });
+    assert.equal(prevented, false, 'must keep the native menu for editable fields');
+});
+
 test('posts a jsRuntimeError message when an uncaught error event fires', () => {
     // Reset the rpcPostMessage module state so a prior test's surface
     // does not leak into this test.

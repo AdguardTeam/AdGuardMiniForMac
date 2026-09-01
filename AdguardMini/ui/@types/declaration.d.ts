@@ -51,6 +51,9 @@ interface WebKitMessageHandlers {
     };
     /** Clipboard → Swift `NSPasteboard` channel (`systemClipboard`). */
     systemClipboard?: { postMessage(text: string): void };
+    /** Clipboard read request → Swift `NSPasteboard` channel (`systemClipboardRead`).
+     *  The reply is delivered via `window.__resolveSystemClipboardRead`. */
+    systemClipboardRead?: { postMessage(request: { id: number }): void };
     /** RPC consecutive-timeout alert channel (`rpcPostMessage`). */
     rpcTimeoutAlert?: { postMessage(body: { count: number }): void };
 }
@@ -109,6 +112,11 @@ interface Window {
      * RPC resolver installed by `rpcPostMessage.__installResolveRpc`.
      */
     __resolveRpc?(id: number, bytes: string): void;
+    /**
+     * Clipboard-read resolver installed by `systemClipboard` bridge; Swift
+     * replies to a `systemClipboardRead` request with the pasteboard content.
+     */
+    __resolveSystemClipboardRead?(id: number, text: string): void;
     /**
      * Close-request hook installed by `userrules/App.tsx` (Swift calls it
      * from `windowShouldClose`).

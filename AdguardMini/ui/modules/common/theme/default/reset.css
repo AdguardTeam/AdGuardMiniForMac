@@ -10,6 +10,19 @@
 * {
     box-sizing: border-box;
     margin: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+/*
+    Editable fields must stay user-selectable, otherwise the native
+    copy/paste stops working in inputs, textareas, and contenteditable
+    regions (search field, license key, the rules editor's hidden textarea).
+    `.CodeMirror` draws the rules-editor text in styled divs, so it needs
+    the same exemption.
+*/
+input, textarea, [contenteditable]:not([contenteditable="false"]), .CodeMirror {
+    user-select: text;
+    -webkit-user-select: text;
 }
 /*
     2. Allow percentage-based heights in the application
