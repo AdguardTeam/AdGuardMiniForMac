@@ -8,6 +8,7 @@
 //
 
 import AppKit
+import Darwin
 
 // MARK: - Constants
 
@@ -16,6 +17,9 @@ private enum Constants {
     static let restartAttempts = 10
     static let baseDelay = 0.1
     static let terminationDelay = 1.0
+    static let processExitPollDelay = 0.05
+    static let processExitMaxWait = 5.0
+    static let relaunchGraceDelay = 0.5
 }
 
 // MARK: - TerminationListener
@@ -26,6 +30,10 @@ final class TerminationListener: NSObject {
 
     private var executable: URL
     private var ppid: pid_t
+    /// Serializes relaunch scheduling so a burst of `runningApplications`
+    /// KVO notifications launches the app only once.
+    private let lock = NSLock()
+    private var restartScheduled = false
 
     // MARK: Init
 
@@ -39,7 +47,7 @@ final class TerminationListener: NSObject {
 
         if getppid() == 1 {
             // Ppid is launchd (1) => parent terminated already
-            self.restart()
+            self.handleAppTerminated()
         }
     }
 
@@ -71,11 +79,57 @@ final class TerminationListener: NSObject {
         }
 
         if notFound {
-            self.restart()
+            self.handleAppTerminated()
         }
     }
 
     // MARK: Private methods
+
+    /// Schedules a single relaunch once the app process is fully gone.
+    ///
+    /// An accessory app can drop out of `runningApplications` while its
+    /// process is still terminating, and relaunching in that window makes
+    /// LaunchServices reopen the dying instance, which surfaces the system
+    /// "no longer open" warning even though the fresh instance starts a
+    /// moment later. Waiting for the process to exit (bounded) plus a short
+    /// settle delay lets the app restart silently.
+    private func handleAppTerminated() {
+        self.lock.lock()
+        let alreadyScheduled = self.restartScheduled
+        self.restartScheduled = true
+        self.lock.unlock()
+
+        guard !alreadyScheduled else {
+            return
+        }
+
+        Task {
+            await self.waitForProcessExit()
+            // Give LaunchServices a moment to deregister the dead instance
+            // Before `openApplication`, so it launches a fresh process.
+            try? await Task.sleep(seconds: Constants.relaunchGraceDelay)
+            self.restart()
+        }
+    }
+
+    /// Waits, with a bounded total time, until the watched app process is
+    /// no longer present in the system.
+    private func waitForProcessExit() async {
+        let deadline = ProcessInfo.processInfo.systemUptime + Constants.processExitMaxWait
+
+        while self.isProcessAlive() && ProcessInfo.processInfo.systemUptime < deadline {
+            try? await Task.sleep(seconds: Constants.processExitPollDelay)
+        }
+    }
+
+    /// Whether a process with the watched pid still exists.
+    private func isProcessAlive() -> Bool {
+        guard kill(self.ppid, 0) == 0 else {
+            // `kill(pid, 0)` reports ESRCH when no process has that pid.
+            return errno != ESRCH
+        }
+        return true
+    }
 
     private func restart(restartAttempts: Int = Constants.restartAttempts, delay: Double = Constants.baseDelay) {
         Task {
