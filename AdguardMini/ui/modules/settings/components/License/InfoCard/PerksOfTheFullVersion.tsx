@@ -195,7 +195,7 @@ function PerksOfTheFullVersionComponent({
             const key = account.license.license?.licenseKey?.getHiddenValue() || '';
             if (isTrialActive) {
                 window.API.Execute(new RequestRenewRequest({ value: key }));
-            } else if (isLicenseExpired) {
+            } else if (isLicenseExpired && !isAppStoreSubscription) {
                 account.requestRenewLicense(key);
             } else if (isAppStoreSubscription || (isMASReleaseVariant && isFreeware)) {
                 account.showPaywall();

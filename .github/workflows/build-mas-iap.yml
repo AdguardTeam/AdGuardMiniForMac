@@ -51,4 +51,4 @@ jobs:
       version: ${{ inputs.version }}
       version-title: ${{ inputs.version-title }}
       build-number: ${{ inputs.build-number }}
-      xcodebuild-args: 'AG_APP_DISPLAYED_NAME="AdGuard Mini IAP" AG_HELPER_REQ="anchor apple generic and certificate leaf[subject.OU] = \$(AG_TEAM)"'
+      xcodebuild-args: 'AG_APP_DISPLAYED_NAME="AdGuard Mini IAP" AG_HELPER_REQ="anchor apple generic and certificate leaf[subject.OU] = \\$(AG_TEAM)"'
