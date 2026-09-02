@@ -17,6 +17,10 @@ private enum Constants {
     static let maxRetryAttempts = 3
     static let baseRetryDelaySeconds: TimeInterval = 1
     static let invalidDisableDelaySeconds: TimeInterval = 5
+
+    /// Display name shown in System Settings for the URL filter configuration.
+    @available(macOS 26, *)
+    static let systemSettingsDisplayName = LocalizedStringResource(stringLiteral: BuildConfig.AG_APP_DISPLAYED_NAME)
 }
 
 // MARK: - URLFilterService
@@ -210,6 +214,7 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
         manager.prefilterFetchInterval = configuration.prefilterFetchInterval
         manager.shouldFailClosed = configuration.shouldFailClosed
         manager.isEnabled = configuration.enabled
+        manager.localizedDescription = Constants.systemSettingsDisplayName
         do {
             try await manager.saveToPreferences()
         } catch NEURLFilterManager.Error.configurationUnchanged {
