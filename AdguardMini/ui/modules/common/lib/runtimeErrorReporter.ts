@@ -2,11 +2,13 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { RpcError } from '../apis/rpcPostMessage';
+
 /** Install global runtime error forwarding to Swift `jsRuntimeError`. */
 /* eslint-disable no-console */
 
 /** Diagnostic class carried by `jsRuntimeError` posts. */
-export type JsRuntimeErrorKind = 'csp-violation';
+export type JsRuntimeErrorKind = 'csp-violation' | 'rpc-error';
 
 /** Swift `jsRuntimeError` payload shape. */
 export interface JsRuntimeErrorBody {
@@ -14,10 +16,11 @@ export interface JsRuntimeErrorBody {
     stack?: string;
     /**
      * Diagnostic class when the post is not a genuine runtime error.
-     * `'csp-violation'` marks `securitypolicyviolation` reports so the
-     * platform can log/telemetry them without surfacing the fatal
-     * WebView-load-failure alert (a blocked inline style is not a load
-     * failure).
+     * `'csp-violation'` marks `securitypolicyviolation` reports and
+     * `'rpc-error'` marks RPC transport failures (timeouts, native-side
+     * rejections), so the platform can log/telemetry them without
+     * surfacing the fatal WebView-load-failure alert (a blocked inline
+     * style or a timed-out RPC is not a load failure).
      */
     kind?: JsRuntimeErrorKind;
 }
@@ -48,6 +51,18 @@ function stringifyReason(value: unknown): string {
 /** Handlers installed via `window.setUnhandledExceptionHandler`. */
 const supplementaryErrorHandlers: Array<(err: unknown) => void> = [];
 
+/**
+ * Whether `err` is a tagged `RpcError` transport failure. Checks the
+ * prototype chain first, then falls back to the `name` marker the class
+ * sets for serialized output: repackaging (`catch (e) { throw new
+ * Error(e.message) }`), wrapping in another `Error`, or a foreign realm
+ * all lose the prototype, and without the fallback an RPC failure would
+ * route to the fatal WebView-failure surface.
+ */
+function isRpcError(err: unknown): boolean {
+    return err instanceof RpcError || (err as { name?: string })?.name === 'RpcError';
+}
+
 /** Install global error listeners and return posting seam. */
 export function installRuntimeErrorReporter(): JsRuntimeErrorSink {
     const postToJsRuntimeError: JsRuntimeErrorSink = (body) => {
@@ -66,7 +81,12 @@ export function installRuntimeErrorReporter(): JsRuntimeErrorSink {
         }
         const message = err instanceof Error ? err.message : stringifyReason(err);
         const stack = err instanceof Error ? err.stack : undefined;
-        postToJsRuntimeError({ message, stack });
+        // RPC transport failures (timeouts, native-side rejections,
+        // undecodable replies) are routine and recoverable, not page
+        // failures: tag them so the platform logs + telemetries without
+        // the fatal restart alert.
+        const kind: JsRuntimeErrorKind | undefined = isRpcError(err) ? 'rpc-error' : undefined;
+        postToJsRuntimeError(kind ? { message, stack, kind } : { message, stack });
     };
 
     window.addEventListener('error', (evt: ErrorEvent) => {

@@ -67,78 +67,105 @@ final class WKWebViewBridgeTests: XCTestCase {
         XCTAssertEqual(echoService.lastReceivedBytes, payload)
     }
 
-    func testDispatch_AcceptsBytesAsNumberArray_BridgedFromUint8Array() throws {
-        // JS `Uint8Array` may arrive as `[NSNumber]`.
+    func testDispatch_AcceptsBytesAsBase64String_BridgedFromUint8Array() throws {
+        // JS `rpc.postMessage` ships the payload base64-encoded (see
+        // `bytesToBase64` in `bridgeBytes.ts`), mirroring the reply
+        // Direction; Swift decodes it deterministically.
         let mockWebView = MockWebView()
         let bridge = WKWebViewBridge(webView: mockWebView)
         let echoService = MockEchoService()
         bridge.register(service: echoService, serviceName: "EchoService")
 
-        // Mirrors `rpc.postMessage` byte delivery.
-        let bridgedBytes: [NSNumber] = [0, 255, 127, 128, 1, 254]
+        let payload = Data([0x00, 0xFF, 0x7F, 0x80, 0x01, 0xFE])
         bridge.handle(message: MockScriptMessage(name: "rpc", body: [
             "id": 3,
             "method": "EchoService.Echo",
-            "bytes": bridgedBytes
+            "bytes": payload.base64EncodedString()
         ]))
 
-        XCTAssertEqual(
-            echoService.lastReceivedBytes,
-            Data([0x00, 0xFF, 0x7F, 0x80, 0x01, 0xFE])
-        )
+        XCTAssertEqual(echoService.lastReceivedBytes, payload)
     }
 
-    func testDispatch_AcceptsBytesAsDictionary_BridgedFromUint8Array() throws {
-        // JS `Uint8Array` may arrive as indexed dictionary.
+    func testDispatch_RejectsMalformedBase64Bytes_DoesNotEnterService() {
         let mockWebView = MockWebView()
         let bridge = WKWebViewBridge(webView: mockWebView)
         let echoService = MockEchoService()
         bridge.register(service: echoService, serviceName: "EchoService")
 
-        // Mirrors indexed-byte dictionary form.
-        let bridgedBytes: [String: NSNumber] = [
-            "0": 10, "1": 20, "2": 101, "3": 110
-        ]
         bridge.handle(message: MockScriptMessage(name: "rpc", body: [
-            "id": 4,
+            "id": 5,
             "method": "EchoService.Echo",
-            "bytes": bridgedBytes
+            "bytes": "!!!not-base64!!!"
         ]))
 
-        XCTAssertEqual(
-            echoService.lastReceivedBytes,
-            Data([10, 20, 101, 110])
-        )
+        XCTAssertEqual(echoService.lastReceivedBytes, Data(),
+                       "A malformed base64 payload must NOT enter the service")
+        // A routable id rejects the pending RPC fast instead of leaving the
+        // Page hanging for the full TS timeout.
+        let inv = try? XCTUnwrap(mockWebView.lastInvocation).get()
+        XCTAssertEqual(inv?.body, "window.__rejectRpc(id, message, reason)")
+        XCTAssertEqual(inv?.arguments["id"] as? Int, 5)
+        XCTAssertEqual(inv?.arguments["message"] as? String, "EchoService.Echo")
+        XCTAssertEqual(inv?.arguments["reason"] as? String, "malformed")
     }
 
-    func testDispatch_AcceptsBytesAsDictionary_MultiDigitKeys_OrderedNumerically() throws {
-        // Protobuf payloads routinely exceed 9 bytes, so the index-keyed
-        // Dictionary form must be re-assembled in NUMERIC order. A lexicographic
-        // Sort would corrupt any payload with index >= 10.
+    func testDispatch_OversizedPayload_IsRejectedFast() {
         let mockWebView = MockWebView()
         let bridge = WKWebViewBridge(webView: mockWebView)
         let echoService = MockEchoService()
         bridge.register(service: echoService, serviceName: "EchoService")
 
-        // A full contiguous index run `0...10` (11 bytes) — a valid bridged
-        // `Uint8Array` whose multi-digit key "10" verifies NUMERIC (not
-        // Lexical) ordering: a lexicographic sort would place "10" right
-        // After "1", producing a corrupted payload.
-        let bridgedBytes: [String: NSNumber] = [
-            "0": 1, "1": 2, "2": 3, "3": 4, "4": 5,
-            "5": 6, "6": 7, "7": 8, "8": 9, "9": 10, "10": 11
-        ]
+        // One byte over the 4 MB inbound cap: must not enter the service and
+        // Must reject the pending RPC instead of leaving it hanging.
+        let oversized = Data(repeating: 0xAB, count: 4 * 1024 * 1024 + 1)
         bridge.handle(message: MockScriptMessage(name: "rpc", body: [
-            "id": 9,
+            "id": 6,
             "method": "EchoService.Echo",
-            "bytes": bridgedBytes
+            "bytes": oversized.base64EncodedString()
         ]))
 
-        XCTAssertEqual(
-            echoService.lastReceivedBytes,
-            Data([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]),
-            "dictionary keys must be ordered numerically, not lexically"
-        )
+        XCTAssertEqual(echoService.lastReceivedBytes, Data(),
+                       "An oversized payload must NOT enter the service")
+        let inv = try? XCTUnwrap(mockWebView.lastInvocation).get()
+        XCTAssertEqual(inv?.body, "window.__rejectRpc(id, message, reason)")
+        XCTAssertEqual(inv?.arguments["id"] as? Int, 6)
+        XCTAssertEqual(inv?.arguments["message"] as? String, "EchoService.Echo")
+        // The reason must distinguish the user-facing oversized case from a
+        // Programming error so the page can explain the failure.
+        XCTAssertEqual(inv?.arguments["reason"] as? String, "oversized")
+    }
+
+    func testDispatch_NonStringMethodWithRoutableId_RejectsFast() {
+        let mockWebView = MockWebView()
+        let bridge = WKWebViewBridge(webView: mockWebView)
+
+        bridge.handle(message: MockScriptMessage(name: "rpc", body: [
+            "id": 7,
+            "method": 42,
+            "bytes": "AAAA"
+        ]))
+
+        let inv = try? XCTUnwrap(mockWebView.lastInvocation).get()
+        XCTAssertEqual(inv?.body, "window.__rejectRpc(id, message, reason)")
+        XCTAssertEqual(inv?.arguments["id"] as? Int, 7)
+        XCTAssertEqual(inv?.arguments["message"] as? String, "<malformed>",
+                       "A non-string method label must use the placeholder")
+        XCTAssertEqual(inv?.arguments["reason"] as? String, "malformed")
+    }
+
+    func testDispatch_MalformedBodyWithUnroutableId_IsDropped() {
+        let mockWebView = MockWebView()
+        let bridge = WKWebViewBridge(webView: mockWebView)
+
+        // Fractional ids are rejected by `coerceId` and cannot route a reply.
+        bridge.handle(message: MockScriptMessage(name: "rpc", body: [
+            "id": 1.5,
+            "method": "EchoService.Echo",
+            "bytes": "AAAA"
+        ]))
+
+        XCTAssertNil(mockWebView.lastInvocation,
+                     "An unroutable id must not invoke the JS reply channel")
     }
 
     // MARK: - Reply path
@@ -163,7 +190,7 @@ final class WKWebViewBridgeTests: XCTestCase {
         XCTAssertEqual(inv?.arguments["bytes"] as? String, payload.base64EncodedString())
     }
 
-    func testReplyError_DeliversEmptyBytesAsNamedArgument_SameFixedBody() {
+    func testReplyError_RejectsRpc_WithRejectBody_AndMethodName() {
         let mock = MockWebView()
         let bridge = WKWebViewBridge(webView: mock)
 
@@ -173,11 +200,38 @@ final class WKWebViewBridgeTests: XCTestCase {
             "bytes": Data()
         ]))
 
+        // Bridge-level rejections reject the pending RPC (a separate JS
+        // Function) instead of resolving it with empty bytes, which the
+        // Page cannot tell apart from a successful empty reply.
         let inv = try? XCTUnwrap(mock.lastInvocation).get()
-        XCTAssertEqual(inv?.body, "window.__resolveRpc(id, bytes)")
+        XCTAssertEqual(inv?.body, "window.__rejectRpc(id, message, reason)")
         XCTAssertEqual(inv?.arguments["id"] as? Int, 99)
-        XCTAssertEqual(inv?.arguments["bytes"] as? String, "",
-                       "The base64 of empty data is the empty string")
+        XCTAssertEqual(inv?.arguments["message"] as? String,
+                       "UnknownService.UnknownMethod")
+        XCTAssertEqual(inv?.arguments["reason"] as? String, "no-service")
+    }
+
+    func testDispatch_HugeMethodName_IsCappedBeforeRejectEcho() {
+        let mock = MockWebView()
+        let bridge = WKWebViewBridge(webView: mock)
+
+        // The `method` field is fully page-controlled: it must be capped
+        // Before it is echoed into the JS reject and the unified log
+        // (mirrors `JsRuntimeErrorMessageHandler`'s 4096-char cap).
+        let hugeMethod = "NoSuchService." + String(repeating: "A", count: 8000)
+        bridge.handle(message: MockScriptMessage(name: "rpc", body: [
+            "id": 11,
+            "method": hugeMethod,
+            "bytes": Data()
+        ]))
+
+        let inv = try? XCTUnwrap(mock.lastInvocation).get()
+        XCTAssertEqual(inv?.body, "window.__rejectRpc(id, message, reason)")
+        let message = inv?.arguments["message"] as? String
+        XCTAssertEqual(message?.count, 4096,
+                       "Page-controlled method must be capped at 4096 chars")
+        XCTAssertTrue(message?.hasPrefix("NoSuchService.") ?? false)
+        XCTAssertEqual(inv?.arguments["reason"] as? String, "no-service")
     }
 
     // MARK: - Callback-push path
@@ -307,6 +361,10 @@ final class WKWebViewBridgeTests: XCTestCase {
             "window.__resolveRpc(id, bytes)"
         )
         XCTAssertEqual(
+            WKWebViewBridge.InstructionBodies.rejectRpcBody,
+            "window.__rejectRpc(id, message, reason)"
+        )
+        XCTAssertEqual(
             WKWebViewBridge.InstructionBodies.dispatchCallbackBody,
             "window.__dispatchCallback(method, bytes)"
         )
@@ -330,8 +388,8 @@ final class WKWebViewBridgeTests: XCTestCase {
                        "A schema-declared method must reach the service handler")
     }
 
-    func testDispatch_UndeclaredMethod_RejectedAtBridge_ServiceNotEntered_EmptyPayload() {
-        // Undeclared method should be rejected with empty payload.
+    func testDispatch_UndeclaredMethod_RejectedAtBridge_ServiceNotEntered() {
+        // Undeclared method should be rejected via the reject channel.
         let mock = MockWebView()
         let bridge = WKWebViewBridge(webView: mock)
         let service = MockThemeService()
@@ -346,10 +404,12 @@ final class WKWebViewBridgeTests: XCTestCase {
         XCTAssertEqual(service.invokedGetEffectiveThemeCount, 0,
                        "An undeclared method must NOT enter the service implementation")
         let inv = try? XCTUnwrap(mock.lastInvocation).get()
-        XCTAssertEqual(inv?.body, "window.__resolveRpc(id, bytes)")
+        XCTAssertEqual(inv?.body, "window.__rejectRpc(id, message, reason)")
         XCTAssertEqual(inv?.arguments["id"] as? Int, 42)
-        XCTAssertEqual(inv?.arguments["bytes"] as? String, "",
-                       "An undeclared method must resolve with an empty payload")
+        XCTAssertEqual(inv?.arguments["message"] as? String,
+                       "ThemeService.DefinitelyNotASchemaMethod",
+                       "An undeclared method must reject the pending RPC")
+        XCTAssertEqual(inv?.arguments["reason"] as? String, "undeclared")
     }
 
     func testDispatch_NonGeneratedService_AllowlistNotEnforced() {
@@ -371,7 +431,7 @@ final class WKWebViewBridgeTests: XCTestCase {
 
     // MARK: - Per-module method restriction (spec FR-008)
 
-    func testDispatch_RestrictedMethod_OutsideSubset_IsRejectedWithEmptyReply() {
+    func testDispatch_RestrictedMethod_OutsideSubset_IsRejectedViaRejectChannel() {
         let mock = MockWebView()
         let bridge = WKWebViewBridge(webView: mock)
         let service = MockThemeService()
@@ -386,9 +446,11 @@ final class WKWebViewBridgeTests: XCTestCase {
 
         XCTAssertEqual(service.invokedGetEffectiveThemeCount, 0)
         let inv = try? XCTUnwrap(mock.lastInvocation).get()
-        XCTAssertEqual(inv?.body, "window.__resolveRpc(id, bytes)")
-        XCTAssertEqual(inv?.arguments["bytes"] as? String, "",
-                       "Rejected method must settle with an empty payload")
+        XCTAssertEqual(inv?.body, "window.__rejectRpc(id, message, reason)")
+        XCTAssertEqual(inv?.arguments["message"] as? String,
+                       "MockService.DeniedMethod",
+                       "Rejected method must reject the pending RPC")
+        XCTAssertEqual(inv?.arguments["reason"] as? String, "restricted")
     }
 
     func testDispatch_RestrictedMethod_InsideSubset_IsDispatched() {

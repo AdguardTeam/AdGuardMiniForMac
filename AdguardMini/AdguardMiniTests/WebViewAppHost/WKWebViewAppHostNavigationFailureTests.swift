@@ -23,6 +23,8 @@ private final class RecordingFailurePresenter: WKWebViewFailurePresenting {
     var jsRuntimeErrorCalls: [JSRuntimeErrorCall] = []
     struct CSPViolationCall { let message: String; let stack: String? }
     var cspViolationCalls: [CSPViolationCall] = []
+    struct RpcErrorCall { let message: String; let stack: String? }
+    var rpcErrorCalls: [RpcErrorCall] = []
     var rpcTimeoutAlertCalls = 0
     /// Optional hook so tests can synchronize on routing (replaces fixed sleeps).
     var onLoadFailure: (() -> Void)?
@@ -42,6 +44,9 @@ private final class RecordingFailurePresenter: WKWebViewFailurePresenting {
     }
     func handleCSPViolation(message: String, stack: String?) async {
         cspViolationCalls.append(.init(message: message, stack: stack))
+    }
+    func handleRpcError(message: String, stack: String?) async {
+        rpcErrorCalls.append(.init(message: message, stack: stack))
     }
     func handleRecurringRpcTimeout() async {
         rpcTimeoutAlertCalls += 1
@@ -172,6 +177,66 @@ final class WKWebViewAppHostNavigationFailureTests: XCTestCase {
         XCTAssertEqual(presenter.jsRuntimeErrorCalls.count, 1)
     }
 
+    func testJsRuntimeErrorMessageHandler_RpcErrorSkipsTokenBucket() async {
+        var current: TimeInterval = 0
+        // A non-advancing clock keeps the rate limiter from ever refilling,
+        // So a single genuine error exhausts the bucket for good.
+        let limiter = TokenBucketLimiter(capacity: 1, refillPerSecond: 1) { current }
+        let presenter = RecordingFailurePresenter()
+        let handler = JsRuntimeErrorMessageHandler(presenter: presenter, rateLimiter: limiter)
+        let rpcError = MockScriptMessageForHandler(
+            name: "jsRuntimeError",
+            body: ["message": "RPC timeout", "kind": "rpc-error"]
+        )
+        let runtimeError = MockScriptMessageForHandler(
+            name: "jsRuntimeError",
+            body: ["message": "boom"]
+        )
+
+        // A burst of non-fatal RPC failures (a stuck native side rejects every
+        // Pending RPC) must not consume the token bucket: the genuine runtime
+        // Error that follows must still be able to present its alert.
+        handler.handle(message: rpcError)
+        handler.handle(message: rpcError)
+        handler.handle(message: runtimeError)
+        try? await Task.sleep(nanoseconds: 100_000_000)
+        XCTAssertEqual(presenter.rpcErrorCalls.count, 2)
+        XCTAssertEqual(presenter.jsRuntimeErrorCalls.count, 1,
+                       "Non-fatal RPC posts must not exhaust the genuine-error bucket")
+    }
+
+    func testJsRuntimeErrorMessageHandler_NonFatalPostsConsumeTheirOwnBucket() async {
+        let current: TimeInterval = 0
+        // A non-advancing clock keeps both buckets from refilling. The
+        // Non-fatal bucket holds a single token, so the second rpc-error
+        // Post must be dropped — an unbounded non-fatal surface would let a
+        // Spamming page flood the unified log and telemetry.
+        let nonFatalLimiter = TokenBucketLimiter(capacity: 1, refillPerSecond: 1) { current }
+        let presenter = RecordingFailurePresenter()
+        let handler = JsRuntimeErrorMessageHandler(
+            presenter: presenter,
+            nonFatalRateLimiter: nonFatalLimiter
+        )
+        let rpcError = MockScriptMessageForHandler(
+            name: "jsRuntimeError",
+            body: ["message": "RPC timeout", "kind": "rpc-error"]
+        )
+        let runtimeError = MockScriptMessageForHandler(
+            name: "jsRuntimeError",
+            body: ["message": "boom"]
+        )
+
+        handler.handle(message: rpcError)
+        handler.handle(message: rpcError)
+        // The genuine-error path draws from the main bucket, which the
+        // Non-fatal posts (allowed or dropped) must leave untouched.
+        handler.handle(message: runtimeError)
+        try? await Task.sleep(nanoseconds: 100_000_000)
+        XCTAssertEqual(presenter.rpcErrorCalls.count, 1,
+                       "The second non-fatal post must be dropped by the non-fatal bucket")
+        XCTAssertEqual(presenter.jsRuntimeErrorCalls.count, 1)
+    }
+
     func testJsRuntimeErrorMessageHandler_RoutesCSPViolationToNonFatalPresenterMethod() async {
         let presenter = RecordingFailurePresenter()
         let handler = JsRuntimeErrorMessageHandler(presenter: presenter)
@@ -193,6 +258,50 @@ final class WKWebViewAppHostNavigationFailureTests: XCTestCase {
         )
         XCTAssertEqual(presenter.cspViolationCalls[0].stack, "at animate()")
         XCTAssertEqual(presenter.jsRuntimeErrorCalls.count, 0)
+    }
+
+    func testJsRuntimeErrorMessageHandler_RoutesRpcErrorToNonFatalPresenterMethod() async {
+        let presenter = RecordingFailurePresenter()
+        let handler = JsRuntimeErrorMessageHandler(presenter: presenter)
+        let message = MockScriptMessageForHandler(
+            name: "jsRuntimeError",
+            body: [
+                "message": "RPC \"ThemeService.GetEffectiveTheme\" timed out after 600000 ms",
+                "stack": "at rpcCall (rpcPostMessage.ts:1:1)",
+                "kind": "rpc-error"
+            ]
+        )
+        handler.handle(message: message)
+        try? await Task.sleep(nanoseconds: 100_000_000)
+        XCTAssertEqual(presenter.rpcErrorCalls.count, 1)
+        XCTAssertEqual(
+            presenter.rpcErrorCalls[0].message,
+            "RPC \"ThemeService.GetEffectiveTheme\" timed out after 600000 ms"
+        )
+        XCTAssertEqual(presenter.rpcErrorCalls[0].stack, "at rpcCall (rpcPostMessage.ts:1:1)")
+        // An RPC failure is not a page failure: no fatal alert surface.
+        XCTAssertEqual(presenter.jsRuntimeErrorCalls.count, 0)
+    }
+
+    func testJsRuntimeErrorMessageHandler_RpcErrorSkipsAlertThrottle() async {
+        var current: TimeInterval = 0
+        let presenter = RecordingFailurePresenter()
+        let handler = JsRuntimeErrorMessageHandler(presenter: presenter) { current }
+        let rpcError = MockScriptMessageForHandler(
+            name: "jsRuntimeError",
+            body: ["message": "RPC timeout", "kind": "rpc-error"]
+        )
+        let runtimeError = MockScriptMessageForHandler(
+            name: "jsRuntimeError",
+            body: ["message": "boom"]
+        )
+        // A non-fatal RPC error must not advance the alert throttle: the
+        // Genuine runtime error that follows can still present an alert.
+        handler.handle(message: rpcError)
+        handler.handle(message: runtimeError)
+        try? await Task.sleep(nanoseconds: 100_000_000)
+        XCTAssertEqual(presenter.rpcErrorCalls.count, 1)
+        XCTAssertEqual(presenter.jsRuntimeErrorCalls.count, 1)
     }
 
     func testJsRuntimeErrorMessageHandler_CSPViolationSkipsAlertThrottle() async {

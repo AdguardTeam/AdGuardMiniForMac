@@ -31,3 +31,31 @@ export const base64ToBytes = (base64: string): Uint8Array => {
     }
     return bytes;
 };
+
+/**
+ * Encode bytes as a base64 string.
+ *
+ * The page ships binary RPC request payloads to the native side
+ * (`WKWebViewBridge`) as base64 strings: `WKScriptMessage` bodies must be
+ * plist-compatible, and a raw `Uint8Array` bridges into an indexed
+ * dictionary of `NSNumber`s, which is wasteful for large payloads (e.g.
+ * rule imports) and relies on undocumented WebKit bridging. Encoding here
+ * mirrors the native reply direction (`bytesArgument` in `WKWebViewBridge`)
+ * and gives Swift a single, deterministic `Data(base64Encoded:)` decode.
+ *
+ * @param bytes - The payload bytes.
+ * @returns The base64-encoded payload string.
+ */
+export const bytesToBase64 = (bytes: Uint8Array): string => {
+    // Chunk the conversion so large payloads (user-rules imports) neither
+    // overflow the call stack (spread) nor build a full-length binary
+    // intermediate before encoding. Each chunk length is a multiple of 3,
+    // so concatenated `btoa` outputs carry no inter-chunk `=` padding.
+    const chunkSize = 0x7FFE; // 32766 = 3 × 10922
+    let base64 = '';
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+        const chunk = bytes.subarray(i, i + chunkSize);
+        base64 += btoa(String.fromCharCode(...chunk));
+    }
+    return base64;
+};

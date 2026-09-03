@@ -44,7 +44,7 @@
 set -e
 
 # Xcode injects CONFIGURATION and SRCROOT as environment variables.
-CONFIGURATION="${CONFIGURATION:-Debug}"
+CONFIGURATION="${CONFIGURATION:-Debug-Standalone}"
 
 PROJECT_ROOT="${SRCROOT}/.."
 YARN="${PROJECT_ROOT}/bin/yarn"
@@ -53,9 +53,10 @@ WEBUI_STAGED="${SRCROOT}/MiniResources/WebUI"
 
 # Map the Xcode build configuration to the webpack build script: Debug
 # configurations use the unminified dev bundle, everything else the prod bundle.
-# The MAS debug configuration is literally named `Debug(MAS)` (no space).
+# The project's debug configurations are `Debug-Standalone` and `Debug-MAS`
+# (see the XCConfigurationList entries in AdguardMini.xcodeproj).
 case "${CONFIGURATION}" in
-  Debug|Debug\(MAS\))
+  Debug-Standalone|Debug-MAS)
     BUILD_SCRIPT="build:dev" ;;
   *)
     BUILD_SCRIPT="build:prod" ;;

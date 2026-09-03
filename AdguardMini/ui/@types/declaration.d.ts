@@ -113,6 +113,16 @@ interface Window {
      */
     __resolveRpc?(id: number, bytes: string): void;
     /**
+     * RPC rejector installed by `rpcPostMessage.__installResolveRpc`; Swift
+     * calls it for bridge-level rejections (unregistered service, allowlist
+     * denial, restricted method) so the pending RPC rejects instead of
+     * resolving with an empty payload. `reason` is a short rejection code
+     * (`malformed` / `oversized` / `no-service` / `undeclared` / `restricted`)
+     * that lets the page distinguish a user-facing situation (e.g. an
+     * oversized payload) from a programming error.
+     */
+    __rejectRpc?(id: number, message: string, reason?: string): void;
+    /**
      * Clipboard-read resolver installed by `systemClipboard` bridge; Swift
      * replies to a `systemClipboardRead` request with the pasteboard content.
      */

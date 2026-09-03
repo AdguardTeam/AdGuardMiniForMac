@@ -22,6 +22,9 @@ protocol WKWebViewFailurePresenting: AnyObject {
     /// Handles a non-fatal CSP violation (diagnostics only, no alert).
     func handleCSPViolation(message: String, stack: String?) async
 
+    /// Handles a non-fatal RPC transport failure (diagnostics only, no alert).
+    func handleRpcError(message: String, stack: String?) async
+
     /// Handles recurring RPC timeout alerts.
     func handleRecurringRpcTimeout() async
 }
@@ -34,6 +37,7 @@ final class WKWebViewFailurePresenter: WKWebViewFailurePresenting {
         static let telemetryLoadFailureEventName = "wkwebview_load_failure"
         static let telemetryJSRuntimeErrorEventName = "wkwebview_js_runtime_error"
         static let telemetryCSPViolationEventName = "wkwebview_csp_violation"
+        static let telemetryRpcErrorEventName = "wkwebview_rpc_error"
         static let telemetryRpcTimeoutEventName = "rpc_recurring_timeout"
     }
 
@@ -125,6 +129,28 @@ final class WKWebViewFailurePresenter: WKWebViewFailurePresenting {
     }
 
     @MainActor
+    func handleRpcError(message: String, stack: String?) async {
+        // Log stack details when available.
+        if let stack {
+            logger.error(
+                "WKWebView RPC error: \(message, privacy: .public)\nstack: \(stack, privacy: .public)"
+            )
+        } else {
+            logger.error("WKWebView RPC error: \(message, privacy: .public)")
+        }
+        await recordTelemetry(
+            .customEvent(.init(
+                name: Constants.telemetryRpcErrorEventName,
+                refName: "webView",
+                label: stack.map { "\(message)\n--- stack ---\n\($0)" } ?? message
+            ))
+        )
+        // RPC transport failures (timeouts, native-side rejections) are
+        // Routine and recoverable and are not load failures. No modal
+        // Alert is presented.
+    }
+
+    @MainActor
     func handleRecurringRpcTimeout() async {
         logger.error("Recurring RPC timeout threshold crossed")
         await recordTelemetry(
@@ -161,5 +187,6 @@ final class NoOpFailurePresenter: WKWebViewFailurePresenting {
     func handleLoadFailure(module: String, error: Error) async {}
     func handleJSRuntimeError(message: String, stack: String?) async {}
     func handleCSPViolation(message: String, stack: String?) async {}
+    func handleRpcError(message: String, stack: String?) async {}
     func handleRecurringRpcTimeout() async {}
 }

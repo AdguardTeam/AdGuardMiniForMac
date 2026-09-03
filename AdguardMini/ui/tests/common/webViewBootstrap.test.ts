@@ -9,6 +9,7 @@ import {
     webViewBootstrap,
 } from '../../modules/common/webViewBootstrap';
 import {
+    RpcError,
     __getRpcTimeoutAlertSurface,
     __resetForTests,
 } from '../../modules/common/apis/rpcPostMessage';
@@ -257,4 +258,104 @@ test('a securitypolicyviolation event is reported through the jsRuntimeError cha
         (w.dispatchEvent as (evt: { type: string }) => boolean)(violationEvent);
     }
     assert.equal(posted.length, 1);
+});
+
+test('an unhandled RPC rejection is tagged rpc-error (non-fatal kind)', () => {
+    __resetForTests();
+
+    const posted: Array<{ name: string; body: Record<string, unknown> }> = [];
+    const listeners: Record<string, Array<(evt: unknown) => void>> = {};
+    const w: Record<string, unknown> = {
+        webkit: {
+            messageHandlers: {
+                jsRuntimeError: {
+                    postMessage: (body: Record<string, unknown>) => {
+                        posted.push({ name: 'jsRuntimeError', body });
+                    },
+                },
+            },
+        },
+        addEventListener: (type: string, fn: (evt: unknown) => void) => {
+            (listeners[type] ??= []).push(fn);
+        },
+        dispatchEvent: (evt: { type: string }) => {
+            (listeners[evt.type] ?? []).forEach((fn) => fn(evt));
+            return true;
+        },
+    };
+    (globalThis as Record<string, unknown>).window = w;
+    (globalThis as Record<string, unknown>).document = {
+        addEventListener: () => {},
+    };
+
+    webViewBootstrap({ env: { launch: () => {} } });
+
+    // A transport-level RPC failure (e.g. a timeout) rejected as `RpcError`
+    // must be tagged `rpc-error` so the platform logs/telemetries it without
+    // the fatal restart alert.
+    const rpcErr = new RpcError('RPC "ThemeService.GetEffectiveTheme" timed out after 600000 ms');
+    (w.dispatchEvent as (evt: { type: string; reason: unknown }) => boolean)({
+        type: 'unhandledrejection',
+        reason: rpcErr,
+    });
+
+    assert.equal(posted.length, 1);
+    assert.equal(posted[0].name, 'jsRuntimeError');
+    assert.equal((posted[0].body as { message: string }).message, rpcErr.message);
+    assert.equal((posted[0].body as { kind?: string }).kind, 'rpc-error');
+
+    // A genuine (non-RPC) rejection stays untagged → fatal surface.
+    (w.dispatchEvent as (evt: { type: string; reason: unknown }) => boolean)({
+        type: 'unhandledrejection',
+        reason: new Error('store bug'),
+    });
+    assert.equal(posted.length, 2);
+    assert.equal((posted[1].body as { kind?: string }).kind, undefined);
+});
+
+test('a repackaged RpcError (name marker, lost prototype) is still tagged rpc-error', () => {
+    __resetForTests();
+
+    const posted: Array<{ name: string; body: Record<string, unknown> }> = [];
+    const listeners: Record<string, Array<(evt: unknown) => void>> = {};
+    const w: Record<string, unknown> = {
+        webkit: {
+            messageHandlers: {
+                jsRuntimeError: {
+                    postMessage: (body: Record<string, unknown>) => {
+                        posted.push({ name: 'jsRuntimeError', body });
+                    },
+                },
+            },
+        },
+        addEventListener: (type: string, fn: (evt: unknown) => void) => {
+            (listeners[type] ??= []).push(fn);
+        },
+        dispatchEvent: (evt: { type: string }) => {
+            (listeners[evt.type] ?? []).forEach((fn) => fn(evt));
+            return true;
+        },
+    };
+    (globalThis as Record<string, unknown>).window = w;
+    (globalThis as Record<string, unknown>).document = {
+        addEventListener: () => {},
+    };
+
+    webViewBootstrap({ env: { launch: () => {} } });
+
+    // Repackaging (`catch (e) { throw new Error(e.message) }`, wrapping in
+    // another Error, a foreign realm) loses the `RpcError` prototype; the
+    // `name` marker the class sets for serialized output must still tag the
+    // post non-fatal so the failure does not hit the fatal restart alert.
+    const repackaged = Object.assign(new Error('RPC "ThemeService.GetEffectiveTheme" timed out'), {
+        name: 'RpcError',
+    });
+    (w.dispatchEvent as (evt: { type: string; reason: unknown }) => boolean)({
+        type: 'unhandledrejection',
+        reason: repackaged,
+    });
+
+    assert.equal(posted.length, 1);
+    assert.equal(posted[0].name, 'jsRuntimeError');
+    assert.equal((posted[0].body as { kind?: string }).kind, 'rpc-error');
 });

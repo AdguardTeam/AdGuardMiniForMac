@@ -17,14 +17,14 @@ import {
 // `globalThis.webkit`), so the mock MUST install `webkit` ON `window`
 // (not on `globalThis` directly). This deviates from the plan's verbatim
 // test code to match the source's actual lookup path.
-const posted: Array<{ id: number; method: string; bytes: Uint8Array }> = [];
+const posted: Array<{ id: number; method: string; bytes: Uint8Array | string }> = [];
 const mockWindow: Record<string, unknown> =
     (globalThis as Record<string, unknown>).window as Record<string, unknown> ?? {};
 (globalThis as Record<string, unknown>).window = mockWindow;
 mockWindow.webkit = {
     messageHandlers: {
         rpc: {
-            postMessage: (msg: { id: number; method: string; bytes: Uint8Array }) => {
+            postMessage: (msg: { id: number; method: string; bytes: Uint8Array | string }) => {
                 posted.push(msg);
             },
         },
@@ -138,4 +138,129 @@ test('rpcCall: success after 2 timeouts resets the counter; 3 more timeouts re-i
     await assert.rejects(q1, (err: Error) => err.message.includes('E'));
     await assert.rejects(q2, (err: Error) => err.message.includes('F'));
     assert.equal(surfaceInvocations, 1, 'post-reset: surface invoked exactly once on the 3rd');
+});
+
+test('rpcCall posts the request payload base64-encoded (plist-compatible body)', async () => {
+    __resetForTests();
+    const payload = new Uint8Array([0x08, 0x01, 0x00, 0xFF, 0x7F]);
+    const promise = rpcCall('UserRulesService.ImportUserRules', payload);
+    const postedMsg = posted[posted.length - 1];
+    assert.equal(typeof postedMsg.bytes, 'string',
+                 'bytes MUST be a base64 string, not a raw Uint8Array');
+    // `atob` of the posted base64 must round-trip the original payload.
+    const binary = atob(postedMsg.bytes as string);
+    const roundTripped = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+    assert.deepEqual(Array.from(roundTripped), Array.from(payload));
+    // Clean up the pending entry so the test runner is not left with a timer.
+    __installResolveRpc()(postedMsg.id, '');
+    await promise;
+});
+
+test('malformed base64 reply rejects the pending RPC (does not hang)', async () => {
+    __resetForTests();
+    const promise = rpcCall('ThemeService.GetEffectiveTheme', new Uint8Array([0]));
+    const id = posted[posted.length - 1].id;
+    // `atob` throws on this input; the resolver must reject, not leave the
+    // promise pending forever with its timeout already cleared.
+    __installResolveRpc()(id, '!!!not-base64!!!');
+    await assert.rejects(
+        promise,
+        (err: Error) => err.message.includes('base64ToBytes: invalid base64 payload')
+                    && err.name === 'RpcError',
+    );
+});
+
+test('window.__rejectRpc rejects the pending RPC with the native-side message', async () => {
+    __resetForTests();
+    const promise = rpcCall('UnknownService.UnknownMethod', new Uint8Array([0]));
+    const id = posted[posted.length - 1].id;
+    __installResolveRpc();
+    (window as unknown as { __rejectRpc?: (id: number, message: string, reason?: string) => void })
+        .__rejectRpc?.(id, 'UnknownService.UnknownMethod', 'no-service');
+    await assert.rejects(
+        promise,
+        (err: Error) => err.message.includes('UnknownService.UnknownMethod')
+            && err.name === 'RpcError'
+            && (err as { reason?: string }).reason === 'no-service',
+    );
+});
+
+test('window.__rejectRpc carries the native-side reason code on the error', async () => {
+    __resetForTests();
+    const promise = rpcCall('UserRulesService.ImportUserRules', new Uint8Array([0]));
+    const id = posted[posted.length - 1].id;
+    __installResolveRpc();
+    // A native-side rejection must surface the reason so the page can tell a
+    // user-facing situation (e.g. an oversized payload) from a programming
+    // error (e.g. an undeclared method).
+    (window as unknown as { __rejectRpc?: (id: number, message: string, reason?: string) => void })
+        .__rejectRpc?.(id, 'UserRulesService.ImportUserRules', 'oversized');
+    await assert.rejects(
+        promise,
+        // The reason is carried both structured and in the message text:
+        // telemetry and the unified log ship `err.message`, and call sites
+        // rarely catch to read the `reason` field.
+        (err: Error) => err.name === 'RpcError'
+            && (err as { reason?: string }).reason === 'oversized'
+            && err.message.includes('(oversized)'),
+    );
+});
+
+test('window.__rejectRpc with an unknown id is a no-op', async () => {
+    __resetForTests();
+    const resolve = __installResolveRpc();
+    assert.doesNotThrow(() => {
+        resolve(999_999, '!!!not-base64!!!');
+        (window as unknown as { __rejectRpc?: (id: number, message: string, reason?: string) => void })
+            .__rejectRpc?.(999_999, 'GhostService.Method', 'no-service');
+    });
+});
+
+test('a postMessage throw breaks the timeout streak (immediate local failure)', async (t) => {
+    t.mock.timers.enable();
+    __resetForTests();
+    let surfaceInvocations = 0;
+    __installRpcTimeoutAlertSurface(() => { surfaceInvocations += 1; });
+
+    // One timeout: counter reaches 1.
+    const p0 = rpcCall('A', new Uint8Array([0]));
+    t.mock.timers.tick(600_001);
+    await assert.rejects(p0, (err: Error) => err.message.includes('A'));
+
+    // A synchronous postMessage throw is an immediate local failure, not a
+    // timeout: it must reset the streak so two later timeouts do not fire
+    // the alert surface.
+    const rpcMock = (mockWindow.webkit as {
+        messageHandlers: { rpc: { postMessage: (msg: { id: number; method: string; bytes: Uint8Array | string }) => void } };
+    }).messageHandlers.rpc;
+    const originalPostMessage = rpcMock.postMessage;
+    rpcMock.postMessage = () => { throw new Error('boom'); };
+    const p1 = rpcCall('B', new Uint8Array([0]));
+    await assert.rejects(p1, (err: Error) => err.message.includes('boom'));
+    rpcMock.postMessage = originalPostMessage;
+
+    const p2 = rpcCall('C', new Uint8Array([2]));
+    const p3 = rpcCall('D', new Uint8Array([3]));
+    t.mock.timers.tick(600_001);
+    await assert.rejects(p2, (err: Error) => err.message.includes('C'));
+    await assert.rejects(p3, (err: Error) => err.message.includes('D'));
+    assert.equal(surfaceInvocations, 0,
+                 'an immediate postMessage failure must break the timeout streak');
+});
+
+test('bytesToBase64 round-trips payloads spanning multiple chunks', async () => {
+    __resetForTests();
+    // 32766-byte chunks: 100_000 bytes span 4 chunks and exercise the
+    // padding-free concatenation of `btoa` outputs.
+    const payload = new Uint8Array(100_000);
+    for (let i = 0; i < payload.length; i += 1) {
+        payload[i] = i % 256;
+    }
+    const promise = rpcCall('UserRulesService.ImportUserRules', payload);
+    const id = posted[posted.length - 1].id;
+    const binary = atob(posted[posted.length - 1].bytes as string);
+    const roundTripped = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+    assert.deepEqual(Array.from(roundTripped), Array.from(payload));
+    __installResolveRpc()(id, '');
+    await promise;
 });

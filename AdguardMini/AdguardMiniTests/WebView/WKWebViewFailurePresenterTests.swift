@@ -112,6 +112,29 @@ final class WKWebViewFailurePresenterTests: XCTestCase {
         XCTAssertEqual(ev.refName, "webView")
     }
 
+    func testHandleRpcError_RecordsTelemetry_DoesNotPresentAlert() async {
+        let recorder = Recorder()
+        let presenter = makePresenter(recorder)
+        await presenter.handleRpcError(
+            message: "RPC \"ThemeService.GetEffectiveTheme\" timed out after 600000 ms",
+            stack: "at rpcCall (rpcPostMessage.ts:1:1)"
+        )
+        // RPC transport failures are telemetry/logging-only: a transient
+        // Timeout must not offer a "restart the app" dialog.
+        XCTAssertEqual(recorder.presentedAlertsCount, 0)
+        XCTAssertEqual(recorder.telemetryEvents.count, 1)
+        guard case .customEvent(let ev) = recorder.telemetryEvents.first else {
+            XCTFail("expected .customEvent")
+            return
+        }
+        XCTAssertEqual(ev.name, "wkwebview_rpc_error")
+        XCTAssertEqual(ev.refName, "webView")
+        XCTAssertTrue(
+            String(describing: ev.label).contains("at rpcCall (rpcPostMessage.ts:1:1)"),
+            "stack MUST be present in the telemetry label"
+        )
+    }
+
     func testRestartButton_ClickInvokesRestartApp_NonRestartDoesNot() async {
         // Restart response should invoke restart callback.
         let restartRecorder = Recorder()

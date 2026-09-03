@@ -19,6 +19,7 @@ final class JsRuntimeErrorMessageHandler: NSObject, WKScriptMessageHandler {
         static let messageBodyStackKey = "stack"
         static let messageBodyKindKey = "kind"
         static let cspViolationKind = "csp-violation"
+        static let rpcErrorKind = "rpc-error"
         static let defaultMessage = "Unknown JS runtime error"
         /// Minimum seconds between native alert surfaces (prevents a buggy
         /// or compromised page from holding the user in a modal alert loop).
@@ -28,10 +29,18 @@ final class JsRuntimeErrorMessageHandler: NSObject, WKScriptMessageHandler {
         /// Token bucket: 60 posts per 10 s window = 6/s.
         static let capacity = 60.0
         static let refillPerSecond = 6.0
+        /// Separate bucket for non-fatal diagnostics (CSP violations, RPC
+        /// Transport failures): same rate, but a burst of them cannot eat
+        /// The tokens a genuine page error needs for its alert — and they
+        /// Stay bounded themselves, so a spamming page cannot flood the
+        /// Unified log and telemetry through the non-fatal surfaces.
+        static let nonFatalCapacity = 60.0
+        static let nonFatalRefillPerSecond = 6.0
     }
 
     private let presenter: any WKWebViewFailurePresenting
     private let rateLimiter: TokenBucketLimiter
+    private let nonFatalRateLimiter: TokenBucketLimiter
     private let now: () -> TimeInterval
     private var lastAlertAt: TimeInterval?
     private let logger = Logger(
@@ -42,12 +51,17 @@ final class JsRuntimeErrorMessageHandler: NSObject, WKScriptMessageHandler {
     init(
         presenter: any WKWebViewFailurePresenting,
         rateLimiter: TokenBucketLimiter? = nil,
+        nonFatalRateLimiter: TokenBucketLimiter? = nil,
         now: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }
     ) {
         self.presenter = presenter
         self.rateLimiter = rateLimiter ?? TokenBucketLimiter(
             capacity: Constants.capacity,
             refillPerSecond: Constants.refillPerSecond
+        )
+        self.nonFatalRateLimiter = nonFatalRateLimiter ?? TokenBucketLimiter(
+            capacity: Constants.nonFatalCapacity,
+            refillPerSecond: Constants.nonFatalRefillPerSecond
         )
         self.now = now
         super.init()
@@ -89,6 +103,34 @@ final class JsRuntimeErrorMessageHandler: NSObject, WKScriptMessageHandler {
 
     /// Rate-limits and forwards error details.
     private func routeIfAllowed(message: String, stack: String?, kind: String?) {
+        // Non-fatal diagnostics — CSP violations (e.g. a third-party
+        // Animation library applying inline styles on macOS 12) and RPC
+        // Transport failures (timeouts, native-side rejections) — are not
+        // Page failures: telemetry + log only, no restart alert. They
+        // Consume their own bucket, not the genuine-error one: a stuck
+        // Native side rejects every pending RPC, and such a burst must not
+        // Exhaust the tokens a genuine page error needs for its alert —
+        // While the separate bucket still keeps a spamming page from
+        // Flooding the unified log and telemetry.
+        if kind == Constants.cspViolationKind || kind == Constants.rpcErrorKind {
+            switch nonFatalRateLimiter.tryConsume() {
+            case .allowed:
+                break
+            case .limited(let shouldLog):
+                if shouldLog {
+                    logger.error("jsRuntimeError: non-fatal post rate limited — dropping")
+                }
+                return
+            }
+            logMessage(message: message, stack: stack)
+            if kind == Constants.cspViolationKind {
+                routeCSPViolation(message: message, stack: stack)
+            } else {
+                routeRpcError(message: message, stack: stack)
+            }
+            return
+        }
+
         switch rateLimiter.tryConsume() {
         case .allowed:
             break
@@ -96,16 +138,6 @@ final class JsRuntimeErrorMessageHandler: NSObject, WKScriptMessageHandler {
             if shouldLog {
                 logger.error("jsRuntimeError: rate limited — dropping")
             }
-            return
-        }
-
-        // CSP violations are diagnostics (e.g. a third-party animation
-        // Library applying inline styles on macOS 12), not runtime errors.
-        // Route them to the telemetry-only surface and skip the alert
-        // Throttle so they cannot suppress a genuine error alert.
-        if kind == Constants.cspViolationKind {
-            logMessage(message: message, stack: stack)
-            routeCSPViolation(message: message, stack: stack)
             return
         }
 
@@ -144,6 +176,13 @@ final class JsRuntimeErrorMessageHandler: NSObject, WKScriptMessageHandler {
     private func routeCSPViolation(message: String, stack: String?) {
         Task { @MainActor in
             await presenter.handleCSPViolation(message: message, stack: stack)
+        }
+    }
+
+    /// Forwards a non-fatal RPC failure to the presenter (telemetry-only).
+    private func routeRpcError(message: String, stack: String?) {
+        Task { @MainActor in
+            await presenter.handleRpcError(message: message, stack: stack)
         }
     }
 

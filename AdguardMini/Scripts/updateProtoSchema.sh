@@ -61,7 +61,13 @@ echo "=================================================================="
 echo
 
 if [ -d "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/callbacks" ]; then
-    find "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/callbacks" -type f -name "*.ts" -delete
+    # `*Internal.ts` files are handwritten extension points: the generator
+    # skips them on regeneration (see `should_skip_service_postfix` in
+    # code_generator_typescript.py) precisely so their store-dispatch logic
+    # survives. Deleting them here would make the generator re-emit empty
+    # classes from the template, silently dropping the live implementation.
+    find "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/callbacks" -type f -name "*.ts" \
+        -not -name "*Internal.ts" -delete
 fi
 if [ -d "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/requests" ]; then
     find "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/requests" -type f -name "*.ts" -delete

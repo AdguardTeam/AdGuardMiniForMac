@@ -20,8 +20,17 @@ public protocol WKWebViewServiceHandler: AnyObject {
     ///   - method: Method name within the service (e.g. `"GetEffectiveTheme"`).
     ///   - bytes: Protobuf-encoded request bytes.
     ///   - promise: Completion invoked exactly once with reply bytes (empty
-    ///     `Data` signals the error path; a richer error envelope may
-    ///     ship in a follow-up issue).
+    ///     `Data` is a legitimate success for `EmptyValue`-shaped replies).
+    ///
+    /// Bridge-level dispatch failures (unregistered service, allowlist
+    /// Denial, restricted method, malformed payload with a routable id)
+    /// Reject the pending RPC via `window.__rejectRpc`; see
+    /// `WKWebViewBridge.replyError`. Generated service bridges still reply
+    /// Empty + log on request-deserialization / reply-serialization failures
+    /// And unknown methods (a codegen contract: the `(Data) -> Void` promise
+    /// Cannot carry an error, so a richer envelope would require reworking
+    /// `@adg/proto-generator`'s Swift templates); those paths are
+    /// Unreachable from a correct bundle.
     func handleRequest(method: String, bytes: Data, promise: @escaping (Data) -> Void)
 }
 
@@ -83,12 +92,41 @@ public final class WKWebViewBridge: NSObject, WKScriptMessageHandler {
 
         /// Upper bound for a single inbound RPC payload.
         static let maxInboundPayloadBytes = 4 * 1024 * 1024
+
+        /// Upper bound for the base64 encoding of a payload at the cap:
+        /// `ceil(maxInboundPayloadBytes / 3) * 4`. A longer string cannot
+        /// Decode within the cap, so it is rejected in O(1) before the
+        /// Decoded payload is materialized.
+        static let maxInboundBase64Length = (maxInboundPayloadBytes + 2) / 3 * 4
+
+        /// Cap for page-controlled `method` text echoed into JS replies and
+        /// the unified log (mirrors `JsRuntimeErrorMessageHandler`'s
+        /// 4096-char cap for remotely-updatable page strings).
+        static let maxMethodLength = 4096
+    }
+
+    /// Short reason codes carried by bridge-level rejections so the page
+    /// can tell a user-facing situation (e.g. an oversized payload) from a
+    /// programming error (e.g. an undeclared method).
+    private enum RejectReason {
+        /// Non-string method, invalid base64, or an unroutable body shape.
+        static let malformed = "malformed"
+        /// Payload over `maxInboundPayloadBytes`.
+        static let oversized = "oversized"
+        /// No service registered under the requested name.
+        static let noService = "no-service"
+        /// Method not declared in the schema allowlist.
+        static let undeclared = "undeclared"
+        /// Method outside this module's restricted subset.
+        static let restricted = "restricted"
     }
 
     /// Fixed instruction bodies; runtime values travel in arguments.
     public enum InstructionBodies {
         /// `window.__resolveRpc(id, bytes)` — TS→Swift RPC reply.
         public static let resolveRpcBody = "window.__resolveRpc(id, bytes)"
+        /// `window.__rejectRpc(id, message, reason)` — TS→Swift RPC error reply.
+        public static let rejectRpcBody = "window.__rejectRpc(id, message, reason)"
         /// `window.__dispatchCallback(method, bytes)` — Swift→TS push.
         public static let dispatchCallbackBody = "window.__dispatchCallback(method, bytes)"
     }
@@ -308,23 +346,28 @@ public final class WKWebViewBridge: NSObject, WKScriptMessageHandler {
         let idValue = body["id"]
         let methodValue = body["method"]
         let bytesValue = body["bytes"]
+        let bytesCoercion = Self.coerceBytes(bytesValue)
         guard let id = Self.coerceId(idValue),
-              let method = methodValue as? String,
-              let bytes = Self.coerceBytes(bytesValue) else {
-            // Unwrap optionals to log actual runtime types.
-            let idType = idValue.map { String(describing: type(of: $0)) } ?? "nil"
-            let methodType = methodValue.map { String(describing: type(of: $0)) } ?? "nil"
-            let bytesType = bytesValue.map { String(describing: type(of: $0)) } ?? "nil"
-            let keys = body.keys.sorted().joined(separator: ",")
-            let bytesDesc: String
-            if let nsObj = bytesValue as? NSObject, let desc = Optional(nsObj.description) {
-                bytesDesc = String(desc.prefix(60))
-            } else {
-                bytesDesc = "-"
-            }
-            BridgeLog.error("WKWebViewBridge: malformed RPC keys=[\(keys)] idType=\(idType) methodType=\(methodType) bytesType=\(bytesType) bytesDesc=\(bytesDesc)")
+              let methodRaw = methodValue as? String,
+              case .ok(let bytes) = bytesCoercion else {
+            // A routable id rejects the pending RPC fast (invalid base64,
+            // Oversized payload, non-string method) instead of leaving the
+            // Page hanging for the full TS timeout; an unroutable id can
+            // Only be dropped — the page is broken and would time out anyway.
+            self.rejectMalformedRpc(
+                body: body,
+                idValue: idValue,
+                methodValue: methodValue,
+                bytesValue: bytesValue,
+                bytesCoercion: bytesCoercion
+            )
             return
         }
+
+        // `method` originates from the remotely-updatable page: cap it before
+        // It is echoed into JS replies and the unified log (mirrors
+        // `JsRuntimeErrorMessageHandler`'s 4096-char cap).
+        let method = String(methodRaw.prefix(Constants.maxMethodLength))
 
         let fqnParts = method.split(
             separator: ".",
@@ -332,7 +375,7 @@ public final class WKWebViewBridge: NSObject, WKScriptMessageHandler {
             omittingEmptySubsequences: false
         )
         guard fqnParts.count == 2 else {
-            self.replyError(id: id, method: method)
+            self.replyError(id: id, method: method, reason: RejectReason.malformed)
             return
         }
         let serviceName = String(fqnParts[0])
@@ -340,7 +383,7 @@ public final class WKWebViewBridge: NSObject, WKScriptMessageHandler {
 
         guard let service = services[serviceName] else {
             BridgeLog.error("WKWebViewBridge: no service registered for \"\(serviceName)\"")
-            self.replyError(id: id, method: method)
+            self.replyError(id: id, method: method, reason: RejectReason.noService)
             return
         }
 
@@ -350,7 +393,7 @@ public final class WKWebViewBridge: NSObject, WKScriptMessageHandler {
             BridgeLog.error(
                 "WKWebViewBridge: rejected undeclared method \"\(methodName)\" on service \"\(serviceName)\""
             )
-            self.replyError(id: id, method: method)
+            self.replyError(id: id, method: method, reason: RejectReason.undeclared)
             return
         }
 
@@ -360,7 +403,7 @@ public final class WKWebViewBridge: NSObject, WKScriptMessageHandler {
             BridgeLog.error(
                 "WKWebViewBridge: rejected \"\(methodName)\" on \"\(serviceName)\" — outside this module's subset"
             )
-            self.replyError(id: id, method: method)
+            self.replyError(id: id, method: method, reason: RejectReason.restricted)
             return
         }
 
@@ -390,90 +433,79 @@ public final class WKWebViewBridge: NSObject, WKScriptMessageHandler {
         }
     }
 
-    /// Coerces RPC `bytes` field to `Data`.
-    private static func coerceBytes(_ value: Any?) -> Data? {
-        guard let coerced = coerceBytesUnbounded(value),
-              coerced.count <= Constants.maxInboundPayloadBytes else {
-            return nil
-        }
-        return coerced
+    /// Outcome of coercing the RPC `bytes` field: the decoded payload, or
+    /// the reject classification when it cannot be accepted. Produced once
+    /// per message so the reject path never re-decodes the payload.
+    private enum BytesCoercion {
+        case ok(Data)
+        case oversized
+        case malformed
     }
 
-    /// Unbounded byte-coercion (no payload-size check); see `coerceBytes`.
-    private static func coerceBytesUnbounded(_ value: Any?) -> Data? {
+    /// Coerces RPC `bytes` field to `Data`.
+    private static func coerceBytes(_ value: Any?) -> BytesCoercion {
         switch value {
         case let data as Data:
-            return data
-        case let dict as NSDictionary:
-            // JS `Uint8Array` may bridge as indexed dictionary.
-            return data(fromIndexedDictionary: dict)
-        case let numbers as [NSNumber]:
-            // Common Uint8Array bridging path.
-            let bytes = numbers.compactMap { UInt8(exactly: $0.intValue) }
-            return bytes.count == numbers.count ? Data(bytes) : nil
-        case let ints as [Int]:
-            // Support non-NSNumber numeric arrays.
-            let bytes = ints.compactMap { UInt8(exactly: $0) }
-            return bytes.count == ints.count ? Data(bytes) : nil
-        case let anyArray as [Any]:
-            // Catch-all for heterogeneous numeric arrays.
-            return data(fromAnyArray: anyArray)
-        default:
-            return nil
-        }
-    }
-
-    /// Reassembles bytes from index-keyed dictionary.
-    private static func data(fromIndexedDictionary dict: NSDictionary) -> Data? {
-        let indexed = dict.allKeys.compactMap { key -> (Int, UInt8)? in
-            let index: Int
-            switch key {
-            case let intValue as Int:
-                index = intValue
-            case let number as NSNumber:
-                index = number.intValue
-            case let stringKey as String:
-                guard let parsed = Int(stringKey) else { return nil }
-                index = parsed
-            default:
-                return nil
+            // Direct `Data` delivery (test seam / alternate bridging).
+            return data.count <= Constants.maxInboundPayloadBytes ? .ok(data) : .oversized
+        case let base64 as String:
+            // JS `rpc.postMessage` ships the payload as a base64 string
+            // (see `bytesToBase64` in `bridgeBytes.ts`), mirroring the
+            // reply direction and avoiding the indexed-dictionary bridging
+            // of raw `Uint8Array`s.
+            guard base64.utf8.count <= Constants.maxInboundBase64Length else {
+                // Cannot decode within the cap; skip the allocation.
+                return .oversized
             }
-            guard let byte = byteValue(dict[key]) else { return nil }
-            return (index, byte)
-        }
-        guard indexed.count == dict.count else { return nil }
-        let sorted = indexed.sorted { $0.0 < $1.0 }
-        guard sorted.indices.allSatisfy({ sorted[$0].0 == $0 }) else { return nil }
-        return Data(sorted.map { $0.1 })
-    }
-
-    /// Coerces heterogeneous numeric array to `Data`.
-    private static func data(fromAnyArray array: [Any]) -> Data? {
-        let bytes = array.compactMap { element -> UInt8? in
-            switch element {
-            case let number as NSNumber:
-                return UInt8(exactly: number.intValue)
-            case let intValue as Int:
-                return UInt8(exactly: intValue)
-            default:
-                return nil
-            }
-        }
-        return bytes.count == array.count ? Data(bytes) : nil
-    }
-
-    /// Coerces a single numeric value to `UInt8`.
-    private static func byteValue(_ value: Any?) -> UInt8? {
-        switch value {
-        case let number as NSNumber:
-            return UInt8(exactly: number.intValue)
-        case let intValue as Int:
-            return UInt8(exactly: intValue)
-        case let stringValue as String:
-            return Int(stringValue).flatMap { UInt8(exactly: $0) }
+            guard let data = Data(base64Encoded: base64) else { return .malformed }
+            return data.count <= Constants.maxInboundPayloadBytes ? .ok(data) : .oversized
         default:
-            return nil
+            return .malformed
         }
+    }
+
+    /// Page-controlled `method` label for reject replies: the raw value when
+    /// it is a String (capped), a placeholder otherwise.
+    private static func methodLabel(_ value: Any?) -> String {
+        guard let method = value as? String else { return "<malformed>" }
+        return String(method.prefix(Constants.maxMethodLength))
+    }
+
+    /// Logs malformed-body diagnostics and rejects the RPC for a routable
+    /// id (invalid base64, oversized payload, non-string method).
+    private func rejectMalformedRpc(
+        body: [String: Any],
+        idValue: Any?,
+        methodValue: Any?,
+        bytesValue: Any?,
+        bytesCoercion: BytesCoercion
+    ) {
+        // Unwrap optionals to log actual runtime types.
+        let idType = idValue.map { String(describing: type(of: $0)) } ?? "nil"
+        let methodType = methodValue.map { String(describing: type(of: $0)) } ?? "nil"
+        let bytesType = bytesValue.map { String(describing: type(of: $0)) } ?? "nil"
+        let keys = body.keys.sorted().joined(separator: ",")
+        let bytesDesc: String
+        if let nsObj = bytesValue as? NSObject, let desc = Optional(nsObj.description) {
+            bytesDesc = String(desc.prefix(60))
+        } else {
+            bytesDesc = "-"
+        }
+        BridgeLog.error("WKWebViewBridge: malformed RPC keys=[\(keys)] idType=\(idType) methodType=\(methodType) bytesType=\(bytesType) bytesDesc=\(bytesDesc)")
+        guard let id = Self.coerceId(idValue) else { return }
+        // `oversized` distinguishes the user-facing cap violation; every
+        // Other shape (bad base64, non-string method, bad id with fine
+        // Bytes) is a `malformed` body.
+        let reason: String
+        switch bytesCoercion {
+        case .oversized:       reason = RejectReason.oversized
+        case .malformed, .ok:  reason = RejectReason.malformed
+        }
+        self.replyError(
+            id: id,
+            method: Self.methodLabel(methodValue),
+            reason: reason
+        )
     }
 
     // MARK: - Reply path
@@ -486,13 +518,21 @@ public final class WKWebViewBridge: NSObject, WKScriptMessageHandler {
         )
     }
 
-    private func replyError(id: Int, method: String) {
-        // Empty bytes signal error path.
+    private func replyError(id: Int, method: String, reason: String) {
+        // Bridge-level rejections (unregistered service, allowlist denial,
+        // Restricted method, malformed payload) reject the pending RPC: an
+        // Empty `Data` reply is a legitimate `EmptyValue` success, so the
+        // Page could not tell a failure apart from an empty result. The
+        // `reason` code lets the page tell a user-facing situation (e.g. an
+        // Oversized payload) from a programming error (e.g. an undeclared
+        // Method).
         invokeOnMain(
-            body: InstructionBodies.resolveRpcBody,
-            arguments: ["id": id, "bytes": Self.bytesArgument(Data())]
+            body: InstructionBodies.rejectRpcBody,
+            arguments: ["id": id, "message": method, "reason": reason]
         )
-        BridgeLog.error("WKWebViewBridge: rpc id=\(id) method=\"\(method)\" failed")
+        BridgeLog.error(
+            "WKWebViewBridge: rpc id=\(id) method=\"\(method)\" reason=\(reason) failed"
+        )
     }
 
     /// Invokes structured JS call on the main thread.
