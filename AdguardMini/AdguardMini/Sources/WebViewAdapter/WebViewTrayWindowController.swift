@@ -8,7 +8,8 @@
 //
 
 import AppKit
-import os
+
+import AML
 
 // MARK: - Constants
 
@@ -29,12 +30,6 @@ final class WebViewTrayWindowController: StatusBarItemControllerDelegate,
     var userSettingsManager: UserSettingsManager!
 
     private var trayIconTemporarilyShown = false
-
-    /// Logger for tray lifecycle diagnostics.
-    private let logger = Logger(
-        subsystem: Subsystem.mainApp.name,
-        category: "WebViewTrayWindowController"
-    )
 
     var statusBarItemIsHidden: Bool {
         get { !self.userSettingsManager.showInMenuBar }
@@ -68,16 +63,22 @@ final class WebViewTrayWindowController: StatusBarItemControllerDelegate,
         self.webViewAppsController.beginShowIntent(for: .tray)
         defer { self.webViewAppsController.endShowIntent(for: .tray) }
 
-        if !self.userSettingsManager.showInMenuBar {
+        if self.statusBarItemIsHidden {
             self.trayIconTemporarilyShown = true
+            // Reveal the icon even when the setting is off; the Big Sur delay
+            // Below lays it out so the popup anchors under its real slot.
+            await self.statusBarItemController.showTrayIconTemporarily()
+        } else {
+            await self.statusBarItemController.updateTrayIconVisibility(isHidden: false)
         }
-        await self.statusBarItemController.updateTrayIconVisibility(isHidden: false)
 
         if self.webViewAppsController.host(for: .tray) == nil {
             self.webViewAppsController.prepareHost(for: .tray)
         }
         guard let host = self.webViewAppsController.host(for: .tray) else {
-            logger.error("showTrayWindow — tray host missing after prepare, aborting")
+            LogWarn("showTrayWindow — tray host missing after prepare, aborting")
+            // Abort skips the hide callback, so restore the revealed icon here.
+            await self.restoreTrayIconVisibilityIfNeeded()
             return
         }
         if self.statusBarItemIsHidden || self.trayIconTemporarilyShown {
@@ -114,10 +115,10 @@ final class WebViewTrayWindowController: StatusBarItemControllerDelegate,
             self.webViewAppsController.beginShowIntent(for: .tray)
             defer { self.webViewAppsController.endShowIntent(for: .tray) }
 
-            logger.error("tray click received — hostExists=\(self.webViewAppsController.host(for: .tray) != nil)")
+            LogDebug("tray click received — hostExists=\(self.webViewAppsController.host(for: .tray) != nil)")
             // Toggle an already-visible tray closed.
             if let host = webViewAppsController.host(for: .tray), host.window.isVisible {
-                logger.error("tray already visible — hiding")
+                LogDebug("tray already visible — hiding")
                 host.hide()
                 await self.restoreTrayIconVisibilityIfNeeded()
                 return
@@ -125,12 +126,12 @@ final class WebViewTrayWindowController: StatusBarItemControllerDelegate,
 
             // Lazily create host on first click.
             if webViewAppsController.host(for: .tray) == nil {
-                logger.error("tray host missing — creating via show(.tray)")
+                LogDebug("tray host missing — creating via show(.tray)")
                 webViewAppsController.show(.tray)
             }
 
             guard let host = webViewAppsController.host(for: .tray) else {
-                logger.error("tray host still nil after show — aborting")
+                LogWarn("tray host still nil after show — aborting")
                 return
             }
             await self.showTrayNearIcon(host: host)
@@ -148,7 +149,9 @@ final class WebViewTrayWindowController: StatusBarItemControllerDelegate,
         guard iconRect != .zero,
               let screenRect = (NSScreen.screens.first { $0.frame.intersects(iconRect) }
                                 ?? NSScreen.screens.first)?.frame else {
-            logger.error("showTrayNearIcon — no usable screen/icon rect, aborting")
+            LogWarn("showTrayNearIcon — no usable screen/icon rect, aborting")
+            // The popup will not appear; restore any revealed icon.
+            await self.restoreTrayIconVisibilityIfNeeded()
             return
         }
         var panelRect = host.window.frame
@@ -158,8 +161,8 @@ final class WebViewTrayWindowController: StatusBarItemControllerDelegate,
             panelRect.origin.x = iconRect.maxX - panelRect.width
         }
         host.window.setFrame(panelRect, display: true)
-        logger.error("showTrayNearIcon — calling host.show() frame=\(panelRect.debugDescription, privacy: .public)")
+        LogDebug("Calling host.show() frame=\(panelRect.debugDescription)")
         host.show()
-        logger.error("showTrayNearIcon — host.show() returned, window.isVisible=\(host.window.isVisible)")
+        LogDebug("Host.show() returned, window.isVisible=\(host.window.isVisible)")
     }
 }

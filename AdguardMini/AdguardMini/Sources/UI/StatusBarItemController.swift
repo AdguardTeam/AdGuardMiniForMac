@@ -31,6 +31,7 @@ protocol StatusBarItemController {
     func updateTrayIconVisibility(isHidden: Bool) async
     func updateTrayIconVisibilityBySetting() async
     func updateStatusBarIcon() async
+    func showTrayIconTemporarily() async
 
     func getTrayIconRect() async -> CGRect
 
@@ -103,27 +104,76 @@ final class StatusBarItemControllerImpl: StatusBarItemController {
             && self.isTrayIconVisibilityAllowed
     }
 
+    /// Reveals the status-bar icon even when the "show icon in menu bar"
+    /// setting is off, so the tray popup can anchor under a real menu-bar
+    /// slot. The icon is hidden again when the popup closes. It is never
+    /// shown while first-run onboarding is in progress.
+    @MainActor
+    func showTrayIconTemporarily() async {
+        await self.updateStatusBarIcon()
+        self.statusBarItemView?.isVisible = self.isTrayIconVisibilityAllowed
+    }
+
     @MainActor
     func getTrayIconRect() async -> CGRect {
-        if let rect = self.statusBarItemView?.globalRect, rect.width > 0, rect.height > 0 {
+        // Fast path: the icon is already laid out.
+        if let rect = self.currentTrayIconRect {
             return rect
         }
-        // Right after launch (for example after an app update) the status item
-        // May not be laid out yet. Wait a short moment and retry, so the popup
-        // Opens under the real icon position instead of the screen corner.
+        // An icon hidden by the user setting has no anchor and no layout to
+        // Catch up on; bail before sleeping so a re-show cannot guess a
+        // Screen-edge slot.
+        guard self.isTrayIconItemVisible else {
+            return .zero
+        }
+
+        // A visible icon can lag behind layout for a moment (fresh launch or
+        // An app update) or fail to get a slot when the menu bar is full.
+        // Wait briefly and retry so the popup opens under its real position.
         try? await Task.sleep(seconds: 0.25)
-        if let rect = self.statusBarItemView?.globalRect, rect.width > 0, rect.height > 0 {
+        if let rect = self.currentTrayIconRect {
             return rect
         }
-        // Safe fallback: center under the menu bar instead of the screen corner.
-        let screenRect = NSScreen.screens[0].frame
+
+        // Hiding can race the sleep above, so re-check before falling back.
+        guard self.isTrayIconItemVisible else {
+            return .zero
+        }
+        // Top-right anchor under the menu bar. Only a visible icon reaches
+        // This fallback — one whose slot is still missing (no room in the
+        // Tray, layout pending). `showTrayNearIcon`'s right-edge clamp
+        // Right-aligns the popup.
+        guard let screen = NSScreen.screens.first else {
+            // No displays: `.zero` matches `showTrayNearIcon`'s hard bail.
+            return .zero
+        }
+        let screenRect = screen.frame
         let size = CGSize(width: NSStatusItem.squareLength, height: NSStatusBar.system.thickness)
         return CGRect(
-            x: (screenRect.width - size.width) / 2,
+            x: screenRect.maxX - size.width,
             y: screenRect.maxY - size.height,
             width: size.width,
             height: size.height
         )
+    }
+
+    /// Whether the status-bar item exists and is currently on screen.
+    @MainActor
+    private var isTrayIconItemVisible: Bool {
+        self.statusBarItemView?.isVisible ?? false
+    }
+
+    /// The status-bar icon's current on-screen rect, or `nil` when it is not
+    /// visible or not laid out. A hidden icon's stale placeholder frame near
+    /// the screen origin must never anchor the popup.
+    @MainActor
+    private var currentTrayIconRect: CGRect? {
+        guard self.isTrayIconItemVisible,
+              let rect = self.statusBarItemView?.globalRect,
+              rect.width > 0, rect.height > 0 else {
+            return nil
+        }
+        return rect
     }
 
     func openContextMenu(_ sender: NSStatusBarButton) {
