@@ -616,6 +616,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    @MainActor
     private func shouldProcessQuit() async -> Bool {
         switch self.userSettingsManager.quitReaction {
         case .ask:
@@ -628,11 +629,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self.firstExitTry = false
                 self.webViewAppsController.hide(.settings)
                 // Only swallow the first quit when an app window is actually
-                // Visible; if nothing is open (settings closed + tray
-                // Dismissed) the first Cmd+Q proceeds to the quit alert
-                // Instead of silently doing nothing.
-                let hasVisibleWindows = self.hasVisibleImportantApps()
-                if hasVisibleWindows {
+                // Visible; with nothing open the first quit proceeds instead
+                // Of hiding and silently doing nothing.
+                if self.hasVisibleImportantApps() {
                     return false
                 }
             }
@@ -643,11 +642,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// Whether any module window is currently visible (used to decide if the
     /// first quit should just hide, per `quitReaction == .keepRunning`).
+    @MainActor
     private func hasVisibleImportantApps() -> Bool {
-        let moduleIds: [ModuleId] = [.tray, .settings, .onboarding, .userrules]
-        return moduleIds.contains { module in
-            self.webViewAppsController.host(for: module)?.window.isVisible ?? false
-        }
+        self.webViewAppsController.hasAnyVisibleImportantWindow()
     }
 
     /// This method checks if the currentAppleEvent event is a quit event and there is no system quit event, and the sender is the "com.apple.dock" app.

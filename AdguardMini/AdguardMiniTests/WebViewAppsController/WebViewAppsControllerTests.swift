@@ -124,4 +124,26 @@ final class WebViewAppsControllerTests: XCTestCase {
 
         XCTAssertEqual(settingsHost?.state, .shown)
     }
+
+    /// The visible-windows scan must see a shown settings window and report
+    /// False once it is hidden. The quit path uses this scan to decide
+    /// Whether the first keep-running quit should be swallowed.
+    @MainActor
+    func testHasAnyVisibleImportantWindow_TracksSettingsVisibility() {
+        let controller = makeController()
+        controller.show(.settings)
+        controller.host(for: .settings)?.didFinishNavigation()
+
+        XCTAssertTrue(controller.hasAnyVisibleImportantWindow())
+
+        controller.hide(.settings)
+        XCTAssertFalse(controller.hasAnyVisibleImportantWindow())
+    }
+
+    /// A controller with no hosts reports no visible windows.
+    @MainActor
+    func testHasAnyVisibleImportantWindow_IsFalseWithNoHosts() {
+        let controller = makeController()
+        XCTAssertFalse(controller.hasAnyVisibleImportantWindow())
+    }
 }

@@ -163,6 +163,22 @@ final class WebViewAppsController: ChildWindowControlling {
         self.hosts[module]?.hide()
     }
 
+    /// Whether any of the app's own module windows is currently visible.
+    ///
+    /// Main-actor-bound because it reads `NSWindow.isVisible`, which AppKit
+    /// Confines to the main thread. The app's quit path consults this to
+    /// Decide whether the first quit should just hide the windows.
+    @MainActor
+    func hasAnyVisibleImportantWindow() -> Bool {
+        // The user-rules editor is a child window kept in `childWindows`, so
+        // `host(for: .userrules)` is always nil. It is parented to settings,
+        // Which stays visible underneath it, so settings covers its visibility.
+        let moduleIds: [ModuleId] = [.tray, .settings, .onboarding]
+        return moduleIds.contains { module in
+            self.host(for: module)?.window.isVisible ?? false
+        }
+    }
+
     /// Destroys module host if present (no-op if missing), tearing down the
     /// Window, WKWebView and WebContent process and dropping the host from
     /// The module map.
