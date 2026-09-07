@@ -29,6 +29,22 @@ type ButtonProps = {
     className?: string;
     disabled?: boolean;
     ariaLabel?: string;
+    /**
+     * Hides the button from assistive tech — for purely visual affordances
+     * (e.g. scroll arrows) that duplicate what a screen reader gets for free.
+     * Pair with `tabIndex={-1}` to also drop it from the tab order.
+     */
+    ariaHidden?: boolean;
+    /**
+     * Id of the element describing the button — for an action that sits inside
+     * a sentence, so the sentence is announced along with it.
+     *
+     * `aria-describedby`, not `aria-labelledby`: a name computed from an
+     * ancestor skips the element being named, which would drop the button's
+     * own text.
+     */
+    ariaDescribedby?: string;
+    tabIndex?: number;
     small?: boolean;
     div?: boolean;
 };
@@ -46,6 +62,9 @@ export function Button({
     onClick,
     disabled,
     ariaLabel,
+    ariaHidden,
+    ariaDescribedby,
+    tabIndex,
     small,
     div,
     ...restProps
@@ -56,6 +75,8 @@ export function Button({
     if (div) {
         return (
             <div
+                aria-describedby={ariaDescribedby}
+                aria-hidden={ariaHidden}
                 aria-label={ariaLabel}
                 className={cx(
                     s.Button,
@@ -64,6 +85,7 @@ export function Button({
                     className,
                 )}
                 disabled={disabled}
+                tabIndex={tabIndex}
                 type="button"
                 onClick={onClick}
                 {...restProps}
@@ -75,6 +97,8 @@ export function Button({
     }
     return (
         <button
+            aria-describedby={ariaDescribedby}
+            aria-hidden={ariaHidden}
             aria-label={ariaLabel}
             className={cx(
                 s.Button,
@@ -83,6 +107,7 @@ export function Button({
                 className,
             )}
             disabled={disabled}
+            tabIndex={tabIndex}
             type="button"
             onClick={onClick}
             {...restProps}

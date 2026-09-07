@@ -85,9 +85,15 @@ function LicenseTitleComponent() {
     };
 
     if ((!isFreeware && !isLicenseBlockedAppId) && actionType) {
+        const label = getLicenseStatusActionLabel();
+        // Only this branch, and only off the App Store, reaches
+        // `window.OpenLinkInBrowser` above — the MAS case opens the App
+        // Store's own subscription management instead, so it gets no hint.
+        const opensInBrowser = actionType === LicenseStatusActionType.manageLicense && !isAppStoreSubscription;
         elements.push({
             action: licenseStatusActionHandler,
-            text: getLicenseStatusActionLabel(),
+            text: label,
+            ariaLabel: opensInBrowser ? `${label}, ${translate('settings.opens.in.browser.aria')}` : undefined,
         });
     }
 

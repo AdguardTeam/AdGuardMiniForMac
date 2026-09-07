@@ -95,30 +95,65 @@ declare global {
 export const i18nInstance = createI18nInstance(messages, 'en');
 
 /**
+ * BCP 47 tags for the locale keys whose internal spelling is not one already.
+ * Every other key in `messages` (`en`, `de`, `ru`, ...) is a valid tag as is.
+ */
+const BCP_47_TAGS: Partial<Record<Locale, string>> = {
+    pt_pt: 'pt-PT',
+    pt_br: 'pt-BR',
+    zh_cn: 'zh-Hans',
+    zh_tw: 'zh-Hant',
+    // The bundled Serbian translation is the Latin-script one (`sr-Latn.json`).
+    sr: 'sr-Latn',
+};
+
+/**
+ * Resolves an incoming language code to a bundled locale, or `undefined` when
+ * nothing matches — in which case the current locale is left alone.
+ *
+ * @param language - language code
+ */
+function resolveLocale(language: string): Locale | undefined {
+    const locale = language.toLowerCase();
+    if (messages[language as keyof typeof messages]) {
+        return locale as Locale;
+    }
+    if (locale.includes('_')) {
+        const [lang] = locale.split('_');
+        return messages[lang as keyof typeof messages] ? lang as Locale : undefined;
+    }
+    if (locale.includes('-')) {
+        const underscored = locale.replace('-', '_');
+        if (messages[underscored as keyof typeof messages]) {
+            return underscored as Locale;
+        }
+        const [lang] = locale.split('-');
+        return messages[lang as keyof typeof messages] ? lang as Locale : undefined;
+    }
+    return 'en' as Locale;
+}
+
+/**
  * Update current locale in translator library with custom function
  *
  * @param language - language code
  */
 export function updateLanguage(language: string) {
-    const locale = language.toLowerCase();
-    if (messages[language as keyof typeof messages]) {
-        i18nInstance.updateLanguage(locale as Locale);
-    } else if (locale.includes('_')) {
-        const [lang] = locale.split('_');
-        if (messages[lang as keyof typeof messages]) {
-            i18nInstance.updateLanguage(lang as Locale);
-        }
-    } else if (locale.includes('-')) {
-        const [lang] = locale.split('-');
-        if (messages[locale.replace('-', '_') as keyof typeof messages]) {
-            const loc = locale.replace('-', '_') as Locale;
-            i18nInstance.updateLanguage(loc);
-        } else if (messages[lang as keyof typeof messages]) {
-            i18nInstance.updateLanguage(lang as Locale);
-        }
-    } else {
-        i18nInstance.updateLanguage('en' as Locale);
+    const locale = resolveLocale(language);
+    if (!locale) {
+        return;
     }
+
+    i18nInstance.updateLanguage(locale);
+
+    // Screen readers pick the speech voice from `lang`, and the entry pages
+    // ship a hardcoded `lang="en"` — without this every localization is read
+    // aloud with an English voice.
+    //
+    // `dir` is deliberately left alone: the UI has no RTL styles, so flipping
+    // it for ar/fa/he would break the layout without helping VoiceOver, which
+    // reads RTL text from the Unicode bidi properties either way.
+    document.documentElement.lang = BCP_47_TAGS[locale] ?? locale;
 }
 
 /**

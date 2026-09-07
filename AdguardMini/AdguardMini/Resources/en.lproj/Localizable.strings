@@ -105,3 +105,12 @@
 
 /* User rules editor window title. */
 "user_rules_editor_title" = "User rules editor";
+
+/* VoiceOver name of the menu bar tray window. */
+"window_accessibility_title_tray" = "AdGuard Mini Tray";
+
+/* VoiceOver name of the settings window. */
+"window_accessibility_title_settings" = "AdGuard Mini Settings";
+
+/* VoiceOver name of the onboarding window. */
+"window_accessibility_title_onboarding" = "AdGuard Mini Onboarding";

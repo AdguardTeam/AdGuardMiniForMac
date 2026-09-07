@@ -223,6 +223,7 @@ function UserRulesComponent() {
                 >
                     {!isScrolling && (
                         <Button
+                            ariaLabel={`${translate('user.rules.how.create.rule')}, ${translate('settings.opens.in.browser.aria')}`}
                             className={s.UserRules_howTo}
                             type="text"
                             onClick={() => {

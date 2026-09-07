@@ -156,6 +156,10 @@ export function useStoriesConfig(): StoryInfo[] {
             icon: 'adblocking',
             style: 'redIcon',
             text: translate.plural('tray.story.statistics', adsBlocked),
+            // Same string, but with the number the card shows in `content`.
+            ariaText: translate.plural('tray.story.statistics.title', adsBlocked, {
+                adsBlocked: formatLocalizedNumber(adsBlocked, language),
+            }),
             content: <Text className={cx(theme.color.red, theme.layout.marginBottomXxs)} type="h5">{formatLocalizedNumber(adsBlocked, language)}</Text>,
             storyConfig: {
                 id: 'statistics',
@@ -186,6 +190,9 @@ export function useStoriesConfig(): StoryInfo[] {
             icon: 'tracking',
             style: 'orangeIcon',
             text: translate.plural('tray.story.statistics.privacy', privacyBlocked),
+            ariaText: translate.plural('tray.story.statistics.privacy.title', privacyBlocked, {
+                trackersBlocked: formatLocalizedNumber(privacyBlocked, language),
+            }),
             content: <Text className={cx(theme.color.orange, theme.layout.marginBottomXxs)} type="h5">{formatLocalizedNumber(privacyBlocked, language)}</Text>,
             storyConfig: {
                 id: 'statisticsPrivacy',

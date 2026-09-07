@@ -2,6 +2,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { useId } from 'preact/hooks';
+
+import { useFocusOnMount } from 'Common/hooks/useFocusOnMount';
 import theme from 'Theme';
 import { Button, Checkbox, Text } from 'UILib';
 
@@ -51,11 +54,17 @@ export function Step({
     secondaryButton,
     checkbox,
 }: StepProps) {
+    const titleId = useId();
+    const descId = useId();
+
+    useFocusOnMount(titleId);
+
     return (
         <div className={s.Step_container}>
             <StepHeader />
-            <div>
-                {image && <img className={imageSmall ? s.Step_imageSmall : s.Step_image} src={image} />}
+            {/* The illustration and the Lottie animation are decorative. */}
+            <div aria-hidden>
+                {image && <img alt="" className={imageSmall ? s.Step_imageSmall : s.Step_image} src={image} />}
                 {lottie && elLottieRef && (
                     <div
                         ref={elLottieRef}
@@ -64,8 +73,17 @@ export function Step({
                 )}
             </div>
             <div className={s.Step_content}>
-                <Text className={s.Step_content_title} type="h4">{title}</Text>
-                <Text className={s.Step_content_desc} type="t1">{description}</Text>
+                {/* Heading names itself plus the description — see `Start`. */}
+                <Text
+                    ariaLabelledby={`${titleId} ${descId}`}
+                    className={s.Step_content_title}
+                    id={titleId}
+                    tabIndex={0}
+                    type="h4"
+                >
+                    {title}
+                </Text>
+                <Text className={s.Step_content_desc} id={descId} type="t1">{description}</Text>
                 {checkbox && (
                     <Checkbox
                         checked={checkbox.checked}

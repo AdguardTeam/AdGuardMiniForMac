@@ -4,7 +4,7 @@
 
 import { clamp } from '@adg/webview-utils-kit';
 import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'preact/hooks';
 import { Fragment } from 'preact/jsx-runtime';
 
 import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
@@ -138,6 +138,19 @@ function HomeComponent() {
 
     const ref = useRef<HTMLDivElement>(null);
 
+    /** Names the stories strip region after its visible "For you" caption. */
+    const storiesTitleId = useId();
+
+    /** Focus target when the tray opens or a story closes — see effects below. */
+    const protectionTitleId = useId();
+
+    // Describes the "Fix it" action with the sentence it sits in. It has to be
+    // `aria-describedby`, not `aria-labelledby`: a name computed from an
+    // ancestor skips the element being named, so labelling by the paragraph
+    // dropped the word "Fix it" itself. As a description the sentence is read
+    // after the button's own text instead.
+    const statusTextId = useId();
+
     const [scrollIsAvailable, setScrollIsAvailable] = useState({
         left: false,
         right: stories.length > 2,
@@ -199,6 +212,34 @@ function HomeComponent() {
         }
     }, [closeStories, settings.trayWindowVisible]);
 
+    // On open, focus lands on the first tab stop — the Updates icon button —
+    // which tells the user nothing about the app's state. Move it to the
+    // protection heading instead: VoiceOver then announces "Protection is
+    // enabled", and Tab from there goes straight to the switch below.
+    // The heading rather than the switch itself, so a stray Space cannot
+    // toggle protection the moment the tray opens.
+    useEffect(() => {
+        if (!settings.trayWindowVisible || isLoading || !traySettings) {
+            return;
+        }
+        document.getElementById(protectionTitleId)?.focus();
+    }, [settings.trayWindowVisible, isLoading, traySettings, protectionTitleId]);
+
+    // Closing a story tears down the overlay that held focus, which would
+    // otherwise drop it on `document.body` and leave the user nowhere. Return
+    // it to the same heading the tray opens on.
+    const wasStoryOpen = useRef(false);
+    useEffect(() => {
+        if (selectedStoryId) {
+            wasStoryOpen.current = true;
+            return;
+        }
+        if (wasStoryOpen.current) {
+            wasStoryOpen.current = false;
+            document.getElementById(protectionTitleId)?.focus();
+        }
+    }, [selectedStoryId, protectionTitleId]);
+
     if (!traySettings) {
         return (
             <div className={s.Home_loader}>
@@ -223,8 +264,13 @@ function HomeComponent() {
             return translate('tray.home.title.protection.extensions.disabled', {
                 link: (text: string) => {
                     return (
+                        // "Fix it" inside the status line is a real action —
+                        // it opens Safari's extension preferences.
                         <div
+                            aria-describedby={statusTextId}
                             className={s.Home_link}
+                            role="button"
+                            tabIndex={0}
                             onClick={() => {
                                 telemetry.trackEvent(TrayEvent.FixItClick);
                                 openSafariPreferences();
@@ -239,7 +285,7 @@ function HomeComponent() {
 
         if (allExtensionsDisabled) {
             return translate('tray.home.title.protection.extensions.all.disabled', {
-                link: (text: string) => (<div className={s.Home_link} onClick={openSafariPreferences}>{text}</div>),
+                link: (text: string) => (<div aria-describedby={statusTextId} className={s.Home_link} role="button" tabIndex={0} onClick={openSafariPreferences}>{text}</div>),
             });
         }
     };
@@ -286,12 +332,14 @@ function HomeComponent() {
                         isDarkTheme={effectiveTheme !== null && isDarkColorTheme(getColorTheme(effectiveTheme))}
                     />
                     <Button
+                        ariaLabel={translate('tray.updates')}
                         className={cx(theme.button.greenIcon, s.Home_header_update)}
                         icon="update"
                         type="icon"
                         onClick={navigateToUpdates}
                     />
                     <Button
+                        ariaLabel={translate('menu.settings')}
                         className={theme.button.greenIcon}
                         icon="settings"
                         type="icon"
@@ -309,16 +357,17 @@ function HomeComponent() {
                     </>
                 ) : (
                     <>
-                        <Text className={s.Home_title} type="h4">
+                        <Text className={s.Home_title} id={protectionTitleId} tabIndex={-1} type="h4">
                             {enabled ? translate('tray.home.title.protection.enabled') : translate('tray.home.title.protection.disabled')}
                         </Text>
-                        <Text className={cx(s.Home_status, !allExtensionsEnabled && s.Home_extensionsDisabled)} type="t2" div>
+                        <Text className={cx(s.Home_status, !allExtensionsEnabled && s.Home_extensionsDisabled)} id={statusTextId} type="t2" div>
                             {allExtensionsEnabled && (enabled ? translate('tray.home.title.protection.enabled.desc') : translate('tray.home.title.protection.disabled.desc'))}
                             {getDisabledExtensionsStatus()}
                         </Text>
                     </>
                 )}
                 <Switch
+                    ariaLabel={translate('tray.home.protection.switch')}
                     checked={enabled}
                     className={s.Home_switch}
                     icon
@@ -327,9 +376,17 @@ function HomeComponent() {
                 {stories.length > 0 && (
                     <>
                         <div className={s.Home_storiesControls}>
-                            <Text className={s.Home_storiesControls_title} type="t2">
+                            <Text className={s.Home_storiesControls_title} id={storiesTitleId} type="t2">
                                 {translate('tray.home.stories.title')}
                             </Text>
+                            {/*
+                              * The arrows are hidden from assistive tech on
+                              * purpose: they only scroll the strip visually.
+                              * A screen reader steps card to card and WebKit
+                              * auto-scrolls each one into view, so for it the
+                              * strip never "moves" — the arrows would be two
+                              * extra stops with no announceable effect.
+                              */}
                             {showStoriesNavigationArrows && (
                                 <>
                                     <Button
@@ -338,7 +395,9 @@ function HomeComponent() {
                                         icon="arrow_left"
                                         iconClassName={!scrollIsAvailable.left
                                             ? s.Home_storiesControls_button__disabled : theme.button.grayIcon}
+                                        tabIndex={-1}
                                         type="icon"
+                                        ariaHidden
                                         onClick={handleMoveStoriesCards}
                                     />
                                     <Button
@@ -350,7 +409,9 @@ function HomeComponent() {
                                         icon="arrow_left"
                                         iconClassName={!scrollIsAvailable.right
                                             ? s.Home_storiesControls_button__disabled : theme.button.grayIcon}
+                                        tabIndex={-1}
                                         type="icon"
+                                        ariaHidden
                                         onClick={handleMoveStoriesCards}
                                     />
                                 </>
@@ -358,7 +419,9 @@ function HomeComponent() {
                         </div>
                         <div
                             ref={ref}
+                            aria-labelledby={storiesTitleId}
                             className={s.Home_stories}
+                            role="region"
                             onScroll={handleStoriesCardsScroll}
                         >
                             <div className={s.Home_stories_container}>

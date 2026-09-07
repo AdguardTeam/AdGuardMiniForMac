@@ -2,6 +2,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { useId } from 'preact/hooks';
+
+import { useFocusOnMount } from 'Common/hooks/useFocusOnMount';
 import theme from 'Theme';
 import { Text } from 'UILib';
 
@@ -34,10 +37,26 @@ export function SettingsTitle({
     newLabel,
 }: SettingsTitleProps) {
     const doubleContextMenu = elements && reportBug;
+
+    // A new page mounts a new `SettingsTitle`, so focusing on mount is the
+    // same thing as focusing on navigation — without the router having to hunt
+    // for this heading in the document.
+    const titleId = useId();
+    useFocusOnMount(titleId);
+
     return (
         <div className={cx(s.SettingsTitle, maxTopPadding && s.SettingsTitle__maxTopPadding)}>
             <div className={cx(s.SettingsTitle_titleBlock, theme.layout.content)}>
-                <Text className={cx(!newLabel && s.SettingsTitle_title)} lineHeight="s" type="h4">{title}</Text>
+                {/* `tabIndex={-1}`: focusable programmatically, no tab stop. */}
+                <Text
+                    className={cx(!newLabel && s.SettingsTitle_title)}
+                    id={titleId}
+                    lineHeight="s"
+                    tabIndex={-1}
+                    type="h4"
+                >
+                    {title}
+                </Text>
                 {newLabel && (<div className={s.SettingsTitle_newLabel}><Text type="t2">New</Text></div>)}
                 {/* We have to use context menu twice due to on UserRules page
                 we have to show report bug and context menu separately */}

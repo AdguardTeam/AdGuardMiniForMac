@@ -34,6 +34,7 @@ import s from './Router.module.pcss';
  */
 function RouterComponent() {
     const { router } = useSettingsStore();
+
     let component = null;
     switch (router.currentPath) {
         case RouteName.safari_protection:

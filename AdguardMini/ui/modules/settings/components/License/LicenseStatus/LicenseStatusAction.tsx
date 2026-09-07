@@ -49,13 +49,18 @@ function LicenseStatusActionComponent() {
         }
     };
 
+    const label = getLicenseStatusActionLabel();
+    // This branch always calls `window.OpenLinkInBrowser` above.
+    const opensInBrowser = actionType === LicenseStatusActionType.manageLicense;
+
     return (
         <Button
+            ariaLabel={opensInBrowser ? `${label}, ${translate('settings.opens.in.browser.aria')}` : undefined}
             type="text"
             onClick={licenseStatusActionHandler}
         >
             <Text lineHeight="none" type="t2">
-                {getLicenseStatusActionLabel()}
+                {label}
             </Text>
         </Button>
     );

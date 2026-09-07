@@ -48,6 +48,7 @@ function EnableExtensionsControllerComponent() {
             containerClassName={s.EnableExtensionsController}
             privacyPolicyUrl={getTdsLink(TDS_PARAMS.privacy, RouteName.safari_protection)}
             useTheme={useTheme}
+            asDialog
             center
         />
     );

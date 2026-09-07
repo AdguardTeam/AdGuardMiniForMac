@@ -31,6 +31,7 @@ function StoryCardComponent({
     className,
     telemetryEvent,
     content,
+    ariaText,
     onHide,
 }: StoryCardProps) {
     const { telemetry } = useTrayStore();
@@ -48,11 +49,28 @@ function StoryCardComponent({
     }, [onHide]);
 
     return (
-        <div className={cx(s.StoryCard, s[`StoryCard__${style}`], className)} onClick={onClick}>
+        // The role sits on the card itself so it is the first tab stop and
+        // announces the story it opens; Hide is a separate stop right after.
+        // `aria-label` also stops the card from reading its own Hide caption
+        // as part of its name.
+        <div
+            aria-label={translate('tray.story.card.aria', { title: ariaText ?? text })}
+            className={cx(s.StoryCard, s[`StoryCard__${style}`], className)}
+            role="button"
+            tabIndex={0}
+            onClick={onClick}
+        >
             <div className={s.StoryCard_header}>
                 <Icon className={cx(s.StoryCard_icon, s[`StoryCard_icon__${style}`])} icon={icon} big />
                 {onHide && (
-                    <Text className={s.StoryCard_hideText} type="t3" onClick={handleHide}>
+                    <Text
+                        ariaLabel={translate('tray.story.hide.aria')}
+                        className={s.StoryCard_hideText}
+                        role="button"
+                        tabIndex={0}
+                        type="t3"
+                        onClick={handleHide}
+                    >
                         {translate('tray.story.hide')}
                     </Text>
                 )}

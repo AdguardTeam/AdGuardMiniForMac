@@ -46,7 +46,7 @@ function QuitReactionComponent() {
                 description={translate('settings.hardware.quit.reaction.desc')}
                 title={translate('settings.hardware.quit.reaction')}
             />
-            <div>
+            <div aria-label={translate('settings.hardware.quit.reaction')} role="radiogroup">
                 {quitReactions.map((reaction) => (
                     <Radio
                         key={reaction.value}

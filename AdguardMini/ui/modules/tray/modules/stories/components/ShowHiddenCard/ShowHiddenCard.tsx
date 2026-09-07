@@ -25,7 +25,7 @@ function ShowHiddenCardComponent({ onShowHidden }: ShowHiddenCardProps) {
     const handleClick = useCallback(() => onShowHidden(), [onShowHidden]);
 
     return (
-        <div className={s.ShowHiddenCard} onClick={handleClick}>
+        <div className={s.ShowHiddenCard} role="button" tabIndex={0} onClick={handleClick}>
             <div className={s.ShowHiddenCard_header}>
                 <Icon className={s.ShowHiddenCard_icon} icon="eye" big />
             </div>

@@ -54,6 +54,16 @@ final class StatusBarItemView {
         self.statusItem.button?.target = target
     }
 
+    /// Names the status-bar button for VoiceOver.
+    ///
+    /// The button carries an image and nothing else, so without an explicit
+    /// label VoiceOver announces it unnamed — and the status item is the only
+    /// way into the tray (VO+M twice moves the VoiceOver cursor to the menu
+    /// bar extras, `Control+F8` does the same for keyboard-only users).
+    func setAccessibilityLabel(_ label: String) {
+        self.statusItem.button?.setAccessibilityLabel(label)
+    }
+
     func setAction(_ action: Selector?) {
         self.statusItem.button?.action = action
     }

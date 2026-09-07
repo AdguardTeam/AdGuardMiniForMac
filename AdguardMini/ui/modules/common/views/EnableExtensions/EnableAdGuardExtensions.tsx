@@ -19,7 +19,7 @@ type EnableAdGuardExtensionsProps = {
     center?: boolean;
     privacyPolicyUrl: string;
     useTheme: UseColorTheme;
-} & Pick<TemplateProps, 'buttons' | 'containerClassName'>;
+} & Pick<TemplateProps, 'buttons' | 'containerClassName' | 'asDialog'>;
 
 /**
  * Enable AdGuard extensions view
@@ -30,6 +30,7 @@ export function EnableAdGuardExtensions({
     buttons,
     containerClassName,
     center,
+    asDialog,
 }: EnableAdGuardExtensionsProps) {
     const [isDarkTheme, setIsDarkTheme] = useState(false);
 
@@ -39,6 +40,7 @@ export function EnableAdGuardExtensions({
 
     return (
         <Template
+            asDialog={asDialog}
             buttons={buttons}
             center={center}
             containerClassName={containerClassName}

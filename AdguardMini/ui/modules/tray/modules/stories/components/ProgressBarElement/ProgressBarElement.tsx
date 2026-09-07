@@ -26,7 +26,10 @@ export function ProgressBarElement({
     const width = frameIndex <= currentFrameIndex ? '100%' : '0%';
 
     return (
-        <div className={s.ProgressBarElement} onClick={onClick}>
+        // Hidden from the accessibility tree: the segments are a visual
+        // progress affordance with tiny hit targets; VoiceOver users move
+        // between frames with the named back/next zones instead.
+        <div className={s.ProgressBarElement} aria-hidden onClick={onClick}>
             <div className={s.ProgressBarElement_bar} style={{ width }} />
         </div>
     );

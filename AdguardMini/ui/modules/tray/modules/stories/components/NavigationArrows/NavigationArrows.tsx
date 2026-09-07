@@ -18,13 +18,27 @@ type NavigationArrowsProps = {
  */
 export function NavigationArrows({ onPrevious, onNext, hideLeft }: NavigationArrowsProps) {
     return (
+        // The tap zones are invisible full-height areas; the role and label
+        // are all VoiceOver has to announce them as back/forward controls.
         <>
             {!hideLeft && (
-                <div className={s.NavigationArrows_left} onClick={onPrevious}>
+                <div
+                    aria-label={translate('back')}
+                    className={s.NavigationArrows_left}
+                    role="button"
+                    tabIndex={0}
+                    onClick={onPrevious}
+                >
                     <Icon className={cx(theme.button.whiteIcon, s.NavigationArrows_left_icon)} icon="arrow_left" />
                 </div>
             )}
-            <div className={s.NavigationArrows_right} onClick={onNext}>
+            <div
+                aria-label={translate('next')}
+                className={s.NavigationArrows_right}
+                role="button"
+                tabIndex={0}
+                onClick={onNext}
+            >
                 <Icon className={cx(theme.button.whiteIcon, s.NavigationArrows_right_icon)} icon="arrow_left" />
             </div>
         </>

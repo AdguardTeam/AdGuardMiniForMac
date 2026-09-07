@@ -40,6 +40,7 @@ export function ProgressBarGroup({
                 />
             ))}
             <Button
+                ariaLabel={translate('close')}
                 className={cx(s.ProgressBar_close, !showProgressBar && s.ProgressBar_close__solo)}
                 icon="cross"
                 iconClassName={theme.button.whiteIcon}

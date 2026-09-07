@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { useId } from 'preact/hooks';
+
 import { RouteName } from 'SettingsStore/modules';
 import theme from 'Theme';
 import { Text, Button } from 'UILib';
@@ -41,8 +43,13 @@ export function SystemWideProtectionSwitch(props: Props) {
         macos25OrLower,
     } = props;
 
+    // "Why?" sits inside "Not supported on this Mac account. <btn>", so alone
+    // it announces a bare "Why?" with no idea what the question is about.
+    const notSupportedId = useId();
+
     const renderWhyBtn = (text: string) => (
         <Button
+            ariaDescribedby={notSupportedId}
             className={s.SystemWideProtectionSwitch_button}
             type="text"
             onClick={(e) => {
@@ -69,7 +76,7 @@ export function SystemWideProtectionSwitch(props: Props) {
                             </Text>
                         )}
                         {non501User && (
-                            <Text className={theme.color.orange} type="t2">
+                            <Text className={theme.color.orange} id={notSupportedId} type="t2">
                                 {translate('advanced.blocking.system.wide.not.supported', whyBtnParams)}
                             </Text>
                         )}
@@ -93,7 +100,7 @@ export function SystemWideProtectionSwitch(props: Props) {
                             </Text>
                         )}
                         {non501User && (
-                            <Text className={theme.color.orange} type="t2">
+                            <Text className={theme.color.orange} id={notSupportedId} type="t2">
                                 {translate('advanced.blocking.system.wide.not.supported', whyBtnParams)}
                             </Text>
                         )}

@@ -15,9 +15,12 @@ type TermsAndConditionsModalProps = {
  */
 export function TermsAndConditionsModal({ onClose }: TermsAndConditionsModalProps) {
     return (
+        // The body is a single block of terms text — announced on open, since
+        // that text is the entire reason the modal exists.
         <Modal
             title={translate('settings.paywall.terms.and.conditions')}
             zIndex="paywall-modal"
+            describedByChildren
             onClose={onClose}
         >
             <Text type="t1">

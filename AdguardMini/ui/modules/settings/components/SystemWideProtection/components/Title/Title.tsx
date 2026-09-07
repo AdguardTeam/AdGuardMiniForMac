@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { observer } from 'mobx-react-lite';
+import { useId } from 'preact/hooks';
 
 import { SettingsEvent } from 'Modules/settings/store/modules';
 import { usePayedFuncsTitle, useSettingsStore } from 'SettingsLib/hooks';
@@ -39,8 +40,14 @@ function TitleComponent({ setShowNotSupportedModal, setShowResetCacheModal, setS
     );
 
     const isUnsupported = macos25OrLower || non501User;
+
+    // Same as on the Advanced protection row: "Why?" alone says nothing about
+    // what is not supported.
+    const notSupportedId = useId();
+
     const renderWhyBtn = (text: string) => (
         <Button
+            ariaDescribedby={notSupportedId}
             className={s.Title_button}
             type="text"
             onClick={() => {
@@ -84,7 +91,7 @@ function TitleComponent({ setShowNotSupportedModal, setShowResetCacheModal, setS
             )}
             {non501User && (
                 <div className={s.Title_notSupportedTitle}>
-                    <Text className={theme.color.orange} type="t2">
+                    <Text className={theme.color.orange} id={notSupportedId} type="t2">
                         {translate('advanced.blocking.system.wide.not.supported', whyBtnParams)}
                     </Text>
                 </div>

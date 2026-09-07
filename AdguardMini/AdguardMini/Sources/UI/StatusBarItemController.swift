@@ -97,6 +97,7 @@ final class StatusBarItemControllerImpl: StatusBarItemController {
             ? .Tray.active
             : .Tray.inactive
         )
+        self.statusBarItemView?.setAccessibilityLabel(.localized.base.app_displayed_name)
         self.statusBarItemView?.setTarget(self)
         self.statusBarItemView?.setAction(#selector(self.handleStatusBarClicked))
         self.statusBarItemView?.listenEvents([.leftMouseUp, .rightMouseUp])

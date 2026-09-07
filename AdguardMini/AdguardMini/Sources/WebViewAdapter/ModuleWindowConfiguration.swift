@@ -9,6 +9,8 @@
 
 import AppKit
 
+import AML
+
 /// Window kind selector.
 enum WindowKind {
     case panel
@@ -21,6 +23,13 @@ struct ModuleWindowConfiguration {
     let styleMask: NSWindow.StyleMask
     /// Window title text.
     let title: String
+    /// VoiceOver name for the window, announced on entry.
+    ///
+    /// Separate from ``title`` because the visible title cannot do this job:
+    /// the tray draws no titlebar text at all, and settings, onboarding and
+    /// the rules editor would otherwise all announce as plain "AdGuard Mini",
+    /// leaving nothing to tell the windows apart.
+    let accessibilityTitle: String
     let level: NSWindow.Level
     let frameAutosaveKey: String?
     let isMovable: Bool
@@ -48,6 +57,7 @@ enum ModuleWindowConfigurator {
                 windowKind: .panel,
                 styleMask: [.nonactivatingPanel, .titled, .fullSizeContentView],
                 title: "",
+                accessibilityTitle: .localized.base.window_accessibility_title_tray,
                 level: .statusBar,
                 frameAutosaveKey: nil,
                 isMovable: false,
@@ -70,6 +80,7 @@ enum ModuleWindowConfigurator {
                 windowKind: .window,
                 styleMask: [.titled, .closable],
                 title: "AdGuard Mini",
+                accessibilityTitle: .localized.base.window_accessibility_title_onboarding,
                 level: .normal,
                 frameAutosaveKey: nil,
                 isMovable: true,
@@ -89,6 +100,7 @@ enum ModuleWindowConfigurator {
                 windowKind: .window,
                 styleMask: [.titled, .closable, .miniaturizable, .resizable],
                 title: "AdGuard Mini",
+                accessibilityTitle: .localized.base.user_rules_editor_title,
                 level: .normal,
                 frameAutosaveKey: "AdguardMini.UserRulesEditor",
                 isMovable: true,
@@ -112,6 +124,7 @@ enum ModuleWindowConfigurator {
             windowKind: .window,
             styleMask: [.titled, .resizable, .miniaturizable, .closable],
             title: "AdGuard Mini",
+            accessibilityTitle: .localized.base.window_accessibility_title_settings,
             level: .normal,
             frameAutosaveKey: "AdguardMini.SettingsApp",
             isMovable: true,

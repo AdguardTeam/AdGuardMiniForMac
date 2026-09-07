@@ -74,6 +74,7 @@ function LicenseStatusComponent() {
                     className={s.LicenseStatus_container}
                     icon="key"
                     title={translate('license.license.activation.code', { code })}
+                    containerAsButton
                     onContainerClick={handleContainerClick}
                 >
                     <Icon className={s.LicenseStatus_container_icon} icon="copy" />

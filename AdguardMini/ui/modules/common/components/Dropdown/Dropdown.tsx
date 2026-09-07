@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { useClickOutside, useEscape, useScrollListener } from '@adg/webview-utils-kit';
+import { KEYBOARD_CODES, useClickOutside, useEscape, useScrollListener } from '@adg/webview-utils-kit';
 import { useRef, useState, useCallback } from 'preact/hooks';
 
 import { Icon, Text, Checkbox } from 'UILib';
@@ -97,7 +97,10 @@ export function Dropdown<T>({
     return (
         <>
             {label && (
-                <label className={s.Dropdown_label} htmlFor={id}>
+                // `htmlFor` does not associate with the `<div>` below — it only
+                // works on form controls — so the field is named by
+                // `aria-labelledby` instead.
+                <label className={s.Dropdown_label} htmlFor={id} id={`${id}-label`}>
                     <Text type="t2">
                         {label}
                     </Text>
@@ -105,27 +108,58 @@ export function Dropdown<T>({
             )}
             <div
                 ref={dropdownRef}
-                aria-label={ariaLabel}
                 className={cx(
                     s.Dropdown,
                     isOpen && s.Dropdown__active,
                     disabled && s.Dropdown__disabled,
                 )}
                 id={id}
-                tabIndex={0}
             >
+                {/*
+                  * The role and the tab stop belong on the header, not on the
+                  * wrapper: the wrapper held the tab stop while the click
+                  * handler sat here, so activating the focused element did
+                  * nothing — clicks bubble up, never down.
+                  */}
                 <div
+                    aria-controls={`${id}-list`}
+                    aria-disabled={disabled}
+                    aria-expanded={isOpen}
+                    aria-haspopup="true"
+                    aria-label={ariaLabel}
+                    aria-labelledby={!ariaLabel && label ? `${id}-label` : undefined}
                     className={s.Dropdown_header}
+                    role="button"
+                    tabIndex={disabled ? -1 : 0}
                     onClick={!disabled ? toggleOptions : undefined}
+                    onKeyDown={!disabled ? (e: KeyboardEvent) => {
+                        if (e.code === KEYBOARD_CODES.enter || e.code === KEYBOARD_CODES.space) {
+                            e.preventDefault();
+                            toggleOptions();
+                        }
+                    } : undefined}
                 >
                     <Text className={cx(s.Dropdown_text)} lineHeight="none" type="t1">
                         {renderLabelValue()}
                     </Text>
                     <Icon className={s.Dropdown_arrow} icon="arrow_left" />
                 </div>
+                {/*
+                  * A list of checkboxes rather than a `listbox` of `option`s:
+                  * each row already holds a real checkbox carrying its own
+                  * role and checked state, and `option` may not contain
+                  * focusable children. `listitem` still gives VoiceOver the
+                  * position — "3 of 5" — which is what was missing.
+                  *
+                  * The roles are spelled out even though `ul`/`li` imply them:
+                  * WebKit drops list semantics from the accessibility tree when
+                  * the list is styled with `list-style: none`, which this one is.
+                  */}
                 <ul
                     ref={optionsRef}
                     className={cx(s.Dropdown_options, isOpen && s.Dropdown_options__show)}
+                    id={`${id}-list`}
+                    role="list"
                     style={ulStyles}
                     tabIndex={-1}
                 >
@@ -139,12 +173,13 @@ export function Dropdown<T>({
                             if (!isMulti) {
                                 setIsOpen(false);
                             }
-                        }
+                        };
 
                         return (
                             <li
                                 key={option.value}
                                 className={cx(s.Dropdown_option)}
+                                role="listitem"
                                 onClick={handleChange}
                             >
                                 {renderOptionLabel

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { observer } from 'mobx-react-lite';
+import { useId } from 'preact/hooks';
 
 import { useSettingsStore } from 'SettingsLib/hooks';
 import { Icon, Switch, Text } from 'UILib';
@@ -33,6 +34,23 @@ export type SettingsItemProps = {
     noHover?: boolean;
     defaultHovered?: boolean;
     newLabel?: boolean;
+    /**
+     * Exposes the whole row as one button (`SettingsItemLink`): such a row has
+     * a single action and no interactive children besides the arrow icon, so
+     * unlike the switch rows there is nothing that would end up nested.
+     */
+    containerAsButton?: boolean;
+    /**
+     * Id for the description block, when the caller needs to reference it —
+     * `SettingsItemSwitch` points its switch's `aria-describedby` here.
+     */
+    descriptionId?: string;
+    /**
+     * Overrides the visible `title` as the row's accessible name when
+     * `containerAsButton` is set — e.g. `SettingsItemLink` appends an
+     * "opens in browser" hint without changing what is printed on screen.
+     */
+    ariaLabel?: string;
 };
 
 /**
@@ -55,8 +73,17 @@ function SettingsItemComponent({
     defaultHovered,
     newLabel,
     trackEventOnRouteChange,
+    containerAsButton,
+    descriptionId,
+    ariaLabel,
 }: SettingsItemProps) {
     const { router, telemetry } = useSettingsStore();
+
+    // Reading the description is what tells the user what a row actually
+    // does; `aria-describedby` attaches it to whichever control represents
+    // the row, so it is announced right after the name.
+    const autoDescriptionId = useId();
+    const descId = (description || additionalText) ? descriptionId ?? autoDescriptionId : undefined;
 
     const handleRouteChange = (e: MouseEvent) => {
         e.stopPropagation();
@@ -68,6 +95,10 @@ function SettingsItemComponent({
 
     return (
         <div
+            aria-describedby={containerAsButton ? descId : undefined}
+            // Some callers pass JSX as `title`; a name is only derivable from a
+            // string, otherwise the button falls back to its text content.
+            aria-label={containerAsButton && typeof title === 'string' ? (ariaLabel ?? title) : undefined}
             className={cx(
                 s.SettingsItem,
                 onContainerClick && s.SettingsItem__pointer,
@@ -75,6 +106,8 @@ function SettingsItemComponent({
                 defaultHovered && s.SettingsItem_defaultHovered,
                 className,
             )}
+            role={containerAsButton ? 'button' : undefined}
+            tabIndex={containerAsButton ? 0 : undefined}
             onClick={routeName ? handleRouteChange : onContainerClick}
         >
             <div className={cx(
@@ -84,8 +117,16 @@ function SettingsItemComponent({
                 routeName && s.SettingsItem__pointer,
             )}
             >
+                {/*
+                  * The role goes on the title line rather than the whole row:
+                  * a row can also hold a switch in `children`, and marking the
+                  * container as a button would nest that switch inside it.
+                  */}
                 <div
+                    aria-describedby={routeName ? descId : undefined}
                     className={cx(s.SettingsItem_container_line, routeName && s.SettingsItem_container__route)}
+                    role={routeName ? 'button' : undefined}
+                    tabIndex={routeName ? 0 : undefined}
                     onClick={routeName ? handleRouteChange : undefined}
                 >
                     {icon && (
@@ -117,6 +158,7 @@ function SettingsItemComponent({
                             icon && s.SettingsItem_container_desc__icon,
                             contentClassName,
                         )}
+                        id={descId}
                         onClick={routeName ? () => router.changePath(routeName) : undefined}
                     >
                         {description && (<Text className={s.SettingsItem_container_desc_text} type="t2">{description}</Text>)}
@@ -170,9 +212,13 @@ export function SettingsItemSwitch({
 }: SettingsItemSwitchProps) {
     const isEnabled = value && !muted;
 
+    const descriptionId = useId();
+    const hasDescription = Boolean(rest.description || rest.additionalText);
+
     return (
         <SettingsItem
             {...rest}
+            descriptionId={descriptionId}
             iconColor={iconColor ?? (isEnabled ? 'green' : 'gray')}
             onContainerClick={() => {
                 if (disabled) {
@@ -181,12 +227,25 @@ export function SettingsItemSwitch({
                 setValue(!value);
             }}
         >
-            <Switch checked={value} disabled={disabled} id={id} muted={muted} onChange={setValue} />
+            {/*
+              * The switch sits in a slot next to the row title, with no label
+              * of its own — without borrowing the title VoiceOver announces
+              * every settings toggle as a nameless "switch".
+              */}
+            <Switch
+                ariaDescribedby={hasDescription ? descriptionId : undefined}
+                ariaLabel={rest.title}
+                checked={value}
+                disabled={disabled}
+                id={id}
+                muted={muted}
+                onChange={setValue}
+            />
         </SettingsItem>
     );
 }
 
-export type SettingsItemLinkProps<T extends Record<string, any> = object> = Omit<SettingsItemProps, 'children' | 'onContainerClick' | 'routeName' | 'trackEventOnRouteChange'> & {
+export type SettingsItemLinkProps<T extends Record<string, any> = object> = Omit<SettingsItemProps, 'children' | 'onContainerClick' | 'routeName' | 'trackEventOnRouteChange' | 'ariaLabel'> & {
     externalLink?: string;
     internalLink?: RouteName;
     internalLinkParams?: RouteParamsMap<T>;
@@ -194,6 +253,13 @@ export type SettingsItemLinkProps<T extends Record<string, any> = object> = Omit
     disabled?: boolean;
     linkIcon?: IconType;
     trackTelemetryEvent?: SettingsEvent;
+    /**
+     * Marks the row as leaving the app for the system browser, for rows that
+     * do it through a custom `onClick` (e.g. a native RPC that resolves a URL
+     * and opens it) rather than `externalLink`. Rows with `externalLink` are
+     * detected automatically.
+     */
+    opensInBrowser?: boolean;
 };
 
 /**
@@ -207,9 +273,19 @@ function SettingsItemLinkComponent<T extends Record<string, any>>({
     disabled,
     linkIcon,
     trackTelemetryEvent,
+    opensInBrowser,
     ...rest
 }: SettingsItemLinkProps<T>) {
     const { router, telemetry } = useSettingsStore();
+
+    // `externalLink` always routes to `window.OpenLinkInBrowser` below, so it
+    // implies the hint on its own; `opensInBrowser` covers rows that reach the
+    // browser through a plain `onClick` instead (e.g. "Report a problem",
+    // which resolves its URL on the Swift side before opening it).
+    const leavesTheApp = Boolean(externalLink) || opensInBrowser;
+    const ariaLabel = leavesTheApp && typeof rest.title === 'string'
+        ? `${rest.title}, ${translate('settings.opens.in.browser.aria')}`
+        : undefined;
     const handleClick = () => {
         if (onClick) {
             onClick();
@@ -231,7 +307,9 @@ function SettingsItemLinkComponent<T extends Record<string, any>>({
         }
     };
     return (
-        <SettingsItem {...rest} onContainerClick={handleClick}>
+        // Without `containerAsButton` the row is a bare clickable `<div>` —
+        // unreachable from the keyboard and invisible to VoiceOver.
+        <SettingsItem {...rest} ariaLabel={ariaLabel} containerAsButton onContainerClick={handleClick}>
             <Icon className={s.SettingsItemLink_arrow} icon={linkIcon ?? 'arrow_left'} />
         </SettingsItem>
     );

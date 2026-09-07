@@ -14,9 +14,35 @@ export type TextProps = {
     semibold?: boolean;
     className?: string;
     div?: boolean;
-    aria?: string;
+    /**
+     * Accessible name, when it must differ from the rendered text — e.g. a
+     * short caption like "Hide" that needs to say what it hides.
+     *
+     * Supersedes the former `aria` prop, which emitted a bare `aria=""`
+     * attribute (not valid HTML) and had no callers.
+     */
+    ariaLabel?: string;
+    /** Element id, e.g. an `aria-labelledby` / `aria-describedby` target. */
+    id?: string;
+    /**
+     * Id of an element describing this one — read after the name, for context
+     * a screen reader would otherwise skip (e.g. a status line under a title).
+     */
+    ariaDescribedby?: string;
+    /**
+     * Ids naming this element, space separated and read in order. Listing this
+     * element's own id among them is valid and is how a heading can announce
+     * itself together with the paragraph under it — no wrapper required.
+     */
+    ariaLabelledby?: string;
     lineHeight?: 's' | 'm' | 'l' | 'none';
     onClick?: JSX.DOMAttributes<HTMLElement>['onClick'];
+    /**
+     * ARIA role — pair with `tabIndex` when the text acts as a control
+     * (`onClick`), otherwise screen readers see it as plain text.
+     */
+    role?: JSX.AriaRole;
+    tabIndex?: number;
 };
 
 /**
@@ -27,12 +53,17 @@ export function Text({
     type,
     children,
     className,
-    aria,
+    ariaLabel,
+    ariaDescribedby,
+    ariaLabelledby,
+    id,
     wide,
     semibold,
     lineHeight,
     div,
     onClick,
+    role,
+    tabIndex,
 }: TextProps): JSX.Element {
     let lineHeightClass: string | undefined = lineHeight;
 
@@ -60,13 +91,18 @@ export function Text({
     }
 
     const props = {
-        className: cx(
+        'className': cx(
             tx.typo[type],
             semibold && tx.typo.semibold,
             lineHeightClass && tx.typo[lineHeightClass],
             className,
         ),
-        aria,
+        'aria-label': ariaLabel,
+        'aria-describedby': ariaDescribedby,
+        'aria-labelledby': ariaLabelledby,
+        id,
+        role,
+        tabIndex,
         onClick,
     };
     switch (type) {

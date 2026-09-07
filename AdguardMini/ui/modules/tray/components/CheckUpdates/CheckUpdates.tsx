@@ -3,10 +3,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { observer } from 'mobx-react-lite';
-import { useEffect } from 'preact/hooks';
+import { useEffect, useId } from 'preact/hooks';
 
 import { RequestApplicationUpdateRequest } from 'Apis/requests/AppUpdateService';
 import { ReleaseVariants } from 'Apis/types';
+import { useFocusOnMount } from 'Common/hooks/useFocusOnMount';
 import { ADGUARD_MINI_TITLE } from 'Common/utils/consts';
 import { resolveLastFiltersUpdateTimestamp } from 'Modules/tray/components/CheckUpdates/resolveLastFiltersUpdateTimestamp';
 import theme from 'Theme';
@@ -69,6 +70,28 @@ function CheckUpdatesComponent() {
 
     const format = useDateFormat();
 
+    // The status line under the title ('Checking for updates...', 'Updates
+    // available') is the actual answer the user came for, but focus lands on
+    // the title alone. Attaching it as a description makes VoiceOver read
+    // both in one go on arrival.
+    const titleDescId = useId();
+
+    // Announces the page on arrival — see `useFocusOnMount`.
+    const titleId = useId();
+    useFocusOnMount(titleId);
+
+    // Each section names itself from its own content, so focusing it announces
+    // the row whole — "Filters, 3 filters updated" — instead of leaving the
+    // status stranded next to a title nobody stopped on.
+    //
+    // Deliberately not `aria-live`: a region whose accessible name is its own
+    // content re-reads the whole row on every change, and these statuses swap
+    // between structurally different branches (loader to icon, one line to
+    // several), so the nodes are replaced wholesale and the section is read
+    // out again each time — a burst of repeats rather than one update.
+    const appSectionId = useId();
+    const filtersSectionId = useId();
+
     const versionIsChecking = newVersionAvailable === undefined;
 
     let titleDesc = '';
@@ -115,6 +138,7 @@ function CheckUpdatesComponent() {
         <div className={s.CheckUpdates}>
             <div className={s.CheckUpdates_header}>
                 <Button
+                    ariaLabel={translate('back')}
                     icon="back"
                     iconClassName={theme.button.grayIcon}
                     type="icon"
@@ -125,11 +149,24 @@ function CheckUpdatesComponent() {
                 />
             </div>
             <div>
-                <Text className={s.CheckUpdates_title} type="h4">{translate('tray.updates')}</Text>
-                <Text className={s.CheckUpdates_desc} type="t1">{titleDesc}</Text>
+                <Text
+                    ariaDescribedby={titleDesc ? titleDescId : undefined}
+                    className={s.CheckUpdates_title}
+                    id={titleId}
+                    tabIndex={-1}
+                    type="h4"
+                >
+                    {translate('tray.updates')}
+                </Text>
+                <Text className={s.CheckUpdates_desc} id={titleDescId} type="t1">{titleDesc}</Text>
                 {globalSettings?.releaseVariant === ReleaseVariants.standAlone && (
                     <div className={s.CheckUpdates_element}>
-                        <div className={s.CheckUpdates_element_title}>
+                        <div
+                            aria-labelledby={appSectionId}
+                            className={s.CheckUpdates_element_title}
+                            id={appSectionId}
+                            tabIndex={0}
+                        >
                             {newVersionAvailable === undefined ? (
                                 <Loader className={s.CheckUpdates_element_title_icon} />
                             ) : (
@@ -153,8 +190,14 @@ function CheckUpdatesComponent() {
                 )}
                 <div className={s.CheckUpdates_element}>
                     <div
+                        aria-labelledby={filtersSectionId}
                         className={cx(s.CheckUpdates_element_title,
                             filtersHoverable && s.CheckUpdates_element_title__hover)}
+                        id={filtersSectionId}
+                        // Once the results are in, the row navigates to the
+                        // per-filter list; until then it is only a status.
+                        role={filtersHoverable ? 'button' : undefined}
+                        tabIndex={0}
                         onClick={() => {
                             if (filtersHoverable) {
                                 onShowResults();

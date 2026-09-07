@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { useId } from 'preact/hooks';
+
 import theme from 'Theme';
 import { Button, Text } from 'UILib';
 
@@ -25,11 +27,16 @@ export function usePayedFuncsTitle(
     textClassName?: string,
 ) {
     const { account, settings, telemetry } = useSettingsStore();
+
+    // The action sits inside "Available in the full version. <btn>", so on its
+    // own it announces just "Try for free" with no hint of what for.
+    const sentenceId = useId();
     const { isLicenseOrTrialActive, trialAvailableDays, appStoreSubscriptions } = account;
     const { isMASReleaseVariant } = settings;
 
     const renderShowPaywallBtn = (text: string) => (
         <Button
+            ariaDescribedby={sentenceId}
             className={s.PayedFuncsTitle_button}
             type="text"
             onClick={() => {
@@ -60,7 +67,7 @@ export function usePayedFuncsTitle(
     };
 
     return !isLicenseOrTrialActive ? (
-        <Text className={cx(theme.color.orange, textClassName)} type="t2">
+        <Text className={cx(theme.color.orange, textClassName)} id={sentenceId} type="t2">
             {renderDescription()}
         </Text>
     ) : undefined;

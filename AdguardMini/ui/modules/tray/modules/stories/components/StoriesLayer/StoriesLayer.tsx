@@ -2,8 +2,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { useCallback, useReducer, useEffect } from 'preact/hooks';
+import { useCallback, useId, useReducer, useEffect, useRef } from 'preact/hooks';
 
+import { useFocusTrap } from 'Common/hooks/useFocusTrap';
 import { actions, navigationReducer } from 'Modules/tray/modules/stories/reducers';
 import { resolveBackTransition } from 'Modules/tray/modules/stories/utils/navigationBoundary';
 
@@ -39,6 +40,10 @@ export function StoriesLayer({
     minFrameIndex = 0,
 }: StoriesLayerProps) {
     const [navigation, dispatch] = useReducer(navigationReducer, story);
+    const frameTitleId = useId();
+    const layerRef = useRef<HTMLDivElement>(null);
+
+    useFocusTrap(layerRef);
     const { currentFrameIndex, length, id, isFirstFrameReturnedBack } = navigation;
     const { backgroundColor, frame } = navigation;
 
@@ -111,6 +116,15 @@ export function StoriesLayer({
         frame?.onFrameShown?.();
     }, [frame, frame?.onFrameShown]);
 
+    // The story opens as an overlay over the tray without touching focus, so
+    // nothing announces it and the close button stays out of reach. Move focus
+    // to the frame heading on open and on every frame change; frames with no
+    // heading fall back to the dialog itself, which announces its own label.
+    useEffect(() => {
+        const heading = document.getElementById(frameTitleId);
+        (heading ?? layerRef.current)?.focus();
+    }, [frameTitleId, frame]);
+
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.code === 'ArrowRight') {
@@ -137,7 +151,16 @@ export function StoriesLayer({
     }
 
     return (
-        <div className={s.StoriesLayer}>
+        // The layer covers the whole tray window; dialog semantics keep the
+        // VoiceOver cursor inside it instead of the Home screen underneath.
+        <div
+            ref={layerRef}
+            aria-label={translate('tray.home.stories.title')}
+            className={s.StoriesLayer}
+            role="dialog"
+            tabIndex={-1}
+            aria-modal
+        >
             <div className={cx(s.StoriesLayer_contents, s[`StoriesLayer__${backgroundColor}`])}>
                 <ProgressBarGroup
                     currentFrameIndex={progressBarCurrentIndex}
@@ -153,6 +176,7 @@ export function StoriesLayer({
                 <FrameContent
                     frame={frame}
                     frameIdNavigation={handleFrameNavigation}
+                    titleId={frameTitleId}
                     onClose={handleClose}
                 />
             </div>

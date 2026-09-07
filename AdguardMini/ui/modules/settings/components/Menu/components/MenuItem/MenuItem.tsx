@@ -34,8 +34,15 @@ function MenuItemComponent({
     const { currentPath } = router;
     const active = currentPath === route || activeRoutes?.includes(currentPath);
     return (
+        // A plain `<div>` is invisible to VoiceOver; the role is what turns the
+        // menu entry into an announceable control, and `aria-current` is what
+        // tells the user which section they are on — the active state is
+        // otherwise conveyed by colour and weight alone.
         <div
+            aria-current={active ? 'page' : undefined}
             className={cx(s.MenuItem_item, active && s.MenuItem_item__active)}
+            role="button"
+            tabIndex={0}
             onClick={() => router.changePath(route)}
         >
             <Icon className={s.MenuItem_icon} icon={icon} />

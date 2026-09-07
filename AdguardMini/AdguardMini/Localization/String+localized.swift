@@ -192,5 +192,20 @@ extension String.localized
         /** */
         /** User rules editor window title. */
         static public let user_rules_editor_title : String = { .localized.string ("user_rules_editor_title", in: "Localizable") }()
+
+        /** `"AdGuard Mini Tray"` */
+        /** */
+        /** VoiceOver name of the menu bar tray window. */
+        static public let window_accessibility_title_tray : String = { .localized.string ("window_accessibility_title_tray", in: "Localizable") }()
+
+        /** `"AdGuard Mini Settings"` */
+        /** */
+        /** VoiceOver name of the settings window. */
+        static public let window_accessibility_title_settings : String = { .localized.string ("window_accessibility_title_settings", in: "Localizable") }()
+
+        /** `"AdGuard Mini Onboarding"` */
+        /** */
+        /** VoiceOver name of the onboarding window. */
+        static public let window_accessibility_title_onboarding : String = { .localized.string ("window_accessibility_title_onboarding", in: "Localizable") }()
     }
 }

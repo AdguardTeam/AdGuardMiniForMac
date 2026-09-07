@@ -30,6 +30,11 @@ export type ContextMenuProps = {
         text: string;
         action(): void;
         className?: string;
+        /**
+         * Overrides the item's accessible name — e.g. to append an
+         * "opens in browser" hint without changing the visible `text`.
+         */
+        ariaLabel?: string;
     }[];
     reportBug?: boolean;
     className?: string;
@@ -102,10 +107,21 @@ function ContextMenuComponent({ elements, reportBug, className, showReportBugToo
                     onMouseMove={debounceRef.current}
                     onTouchEnd={closeTooltip}
                 >
-                    <Button icon="flag" iconClassName={theme.button.grayIcon} type="icon" />
+                    <Button
+                        ariaLabel={translate('context.menu.report.problem')}
+                        icon="flag"
+                        iconClassName={theme.button.grayIcon}
+                        type="icon"
+                    />
                 </div>
             ) : (
-                <Button icon="context" iconClassName={theme.button.grayIcon} type="icon" onClick={() => setOpen(!open)} />
+                <Button
+                    ariaLabel={translate('context.menu.more.options')}
+                    icon="context"
+                    iconClassName={theme.button.grayIcon}
+                    type="icon"
+                    onClick={() => setOpen(!open)}
+                />
             )}
             {open && (
                 <div className={cx(s.ContextMenu_context, reportBug && s.ContextMenu_context__tooltip)}>
@@ -115,8 +131,17 @@ function ContextMenuComponent({ elements, reportBug, className, showReportBugToo
                                 {showReportBugTooltip ? translate('context.menu.report.problem.tooltip') : translate('context.menu.report.problem')}
                             </Text>
                         </div>
-                    ) : elements?.map(({ text, action, className: cs }) => (
-                        <div key={text} className={s.ContextMenu_action} role="button" tabIndex={0} onClick={handleAction(action)}>
+                    ) : elements?.map(({
+                        text, action, className: cs, ariaLabel,
+                    }) => (
+                        <div
+                            key={text}
+                            aria-label={ariaLabel}
+                            className={s.ContextMenu_action}
+                            role="button"
+                            tabIndex={0}
+                            onClick={handleAction(action)}
+                        >
                             <Text className={cs} lineHeight="none" type="t1">{text}</Text>
                         </div>
                     ))}

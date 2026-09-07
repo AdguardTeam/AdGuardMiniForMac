@@ -51,6 +51,14 @@ export type StoryInfo = {
      */
     content?: JSX.Element;
     /**
+     * Accessible name for the card, when ``text`` alone does not describe it.
+     *
+     * The statistics cards render their number in ``content`` and only the
+     * unit in ``text`` ("ads blocked"), so a screen reader announcing ``text``
+     * would drop the number entirely.
+     */
+    ariaText?: string;
+    /**
      * Story display config
      */
     storyConfig: StoryViewConfig;

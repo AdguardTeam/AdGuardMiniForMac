@@ -59,48 +59,50 @@ function ProtectionLevelComponent() {
                     {translate('advanced.blocking.system.wide.part.level.desc')}
                 </Text>
             </div>
-            <Radio
-                checked={systemWideProtectionLevel === URLFilterProtectionLevel.essential}
-                className={s.ProtectionLevel_level}
-                disabled={isDisabled}
-                muted={muted}
-                onClick={() => onUpdateSystemWideProtectionLevel(URLFilterProtectionLevel.essential)}
-            >
-                <Text type="t1">
-                    {translate('advanced.blocking.system.wide.level.essential')}
-                </Text>
-                <Text className={s.ProtectionLevel_level_desc} type="t2">
-                    {translate('advanced.blocking.system.wide.level.essential.desc')}
-                </Text>
-            </Radio>
-            <Radio
-                checked={systemWideProtectionLevel === URLFilterProtectionLevel.safe}
-                className={s.ProtectionLevel_level}
-                disabled={isDisabled}
-                muted={muted}
-                onClick={() => onUpdateSystemWideProtectionLevel(URLFilterProtectionLevel.safe)}
-            >
-                <Text type="t1">
-                    {translate('advanced.blocking.system.wide.level.safe')}
-                </Text>
-                <Text className={s.ProtectionLevel_level_desc} type="t2">
-                    {translate('advanced.blocking.system.wide.level.safe.desc')}
-                </Text>
-            </Radio>
-            <Radio
-                checked={systemWideProtectionLevel === URLFilterProtectionLevel.family}
-                className={s.ProtectionLevel_level}
-                disabled={isDisabled}
-                muted={muted}
-                onClick={() => onUpdateSystemWideProtectionLevel(URLFilterProtectionLevel.family)}
-            >
-                <Text type="t1">
-                    {translate('advanced.blocking.system.wide.level.family')}
-                </Text>
-                <Text className={s.ProtectionLevel_level_desc} type="t2">
-                    {translate('advanced.blocking.system.wide.level.family.desc')}
-                </Text>
-            </Radio>
+            <div aria-label={translate('advanced.blocking.system.wide.part.level')} role="radiogroup">
+                <Radio
+                    checked={systemWideProtectionLevel === URLFilterProtectionLevel.essential}
+                    className={s.ProtectionLevel_level}
+                    disabled={isDisabled}
+                    muted={muted}
+                    onClick={() => onUpdateSystemWideProtectionLevel(URLFilterProtectionLevel.essential)}
+                >
+                    <Text type="t1">
+                        {translate('advanced.blocking.system.wide.level.essential')}
+                    </Text>
+                    <Text className={s.ProtectionLevel_level_desc} type="t2">
+                        {translate('advanced.blocking.system.wide.level.essential.desc')}
+                    </Text>
+                </Radio>
+                <Radio
+                    checked={systemWideProtectionLevel === URLFilterProtectionLevel.safe}
+                    className={s.ProtectionLevel_level}
+                    disabled={isDisabled}
+                    muted={muted}
+                    onClick={() => onUpdateSystemWideProtectionLevel(URLFilterProtectionLevel.safe)}
+                >
+                    <Text type="t1">
+                        {translate('advanced.blocking.system.wide.level.safe')}
+                    </Text>
+                    <Text className={s.ProtectionLevel_level_desc} type="t2">
+                        {translate('advanced.blocking.system.wide.level.safe.desc')}
+                    </Text>
+                </Radio>
+                <Radio
+                    checked={systemWideProtectionLevel === URLFilterProtectionLevel.family}
+                    className={s.ProtectionLevel_level}
+                    disabled={isDisabled}
+                    muted={muted}
+                    onClick={() => onUpdateSystemWideProtectionLevel(URLFilterProtectionLevel.family)}
+                >
+                    <Text type="t1">
+                        {translate('advanced.blocking.system.wide.level.family')}
+                    </Text>
+                    <Text className={s.ProtectionLevel_level_desc} type="t2">
+                        {translate('advanced.blocking.system.wide.level.family.desc')}
+                    </Text>
+                </Radio>
+            </div>
         </>
     );
 }

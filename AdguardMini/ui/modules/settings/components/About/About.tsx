@@ -125,6 +125,8 @@ export function AboutComponent() {
                             a: (text: string) => (
                                 <div
                                     className={s.About_update_requestUpdate}
+                                    role="button"
+                                    tabIndex={0}
                                     onClick={appInfo.requestUpdate}
                                 >
                                     {text}

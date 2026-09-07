@@ -19,11 +19,15 @@ export function AppUsageDataModal({
     onClose,
 }: AppUsageDataModalProps) {
     return (
+        // The body is the whole point of this modal — it explains what usage
+        // data is collected — so it is announced on open rather than left for
+        // the user to find.
         <Modal
             submitAction={onClose}
             submitClassName={theme.button.greenSubmit}
             submitText={translate('close')}
             title={translate('telemetry.modal.title')}
+            describedByChildren
             submit
             onClose={onClose}
         >

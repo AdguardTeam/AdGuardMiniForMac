@@ -3,7 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { useEnter, useEscape } from '@adg/webview-utils-kit';
+import { useEffect, useId, useRef } from 'preact/hooks';
 
+import { useFocusTrap } from 'Common/hooks/useFocusTrap';
 import theme from 'Theme';
 import { Button, Loader, Text } from 'UILib';
 
@@ -28,6 +30,15 @@ type BasicProps = {
     contentPadding?: boolean;
     modalForceHeight?: number;
     childrenClassName?: string;
+    /**
+     * Announces the whole body on open, for modals whose text lives in
+     * `children` rather than in `description` — otherwise only the title is
+     * read and the content has to be hunted for.
+     *
+     * Opt-in: on a modal whose body is a form this would read every field's
+     * text as one blob before the user reaches any of them.
+     */
+    describedByChildren?: boolean;
 };
 
 export type ModalProps = BasicProps & ({
@@ -76,6 +87,7 @@ export function Modal({
     contentPadding = true,
     modalForceHeight,
     childrenClassName,
+    describedByChildren,
 }: ModalProps) {
     const escapeAction = cancelAction ?? onClose;
     useEscape(escapeAction, escapeAction ? [escapeAction] : [], true);
@@ -83,29 +95,72 @@ export function Modal({
     const enterAction = submitAction ?? emptyAction;
     useEnter(enterAction, enterAction ? [enterAction] : [], true);
 
+    const titleId = useId();
+    const descriptionId = useId();
+    const childrenId = useId();
+
+    // A dialog may describe itself with a `description`, with its body, or
+    // both; `aria-describedby` takes a list and reads them in order.
+    const describedBy = [
+        description ? descriptionId : undefined,
+        describedByChildren && children ? childrenId : undefined,
+    ].filter(Boolean).join(' ') || undefined;
+    const dialogRef = useRef<HTMLDivElement>(null);
+
+    useFocusTrap(dialogRef);
+
+    // A modal appears without touching focus, so VoiceOver stays wherever it
+    // was and never announces that a dialog opened. Move focus to the title
+    // (or the dialog itself when there is none) so it is read on arrival.
+    //
+    // Skipped when focus already landed inside: child effects run before the
+    // parent's, so a field with `autoFocus` has claimed it by now and must
+    // keep it.
+    useEffect(() => {
+        const dialog = dialogRef.current;
+        if (!dialog || dialog.contains(document.activeElement)) {
+            return;
+        }
+        (document.getElementById(titleId) ?? dialog).focus();
+    }, [titleId]);
+
     return (
         <div className={cx(s.Modal)} style={{ zIndex: zIndex ? `var(--zi-${zIndex})` : undefined }}>
+            {/*
+              * `role="dialog"` + `aria-modal` tell VoiceOver a dialog opened
+              * and confine its cursor to it — without them the cursor keeps
+              * wandering the page under the backdrop. The name comes from the
+              * title element (falling back to the loader caption), and
+              * `aria-describedby` makes VO read the description on entry.
+              */}
             <div
+                ref={dialogRef}
+                aria-describedby={describedBy}
+                aria-label={!title ? loaderText : undefined}
+                aria-labelledby={title ? titleId : undefined}
                 className={cx(
                     s.Modal_modalContent,
                     contentPadding && s.Modal_modalContent__horizontalPadding,
                 )}
+                role="dialog"
                 style={{ height: modalForceHeight ? `${modalForceHeight}px` : undefined }}
+                tabIndex={-1}
+                aria-modal
             >
-                {canClose && (<Button className={s.Modal_modalClose} icon="cross" iconClassName={theme.button.grayIcon} type="icon" onClick={onClose} />)}
+                {canClose && (<Button ariaLabel={translate('close')} className={s.Modal_modalClose} icon="cross" iconClassName={theme.button.grayIcon} type="icon" onClick={onClose} />)}
                 <div className={s.Modal_header}>
                     {headerSlot}
-                    {title && <Text type="h4">{title}</Text>}
+                    {title && <Text id={titleId} tabIndex={-1} type="h4">{title}</Text>}
                     {loaderText && (
                         <div className={s.Modal_descWrapper}>
                             <Loader className={s.Modal_loader} />
                             <Text className={s.Modal_loaderText} type="t1">{loaderText}</Text>
                         </div>
                     )}
-                    {description && (<Text className={s.Modal_desc} type="t1">{description}</Text>)}
+                    {description && (<Text className={s.Modal_desc} id={descriptionId} type="t1">{description}</Text>)}
                 </div>
                 {children && (
-                    <div className={cx(s.Modal_children, childrenClassName)}>
+                    <div className={cx(s.Modal_children, childrenClassName)} id={childrenId}>
                         {children}
                     </div>
                 )}
@@ -142,8 +197,14 @@ export function Modal({
                     </div>
                 )}
             </div>
+            {/*
+              * The backdrop is a nameless clickable area; hiding it from the
+              * accessibility tree keeps the VoiceOver cursor off it. Closing
+              * stays available through the Close button and Escape.
+              */}
             <div
                 className={cx(s.Modal_modalBackdrop)}
+                aria-hidden
                 onClick={canClose ? onClose : undefined}
             />
         </div>

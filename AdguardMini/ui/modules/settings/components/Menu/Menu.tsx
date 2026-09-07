@@ -63,7 +63,13 @@ function MenuComponent() {
     return (
         <Layout className={s.Menu} type="settingsMenu">
             <Logo className={s.Menu_logo} isDarkTheme={isDarkTheme} />
-            <div className={s.Menu_menuItems}>
+            {/*
+              * The navigation landmark is what identifies this strip as the
+              * app's navigation rather than a pile of buttons: VoiceOver
+              * announces it on entry and lists it under Landmarks in the
+              * rotor (VO+U), so the menu can be jumped to from anywhere.
+              */}
+            <div className={s.Menu_menuItems} role="navigation">
                 <MenuItem
                     activeRoutes={[RouteName.language_specific]}
                     icon="safari"

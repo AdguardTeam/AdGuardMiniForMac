@@ -138,7 +138,11 @@ export function Select<T,>({
     return (
         <>
             {label && (
-                <label className={s.Select_label} htmlFor={id}>
+                // `htmlFor` does not associate with the `<div>` below — it only
+                // works on form controls — so the field is named by
+                // `aria-labelledby` instead. Kept for the click-to-focus
+                // behaviour it still provides.
+                <label className={s.Select_label} htmlFor={id} id={`${id}-label`}>
                     <Text type="t2">
                         {label}
                     </Text>
@@ -146,13 +150,21 @@ export function Select<T,>({
             )}
             <div
                 ref={selectRef}
+                // Arrow keys move `activeIndex` and highlight the option
+                // visually, but focus never leaves this element — so without
+                // `aria-activedescendant` the movement is invisible to a
+                // screen reader and the user cannot tell where they are.
+                aria-activedescendant={isOpen && activeIndex >= 0 ? `${id}-option-${activeIndex}` : undefined}
                 aria-controls={`${id}-listbox`}
                 aria-expanded={isOpen}
                 aria-haspopup="listbox"
                 aria-label={ariaLabel}
+                aria-labelledby={!ariaLabel && label ? `${id}-label` : undefined}
                 className={cx(s.Select, isOpen && s.Select__active, className)}
                 id={id}
-                role="button"
+                // `combobox`, not `button`: this is a value picker, and
+                // `button` does not support `aria-activedescendant`.
+                role="combobox"
                 tabIndex={0}
                 onClick={(e) => {
                     e.stopPropagation();

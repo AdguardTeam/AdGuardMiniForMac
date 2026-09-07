@@ -39,6 +39,7 @@ function AlreadyPurchasedModalComponent({
                 icon="user"
                 iconColor="green"
                 title={translate('settings.activation.flow.already.purchased.modal.log.in')}
+                containerAsButton
                 onContainerClick={() => {
                     account.requestLoginOrActivate();
                     onClose();
@@ -50,6 +51,7 @@ function AlreadyPurchasedModalComponent({
                     icon="purchase"
                     iconColor="green"
                     title={translate('settings.activation.flow.already.purchased.modal.restore')}
+                    containerAsButton
                     onContainerClick={() => {
                         account.restorePurchase();
                         onClose();
@@ -61,6 +63,7 @@ function AlreadyPurchasedModalComponent({
                 icon="key"
                 iconColor="green"
                 title={translate('settings.activation.flow.already.purchased.modal.enter.code')}
+                containerAsButton
                 onContainerClick={onGoToEnterActivationCodeStep}
             />
         </Modal>

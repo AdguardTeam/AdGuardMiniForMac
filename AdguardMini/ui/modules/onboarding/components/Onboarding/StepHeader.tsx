@@ -42,6 +42,7 @@ function StepHeaderComponent() {
         if (prevStep) {
             return (
                 <Button
+                    ariaLabel={translate('back')}
                     icon="arrow_left"
                     iconClassName={theme.button.grayIcon}
                     type="icon"

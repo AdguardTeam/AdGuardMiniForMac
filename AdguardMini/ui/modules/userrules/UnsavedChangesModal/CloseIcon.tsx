@@ -6,15 +6,20 @@ import s from './UnsavedChangesModal.module.pcss';
 
 type CloseIconProps = {
     onClick(): void;
+    /** Accessible name — the icon carries no text of its own. */
+    ariaLabel?: string;
 };
 
 /**
  * Close icon component (gray stroke, transparent background)
  */
-export function CloseIcon({ onClick }: CloseIconProps) {
+export function CloseIcon({ onClick, ariaLabel }: CloseIconProps) {
     return (
         <div
+            aria-label={ariaLabel}
             className={s.UnsavedChangesModal_modal_close}
+            role="button"
+            tabIndex={0}
             onClick={onClick}
         >
             <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">

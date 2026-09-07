@@ -42,6 +42,7 @@ function SupportComponent() {
         description: `${translate('support.report.desc')}`,
         onClick: clickHandler,
         linkIcon: 'rightIcon',
+        opensInBrowser: true,
     }, /* AG-49352 {
         icon: 'message',
         title: translate('support.discuss'),

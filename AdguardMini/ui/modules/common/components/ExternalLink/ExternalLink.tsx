@@ -21,6 +21,11 @@ export type ExternalLinkProps = {
     noLineHeight?: boolean;
     color?: 'green' | 'red' | 'inheritColor';
     onClick?: JSXInternal.DOMAttributes<HTMLAnchorElement>['onClick'];
+    /**
+     * Accessible name — required for the icon-only form, which renders no text
+     * and would otherwise be announced as a nameless link.
+     */
+    ariaLabel?: string;
 };
 
 /**
@@ -36,9 +41,11 @@ export function ExternalLink({
     noLineHeight,
     onClick,
     color = 'green',
+    ariaLabel,
 }: ExternalLinkProps) {
     return (
         <a
+            aria-label={ariaLabel}
             className={cx(s.ExternalLink, s[`ExternalLink__${color}`], className, noUnderline && s.ExternalLink__noUnderline)}
             href={href}
             rel="noopener noreferrer"

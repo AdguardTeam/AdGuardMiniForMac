@@ -17,10 +17,12 @@ export type FrameContentProps = {
     frame: IStoryFrame;
     frameIdNavigation(frameId: string): void;
     onClose(): void;
+    /** Id for the frame heading, so the layer can move focus to it. */
+    titleId?: string;
 };
 
 /** Story frame content. */
-export function FrameContent({ frame, frameIdNavigation, onClose }: FrameContentProps) {
+export function FrameContent({ frame, frameIdNavigation, onClose, titleId }: FrameContentProps) {
     const {
         title, description, descriptionElement, image, imageText, buttons,
     } = frame;
@@ -52,7 +54,7 @@ export function FrameContent({ frame, frameIdNavigation, onClose }: FrameContent
                     />
                 )}
             <div>
-                {title && (<Text className={s.FrameContent_title} type="h4">{title}</Text>)}
+                {title && (<Text className={s.FrameContent_title} id={titleId} tabIndex={-1} type="h4">{title}</Text>)}
                 {description && (
                     <Text className={s.FrameContent_description} type="t1">{description}</Text>
                 )}

@@ -3,8 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { observer } from 'mobx-react-lite';
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useId, useRef, useState } from 'preact/hooks';
 
+import { useFocusOnMount } from 'Common/hooks/useFocusOnMount';
+import { useFocusTrap } from 'Common/hooks/useFocusTrap';
 import { getTdsLink, TDS_PARAMS } from 'Common/utils/links';
 import { RouteName, SettingsLayer } from 'Modules/settings/store/modules';
 import { useSettingsStore } from 'SettingsLib/hooks';
@@ -63,6 +65,19 @@ function PaywallComponent() {
     const [showAlreadyPurchasedFlowModal, setShowAlreadyPurchasedFlowModal] = useState(false);
     const [showTermsAndConditionsModal, setShowTermsAndConditionsModal] = useState(false);
 
+    const dialogRef = useRef<HTMLDivElement>(null);
+
+    // Released while a nested modal is up, so its own trap takes over.
+    useFocusTrap(dialogRef, !showTermsAndConditionsModal && !showAlreadyPurchasedFlowModal);
+
+    const titleId = useId();
+    const descId = useId();
+
+    // The paywall covers the window without touching focus, so nothing
+    // announced that it opened. Focus its title, which carries both the title
+    // and the line under it as its accessible name.
+    useFocusOnMount(titleId);
+
     const getBackgroundImageClassName = () => {
         if (isMASReleaseVariant) {
             return s.Paywall_bg__defaultImage;
@@ -105,10 +120,20 @@ function PaywallComponent() {
 
     return (
         <div className={s.Paywall}>
-            <div className={cx(s.Paywall_bg, getBackgroundImageClassName())}>
+            {/* The paywall is a modal in all but markup — same dialog semantics as `Modal`. */}
+            <div
+                ref={dialogRef}
+                aria-label={getPaywallTitle()}
+                className={cx(s.Paywall_bg, getBackgroundImageClassName())}
+                role="dialog"
+                aria-modal
+            >
                 <Icon
+                    ariaLabel={translate('close')}
                     className={s.Paywall_cross}
                     icon="cross"
+                    role="button"
+                    isFocusable
                     onClick={() => account.closePaywall()}
                 />
                 {showOffer && !isRightSide && (
@@ -141,15 +166,20 @@ function PaywallComponent() {
                     isRightSide ? s.Paywall_container__right : s.Paywall_container__left,
                 )}
                 >
+                    {/* The heading names itself plus the line under it. */}
                     <Text
+                        ariaLabelledby={`${titleId} ${descId}`}
                         className={s.Paywall_title}
+                        id={titleId}
                         lineHeight="none"
+                        tabIndex={0}
                         type="h4"
                     >
                         {getPaywallTitle()}
                     </Text>
                     <Text
                         className={s.Paywall_desc}
+                        id={descId}
                         lineHeight="none"
                         type="t1"
                     >
@@ -157,15 +187,23 @@ function PaywallComponent() {
                             ? translate('settings.paywall.expired.desc')
                             : translate('settings.paywall.desc')}
                     </Text>
-                    <div className={s.Paywall_advantages}>
+                    {/*
+                      * A list, stepped through one item at a time: read in one
+                      * breath the four perks blur into a single long sentence.
+                      * The icons only repeat the text, so they stay hidden.
+                      */}
+                    <div className={s.Paywall_advantages} role="list">
                         {ADVANTAGES.map(({ label, icon }) => (
                             <div
                                 key={label}
                                 className={s.Paywall_advantages_advantage}
+                                role="listitem"
+                                tabIndex={0}
                             >
                                 <Icon
                                     className={s.Paywall_advantages_advantage_icon}
                                     icon={icon}
+                                    ariaHidden
                                 />
                                 <Text
                                     lineHeight="none"
@@ -232,6 +270,7 @@ function PaywallComponent() {
             )}
             <div
                 className={s.Paywall_backdrop}
+                aria-hidden
                 onClick={() => account.closePaywall()}
             />
         </div>

@@ -44,7 +44,7 @@ function ThemeComponent() {
             <SettingsTitle
                 title={translate('settings.theme')}
             />
-            <div>
+            <div aria-label={translate('settings.theme')} role="radiogroup">
                 {themes.map((theme) => (
                     <Radio
                         key={theme.value}

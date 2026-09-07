@@ -13,9 +13,10 @@ import {
     RulesBuilder,
 } from '@adguard/rules-editor';
 import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
+import { useCallback, useEffect, useId, useRef, useState } from 'preact/hooks';
 
 import { UserRule as UserRuleType } from 'Apis/types';
+import { useFocusOnMount } from 'Common/hooks/useFocusOnMount';
 import { useSettingsStore } from 'SettingsLib/hooks';
 import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
 import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType, RouteName, SettingsEvent } from 'SettingsStore/modules';
@@ -46,6 +47,11 @@ export type FormErrors = Partial<Record<ErrorFields, string>>;
  */
 function UserRuleComponent() {
     const { router, userRules, notification, telemetry, ui } = useSettingsStore();
+
+    // This page builds its own heading instead of using `SettingsTitle`, so it
+    // announces itself directly. See `useFocusOnMount`.
+    const titleId = useId();
+    useFocusOnMount(titleId);
     const editRef = useRef(false);
 
     const { userRules: { rules } } = userRules;
@@ -291,7 +297,7 @@ function UserRuleComponent() {
     return (
         <Layout navigation={{ router, onClick: onCancel, title: translate('menu.user.rules') }} type="settingsPage">
             <div ref={divRef} className={cx(s.UserRule_title, theme.layout.content)}>
-                <Text className={s.UserRule_title_text} type="h4">
+                <Text className={s.UserRule_title_text} id={titleId} tabIndex={-1} type="h4">
                     {hasRawRule ? translate('user.rules.edit') : translate('user.rules.create')}
                 </Text>
                 <ContextMenu reportBug />

@@ -376,6 +376,12 @@ final class WKWebViewAppHost: NSObject {
             self.window.hidesOnDeactivate = false
         }
         self.window.makeKeyAndOrderFront(nil)
+        // Point the window's first responder at the web view. A freshly shown
+        // Window leaves it on the content view or the window itself, so key
+        // Events never reach the page: Tab did nothing at all until the user
+        // First clicked inside. The web content owns all the controls, so it
+        // Should hold the keyboard from the moment the window appears.
+        self.window.makeFirstResponder(self.webView)
         // `activate()` on macOS 14+ completes asynchronously, so the ordering
         // Above can land before activation takes effect. For `.accessory`-policy
         // Apps the window server then leaves a `.normal`-level window (settings)
@@ -720,6 +726,13 @@ final class WKWebViewAppHost: NSObject {
         config.userContentController = userContent
         config.preferences.javaScriptCanOpenWindowsAutomatically = false
 
+        // Tab moves between form controls only by default, silently skipping
+        // Links — which made keyboard users unable to reach the EULA and
+        // Privacy links in onboarding, while custom `tabindex` controls right
+        // Next to them worked. This is the WebKit-level equivalent of Safari's
+        // "Press Tab to highlight each item on a webpage".
+        config.preferences.tabFocusesLinks = true
+
         let webView = WKWebView(frame: .zero, configuration: config)
         // Do not paint the web view's default opaque white backing layer.
         // The modules draw their own page background — the inlined critical
@@ -777,6 +790,12 @@ final class WKWebViewAppHost: NSObject {
         // `.titleVisibility = .hidden`, hence `config.title == ""` is
         // A no-op there.
         window.title = config.title
+        // VoiceOver names a window by its AX title, which AppKit derives from
+        // `title`. That is not enough here: the tray panel keeps `title` empty
+        // (it draws no titlebar text) and the windowed modules all share the
+        // Visible title "AdGuard Mini", so every window would announce the
+        // Same. Give each its own AX name; the visible titlebar is untouched.
+        window.setAccessibilityTitle(config.accessibilityTitle)
         window.level = config.level
         if let key = config.frameAutosaveKey {
             window.setFrameAutosaveName(key)
