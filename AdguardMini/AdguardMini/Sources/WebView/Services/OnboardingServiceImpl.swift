@@ -47,6 +47,9 @@ final class OnboardingServiceImpl: OnboardingService.ServiceType {
             await self.protectionService.startIfEnabled()
             await self.statusBarItemController.updateStatusBarIcon()
             self.webViewAppsController.show(.settings)
+            // Surface the paywall over the settings window right after onboarding.
+            // The settings module resolves it against the current license state.
+            self.eventBus.post(event: .settingsPageRequested, userInfo: "paywall")
             promise(EmptyValue())
         }
     }
