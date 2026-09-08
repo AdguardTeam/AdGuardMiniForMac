@@ -21,6 +21,8 @@ protocol AppStoreInteractor {
     func makePurchase(product: AppStore.Subscription) async throws
     func hasActiveEntitlement() async -> Bool
     func restorePurchases() async throws
+    /// JWS of the latest active subscription transaction, if any.
+    func latestActiveTransactionJWS() async -> String?
 }
 
 // MARK: - AppStoreInteractorImpl
@@ -70,6 +72,10 @@ final class AppStoreInteractorImpl: AppStoreInteractor, StoreApiDelegate {
 
     func hasActiveEntitlement() async -> Bool {
         await self.appStore.hasActiveTransaction()
+    }
+
+    func latestActiveTransactionJWS() async -> String? {
+        await self.appStore.latestActiveTransaction()?.jwsRepresentation
     }
 
     func transactionUpdated(_ signedTransaction: SignedTransaction, _ err: AppStoreError?) {

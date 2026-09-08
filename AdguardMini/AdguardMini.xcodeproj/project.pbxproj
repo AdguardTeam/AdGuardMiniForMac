@@ -694,6 +694,7 @@
 				Settings/UserSettingsManager.swift,
 				UI/EditMenuBuilder.swift,
 				UI/UIElements/Alerts.swift,
+				URLFilter/PIRLicenseProvider.swift,
 				"URLFilter/SharedSettingsStorage+URLFilter.swift",
 				URLFilter/URLFilterConfiguration.swift,
 				URLFilter/URLFilterError.swift,

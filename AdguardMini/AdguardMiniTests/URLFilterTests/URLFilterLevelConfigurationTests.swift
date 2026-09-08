@@ -66,21 +66,24 @@ final class URLFilterLevelConfigurationTests: XCTestCase {
     }
 
     func testAuthenticationTokensAreUniqueAndNonEmpty() {
-        let levels = URLFilterLevelConfiguration.compiledDefaultLevels
-        let tokens = URLFilterProtectionLevel.allCases.compactMap { levels[$0]?.pirAuthenticationToken }
+        let tokens = URLFilterProtectionLevel.allCases.map {
+            URLFilterLevelConfiguration.pirAuthenticationToken(for: $0, license: "lic")
+        }
 
         XCTAssertEqual(tokens.count, URLFilterProtectionLevel.allCases.count)
         XCTAssertFalse(tokens.contains(""), "Tokens must not be empty")
         XCTAssertEqual(Set(tokens).count, tokens.count, "Tokens must be unique per level")
     }
 
-    func testAuthenticationTokenEncodesTheLevelDatabaseName() throws {
-        let levels = URLFilterLevelConfiguration.compiledDefaultLevels
+    func testAuthenticationTokenEncodesTheLevelDatabaseNameAndLicense() throws {
+        let license = "some-license"
 
         for level in URLFilterProtectionLevel.allCases {
-            let configuration = try XCTUnwrap(levels[level])
+            let token = URLFilterLevelConfiguration.pirAuthenticationToken(
+                for: level, license: license
+            )
             let payloadData = try XCTUnwrap(
-                Data(base64Encoded: configuration.pirAuthenticationToken),
+                Data(base64Encoded: token),
                 "Token for level \(level) is not valid base64"
             )
             let payload = try XCTUnwrap(
@@ -89,6 +92,73 @@ final class URLFilterLevelConfigurationTests: XCTestCase {
             )
 
             XCTAssertEqual(payload["db"], self.tokenDatabaseNames[level])
+            XCTAssertEqual(payload["license"], license)
+        }
+    }
+
+    func testAuthenticationTokenEncodesAnEmptyLicenseField() throws {
+        for level in URLFilterProtectionLevel.allCases {
+            let token = URLFilterLevelConfiguration.pirAuthenticationToken(for: level, license: "")
+            let payloadData = try XCTUnwrap(
+                Data(base64Encoded: token),
+                "Token for level \(level) is not valid base64"
+            )
+            let payload = try XCTUnwrap(
+                try JSONSerialization.jsonObject(with: payloadData) as? [String: String],
+                "Token payload for level \(level) is not a string dictionary"
+            )
+
+            XCTAssertEqual(payload["db"], self.tokenDatabaseNames[level])
+            XCTAssertEqual(payload["license"], "", "The license field must be present, even when empty")
+        }
+    }
+
+    func testCompiledDefaultLevelsCarryAnEmptyTokenPlaceholder() {
+        let levels = URLFilterLevelConfiguration.compiledDefaultLevels
+
+        for level in URLFilterProtectionLevel.allCases {
+            XCTAssertEqual(
+                levels[level]?.pirAuthenticationToken,
+                "",
+                "Compiled defaults must not embed a static token; it is resolved dynamically"
+            )
+        }
+    }
+
+    func testEffectiveAuthenticationTokenPrefersConfiguredOverride() {
+        let override = "override-token"
+
+        for level in URLFilterProtectionLevel.allCases {
+            let token = URLFilterLevelConfiguration.effectiveAuthenticationToken(
+                configured: override,
+                for: level,
+                license: "lic"
+            )
+
+            XCTAssertEqual(token, override, "A non-empty configured token must win verbatim")
+        }
+    }
+
+    func testEffectiveAuthenticationTokenGeneratesFromLicenseWhenNoOverride() throws {
+        let license = "some-license"
+
+        for level in URLFilterProtectionLevel.allCases {
+            let token = URLFilterLevelConfiguration.effectiveAuthenticationToken(
+                configured: "",
+                for: level,
+                license: license
+            )
+            let payloadData = try XCTUnwrap(
+                Data(base64Encoded: token),
+                "Token for level \(level) is not valid base64"
+            )
+            let payload = try XCTUnwrap(
+                try JSONSerialization.jsonObject(with: payloadData) as? [String: String],
+                "Token payload for level \(level) is not a string dictionary"
+            )
+
+            XCTAssertEqual(payload["db"], self.tokenDatabaseNames[level])
+            XCTAssertEqual(payload["license"], license)
         }
     }
 }

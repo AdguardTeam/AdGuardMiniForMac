@@ -62,6 +62,10 @@ struct URLFilterLevelConfiguration: Equatable {
     /// Privacy Pass issuer URL for anonymous authentication.
     var pirPrivacyPassIssuerURL: URL?
     /// Bearer token for authenticating with the PIR server.
+    ///
+    /// The compiled default is an empty placeholder; the effective token is
+    /// resolved at configuration-creation time, unless a dev-config override
+    /// replaces it verbatim.
     var pirAuthenticationToken: String
     /// URL for downloading the bloom filter parameters JSON.
     var bloomParamsURL: URL
@@ -108,20 +112,15 @@ extension URLFilterLevelConfiguration {
         return levels
     }()
 
-    /// Compiled-in configurations indexed by protection level.
-    ///
-    /// Independent of the environment: no dev-config is consulted here, so
-    /// these are safe to assert in unit tests. Tokens are opaque per-level
-    /// values generated from the compiled-in payload. URLs can be overridden
-    /// at runtime via dev-config; see ``Constants/defaultPIRServerURL`` for
-    /// the current Debug/Release policy.
+    /// Per-level default configurations, independent of dev-config. The
+    /// token is an empty placeholder resolved with the license at runtime.
     static let compiledDefaultLevels: [URLFilterProtectionLevel: URLFilterLevelConfiguration] = {
         var levels: [URLFilterProtectionLevel: URLFilterLevelConfiguration] = [:]
         for level in URLFilterProtectionLevel.allCases {
             levels[level] = URLFilterLevelConfiguration(
                 pirServerURL: Constants.defaultPIRServerURL,
                 pirPrivacyPassIssuerURL: Constants.defaultPrivacyPassIssuerURL,
-                pirAuthenticationToken: Self.token(for: level),
+                pirAuthenticationToken: "",
                 bloomParamsURL: Constants.bloomParamsURL(for: level)
             )
         }
@@ -213,15 +212,31 @@ extension URLFilterLevelConfiguration {
         }
     }
 
-    /// Opaque PIR bearer token for the given protection level.
+    /// Opaque PIR bearer token for the given protection level and license.
     ///
-    /// The payload format is a backend-internal detail (base64 of
-    /// `{"db":"<database>"}`) and is kept private so the app does not depend
-    /// on the PIR service's naming.
-    private static func token(for level: URLFilterProtectionLevel) -> String {
-        let payload = PIRAuthenticationTokenPayload(db: Self.name(of: level))
+    /// Base64 of `{"db":"<database>","license":"<license>"}`.
+    static func pirAuthenticationToken(
+        for level: URLFilterProtectionLevel,
+        license: String
+    ) -> String {
+        let payload = PIRAuthenticationTokenPayload(db: Self.name(of: level), license: license)
         let data = try? JSONEncoder().encode(payload)
         return data?.base64EncodedString() ?? ""
+    }
+
+    /// Effective PIR token for the level: the configured (dev-config) token
+    /// when non-empty, otherwise the generated db+license token.
+    ///
+    /// Note on dev-config semantics: an explicit `"pir_authentication_token":
+    /// ""` no longer clears the token to an empty value. An empty override is
+    /// treated as "no override", so the token is generated dynamically.
+    static func effectiveAuthenticationToken(
+        configured: String,
+        for level: URLFilterProtectionLevel,
+        license: String
+    ) -> String {
+        guard configured.isEmpty else { return configured }
+        return Self.pirAuthenticationToken(for: level, license: license)
     }
 }
 
@@ -233,4 +248,5 @@ extension URLFilterLevelConfiguration {
 /// token consumers.
 private struct PIRAuthenticationTokenPayload: Encodable {
     var db: String
+    var license: String
 }

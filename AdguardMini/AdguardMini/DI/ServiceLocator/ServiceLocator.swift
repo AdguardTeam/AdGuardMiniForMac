@@ -357,10 +357,22 @@ final class ServiceLocator {
         if #available(macOS 26, *) {
             return URLFilterServiceLiveImpl(
                 eventBus: self.eventBus,
-                sharedKeychainStorage: self.sharedKeychainStorage
+                sharedKeychainStorage: self.sharedKeychainStorage,
+                licenseProvider: self.pirLicenseProvider
             )
         }
         return URLFilterServiceNoOp()
+    }()
+
+    private lazy var pirLicenseProvider: PIRLicenseProvider = {
+        #if MAS
+        PIRLicenseProviderImpl(
+            licenseStateProvider: self.licenseStateProvider,
+            appStoreInteractor: self.appStoreInteractor
+        )
+        #else
+        PIRLicenseProviderImpl(licenseStateProvider: self.licenseStateProvider)
+        #endif
     }()
 
     private lazy var urlFilterBloomMetadataStorage: URLFilterBloomMetadataStorage =
