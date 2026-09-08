@@ -374,7 +374,7 @@
     "advanced.blocking.system.wide.not.supported.modal.title": "Why isn’t system-wide protection available?",
     "advanced.blocking.system.wide.not.supported.modal.desc": "System-wide protection only works with the first account created on a Mac. This is a known system issue, and a fix from Apple is expected<br></br><br></br>To check your account, open Terminal, type id -u, and press Enter. If the number isn’t 501, then system-wide protection isn’t supported on this account yet<br></br><br></br>Boost the discussion on <link>Apple Developer Forums</link>",
     "advanced.blocking.system.wide.install.modal.title": "System-wide protection requires a URL filter",
-    "advanced.blocking.system.wide.install.modal.desc": "To block trackers across browsers and apps, allow<br></br>AdGuard to install the URL filter on your device<br></br><br></br>macOS will ask for your Touch ID or passcode",
+    "advanced.blocking.system.wide.install.modal.desc": "To block trackers across browsers and apps, allow<br></br>AdGuard to install the URL filter on your device",
     "advanced.blocking.system.wide.install.modal.submit": "Install",
     "advanced.blocking.system.wide.reset.cache": "Reset cache",
     "advanced.blocking.system.wide.reset.cache.modal.title": "Reset cache?",
