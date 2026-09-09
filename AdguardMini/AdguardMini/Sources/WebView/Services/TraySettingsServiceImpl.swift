@@ -20,6 +20,7 @@ extension TraySettingsServiceImpl:
     AppUpdaterDependent,
     UserSettingsServiceDependent,
     HealthCheckAttentionProviderDependent,
+    SystemInfoManagerDependent,
     StatisticsServiceDependent {}
 
 final class TraySettingsServiceImpl: TraySettingsService.ServiceType {
@@ -28,6 +29,7 @@ final class TraySettingsServiceImpl: TraySettingsService.ServiceType {
     var userSettingsService: UserSettingsService!
     var healthCheckAttentionProvider: HealthCheckAttentionProvider!
     var statisticsService: StatisticsService!
+    var systemInfoManager: SystemInfoManager!
 
     override init() {
         super.init()
@@ -59,6 +61,7 @@ final class TraySettingsServiceImpl: TraySettingsService.ServiceType {
                 lastUpdateMoreSevenDays: timeSinceLastFiltersUpdate > Constants.noUpdatesThreshold
             )
             traySettings.hiddenStories = self.userSettingsService.hiddenStories
+            traySettings.macos25OrLower = self.systemInfoManager.isMacOS25OrLower
             promise(traySettings)
         }
     }

@@ -21,12 +21,6 @@ private enum Constants {
         let effectiveUID = DeveloperConfigUtils[.urlFilterOverrideUID] as? Int ?? Int(getuid())
         return effectiveUID != 501
     }
-    static let isMacOS25OrLower: Bool = {
-        if #available(macOS 26, *) {
-            return false
-        }
-        return true
-    }()
 }
 
 extension SettingsServiceImpl:
@@ -168,7 +162,7 @@ final class SettingsServiceImpl: SettingsService.ServiceType {
         )
 
         settings.non501User = Constants.isNon501User
-        settings.macos25OrLower = Constants.isMacOS25OrLower
+        settings.macos25OrLower = self.systemInfoManager.isMacOS25OrLower
         promise(settings)
     }
 

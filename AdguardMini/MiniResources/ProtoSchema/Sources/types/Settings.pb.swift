@@ -356,6 +356,8 @@ public struct GlobalSettings: Sendable {
 
   public var lastUpdateMoreSevenDays: Bool = false
 
+  public var macos25OrLower: Bool = false
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -685,7 +687,7 @@ extension ImportStatus: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
 
 extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "GlobalSettings"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}enabled\0\u{2}\u{2}newVersionAvailable\0\u{1}releaseVariant\0\u{1}language\0\u{3}debug_logging\0\u{4}\u{2}allow_telemetry\0\u{1}theme\0\u{3}last_filters_update_timestamp_ms\0\u{3}hidden_stories\0\u{3}login_item_enabled\0\u{3}last_update_more_seven_days\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}enabled\0\u{2}\u{2}newVersionAvailable\0\u{1}releaseVariant\0\u{1}language\0\u{3}debug_logging\0\u{4}\u{2}allow_telemetry\0\u{1}theme\0\u{3}last_filters_update_timestamp_ms\0\u{3}hidden_stories\0\u{3}login_item_enabled\0\u{3}last_update_more_seven_days\0\u{3}macos_25_or_lower\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -704,6 +706,7 @@ extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       case 11: try { try decoder.decodeRepeatedStringField(value: &self.hiddenStories) }()
       case 12: try { try decoder.decodeSingularBoolField(value: &self.loginItemEnabled) }()
       case 13: try { try decoder.decodeSingularBoolField(value: &self.lastUpdateMoreSevenDays) }()
+      case 14: try { try decoder.decodeSingularBoolField(value: &self.macos25OrLower) }()
       default: break
       }
     }
@@ -743,6 +746,9 @@ extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if self.lastUpdateMoreSevenDays != false {
       try visitor.visitSingularBoolField(value: self.lastUpdateMoreSevenDays, fieldNumber: 13)
     }
+    if self.macos25OrLower != false {
+      try visitor.visitSingularBoolField(value: self.macos25OrLower, fieldNumber: 14)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -758,6 +764,7 @@ extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if lhs.hiddenStories != rhs.hiddenStories {return false}
     if lhs.loginItemEnabled != rhs.loginItemEnabled {return false}
     if lhs.lastUpdateMoreSevenDays != rhs.lastUpdateMoreSevenDays {return false}
+    if lhs.macos25OrLower != rhs.macos25OrLower {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

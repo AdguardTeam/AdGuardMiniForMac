@@ -68,7 +68,7 @@ export function useStoriesConfig(): StoryInfo[] {
         lastUpdateMoreSevenDays,
     } = settings;
 
-    const { allowTelemetry, language: currentLanguage } = traySettings || {};
+    const { allowTelemetry, language: currentLanguage, macos25OrLower } = traySettings || {};
     const language = currentLanguage || 'en';
 
     const openHealthCheckPage = () => {
@@ -272,7 +272,7 @@ export function useStoriesConfig(): StoryInfo[] {
         });
     }
 
-    if (!isLicenseOrTrialActive || !urlFilterState?.enabled) {
+    if ((!isLicenseOrTrialActive || !urlFilterState?.enabled) && !macos25OrLower) {
         let actionButtonTitle = '';
         let actionButton = noop;
         if (!isLicenseOrTrialActive && trialAvailableDays > 0) {

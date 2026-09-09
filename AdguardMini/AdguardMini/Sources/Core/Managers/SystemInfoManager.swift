@@ -24,6 +24,7 @@ protocol SystemInfoManager {
     var name: String? { get }
     var mac: String? { get }
     var hid: String { get }
+    var isMacOS25OrLower: Bool { get }
 }
 
 // MARK: - SystemInfoManagerImpl
@@ -47,4 +48,11 @@ final class SystemInfoManagerImpl: SystemInfoManager {
     var hid: String {
         SystemInfo.serialNumber
     }
+
+    let isMacOS25OrLower: Bool = {
+        if #available(macOS 26, *) {
+            return false
+        }
+        return true
+    }()
 }

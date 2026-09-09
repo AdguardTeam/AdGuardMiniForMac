@@ -723,6 +723,7 @@ export class GlobalSettings extends pb_1.Message {
         hiddenStories?: string[];
         loginItemEnabled?: boolean;
         lastUpdateMoreSevenDays?: boolean;
+        macos25OrLower?: boolean;
     }) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [11], this.#one_of_decls);
@@ -759,6 +760,9 @@ export class GlobalSettings extends pb_1.Message {
             }
             if ("lastUpdateMoreSevenDays" in data && data.lastUpdateMoreSevenDays != undefined) {
                 this.lastUpdateMoreSevenDays = data.lastUpdateMoreSevenDays;
+            }
+            if ("macos25OrLower" in data && data.macos25OrLower != undefined) {
+                this.macos25OrLower = data.macos25OrLower;
             }
         }
     }
@@ -828,6 +832,12 @@ export class GlobalSettings extends pb_1.Message {
     set lastUpdateMoreSevenDays(value: boolean) {
         pb_1.Message.setField(this, 13, value);
     }
+    get macos25OrLower() {
+        return pb_1.Message.getFieldWithDefault(this, 14, false) as boolean;
+    }
+    set macos25OrLower(value: boolean) {
+        pb_1.Message.setField(this, 14, value);
+    }
     static fromObject(data: {
         enabled?: boolean;
         newVersionAvailable?: boolean;
@@ -840,6 +850,7 @@ export class GlobalSettings extends pb_1.Message {
         hiddenStories?: string[];
         loginItemEnabled?: boolean;
         lastUpdateMoreSevenDays?: boolean;
+        macos25OrLower?: boolean;
     }): GlobalSettings {
         const message = new GlobalSettings({});
         if (data.enabled != null) {
@@ -875,6 +886,9 @@ export class GlobalSettings extends pb_1.Message {
         if (data.lastUpdateMoreSevenDays != null) {
             message.lastUpdateMoreSevenDays = data.lastUpdateMoreSevenDays;
         }
+        if (data.macos25OrLower != null) {
+            message.macos25OrLower = data.macos25OrLower;
+        }
         return message;
     }
     toObject() {
@@ -890,6 +904,7 @@ export class GlobalSettings extends pb_1.Message {
             hiddenStories?: string[];
             loginItemEnabled?: boolean;
             lastUpdateMoreSevenDays?: boolean;
+            macos25OrLower?: boolean;
         } = {};
         if (this.enabled != null) {
             data.enabled = this.enabled;
@@ -924,6 +939,9 @@ export class GlobalSettings extends pb_1.Message {
         if (this.lastUpdateMoreSevenDays != null) {
             data.lastUpdateMoreSevenDays = this.lastUpdateMoreSevenDays;
         }
+        if (this.macos25OrLower != null) {
+            data.macos25OrLower = this.macos25OrLower;
+        }
         return data;
     }
     serialize(): Uint8Array;
@@ -952,6 +970,8 @@ export class GlobalSettings extends pb_1.Message {
             writer.writeBool(12, this.loginItemEnabled);
         if (this.lastUpdateMoreSevenDays != false)
             writer.writeBool(13, this.lastUpdateMoreSevenDays);
+        if (this.macos25OrLower != false)
+            writer.writeBool(14, this.macos25OrLower);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -993,6 +1013,9 @@ export class GlobalSettings extends pb_1.Message {
                     break;
                 case 13:
                     message.lastUpdateMoreSevenDays = reader.readBool();
+                    break;
+                case 14:
+                    message.macos25OrLower = reader.readBool();
                     break;
                 default: reader.skipField();
             }

@@ -62,6 +62,7 @@ message GlobalSettings {
     repeated string hidden_stories = 11;
     bool login_item_enabled = 12;
     bool last_update_more_seven_days = 13;
+    bool macos_25_or_lower = 14;
 }
 
 message UpdateQuitReactionMessage {
