@@ -28,9 +28,12 @@
         justify-content: center;
         height: 100%;
 
-        &_text {
+        &_left {
             width: 464px;
-            padding: var(--m-l) var(--m-l);
+        }
+
+        &_text {
+            padding: 0 var(--m-l) var(--m-xxs);
         }
 
         &_title {
@@ -44,15 +47,10 @@
         }
 
         &_checkbox {
-            margin: var(--m-l) auto;
+            margin: 0 var(--m-s);
             min-width: 400px;
             display: flex;
             align-items: center;
-
-            &_text {
-                margin-left: var(--m-xs);
-                cursor: pointer;
-            }
 
             &_link {
                 text-decoration-line: underline;

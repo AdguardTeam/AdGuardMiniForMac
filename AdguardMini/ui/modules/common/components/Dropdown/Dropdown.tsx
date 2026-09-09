@@ -191,11 +191,12 @@ export function Dropdown<T>({
                                         <Checkbox
                                             checked={selected}
                                             onChange={handleChange}
-                                        >
-                                            <Text className={s.Dropdown_text} type="t1">
-                                                {option.label}
-                                            </Text>
-                                        </Checkbox>
+                                            title={(
+                                                <Text className={s.Dropdown_text} type="t1">
+                                                    {option.label}
+                                                </Text>
+                                            )}
+                                        />      
                                     )}
                             </li>
                         );

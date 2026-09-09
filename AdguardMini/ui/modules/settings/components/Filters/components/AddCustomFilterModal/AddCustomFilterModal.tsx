@@ -232,12 +232,13 @@ function AddCustomFilterModalComponent({
                             className={s.AddCustomFilterModal_checkbox}
                             id="trusted"
                             onChange={(e) => setTrusted(e)}
-                        >
-                            <div>
+                            title={(
                                 <Text type="t1">{translate('filters.trusted.filter')}</Text>
+                            )}
+                            desc={(
                                 <Text className={s.AddCustomFilterModal_checkbox_desk} type="t2">{translate('filters.trusted.filter.desc')}</Text>
-                            </div>
-                        </Checkbox>
+                            )}
+                        />
                         <Button
                             className={cx(s.AddCustomFilterModal_button, theme.button.greenSubmit)}
                             disabled={!name || loading}

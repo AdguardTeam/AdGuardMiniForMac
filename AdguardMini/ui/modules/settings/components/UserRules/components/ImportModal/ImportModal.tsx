@@ -49,11 +49,12 @@ function ImportModalComponent({ setShowImportModal, onImportRules }: ImportModal
                     checked={dontAskAgainImportModal}
                     className={s.ImportModal_checkbox}
                     onChange={() => userRules.setDontAskAgainImportModal(!dontAskAgainImportModal)}
-                >
-                    <Text type="t1">
-                        {translate('user.rules.import.modal.dontAskAgain')}
-                    </Text>
-                </Checkbox>
+                    title={(
+                        <Text type="t1">
+                            {translate('user.rules.import.modal.dontAskAgain')}
+                        </Text>
+                    )}
+                />                    
             </div>
         </Modal>
     );

@@ -89,11 +89,12 @@ export function Step({
                         checked={checkbox.checked}
                         className={s.Step_content_checkbox}
                         onChange={checkbox.onChange}
-                    >
-                        <Text className={s.Step_content_checkbox_text} type="t1">
-                            {checkbox.label}
-                        </Text>
-                    </Checkbox>
+                        title={(
+                            <Text className={s.Step_content_checkbox_text} type="t1">
+                                {checkbox.label}
+                            </Text>
+                        )}
+                    />      
                 )}
                 <div className={s.Step_content_buttons}>
                     {secondaryButton && (

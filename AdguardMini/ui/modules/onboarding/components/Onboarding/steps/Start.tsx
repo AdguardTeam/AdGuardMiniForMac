@@ -60,64 +60,66 @@ function StartComponent({ trackPage }: StartProps) {
     return (
         <div className={s.Start_container}>
             <div className={s.Start_content}>
-                <div className={s.Start_content_text}>
-                    {/*
-                      * The heading names itself together with the description
-                      * under it, so both are announced in one go. This is a
-                      * consent screen — the description is not decoration, it
-                      * is what the checkboxes below are agreeing to.
-                      */}
-                    <Text
-                        ariaLabelledby={`${titleId} ${descId}`}
-                        className={s.Start_content_title}
-                        id={titleId}
-                        tabIndex={0}
-                        type="h4"
-                    >
-                        {translate('onboarding.start.title')}
-                    </Text>
-                    <Text className={s.Start_content_desc} id={descId} type="t1">{translate('onboarding.start.desc')}</Text>
+                <div className={s.Start_content_left}>
+                    <div className={s.Start_content_text}>
+                        <Text
+                            ariaLabelledby={`${titleId} ${descId}`}
+                            className={s.Start_content_title}
+                            id={titleId}
+                            tabIndex={0}
+                            type="h4"
+                        >
+                            {translate('onboarding.start.title')}
+                        </Text>
+                        <Text className={s.Start_content_desc} id={descId} type="t1">{translate('onboarding.start.desc')}</Text>
+                    </div>
                     <div className={s.Start_content_checkbox}>
                         <Checkbox
                             ariaLabelledby={eulaLabelId}
                             checked={checked}
                             onChange={() => setChecked(!checked)}
+                            withHover
+                            title={(
+                                <Text className={s.Start_content_checkbox_text} id={eulaLabelId} type="t2" onClick={() => setChecked(!checked)}>
+                                    {translate('onboarding.accept', {
+                                        eula: (text: string) => (
+                                            <ExternalLink href={getTdsLink(TDS_PARAMS.eula)} textType="t2">{text}</ExternalLink>
+                                        ),
+                                        privacy: (text: string) => (
+                                            <ExternalLink href={getTdsLink(TDS_PARAMS.privacy)} textType="t2">{text}</ExternalLink>
+                                        ),
+                                    })}
+                                </Text>
+                            )}
                         />
-                        <Text className={s.Start_content_checkbox_text} id={eulaLabelId} type="t2" onClick={() => setChecked(!checked)}>
-                            {translate('onboarding.accept', {
-                                eula: (text: string) => (
-                                    <ExternalLink href={getTdsLink(TDS_PARAMS.eula)} textType="t2">{text}</ExternalLink>
-                                ),
-                                privacy: (text: string) => (
-                                    <ExternalLink href={getTdsLink(TDS_PARAMS.privacy)} textType="t2">{text}</ExternalLink>
-                                ),
-                            })}
-                        </Text>
                     </div>
                     <div className={s.Start_content_checkbox}>
                         <Checkbox
                             ariaLabelledby={telemetryLabelId}
                             checked={telemetry}
                             onChange={() => setTelemetry(!telemetry)}
+                            withHover
+                            title={(
+                                <Text className={s.Start_content_checkbox_text} id={telemetryLabelId} type="t2" onClick={() => setTelemetry(!telemetry)}>
+                                    {translate('telemetry.accept.send.data', {
+                                        link: (text: string) => (
+                                            <div
+                                                className={s.Start_content_checkbox_link}
+                                                role="button"
+                                                tabIndex={0}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    setShowModal(true);
+                                                }}
+                                            >
+                                                {text}
+                                            </div>
+                                        ),
+                                    })}
+                                </Text>
+                            )}
                         />
-                        <Text className={s.Start_content_checkbox_text} id={telemetryLabelId} type="t2" onClick={() => setTelemetry(!telemetry)}>
-                            {translate('telemetry.accept.send.data', {
-                                link: (text: string) => (
-                                    <div
-                                        className={s.Start_content_checkbox_link}
-                                        role="button"
-                                        tabIndex={0}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            setShowModal(true);
-                                        }}
-                                    >
-                                        {text}
-                                    </div>
-                                ),
-                            })}
-                        </Text>
                     </div>
                 </div>
                 <img alt="" className={s.Start_image} src={startImage} />

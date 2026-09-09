@@ -126,60 +126,69 @@ function SupportContactComponent() {
                     description={translate('support.contact.support.desc')}
                     title={translate('support.contact.support')}
                 />
-                <div className={cx(s.SupportContact_content, tx.layout.content, th.layout.bottomPadding)}>
-                    <Input
-                        className={s.SupportContact_input}
-                        error={!!emailError}
-                        errorMessage={emailError}
-                        id="email"
-                        label={translate('email')}
-                        placeholder="example@email.com"
-                        value={email}
-                        allowClear
-                        onChange={(e) => {
-                            setEmailError('');
-                            setEmail(e);
-                        }}
-                        onClear={() => setEmail('')}
-                    />
-                    <Select
-                        className={s.SupportContact_input}
-                        currentValue={theme.value}
-                        id="type"
-                        itemList={themes}
-                        label={translate('theme')}
-                        onChange={(opt) => setTheme(themes.find(({ value }) => value === opt)!)}
-                    />
-                    <Textarea
-                        className={s.SupportContact_textarea}
-                        error={!!messageError}
-                        errorMessage={messageError}
-                        id="message"
-                        label={translate('message')}
-                        placeholder={getMessagePlaceholder(theme.value)}
-                        textAreaClassName={s.SupportContact_textarea_inner}
-                        value={message}
-                        onChange={(e) => {
-                            setMessageError('');
-                            setMessage(e);
-                        }}
-                    />
+                <div className={cx(s.SupportContact_content, th.layout.bottomPadding)}>
+                    <div className={tx.layout.content}>
+
+                        <Input
+                            className={s.SupportContact_input}
+                            error={!!emailError}
+                            errorMessage={emailError}
+                            id="email"
+                            label={translate('email')}
+                            placeholder="example@email.com"
+                            value={email}
+                            allowClear
+                            onChange={(e) => {
+                                setEmailError('');
+                                setEmail(e);
+                            }}
+                            onClear={() => setEmail('')}
+                        />
+                        <Select
+                            className={s.SupportContact_input}
+                            currentValue={theme.value}
+                            id="type"
+                            itemList={themes}
+                            label={translate('theme')}
+                            onChange={(opt) => setTheme(themes.find(({ value }) => value === opt)!)}
+                        />
+                        <Textarea
+                            className={s.SupportContact_textarea}
+                            error={!!messageError}
+                            errorMessage={messageError}
+                            id="message"
+                            label={translate('message')}
+                            placeholder={getMessagePlaceholder(theme.value)}
+                            textAreaClassName={s.SupportContact_textarea_inner}
+                            value={message}
+                            onChange={(e) => {
+                                setMessageError('');
+                                setMessage(e);
+                            }}
+                        />
+                    </div>
                     {showAddLogsCheckbox && (
                         <Checkbox
                             checked={addLogs}
                             className={s.SupportContact_input}
                             id="addLogs"
                             onChange={(e) => setAddLogs(e)}
-                        >
-                            <Text type="t1">{translate('support.contact.add.logs')}</Text>
-                            <Text className={s.SupportContact_input_addLogsDesc} type="t2">{translate('support.contact.add.logs.desc')}</Text>
-                        </Checkbox>
+                            withHover
+                            title={(
+                                <Text type="t1">{translate('support.contact.add.logs')}</Text>
+                            )}
+                            desc={(
+                                <Text className={s.SupportContact_input_addLogsDesc} type="t2">{translate('support.contact.add.logs.desc')}</Text>
+                            )}
+                        />      
                     )}
-                    <Button className={cx(th.button.greenSubmit, s.SupportContact_submit)} disabled={submitDisabled} type="submit" onClick={handleSubmit}>
-                        <Text lineHeight="none" type="t1">
-                            {translate('send')}
-                        </Text>
-                    </Button>
+                    <div className={tx.layout.content}>
+                        <Button className={cx(th.button.greenSubmit, s.SupportContact_submit)} disabled={submitDisabled} type="submit" onClick={handleSubmit}>
+                            <Text lineHeight="none" type="t1">
+                                {translate('send')}
+                            </Text>
+                        </Button>
+                    </div>
                 </div>
             </Layout>
             {showSuccessSubmitModal && (

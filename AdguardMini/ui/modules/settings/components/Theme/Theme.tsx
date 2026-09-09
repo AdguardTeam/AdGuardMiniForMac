@@ -11,8 +11,6 @@ import { useSettingsStore } from 'SettingsLib/hooks';
 import { themeText } from 'SettingsLib/utils/translate';
 import { RouteName } from 'SettingsStore/modules';
 
-import s from './Theme.module.pcss';
-
 import type { IOption } from 'Common/components';
 
 const THEMES = [
@@ -49,7 +47,6 @@ function ThemeComponent() {
                     <Radio
                         key={theme.value}
                         checked={theme.value === currentTheme}
-                        className={s.Theme_option}
                         id={theme.value.toString()}
                         onClick={onThemeChanged(theme.value)}
                     >

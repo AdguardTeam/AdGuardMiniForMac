@@ -4,12 +4,33 @@
 */
 
 .Checkbox {
-    display: flex;
-    align-items: center;
     cursor: pointer;
     position: relative;
     outline: none;
     -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    display: block;
+
+    &_withHover {
+        padding: var(--m-s);
+
+        &:hover {            
+            border-radius: 8px;
+            background: var(--fills-backgrounds-page-background-hovered);
+        }
+    }
+
+    &_title {
+        display: flex;
+        align-items: center;
+        gap: var(--m-xs);
+    }
+
+    &_desc {
+        margin-left: 36px;
+        margin-top: 2px;
+    }
+
 
     &__disabled {
         cursor: default;
@@ -29,11 +50,5 @@
 
     &_input:disabled + &_handler {
         opacity: 0.4;
-    }
-
-    &_label {
-        user-select: none;
-        text-align: left;
-        margin-left: var(--m-xs);
     }
 }

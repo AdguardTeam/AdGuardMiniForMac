@@ -66,38 +66,42 @@ export function DisableFilteringForm({ rule, setRule, errors, setErrors }: Disab
     };
 
     return (
-        <div className={cx(theme.layout.content)}>
-            <Input
-                key="input"
-                className={s.UserRule_input}
-                error={!!errors.domain}
-                errorMessage={errors.domain}
-                id="search"
-                label={translate('website')}
-                placeholder="example.com"
-                value={currentRule.getDomain()}
-                allowClear
-                onBlur={onDomainBlur}
-                onChange={onDomainChange}
-            />
-            <div className={s.UserRule_input}>
-                <Dropdown
-                    currentValue={currentContentOptions}
-                    id="type"
-                    itemList={getExceptionOptions()}
-                    label={translate('user.rule.filtering.options')}
-                    onChange={onContentChange}
+        <div>
+            <div className={cx(theme.layout.content)}>
+                <Input
+                    key="input"
+                    className={s.UserRule_input}
+                    error={!!errors.domain}
+                    errorMessage={errors.domain}
+                    id="search"
+                    label={translate('website')}
+                    placeholder="example.com"
+                    value={currentRule.getDomain()}
+                    allowClear
+                    onBlur={onDomainBlur}
+                    onChange={onDomainChange}
                 />
+                <div className={s.UserRule_input}>
+                    <Dropdown
+                        currentValue={currentContentOptions}
+                        id="type"
+                        itemList={getExceptionOptions()}
+                        label={translate('user.rule.filtering.options')}
+                        onChange={onContentChange}
+                    />
+                </div>
             </div>
             <Checkbox
                 checked={currentRule.getHighPriority()}
-                className={cx(s.UserRule_input, s.UserRule_checkbox)}
+                className={s.UserRule_checkbox}
                 onChange={onPriorityChange}
-            >
-                <Text type="t1">
-                    {translate('user.rule.priority')}
-                </Text>
-            </Checkbox>
+                withHover
+                title={(
+                    <Text type="t1">
+                        {translate('user.rule.priority')}
+                    </Text>
+                )}
+            />
         </div>
     );
 }

@@ -64,12 +64,9 @@ export function EditCustomFilterModal({
                 className={s.EditCustomFilterModal_checkbox}
                 id="trusted"
                 onChange={(e) => setLocalFilter({ ...localFilter, trusted: e })}
-            >
-                <div>
-                    <Text type="t1">{translate('filters.trusted.filter')}</Text>
-                    <Text className={s.EditCustomFilterModal_checkbox_desk} type="t2">{translate('filters.trusted.filter.desc')}</Text>
-                </div>
-            </Checkbox>
+                title={<Text type="t1">{translate('filters.trusted.filter')}</Text>}
+                desc={<Text className={s.EditCustomFilterModal_checkbox_desk} type="t2">{translate('filters.trusted.filter.desc')}</Text>}
+            />
         </Modal>
     );
 }

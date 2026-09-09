@@ -78,6 +78,9 @@ function MenuComponent() {
                 />
                 <MenuItem
                     icon="advanced"
+                    activeRoutes={[
+                        RouteName.system_wide_protection
+                    ]}
                     isNew={urlFilterNew}
                     route={RouteName.advanced_blocking}
                     title={translate('menu.advanced.blocking.title')}

@@ -75,7 +75,6 @@ function TitleComponent({ setShowNotSupportedModal, setShowResetCacheModal, setS
             }]}
             newLabel={isSystemWideProtectionPageNew}
             title={translate('advanced.blocking.system.wide')}
-            maxTopPadding
         >
             {payedFuncsTitle && (
                 <div className={s.Title_payedTitle}>

@@ -358,29 +358,33 @@ function UserRuleComponent() {
             {/* User can add a comment to any new rule type except comment, when creating a new rule */}
             {/* if rawRule exist - it means user is editing an existing rule */}
             {type.value !== 'comment' && !hasRawRule && (
-                <div className={cx(theme.layout.content)}>
+                <>
                     <Checkbox
                         checked={addComment.value}
-                        className={cx(s.UserRule_input, s.UserRule_commentCheckbox)}
+                        className={s.UserRule_input}
                         onChange={(e) => setAddComment({ ...addComment, value: e })}
-                    >
-                        <Text type="t1">
-                            {translate('user.rule.add.comment')}
-                        </Text>
-                    </Checkbox>
-                    {addComment.value && (
-                        <Textarea
-                            className={s.UserRule_input}
-                            id="domainModifierDomains"
-                            textAreaClassName={s.UserRule_textarea}
-                            value={addComment.comment.getText()}
-                            onChange={(e) => {
-                                addComment.comment.setText(e);
-                                setAddComment({ ...addComment });
-                            }}
-                        />
-                    )}
-                </div>
+                        withHover
+                        title={(
+                            <Text type="t1">
+                                {translate('user.rule.add.comment')}
+                            </Text>
+                        )}
+                    />
+                    <div className={cx(theme.layout.content)}>
+                        {addComment.value && (
+                            <Textarea
+                                className={s.UserRule_input}
+                                id="domainModifierDomains"
+                                textAreaClassName={s.UserRule_textarea}
+                                value={addComment.comment.getText()}
+                                onChange={(e) => {
+                                    addComment.comment.setText(e);
+                                    setAddComment({ ...addComment });
+                                }}
+                            />
+                        )}
+                    </div>
+                </>
             )}
 
             {(type.value !== 'comment') && (type.value !== 'custom') && (

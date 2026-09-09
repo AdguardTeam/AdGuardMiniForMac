@@ -11,7 +11,8 @@ import type { ComponentChild } from 'preact';
 
 type CheckboxProps = {
     checked: boolean;
-    children?: ComponentChild;
+    title?: ComponentChild;
+    desc?: ComponentChild;
     className?: string;
     labelClassName?: string;
     disabled?: boolean;
@@ -24,6 +25,7 @@ type CheckboxProps = {
      * checkbox) and the input would otherwise have no accessible name.
      */
     ariaLabelledby?: string;
+    withHover?: boolean;
 };
 
 /**
@@ -31,7 +33,8 @@ type CheckboxProps = {
  */
 export function Checkbox({
     checked,
-    children,
+    title,
+    desc,
     className,
     labelClassName,
     disabled,
@@ -39,6 +42,7 @@ export function Checkbox({
     onChange,
     id,
     ariaLabelledby,
+    withHover,
 }: CheckboxProps) {
     const ref = useRef<HTMLLabelElement>(null);
 
@@ -52,7 +56,7 @@ export function Checkbox({
             aria-checked={checked}
             aria-disabled={disabled}
             aria-labelledby={ariaLabelledby}
-            className={cx(s.Checkbox, disabled && s.Checkbox__disabled, className)}
+            className={cx(s.Checkbox, disabled && s.Checkbox__disabled, withHover && s.Checkbox_withHover, className)}
             htmlFor={id}
             // The rule fires because a `<label>` is not natively interactive —
             // but this one is: a native `<label for>` click forwards to its
@@ -70,10 +74,13 @@ export function Checkbox({
                 type="checkbox"
                 onChange={(e) => onChange(e.currentTarget.checked)}
             />
-            <CheckboxIcon checked={checked} muted={muted} />
-            {children && (
-                <div className={cx(s.Checkbox_label, labelClassName)}>
-                    {children}
+            <div className={s.Checkbox_title}>
+                <CheckboxIcon checked={checked} muted={muted} />
+                {title}
+            </div>
+            {desc && (
+                <div className={cx(s.Checkbox_desc, labelClassName)}>
+                    {desc}
                 </div>
             )}
         </label>

@@ -90,61 +90,65 @@ export function UnblockRequestForm({ rule, setRule, errors, setErrors }: Unblock
     };
 
     return (
-        <div className={cx(theme.layout.content)}>
-            <Input
-                key="input"
-                className={s.UserRule_input}
-                error={!!errors.domain}
-                errorMessage={errors.domain}
-                id="search"
-                label={translate('user.rule.unblock.domain.label')}
-                placeholder="example.com"
-                value={currentRule.getDomain()}
-                allowClear
-                onBlur={onDomainBlur}
-                onChange={onDomainChange}
-            />
-            <div className={s.UserRule_input}>
-                <Dropdown
-                    currentValue={currentContentOptions}
-                    id="type"
-                    itemList={getContentUnblockOptions()}
-                    label={translate('user.rule.unblock.content.label')}
-                    onChange={onContentChange}
-                />
-            </div>
-            <div className={s.UserRule_input}>
-                <Select<DomainModifiers>
-                    currentValue={currentRule.getDomainModifiers()}
-                    id="type"
-                    itemList={getDomainOptions()}
-                    label={translate('user.rule.apply.websites.label')}
-                    onChange={onDomainModifierChange}
-                />
-            </div>
-            {showDomainsField && (
-                <Textarea
-                    key="textarea"
+        <div>
+            <div className={cx(theme.layout.content)}>
+                <Input
+                    key="input"
                     className={s.UserRule_input}
-                    error={!!errors.websites}
-                    errorMessage={errors.websites}
-                    id="domainModifierDomains"
+                    error={!!errors.domain}
+                    errorMessage={errors.domain}
+                    id="search"
+                    label={translate('user.rule.unblock.domain.label')}
                     placeholder="example.com"
-                    textAreaClassName={s.UserRule_textarea}
-                    value={currentRule.getDomainModifiersDomains().join('\n')}
-                    onBlur={onWebsitesBlur}
-                    onChange={onDomainsChange}
+                    value={currentRule.getDomain()}
+                    allowClear
+                    onBlur={onDomainBlur}
+                    onChange={onDomainChange}
                 />
-            )}
+                <div className={s.UserRule_input}>
+                    <Dropdown
+                        currentValue={currentContentOptions}
+                        id="type"
+                        itemList={getContentUnblockOptions()}
+                        label={translate('user.rule.unblock.content.label')}
+                        onChange={onContentChange}
+                    />
+                </div>
+                <div className={s.UserRule_input}>
+                    <Select<DomainModifiers>
+                        currentValue={currentRule.getDomainModifiers()}
+                        id="type"
+                        itemList={getDomainOptions()}
+                        label={translate('user.rule.apply.websites.label')}
+                        onChange={onDomainModifierChange}
+                    />
+                </div>
+                {showDomainsField && (
+                    <Textarea
+                        key="textarea"
+                        className={s.UserRule_input}
+                        error={!!errors.websites}
+                        errorMessage={errors.websites}
+                        id="domainModifierDomains"
+                        placeholder="example.com"
+                        textAreaClassName={s.UserRule_textarea}
+                        value={currentRule.getDomainModifiersDomains().join('\n')}
+                        onBlur={onWebsitesBlur}
+                        onChange={onDomainsChange}
+                    />
+                )}
+            </div>
             <Checkbox
                 checked={currentRule.getHighPriority()}
-                className={cx(s.UserRule_input, s.UserRule_checkbox)}
+                className={s.UserRule_checkbox}
                 onChange={onPriorityChange}
-            >
-                <Text type="t1">
-                    {translate('user.rule.priority')}
-                </Text>
-            </Checkbox>
+                withHover
+                title={(
+                    <Text type="t1">
+                        {translate('user.rule.priority')}
+                    </Text>
+                )}
+            />
         </div>
     );
 }

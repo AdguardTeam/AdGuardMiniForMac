@@ -12,8 +12,6 @@ import { RouteName } from 'SettingsStore/modules';
 
 import { SettingsTitle } from '../SettingsTitle';
 
-import s from './QuitReaction.module.pcss';
-
 import type { IOption } from 'Common/components';
 
 const QUIT_REACTIONS = [
@@ -51,7 +49,6 @@ function QuitReactionComponent() {
                     <Radio
                         key={reaction.value}
                         checked={reaction.value === quitReaction}
-                        className={s.QuitReaction_option}
                         id={reaction.value.toString()}
                         onClick={onReactionChange(reaction.value)}
                     >

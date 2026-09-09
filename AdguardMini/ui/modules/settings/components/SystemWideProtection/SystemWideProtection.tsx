@@ -6,6 +6,7 @@ import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'preact/hooks';
 
 import { useSettingsStore } from 'SettingsLib/hooks';
+import { RouteName } from 'SettingsStore/modules';
 import { Layout } from 'UILib';
 
 import { InstallModal } from '../InstallModal';
@@ -17,7 +18,7 @@ import { FilteringRules, HowItWorks, ProtectionLevel, Switch, Title, ResetCacheM
  * System-wide Protection page component for settings module
  */
 function SystemWideProtectionComponent() {
-    const { advancedBlocking } = useSettingsStore();
+    const { advancedBlocking, router } = useSettingsStore();
     const { urlFilterNew } = advancedBlocking;
 
     const [showNotSupportedModal, setShowNotSupportedModal] = useState(false);
@@ -32,7 +33,7 @@ function SystemWideProtectionComponent() {
     }, [advancedBlocking, urlFilterNew]);
 
     return (
-        <Layout type="settingsPage">
+        <Layout navigation={{ router, route: RouteName.safari_protection, title: translate('menu.advanced.blocking.title') }} type="settingsPage">
             <Title
                 setShowNotSupportedModal={setShowNotSupportedModal}
                 setShowRemoveFilterModal={setShowRemoveFilterModal}
