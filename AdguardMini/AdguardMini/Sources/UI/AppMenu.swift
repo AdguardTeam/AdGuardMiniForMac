@@ -140,7 +140,11 @@ final class AppMenu: NSMenu, NSMenuItemValidation, NSMenuDelegate {
     /// context menu, which bypasses the app menu). Nil targets route each
     /// action through the responder chain to the focused WKWebView.
     private var editMenu: NSMenuItem {
-        let editMenu = NSMenuItem()
+        let editMenu = NSMenuItem(
+            title: .localized.base.app_menu_edit_title,
+            action: nil,
+            keyEquivalent: ""
+        )
         editMenu.submenu = NSMenu()
         editMenu.submenu?.items = self.editMenuItems
         return editMenu

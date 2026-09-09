@@ -22,6 +22,9 @@
 /* App Menu - "Quit AdGuard Mini" title. */
 "app_menu_quit_title" = "Quit AdGuard Mini";
 
+/* App Menu - "Edit" title. */
+"app_menu_edit_title" = "Edit";
+
 /* App Menu - "Undo" title. */
 "app_menu_undo_title" = "Undo";
 

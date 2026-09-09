@@ -53,6 +53,11 @@ extension String.localized
         /** App Menu - "Quit AdGuard Mini" title. */
         static public let app_menu_quit_title : String = { .localized.string ("app_menu_quit_title", in: "Localizable") }()
 
+        /** `"Edit"` */
+        /** */
+        /** App Menu - "Edit" title. */
+        static public let app_menu_edit_title : String = { .localized.string ("app_menu_edit_title", in: "Localizable") }()
+
         /** `"Undo"` */
         /** */
         /** App Menu - "Undo" title. */
