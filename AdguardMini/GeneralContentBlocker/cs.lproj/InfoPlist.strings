@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Obsahuje obecná pravidla filtrů blokování";
+"NSHumanReadableDescription" = "Pomáhá blokovat většinu reklam na webových stránkách";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard – Všeobecné";

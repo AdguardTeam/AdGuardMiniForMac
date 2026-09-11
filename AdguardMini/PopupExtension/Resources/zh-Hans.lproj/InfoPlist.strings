@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "该扩展有两个重要功能：在 Safari 工具栏上添加一个图标，用于管理 AdGuard 设置；应用 Safari 内容拦截 API 不支持的进阶拦截规则。";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Safari 版";

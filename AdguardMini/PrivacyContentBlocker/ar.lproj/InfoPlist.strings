@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "يحتوي على قواعد من فلاتر لحظر أدوات التتبع وتحليلات الويب.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "خصوصية AdGuard";

@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "هذه الإضافة تؤدي وظيفتين هامتين: إنها تضيف أيقونة إلى شريط أدوات Safari يمكن استخدامها لإدارة إعدادات AdGuard، وهي تطبق أيضًا قواعد حظر متقدمة غير مدعومة بواسطة واجهة برمجة تطبيقات Safari لحجب المحتوى.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard لـ سفاري";

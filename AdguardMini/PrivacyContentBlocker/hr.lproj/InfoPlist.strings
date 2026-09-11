@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Sadrži pravila iz filtera za blokiranje pratitelja i web analitike";
+"NSHumanReadableDescription" = "Pomaže blokirati pratitelje i web-analitiku";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Privatnost";

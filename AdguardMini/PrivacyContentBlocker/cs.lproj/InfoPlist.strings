@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Obsahuje pravidla z filtrů pro blokování slídičů a webové analytiky";
+"NSHumanReadableDescription" = "Pomáhá blokovat slídiče a webové analytické prvky";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard – Soukromí";

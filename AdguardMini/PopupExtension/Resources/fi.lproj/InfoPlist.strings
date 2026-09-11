@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "Tällä laajennuksella on kaksi tärkeää tehtävää: Se lisää Safarin työkalupalkkiin kuvakkeen, jonka kautta voidaan hallita AdGuardin asetuksia, ja lisäksi se käyttää edistyneitä estosääntöjä, joita Safarin sisällönestorajapinta ei tue.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Safarille";

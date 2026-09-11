@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "Гэта пашырэнне выконвае дзве важныя функцыі: яно дадае значок на панэль інструментаў Safari, дзякуючы якому можна кіраваць наладамі AdGuard, а таксама ўжывае пашыраныя правілы блакіравання, якія не падтрымліваюцца API блакіравання змесціва Safari.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard для Safari";

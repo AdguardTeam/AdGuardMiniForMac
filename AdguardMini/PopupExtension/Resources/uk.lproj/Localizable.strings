@@ -1,6 +1,12 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "Безпечна сторінка";
 
+/* Domain view - Domain Item hint "Website protection disabled" */
+"item_hint_domain_protection_off" = "Захист вебсайту вимкнено";
+
+/* Domain view - Item title "Still seeing ads? Learn how to fix this" */
+"item_attention_title_health_check_trouble" = "Все ще бачите рекламу? Дізнайтеся, як це виправити";
+
 /* Domain view - Item title "Block element" */
 "item_title_block_element" = "Блокувати елемент";
 
@@ -9,6 +15,12 @@
 
 /* Domain view - Item title "Rate AdGuard Mini" */
 "item_title_rate_adguard_mini" = "Оцініть AdGuard Mini";
+
+/* Domain view - Stats label "{count} ad(s) blocked" */
+"item_stats_ads_blocked" = "%d реклами заблоковано";
+
+/* Domain view - Stats label "{count} tracker(s) blocked" */
+"item_stats_trackers_blocked" = "%d відстежувачів заблоковано";
 
 /* Info view - Title "Protection is disabled" */
 "info_title_protection_disabled" = "Захист вимкнено";
@@ -70,3 +82,12 @@ Info view - Subtitle "To get AdGuard Mini up and running properly, you’ll need
 
 /* Info view - Button title "Opening..." */
 "info_button_title_opening" = "Відкривається...";
+
+/* Domain view - Upsell CTA title "Unlock full protection" */
+"item_upsell_title" = "Розблокуйте повний захист";
+
+/* Domain view - Upsell CTA description when trial is available */
+"item_upsell_description_trial" = "Спробуйте %d днів без оплати";
+
+/* Domain view - Upsell CTA description when trial is not available */
+"item_upsell_description_upgrade" = "Натисніть, щоб оновити план";

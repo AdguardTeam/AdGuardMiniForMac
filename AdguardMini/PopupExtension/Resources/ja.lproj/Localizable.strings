@@ -1,6 +1,9 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "セキュアページ";
 
+/* Domain view - Item title "Still seeing ads? Learn how to fix this" */
+"item_attention_title_health_check_trouble" = "まだ広告が表示される場合、解決方法はこちら";
+
 /* Domain view - Item title "Block element" */
 "item_title_block_element" = "要素を手動ブロックする";
 
@@ -70,3 +73,12 @@ Info view - Subtitle "To get AdGuard Mini up and running properly, you’ll need
 
 /* Info view - Button title "Opening..." */
 "info_button_title_opening" = "開いています...";
+
+/* Domain view - Upsell CTA title "Unlock full protection" */
+"item_upsell_title" = "フル機能を手に入れる";
+
+/* Domain view - Upsell CTA description when trial is available */
+"item_upsell_description_trial" = "%d日間無料で試せます";
+
+/* Domain view - Upsell CTA description when trial is not available */
+"item_upsell_description_upgrade" = "クリックしてアップグレード";

@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "일반 필터의 차단 규칙을 포함합니다";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard";

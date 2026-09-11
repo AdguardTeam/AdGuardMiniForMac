@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "Această extensie îndeplinește două funcții importante: adaugă o pictogramă la bara de instrumente Safari care poate fi utilizată pentru a gestiona setările AdGuard și, de asemenea, aplică reguli avansate de blocare care nu sunt acceptate de API-ul Safari Content Blocking.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard pentru Safari";

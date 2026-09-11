@@ -163,6 +163,16 @@ extension String.localized
         /** WebView failure alert - Informative text */
         static public let webview_load_failure_message_text : String = { .localized.string ("webview_load_failure_message_text", in: "Localizable") }()
 
+        /** `"AdGuard Mini is not responding"` */
+        /** */
+        /** RPC recurring-timeout alert - Title */
+        static public let rpc_timeout_message_title : String = { .localized.string ("rpc_timeout_message_title", in: "Localizable") }()
+
+        /** `"Communication between the app and its interface has timed out repeatedly. You can restart the app or report the issue."` */
+        /** */
+        /** RPC recurring-timeout alert - Informative text */
+        static public let rpc_timeout_message_text : String = { .localized.string ("rpc_timeout_message_text", in: "Localizable") }()
+
         /** `"Close"` */
         /** */
         /** Title on Close button in error message */

@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "Sisältää suodattimien sääntöjä seurannan ja web-analytiikan estämiseen";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Tietosuoja";

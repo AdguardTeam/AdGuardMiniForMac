@@ -55,6 +55,21 @@
 /* Request user about restarting AdGuard Mini */
 "restarting_request_message_text" = "Indstillingerne er nulstillet. Genstart AdGuard Mini for at genoprette funktionaliteten";
 
+/* WebView failure alert - "Report issue" button title */
+"report_issue_button" = "Anmeld problematik";
+
+/* WebView failure alert - Title */
+"webview_load_failure_message_title" = "AdGuard Mini-brugerfladen kan ikke indlæses";
+
+/* WebView failure alert - Informative text */
+"webview_load_failure_message_text" = "Noget gik galt under indlæsning af AdGuard Mini-vinduet. Prøv at genstarte appen eller anmelde problemet.";
+
+/* RPC recurring-timeout alert - Title */
+"rpc_timeout_message_title" = "AdGuard Mini svarer ikke";
+
+/* RPC recurring-timeout alert - Informative text */
+"rpc_timeout_message_text" = "Kommunikation mellem appen og dens brugerflade har gentagne gange oplevet timeout. Prøv at genstarte appen eller anmelde problemet.";
+
 /* Title on Close button in error message */
 "close_button" = "Luk";
 

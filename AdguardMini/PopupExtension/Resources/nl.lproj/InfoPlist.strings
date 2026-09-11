@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Deze uitbreiding heeft twee belangrijke functies: het voegt een pictogram toe aan de werkbalk van Safari dat kan worden gebruikt om de instellingen van AdGuard te beheren, en het past ook geavanceerde blokkeerregels toe die niet worden ondersteund door Safari Content Blocking API.";
+"NSHumanReadableDescription" = "Hiermee kun je AdGuard Mini-bescherming beheren vanuit de Safari-werkbalk, statistieken bekijken en geavanceerde blokkeringsregels toepassen";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard voor Safari";

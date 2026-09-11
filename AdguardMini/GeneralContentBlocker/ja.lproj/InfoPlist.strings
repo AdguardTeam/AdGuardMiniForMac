@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "一般フィルタのブロックルールを含む。";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard 一般";

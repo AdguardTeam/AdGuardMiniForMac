@@ -55,6 +55,9 @@
 /* Request user about restarting AdGuard Mini */
 "restarting_request_message_text" = "Ayarlar sıfırlandı. İşlevselliğini geri yüklemek için lütfen AdGuard Mini'yi yeniden başlatın";
 
+/* RPC recurring-timeout alert - Title */
+"rpc_timeout_message_title" = "AdGuard Mini yanıt vermiyor";
+
 /* Title on Close button in error message */
 "close_button" = "Kapat";
 

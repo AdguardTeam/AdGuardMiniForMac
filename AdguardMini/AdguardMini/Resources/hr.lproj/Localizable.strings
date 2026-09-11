@@ -55,6 +55,21 @@
 /* Request user about restarting AdGuard Mini */
 "restarting_request_message_text" = "Restart je potreban da bi AdGuard nastavio s radom. Kliknite \"Restart\" za nastavak.";
 
+/* WebView failure alert - "Report issue" button title */
+"report_issue_button" = "Prijavite problem";
+
+/* WebView failure alert - Title */
+"webview_load_failure_message_title" = "AdGuard Mini ne može učitati svoje sučelje";
+
+/* WebView failure alert - Informative text */
+"webview_load_failure_message_text" = "Došlo je do pogreške prilikom učitavanja prozora AdGuard Mini. Možete ponovno pokrenuti aplikaciju ili prijaviti problem.";
+
+/* RPC recurring-timeout alert - Title */
+"rpc_timeout_message_title" = "AdGuard Mini ne odgovara";
+
+/* RPC recurring-timeout alert - Informative text */
+"rpc_timeout_message_text" = "Komunikacija između aplikacije i njezina sučelja više je puta istekla. Možete ponovno pokrenuti aplikaciju ili prijaviti problem.";
+
 /* Title on Close button in error message */
 "close_button" = "Zatvori";
 

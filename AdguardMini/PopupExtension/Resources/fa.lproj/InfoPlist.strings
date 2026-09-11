@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "این برنامه افزودنی دو عملکرد مهم را انجام می دهد: یک نماد به نوار ابزار سافاری اضافه می کند که می تواند برای مدیریت تنظیمات AdGuard استفاده شود و همچنین قوانین مسدودسازی پیشرفته ای را اعمال می کند که توسط Safari Content Blocking API پشتیبانی نمی شوند.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard for Safari";

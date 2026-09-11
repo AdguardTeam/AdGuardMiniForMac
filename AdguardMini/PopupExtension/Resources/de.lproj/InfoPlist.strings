@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "Diese Erweiterung erfüllt zwei wichtige Funktionen: Sie fügt ein Symbol zur Safari-Symbolleiste hinzu, das zur Verwaltung von AdGuard-Einstellungen verwendet werden kann, und wendet auch erweiterte Blockierungsregeln an, die von der Safari Content Blocking API nicht unterstützt werden.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard für Safari";

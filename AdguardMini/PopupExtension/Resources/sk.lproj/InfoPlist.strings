@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "Toto rozšírenie plní dve dôležité funkcie: pridáva ikonu na panel nástrojov Safari, aby ste mohli spravovať nastavenia AdGuard, a uplatňuje pokročilé pravidlá blokovania, ktoré nie sú podporované rozhraním API na blokovanie obsahu v Safari.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard pre Safari";

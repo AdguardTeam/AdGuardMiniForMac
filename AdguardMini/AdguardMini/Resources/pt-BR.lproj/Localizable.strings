@@ -55,6 +55,9 @@
 /* Request user about restarting AdGuard Mini */
 "restarting_request_message_text" = "As configurações foram redefinidas. Reinicie o AdGuard Mini para restaurar sua funcionalidade";
 
+/* WebView failure alert - "Report issue" button title */
+"report_issue_button" = "Reportar problema";
+
 /* Title on Close button in error message */
 "close_button" = "Fechar";
 

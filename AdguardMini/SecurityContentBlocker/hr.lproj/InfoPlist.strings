@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Sadrži pravila blokiranja za Sigurnosne filtre";
+"NSHumanReadableDescription" = "Pomaže blokirati zlonamjerne web stranice te web stranice za krađu identiteta i prijevare";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Sigurnost";

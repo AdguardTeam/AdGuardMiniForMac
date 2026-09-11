@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Indeholder blokeringsregler for Sikkerhedsfiltre";
+"NSHumanReadableDescription" = "Assisterer med at blokere skadelige, phishing- og svindelwebsteder";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Sikkerhed";

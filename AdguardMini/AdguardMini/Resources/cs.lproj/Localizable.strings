@@ -55,6 +55,21 @@
 /* Request user about restarting AdGuard Mini */
 "restarting_request_message_text" = "Nastavení byla resetována. Restartujte prosím AdGuard Mini, abyste obnovili jeho funkčnost";
 
+/* WebView failure alert - "Report issue" button title */
+"report_issue_button" = "Nahlásit problém";
+
+/* WebView failure alert - Title */
+"webview_load_failure_message_title" = "AdGuard Mini nemůže načíst své rozhraní";
+
+/* WebView failure alert - Informative text */
+"webview_load_failure_message_text" = "Při načítání okna aplikace AdGuard Mini došlo k chybě. Můžete aplikaci restartovat nebo nahlásit tento problém.";
+
+/* RPC recurring-timeout alert - Title */
+"rpc_timeout_message_title" = "AdGuard Mini neodpovídá";
+
+/* RPC recurring-timeout alert - Informative text */
+"rpc_timeout_message_text" = "Komunikace mezi aplikací a jejím rozhraním opakovaně vypršela. Můžete aplikaci restartovat nebo nahlásit tento problém.";
+
 /* Title on Close button in error message */
 "close_button" = "Zavřít";
 

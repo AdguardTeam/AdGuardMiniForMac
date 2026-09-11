@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Seznamy filtrů zabezpečení pro pravidla blokování.";
+"NSHumanReadableDescription" = "Pomáhá blokovat škodlivé, phishingové a podvodné webové stránky";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard – Zabezpečení";

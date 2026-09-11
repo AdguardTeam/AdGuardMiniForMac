@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "セキュリティフィルタのブロックルールを含む。";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard セキュリティ";

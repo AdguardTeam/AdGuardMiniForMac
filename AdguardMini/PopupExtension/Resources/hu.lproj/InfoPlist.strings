@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "Ez a bővítmény két fontos funkciót lát el: egy ikont ad a Safari eszköztárhoz, amellyel kezelheti az AdGuard beállításait, és olyan speciális blokkoló szabályokat is alkalmaz, amelyeket a Safari Content Blocking API nem támogat.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Safarihoz";

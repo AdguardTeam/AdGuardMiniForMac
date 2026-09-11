@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "Contient des règles de filtres pour bloquer les traqueurs et les analyses Web";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Confidentialité";

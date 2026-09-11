@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "추적기 및 웹 분석 차단을 위한 필터 규칙이 포함되어 있습니다.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard 개인 정보 보호";

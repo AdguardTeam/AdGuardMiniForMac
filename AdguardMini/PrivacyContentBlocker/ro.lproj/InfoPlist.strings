@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "Conține reguli din filtre pentru blocarea trackerelor și analiza web";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Privacy";

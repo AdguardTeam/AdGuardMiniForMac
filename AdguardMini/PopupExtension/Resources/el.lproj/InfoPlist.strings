@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "Αυτή η επέκταση εκτελεί δύο σημαντικές λειτουργίες: προσθέτει ένα εικονίδιο στην γραμμή εργαλείων του Safari που μπορεί να χρησιμοποιηθεί για τη διαχείριση των ρυθμίσεων του AdGuard και εφαρμόζει επίσης προηγμένους κανόνες αποκλεισμού που δεν υποστηρίζονται από το API περιεχομένου του Safari.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard για Safari";

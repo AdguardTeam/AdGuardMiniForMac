@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "Esta extensão desempenha duas funções importantes: adiciona um ícone à barra de ferramentas do Safari, que pode ser utilizado para gerir as definições do AdGuard, e também aplica regras de bloqueio avançadas que não são suportadas pela API de bloqueio de conteúdos do Safari.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard para Safari";

@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "此延伸功能執行兩個重要功能：它新增一個圖像到 Safari 工具列，其可被用於管理 AdGuard 設定，且它也套用未受 Safari 內容阻擋 API 支援的進階封鎖規則。";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard for Safari";

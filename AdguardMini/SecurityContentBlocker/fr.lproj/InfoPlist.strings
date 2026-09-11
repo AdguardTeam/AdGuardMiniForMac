@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "Contient les régles de blocage du groupe des filtres \"Sécurité\"";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Sécurité";

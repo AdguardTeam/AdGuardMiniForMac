@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Indeholder blokeringsregler for Generelle filtre";
+"NSHumanReadableDescription" = "Assisterer med at blokere de fleste annoncer på websteder";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Generelt";

@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "Contiene reglas de bloqueo de filtros generales";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard - General";

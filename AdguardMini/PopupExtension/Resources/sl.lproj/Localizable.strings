@@ -1,6 +1,12 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "Zaščitena stran";
 
+/* Domain view - Domain Item hint "Website protection disabled" */
+"item_hint_domain_protection_off" = "Zaščita spletnega mesta onemogočena";
+
+/* Domain view - Item title "Still seeing ads? Learn how to fix this" */
+"item_attention_title_health_check_trouble" = "Še vedno vidite oglase? Naučite se, kako to odpraviti";
+
 /* Domain view - Item title "Block element" */
 "item_title_block_element" = "Onemogoči element";
 
@@ -9,6 +15,12 @@
 
 /* Domain view - Item title "Rate AdGuard Mini" */
 "item_title_rate_adguard_mini" = "Ocenite AdGuard Mini";
+
+/* Domain view - Stats label "{count} ad(s) blocked" */
+"item_stats_ads_blocked" = "%d blokiranih oglasov";
+
+/* Domain view - Stats label "{count} tracker(s) blocked" */
+"item_stats_trackers_blocked" = "%d sledilnikov blokiranih";
 
 /* Info view - Title "Protection is disabled" */
 "info_title_protection_disabled" = "Zaščita je onemogočena";
@@ -70,3 +82,12 @@ Info view - Subtitle "To get AdGuard Mini up and running properly, you’ll need
 
 /* Info view - Button title "Opening..." */
 "info_button_title_opening" = "Odpiranje...";
+
+/* Domain view - Upsell CTA title "Unlock full protection" */
+"item_upsell_title" = "Odklenite popolno zaščito";
+
+/* Domain view - Upsell CTA description when trial is available */
+"item_upsell_description_trial" = "Preizkusite %d dni brezplačno";
+
+/* Domain view - Upsell CTA description when trial is not available */
+"item_upsell_description_upgrade" = "Kliknite za nadgradnjo";

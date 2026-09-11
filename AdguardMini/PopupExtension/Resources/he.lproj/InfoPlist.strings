@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "הרחבה זו מבצעת שתי פונקציות חשובות: היא מוסיפה אייקון לסרגל הכלים של Safari שיכול לשמש לניהול הגדרות של AdGuard, והיא גם מחילה כללים מתקדמים לחסימה שאינם נתמכים על ידי API של Safari Content Blocking.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard עבור Safari";

@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "Ekstensi ini menjalankan dua fungsi penting: menambahkan ikon ke toolbar Safari yang dapat digunakan untuk mengelola pengaturan AdGuard, dan juga menerapkan aturan pemblokiran lanjutan yang tidak didukung oleh API Pemblokiran Konten Safari.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard untuk Safari";

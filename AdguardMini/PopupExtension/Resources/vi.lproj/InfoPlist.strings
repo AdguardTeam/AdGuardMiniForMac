@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "Tiện ích mở rộng này thực hiện hai chức năng quan trọng: nó thêm một biểu tượng vào thanh công cụ Safari. Biểu tượng này có thể được sử dụng để quản lý cài đặt AdGuard và nó cũng áp dụng các quy tắc chặn nâng cao không được API chặn nội dung Safari hỗ trợ.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard cho Safari";

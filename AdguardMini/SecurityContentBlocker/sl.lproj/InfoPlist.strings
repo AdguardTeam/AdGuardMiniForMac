@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "Seznami varnostnih filtrov pravila zaviranja.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Varnost";

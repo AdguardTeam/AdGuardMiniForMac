@@ -1,6 +1,12 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "الصفحة أمان";
 
+/* Domain view - Domain Item hint "Website protection disabled" */
+"item_hint_domain_protection_off" = "تم تعطيل حماية الموقع";
+
+/* Domain view - Item title "Still seeing ads? Learn how to fix this" */
+"item_attention_title_health_check_trouble" = "ما زلت ترى إعلانات؟ تعرّف على كيفية إصلاح ذلك";
+
 /* Domain view - Item title "Block element" */
 "item_title_block_element" = "حظر عنصر";
 
@@ -9,6 +15,12 @@
 
 /* Domain view - Item title "Rate AdGuard Mini" */
 "item_title_rate_adguard_mini" = "قيِّم AdGuard Mini";
+
+/* Domain view - Stats label "{count} ad(s) blocked" */
+"item_stats_ads_blocked" = "%d الإعلانات المحجوبة";
+
+/* Domain view - Stats label "{count} tracker(s) blocked" */
+"item_stats_trackers_blocked" = "%d من أدوات التتبع المحظورة";
 
 /* Info view - Title "Protection is disabled" */
 "info_title_protection_disabled" = "الحماية معطلة";
@@ -70,3 +82,12 @@ Info view - Subtitle "To get AdGuard Mini up and running properly, you’ll need
 
 /* Info view - Button title "Opening..." */
 "info_button_title_opening" = "يتم الفتح...";
+
+/* Domain view - Upsell CTA title "Unlock full protection" */
+"item_upsell_title" = "فعّل الحماية الكاملة";
+
+/* Domain view - Upsell CTA description when trial is available */
+"item_upsell_description_trial" = "جرّب %d يوم مجانًا";
+
+/* Domain view - Upsell CTA description when trial is not available */
+"item_upsell_description_upgrade" = "انقر للترقية";

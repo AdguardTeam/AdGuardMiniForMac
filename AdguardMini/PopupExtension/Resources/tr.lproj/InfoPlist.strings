@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "Bu uzantı iki önemli işlevi yerine getirir: Safari araç çubuğuna AdGuard ayarlarını yönetmek için kullanılabilecek bir simge ekler ve ayrıca Safari İçerik Engelleme API'si tarafından desteklenmeyen gelişmiş engelleme kuralları uygular.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "Safari için AdGuard";

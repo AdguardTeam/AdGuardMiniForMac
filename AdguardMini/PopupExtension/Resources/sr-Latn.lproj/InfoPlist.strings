@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "Ovo proširenje ima dve važne funkcije: dodaje ikonu na Safari-jevu traku sa alatkama koja omogućava upravljanje podešavanjima Adguard-a, a takođe primenjuje Napredna pravila zaključavanja koja nisu podržana Safari-jevim API-jem za blokiranje sadržaja.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard za Safari";

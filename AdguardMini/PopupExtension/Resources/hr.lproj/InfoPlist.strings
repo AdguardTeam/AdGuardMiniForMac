@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Ovo proširenje obavlja dvije važne funkcije: dodaje ikonu na alatnoj traci Safarija s kojom možete upravljati postavkama AdGuarda i primjenjuje napredna pravila blokiranja koja nisu podržana API-jem za blokiranje sadržaja Safarija.";
+"NSHumanReadableDescription" = "Omogućuje vam upravljanje zaštitom AdGuard Mini s alatne trake preglednika Safari, pregled statistike i primjenu naprednih pravila blokiranja";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard za Safari";

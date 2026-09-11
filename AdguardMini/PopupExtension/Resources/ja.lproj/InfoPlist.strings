@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "この拡張機能は、2つの重要な機能を提供します。　①AdGuardの設定を管理するために使用できるアイコンをSafariツールバーに追加　②Safari Content Blocking APIではサポートされていない高度なブロックルールを適用";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard for Safari";

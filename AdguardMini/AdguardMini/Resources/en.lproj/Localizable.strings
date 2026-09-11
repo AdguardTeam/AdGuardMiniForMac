@@ -88,6 +88,12 @@
 /* WebView failure alert - Informative text */
 "webview_load_failure_message_text" = "Something went wrong while loading the AdGuard Mini window. You can restart the app or report the issue.";
 
+/* RPC recurring-timeout alert - Title */
+"rpc_timeout_message_title" = "AdGuard Mini is not responding";
+
+/* RPC recurring-timeout alert - Informative text */
+"rpc_timeout_message_text" = "Communication between the app and its interface has timed out repeatedly. You can restart the app or report the issue.";
+
 /* Title on Close button in error message */
 "close_button" = "Close";
 

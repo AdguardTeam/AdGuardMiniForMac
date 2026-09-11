@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Denne udvidelse udfører to vigtige funktioner: Den føjer et ikon til Safari-værktøjsbjælken til brug for håndtering af AdGuard-indstillinger, og den anvender også avancerede blokeringsregler, som ikke understøttes af Safari Content Blocking API'en.";
+"NSHumanReadableDescription" = "Muliggør at håndtere AdGuard Mini-beskyttelse fra Safari-værktøjsbjælken, se statistik og anvende avancerede blokeringsregler";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard til Safari";

@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "ขยายนี้ดำเนินการสองฟังก์ชันสำคัญ: มันเพิ่มไอคอนไปที่แถบเครื่องมือ Safari ซึ่งสามารถใช้จัดการการตั้งค่า AdGuard ได้และมันยังนำกฎการบล็อกขั้นสูงที่ไม่รองรับโดยการป้องกันเนื้อหาของ Safari จำนวนมาใช้งาน";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard สำหรับ Safari";

@@ -1,5 +1,2 @@
-/* Human Readable Description */
-"NSHumanReadableDescription" = "이 확장 프로그램에는 두 가지 중요한 기능이 있습니다. 첫 번째는 Safari 도구 모음에 AdGuard 설정을 관리하는 데 사용할 수 있는 아이콘을 추가하고, 두 번째는 Safari 콘텐츠 차단 API에서 지원하지 않는 고급 차단 규칙을 적용하는 것입니다.";
-
 /* Bundle display name */
 "CFBundleDisplayName" = "Safari용 AdGuard";
