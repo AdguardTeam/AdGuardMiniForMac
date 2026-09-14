@@ -109,6 +109,7 @@ jobs:
       download-url: ${{ steps.const.outputs.download-url }}
       deployer-module: ${{ steps.const.outputs.deployer-module }}
       channel: ${{ steps.const.outputs.channel }}
+      timestamp: ${{ steps.const.outputs.timestamp }}
     steps:
       - id: const
         env:
@@ -141,6 +142,7 @@ jobs:
           echo "download-url=${DOWNLOAD_URL}" >> "$GITHUB_OUTPUT"
           echo "deployer-module=${DEPLOYER_MODULE}" >> "$GITHUB_OUTPUT"
           echo "channel=${CHANNEL}" >> "$GITHUB_OUTPUT"
+          echo "timestamp=$(date +%s)" >> "$GITHUB_OUTPUT"
 
   # ---------------------------------------------------------------------------
   # Changelog
@@ -197,7 +199,8 @@ jobs:
       build-entry: >-
         {"version": "${{ needs.meta.outputs.version }}.${{ needs.build-number.outputs.value }}",
          "buildNumber": "${{ needs.build-number.outputs.value }}",
-         "downloadUrl": "${{ needs.constants.outputs.download-url }}"}
+         "downloadUrl": "${{ needs.constants.outputs.download-url }}",
+         "timestamp": ${{ needs.constants.outputs.timestamp }}}
       update-url: ${{ needs.constants.outputs.download-url }}
       builds-json-url: ${{ needs.constants.outputs.static-url }}/nightly/builds.json
       changelog-text: ${{ needs.changelog-public.outputs.changelog-text }}
