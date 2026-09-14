@@ -21,6 +21,10 @@ public protocol SafariExtensionsServiceProtocol
 	func openSafariExtensionPreferences (
 						_ message: OptionalStringValue,
 						_ promise: @escaping (OptionalError) -> Void) -> Void
+	/// Request reload content blockers
+	func requestReloadContentBlockers (
+						_ message: EmptyValue,
+						_ promise: @escaping (EmptyValue) -> Void) -> Void
 }
 
 // MARK: Protobuf Bridge definition
@@ -63,6 +67,21 @@ open class SafariExtensionsService: WebViewBridge
 				}
 			} catch {
 				BridgeLog.error("SafariExtensionsService.OpenSafariExtensionPreferences: failed to deserialize request: \(error)")
+				promise(Data())
+			}
+		case "RequestReloadContentBlockers":
+			do {
+				let input = try EmptyValue(serializedBytes: bytes)
+				cast.requestReloadContentBlockers(input) { result in
+					do {
+						promise(try result.serializedData())
+					} catch {
+						BridgeLog.error("SafariExtensionsService.RequestReloadContentBlockers: failed to serialize reply: \(error)")
+						promise(Data())
+					}
+				}
+			} catch {
+				BridgeLog.error("SafariExtensionsService.RequestReloadContentBlockers: failed to deserialize request: \(error)")
 				promise(Data())
 			}
 		default:

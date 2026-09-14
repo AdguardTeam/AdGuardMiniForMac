@@ -9,4 +9,6 @@ service SafariExtensionsService {
     rpc GetSafariExtensions(EmptyValue) returns (SafariExtensions);
     /* Open Safari preferences */
     rpc OpenSafariExtensionPreferences(OptionalStringValue) returns (OptionalError);
+    /* Request reload content blockers */
+    rpc RequestReloadContentBlockers(EmptyValue) returns (EmptyValue);
 }

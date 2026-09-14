@@ -17,9 +17,15 @@ import { GetStatisticsRequest, GetTraySettingsRequest, UpdateTraySettingsRequest
 import { GlobalSettings, LicenseStatus, ReleaseVariants, StatisticsPeriod, StatisticsResponse, FiltersStatus, TrayLicenseOrError, URLFilterState } from 'Apis/types';
 import { SafariExtensionsStore } from 'Common/stores/SafariExtensionsStore';
 import { updateLanguage } from 'Intl';
+import { withLast } from 'Modules/common/utils/queue';
 
 import type { Filters, Filter, FilterUpdateStatus, SafariExtensionUpdate, SafariExtensions, EffectiveTheme, BoolValue } from 'Apis/types';
 import type { StoryId } from 'Modules/tray/modules/stories/model';
+
+/**
+ * Debounce delay for uploading tray settings to the platform.
+ */
+const SETTINGS_UPLOAD_DEBOUNCE_MS = 1000;
 
 /**
  * Compares two arrays of filter update statuses for equality.
@@ -52,6 +58,14 @@ function filtersStatusesEqual(
  * Store that manages tray home screen
  */
 export class SettingsStore {
+    /**
+     * Upload settings to the platform, debounced so rapid consecutive
+     * updates collapse into a single call carrying the latest state.
+     */
+    private readonly uploadSettings = withLast(async (newValue: UpdateTraySettingsRequest) => {
+        return window.API.Execute(newValue);
+    }, 'uploadSettings', SETTINGS_UPLOAD_DEBOUNCE_MS);
+
     /**
      * Previous filters update result, used to detect duplicate update responses.
      */
@@ -212,7 +226,7 @@ export class SettingsStore {
         const newValue = this.buildGlobalSettings();
         newValue.hiddenStories = [...this.hiddenStories];
         this.setSettings(newValue);
-        window.API.Execute(new UpdateTraySettingsRequest(newValue));
+        this.uploadSettings(new UpdateTraySettingsRequest(newValue));
     }
 
     /**
@@ -306,11 +320,11 @@ export class SettingsStore {
     /**
      * Update tray settings
      */
-    public async updateSettings(enabled: boolean) {
+    public updateSettings(enabled: boolean) {
         const newValue = this.buildGlobalSettings();
         newValue.enabled = enabled;
         this.setSettings(newValue);
-        await window.API.Execute(new UpdateTraySettingsRequest(newValue));
+        this.uploadSettings(new UpdateTraySettingsRequest(newValue));
     }
 
     /**

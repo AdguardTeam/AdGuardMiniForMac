@@ -54,7 +54,12 @@ function HealthCheckComponent({ setShowConsent }: HealthCheckProps) {
         blockOtherAnnoyance,
     } = safariProtection;
 
-    const { hasExtensionsDisabled, hasExtensionsBroken, hasRulesLimitExceeded } = useSafariExtensionsStatus();
+    const {
+        hasExtensionsDisabled,
+        hasExtensionsBroken,
+        hasRestartableExtensionsError,
+        hasRulesLimitExceeded,
+    } = useSafariExtensionsStatus();
 
     const hasBackgroundDisabled = !loginItemEnabled;
 
@@ -74,7 +79,10 @@ function HealthCheckComponent({ setShowConsent }: HealthCheckProps) {
             <BackgroundDisabledCard key="backgroundDisabled" />
         ),
         hasExtensionsBroken && (
-            <ExtensionsBrokenCard key="extensionsBroken" />
+            <ExtensionsBrokenCard
+                key="extensionsBroken"
+                showRestart={hasRestartableExtensionsError}
+            />
         ),
         hasRulesLimitExceeded && (
             <RulesLimitExceededCard key="rulesLimitExceeded" />

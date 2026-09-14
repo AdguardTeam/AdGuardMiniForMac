@@ -69,6 +69,10 @@ protocol UrlSchemesProcessorDependent: ServiceDependent {
     var urlSchemesProcessor: UrlSchemesProcessor { get }
 }
 
+protocol SafariExtensionManagerDependent: ServiceDependent {
+    var safariExtensionManager: SafariExtensionManager! { get set }
+}
+
 extension UrlSchemesProcessorDependent {
     var urlSchemesProcessor: UrlSchemesProcessor {
         self.urlSchemesProcessorInjector()

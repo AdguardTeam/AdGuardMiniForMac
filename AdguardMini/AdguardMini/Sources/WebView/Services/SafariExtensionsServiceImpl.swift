@@ -14,11 +14,13 @@ import SafariServices
 
 extension SafariExtensionsServiceImpl:
     SafariExtensionStatusManagerDependent,
+    SafariExtensionManagerDependent,
     SafariExtensionStateServiceDependent {}
 
 final class SafariExtensionsServiceImpl: SafariExtensionsService.ServiceType {
     var safariExtensionStatusManager: SafariExtensionStatusManager!
     var safariExtensionStateService: SafariExtensionStateService!
+    var safariExtensionManager: SafariExtensionManager!
 
     override init() {
         super.init()
@@ -67,6 +69,13 @@ final class SafariExtensionsServiceImpl: SafariExtensionsService.ServiceType {
                 promise(OptionalError(hasError: true, message: message))
                 LogError(message)
             }
+        }
+    }
+
+    func requestReloadContentBlockers(_ message: EmptyValue, _ promise: @escaping (EmptyValue) -> Void) {
+        Task {
+            await self.safariExtensionManager.reloadAllContentBlockers()
+            promise(EmptyValue())
         }
     }
 }

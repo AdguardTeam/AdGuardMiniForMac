@@ -65,6 +65,7 @@ extension ServiceLocator {
             .safariExtensionStateService = self.safariExtensionStateService
         (client as? SafariExtensionStatusManagerDependent)?
             .safariExtensionStatusManager = self.safariExtensionStatusManager
+        (client as? SafariExtensionManagerDependent)?.safariExtensionManager = self.safariExtensionManager
         (client as? HealthCheckAttentionProviderDependent)?
             .healthCheckAttentionProvider = self.healthCheckAttentionProvider
 
