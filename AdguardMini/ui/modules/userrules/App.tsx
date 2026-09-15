@@ -53,15 +53,10 @@ function AppComponent() {
      */
     const saveChanges = async (): Promise<boolean> => {
         setIsSaving(true);
-        // Let the spinner paint before the synchronous protobuf serialization
-        // + `postMessage` block the main thread. Preact's default diff flush
-        // is a microtask, which runs before the browser paints, so wait for
-        // the next animation frame before doing the heavy work. (WebKit
-        // suspends rAF while the window is hidden, but saves are always
-        // user-initiated from a visible window.)
-        await new Promise<void>((resolve) => {
-            requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
-        });
+        // NOTE: no paint wait here on purpose. The editor window's WebContent
+        // on macOS 12 throttles timers and can suspend `requestAnimationFrame`
+        // (observed in debugging), so a rAF/timer gate would hang the save.
+        // The spinner paint nicety is not worth that risk.
         try {
             // Flush a pending debounced parse so the saved working set matches
             // the latest editor content (see the Editor's `onChange`).
@@ -81,7 +76,10 @@ function AppComponent() {
                 }),
             }));
             return true;
-        } catch {
+        } catch (err) {
+            const message = err instanceof Error ? err.message : String(err);
+            const stack = err instanceof Error ? err.stack : undefined;
+            window.log?.error('[save] FAILED:', message, stack || '');
             setIsSaving(false);
             return false;
         }

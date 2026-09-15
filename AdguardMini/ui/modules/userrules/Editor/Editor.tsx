@@ -9,6 +9,7 @@ import { observer } from 'mobx-react-lite';
 import { useEffect, useRef } from 'preact/hooks';
 
 import { UserRule } from 'Common/apis/types';
+import { reinstallConsoleLogForwarding } from 'Common/lib/logBridge';
 
 import { editorStore } from '../editorStore';
 import { dataUrlToBytes } from '../lib/dataUrlToBytes';
@@ -171,6 +172,7 @@ function EditorComponent({
                 console.error('[userrules] failed to decode editor wasm:', err);
                 return;
             }
+            let initError: unknown = null;
             try {
                 editorRef.current = await initEditor(document.getElementById('area') as HTMLTextAreaElement, wasmBytes, {
                     withBreakpoints: true,
@@ -213,7 +215,30 @@ function EditorComponent({
                         theme: THEME,
                     },
                 });
-            } catch {
+            } catch (err) {
+                // Rules-editor swallows WASM init failures in an empty
+                // `catch`, so they never reach here; failures reported
+                // through Emscripten's `abort()`/`err()` are traced by the
+                // `window.print` forwarder in `index.tsx`. This log covers
+                // the remaining `initEditor` failures and is written after
+                // the `finally` restores the console.
+                initError = err;
+            } finally {
+                // Onigasm's Emscripten glue (compiled with
+                // `ENVIRONMENT_IS_SHELL=true`) replaces `console.*` with
+                // `print` and rolls the console back only when the factory
+                // returns normally; when it throws synchronously (e.g. a
+                // WASM init failure), `console.*` stays clobbered. Restore
+                // the console→Swift forwarding on every path.
+                reinstallConsoleLogForwarding();
+            }
+            if (initError !== null) {
+                // The fallback textarea remains usable.
+                // eslint-disable-next-line no-console
+                console.error('[userrules] failed to init the editor:', initError);
+                return;
+            }
+            if (!editorRef.current) {
                 return;
             }
             if (cancelled) {

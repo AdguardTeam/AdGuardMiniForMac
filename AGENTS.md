@@ -1074,3 +1074,32 @@ humans and AI agents that consume project documentation.
     reads through the `systemClipboardRead` bridge keeps a single Swift-owned
     paste seam; writes triggered by a gesture are permitted by WebKit, so the
     standard copy/cut behavior needs no rerouting.
+
+15. **Emscripten/WASM console clobbering (TS)**: The onigasm tokenizer
+    bundled in `@adguard/rules-editor` is built with Emscripten's
+    `ENVIRONMENT_IS_SHELL=true`, so its glue runs on any macOS. During
+    `loadWASM` the glue synchronously assigns `console.log = print` (its
+    `print` resolves to `window.print`; `console.warn`/`console.error` get
+    `printErr || print` too) and rolls all three back to the pre-clobber
+    originals in the same synchronous section, right after the factory
+    returns — there is no async re-clobbering. The rollback is skipped only
+    when the factory throws synchronously: e.g. a WASM init failure makes
+    Emscripten's `abort()` call `out(what)`/`err(what)`, which are
+    `window.print.bind(console)` and throw the very "Can only call
+    Window.print on instances of Window" they were invoked to report
+    (strict mode is irrelevant — `print` with `this === console` throws in
+    any mode). `console.*` then stays clobbered, and rules-editor's
+    `initEditor` swallows the init error in an empty `catch` and resolves,
+    silently leaving the editor without highlighting. Guards required when
+    such a library is loaded: replace `window.print` with a forwarder to the
+    native log (captured before the clobbering) so `abort()`/`err()`
+    diagnostics survive, and re-apply the console→Swift forwarding
+    (`reinstallConsoleLogForwarding` in
+    `AdguardMini/ui/modules/common/lib/logBridge.ts`) after the library's
+    initialization completes — on the failure path too, where the glue's
+    rollback never ran.
+
+    **Rationale**: A broken `console.log` is invisible — no error is
+    logged — yet disables logging itself and every action that logs first;
+    guarding the Emscripten print path keeps diagnostics and user actions
+    alive.
