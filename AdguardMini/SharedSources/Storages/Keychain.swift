@@ -8,6 +8,7 @@
 //
 
 import Foundation
+import Security
 import AML
 
 // MARK: - Constants
@@ -35,25 +36,34 @@ enum Keychain {
     }
 
     /// Saves data to keychain with optional access group for shared keychain.
-    static func set(key: String, data: Data, accessGroup: String? = nil) {
-        let status = KeyChain.save(key: key, value: data, accessGroup: accessGroup)
+    /// - Returns: The keychain save status.
+    @discardableResult
+    static func set(key: String, data: Data, accessGroup: String? = nil, service: String? = nil) -> OSStatus {
+        let status = KeyChain.save(key: key, value: data, service: service, accessGroup: accessGroup)
         if status != Constants.successStatus {
             LogError("Save to keychain \(key) OSStatus: \(status)")
         }
+        return status
     }
 
-    /// Saves data to shared keychain using the AG_GROUP access group.
-    static func setShared(key: String, data: Data) {
-        Self.set(key: key, data: data, accessGroup: BuildConfig.AG_GROUP)
+    /// Saves data to shared keychain using the AG_GROUP access group and the
+    /// App Group service name, so the app and its extensions query the same
+    /// `kSecAttrService` item.
+    /// - Returns: The keychain save status.
+    @discardableResult
+    static func setShared(key: String, data: Data) -> OSStatus {
+        Self.set(key: key, data: data, accessGroup: BuildConfig.AG_GROUP, service: BuildConfig.AG_APP_ID)
     }
 
     /// Saves string value to shared keychain using the AG_GROUP access group.
-    static func setShared(key: KeychainKey.Base, value: String) {
-        if let data = value.data(using: .utf8) {
-            Self.setShared(key: key.key, data: data)
-        } else {
+    /// - Returns: The keychain save status.
+    @discardableResult
+    static func setShared(key: KeychainKey.Base, value: String) -> OSStatus {
+        guard let data = value.data(using: .utf8) else {
             LogDebug("Can't convert \(value) to data")
+            return errSecInvalidData
         }
+        return Self.setShared(key: key.key, data: data)
     }
 
     static func delete(key: KeychainKey.Base) async {
@@ -72,20 +82,22 @@ enum Keychain {
     }
 
     /// Deletes item from keychain with optional access group.
-    static func delete(for key: String, accessGroup: String? = nil) {
-        let status = KeyChain.delete(key: key, accessGroup: accessGroup)
+    static func delete(for key: String, accessGroup: String? = nil, service: String? = nil) {
+        let status = KeyChain.delete(key: key, service: service, accessGroup: accessGroup)
         LogDebug("Remove from keychain \(key) status: \(status)")
     }
 
-    /// Deletes item from shared keychain using the AG_GROUP access group.
+    /// Deletes item from shared keychain using the AG_GROUP access group and
+    /// the App Group service name, so the app and its extensions target the
+    /// same `kSecAttrService` item.
     static func deleteShared(for key: String) {
-        Self.delete(for: key, accessGroup: BuildConfig.AG_GROUP)
+        Self.delete(for: key, accessGroup: BuildConfig.AG_GROUP, service: BuildConfig.AG_APP_ID)
     }
 
     /// Loads data from keychain with optional access group.
-    static func getValue(for key: String, accessGroup: String? = nil) async -> Data? {
+    static func getValue(for key: String, accessGroup: String? = nil, service: String? = nil) async -> Data? {
         await Task(priority: .userInitiated) {
-            Self.getValue(for: key, accessGroup: accessGroup)
+            Self.getValue(for: key, accessGroup: accessGroup, service: service)
         }.value
     }
 
@@ -104,13 +116,15 @@ enum Keychain {
     }
 
     /// Loads data from keychain with optional access group.
-    static func getValue(for key: String, accessGroup: String? = nil) -> Data? {
-        KeyChain.load(key: key, accessGroup: accessGroup)
+    static func getValue(for key: String, accessGroup: String? = nil, service: String? = nil) -> Data? {
+        KeyChain.load(key: key, service: service, accessGroup: accessGroup)
     }
 
-    /// Loads data from shared keychain using the AG_GROUP access group.
+    /// Loads data from shared keychain using the AG_GROUP access group and the
+    /// App Group service name, so the app and its extensions query the same
+    /// `kSecAttrService` item.
     static func getValueShared(for key: String) -> Data? {
-        Self.getValue(for: key, accessGroup: BuildConfig.AG_GROUP)
+        Self.getValue(for: key, accessGroup: BuildConfig.AG_GROUP, service: BuildConfig.AG_APP_ID)
     }
 
     /// Loads string from shared keychain using the AG_GROUP access group.

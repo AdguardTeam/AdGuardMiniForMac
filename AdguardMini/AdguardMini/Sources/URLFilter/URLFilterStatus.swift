@@ -15,7 +15,7 @@ import Foundation
 ///
 /// `NEURLFilterManager.Status` is only available on macOS 26+, so the raw value
 /// is bridged into this enum inside an availability guard, keeping the mapper available on any OS version.
-enum URLFilterRawStatus {
+enum URLFilterRawStatus: Equatable {
     /// The extension is not installed or the configuration is invalid.
     case invalid
     /// The filter is stopped.

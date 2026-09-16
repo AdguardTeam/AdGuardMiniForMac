@@ -702,12 +702,11 @@ extension AppDelegate {
     /// Production wiring — creates a `WKWebViewAppHost` with failure
     /// presenter + RPC timeout monitor for each module. All four host
     /// factory cases route through this helper so every WKWebView instance
-    /// logs + records telemetry for RPC timeouts in both Debug and Release
-    /// builds — no user-facing alert, per the slow-but-alive
-    /// false-positive finding. Constructing `WKWebViewAppHost` directly
-    /// instead leaves the default `WKWebViewFailurePresenter.noOp`, which
-    /// silently swallows load failures, JS runtime errors, and the
-    /// recurring-timeout signal.
+    /// logs RPC timeouts in both Debug and Release builds — no user-facing
+    /// alert, per the slow-but-alive false-positive finding. Constructing
+    /// `WKWebViewAppHost` directly instead leaves the default
+    /// `WKWebViewFailurePresenter.noOp`, which silently swallows load
+    /// failures, JS runtime errors, and the recurring-timeout signal.
     private func makeWebViewAppHostProduction(
         module: ModuleId,
         onVisibilityChange: VisibilityChange? = nil,
@@ -716,9 +715,6 @@ extension AppDelegate {
     ) -> WKWebViewAppHost {
         let monitor = RecurringRpcTimeoutMonitor()
         let presenter = WKWebViewFailurePresenter(
-            recordTelemetry: { [weak self] event in
-                await self?.telemetryService?.sendEvent(event)
-            },
             presentAlert: { alert in await alert.show() },
             restartApp: { [weak self] in
                 self?.appLifecycleService?.terminate(restart: true)
@@ -731,8 +727,8 @@ extension AppDelegate {
             bridgeSetup: { bridge in
                 // Wire the bridge's evaluateJavaScript-timeout closures to
                 // The monitor. `recordTimeout()`/`recordSuccess()` drive
-                // `handleRecurringRpcTimeout`: log + telemetry only, with
-                // No user-facing alert. Recurring timeouts can be false
+                // `handleRecurringRpcTimeout`: log only, with no
+                // User-facing alert. Recurring timeouts can be false
                 // Positives from slow-but-alive modules (e.g. the user-rules
                 // Editor's initial load), so a blocking dialog is wrong.
                 bridge.onJavaScriptTimeout = { _, _ in

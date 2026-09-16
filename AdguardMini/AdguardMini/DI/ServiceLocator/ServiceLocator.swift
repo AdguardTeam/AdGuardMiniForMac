@@ -359,6 +359,7 @@ final class ServiceLocator {
             return URLFilterServiceLiveImpl(
                 eventBus: self.eventBus,
                 sharedKeychainStorage: self.sharedKeychainStorage,
+                sharedSettingsStorage: SharedDIContainer.shared.sharedSettingsStorage,
                 licenseProvider: self.pirLicenseProvider
             )
         }
@@ -594,7 +595,8 @@ final class ServiceLocator {
             safariExtensionManager: self.safariExtensionManager,
             sharedSettingsStorage: SharedDIContainer.shared.sharedSettingsStorage,
             statusBarItemController: self.statusBarItemController,
-            appMetadata: self.appMetadata
+            appMetadata: self.appMetadata,
+            urlFilterService: self.urlFilterService
         )
     }()
 

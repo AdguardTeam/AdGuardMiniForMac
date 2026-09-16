@@ -8,6 +8,7 @@
 //
 
 import Foundation
+import AML
 import FLM
 import ProtoSchema
 
@@ -217,6 +218,13 @@ final class WebViewCallbackCoordinator {
             guard let self, !Task.isCancelled else { return }
             let state = await self.urlFilterStateAssembler.makeState()
             guard !Task.isCancelled else { return }
+            // The callback payload is otherwise invisible in the app log;
+            // Record it so a transient error/disabled state reaching the UI
+            // Leaves a trace.
+            LogDebug(
+                "URLFilter state push: enabled=\(state.enabled), status=\(state.status), "
+                    + "protectionLevel=\(state.protectionLevel)"
+            )
             self.settings.onURLFilterStateChanged(state.toProto())
         }
         self.urlFilterLock.unlock()

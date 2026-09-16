@@ -41,4 +41,8 @@ final class PIRLicenseProviderImpl: PIRLicenseProvider {
         #endif
         return await self.licenseStateProvider.getStoredInfo()?.applicationKey ?? ""
     }
+
+    func isPaid() async -> Bool {
+        await self.licenseStateProvider.isPaid()
+    }
 }

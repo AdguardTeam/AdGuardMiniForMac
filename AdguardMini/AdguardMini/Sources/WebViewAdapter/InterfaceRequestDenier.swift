@@ -9,30 +9,24 @@
 
 import Foundation
 import WebKit
-import os
+import AML
 
 /// Logging seam for request denial.
 protocol InterfaceRequestDenialLogging: AnyObject {
-    /// Records one refusal message.
-    func recordRefusal(_ entry: String)
+    /// Records one refusal mechanism.
+    ///
+    /// `StaticString` guarantees only compile-time literals reach the log, so
+    /// Page-controlled values (dialog text, URLs) can never be persisted.
+    func recordRefusal(_ entry: StaticString)
 }
 
 /// Production logger adapter.
 final class LoggerInterfaceRequestDenialLog: InterfaceRequestDenialLogging {
-    private enum Constants {
-        static let subsystem = Subsystem.mainApp.name
-        static let category = "InterfaceRequestDenier"
-    }
-
-    private let logger = Logger(
-        subsystem: Constants.subsystem,
-        category: Constants.category
-    )
-
-    func recordRefusal(_ entry: String) {
-        // Refusals can embed arbitrary JS dialog text or URLs carrying
-        // Sensitive data; keep them private-redacted in the unified log.
-        logger.error("\(entry, privacy: .private)")
+    func recordRefusal(_ entry: StaticString) {
+        // Not an app failure, but security refusals must stay auditable in
+        // Exported logs: info keeps them without displacing the last-error
+        // Store (only `LogError` reaches it).
+        LogInfo(String(describing: entry))
     }
 }
 
@@ -60,13 +54,15 @@ final class InterfaceRequestDenier: NSObject, WKUIDelegate {
         for navigationAction: WKNavigationAction,
         windowFeatures: WKWindowFeatures
     ) -> WKWebView? {
-        let requested = navigationAction.request.url?.absoluteString ?? "<no url>"
-        return refuseWindowCreation(requestedURL: requested)
+        refuseWindowCreation()
     }
 
     /// Refuses window creation for tests and delegate path.
-    func refuseWindowCreation(requestedURL: String) -> WKWebView? {
-        logger.recordRefusal("Refused window.create: \(requestedURL)")
+    ///
+    /// The requested URL is deliberately not logged: it can embed tokens or
+    /// PII, and the refusal mechanism alone is what diagnostics need.
+    func refuseWindowCreation() -> WKWebView? {
+        logger.recordRefusal("Refused window.create")
         return nil
     }
 
@@ -79,12 +75,15 @@ final class InterfaceRequestDenier: NSObject, WKUIDelegate {
         initiatedByFrame frame: WKFrameInfo,
         completionHandler: @escaping () -> Void
     ) {
-        refuseAlert(message: message, completionHandler: completionHandler)
+        refuseAlert(completionHandler: completionHandler)
     }
 
     /// Refuses alert for tests and delegate path.
-    func refuseAlert(message: String, completionHandler: @escaping () -> Void) {
-        logger.recordRefusal("Refused alert: \(message)")
+    ///
+    /// The alert text is deliberately not logged: it can embed user data,
+    /// And the refusal mechanism alone is what diagnostics need.
+    func refuseAlert(completionHandler: @escaping () -> Void) {
+        logger.recordRefusal("Refused alert")
         completionHandler()
     }
 
@@ -95,12 +94,15 @@ final class InterfaceRequestDenier: NSObject, WKUIDelegate {
         initiatedByFrame frame: WKFrameInfo,
         completionHandler: @escaping (Bool) -> Void
     ) {
-        refuseConfirm(message: message, completionHandler: completionHandler)
+        refuseConfirm(completionHandler: completionHandler)
     }
 
     /// Refuses confirm for tests and delegate path.
-    func refuseConfirm(message: String, completionHandler: @escaping (Bool) -> Void) {
-        logger.recordRefusal("Refused confirm: \(message)")
+    ///
+    /// The confirm text is deliberately not logged: it can embed user data,
+    /// And the refusal mechanism alone is what diagnostics need.
+    func refuseConfirm(completionHandler: @escaping (Bool) -> Void) {
+        logger.recordRefusal("Refused confirm")
         completionHandler(false)
     }
 
@@ -112,12 +114,15 @@ final class InterfaceRequestDenier: NSObject, WKUIDelegate {
         initiatedByFrame frame: WKFrameInfo,
         completionHandler: @escaping (String?) -> Void
     ) {
-        refusePrompt(prompt: prompt, completionHandler: completionHandler)
+        refusePrompt(completionHandler: completionHandler)
     }
 
     /// Refuses prompt for tests and delegate path.
-    func refusePrompt(prompt: String, completionHandler: @escaping (String?) -> Void) {
-        logger.recordRefusal("Refused prompt: \(prompt)")
+    ///
+    /// The prompt text is deliberately not logged: it can embed user data,
+    /// And the refusal mechanism alone is what diagnostics need.
+    func refusePrompt(completionHandler: @escaping (String?) -> Void) {
+        logger.recordRefusal("Refused prompt")
         completionHandler(nil)
     }
 

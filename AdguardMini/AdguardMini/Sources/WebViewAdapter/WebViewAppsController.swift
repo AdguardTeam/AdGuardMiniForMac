@@ -9,7 +9,7 @@
 
 import AppKit
 import Foundation
-import os
+import AML
 
 // MARK: - Constants
 private enum Constants {
@@ -78,12 +78,6 @@ final class WebViewAppsController: ChildWindowControlling {
     /// ``beginShowIntent(for:)``.
     private var showIntents: [ModuleId: Int] = [:]
 
-    /// Logs idle-teardown decisions.
-    private let logger = Logger(
-        subsystem: Subsystem.mainApp.name,
-        category: "WebViewAppsController"
-    )
-
     /// Called after child window teardown (for close callback propagation).
     private let onChildWindowClosed: ((WindowId) -> Void)?
 
@@ -120,8 +114,8 @@ final class WebViewAppsController: ChildWindowControlling {
     func show(_ module: ModuleId) {
         var host = self.hosts[module]
         if let existing = host, existing.state == .destroyed || existing.state == .tearingDown {
-            self.logger.info(
-                "show: discarding a torn-down host module=\(module.rawValue, privacy: .public)"
+            LogInfo(
+                "show: discarding a torn-down host module=\(module.rawValue)"
             )
             existing.onIdleActivity = nil
             host = nil
@@ -279,11 +273,11 @@ final class WebViewAppsController: ChildWindowControlling {
             // Deliberately not rearming: ``armIdleTimer()`` consults the same
             // Predicate and would refuse for the same reason. Whatever is
             // Blocking arms the countdown when it stops blocking.
-            self.logger.debug("idle check skipped — \(blocker.description, privacy: .public)")
+            LogDebug("idle check skipped — \(blocker.description)")
             return
         }
 
-        self.logger.info("idle for \(self.idleTimeout, privacy: .public)s — destroying idle module windows")
+        LogInfo("idle for \(self.idleTimeout)s — destroying idle module windows")
         Constants.reapableModules.forEach(self.destroyHost)
     }
 

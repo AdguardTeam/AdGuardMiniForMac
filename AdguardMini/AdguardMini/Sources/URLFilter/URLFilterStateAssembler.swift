@@ -56,7 +56,7 @@ actor URLFilterStateAssembler {
         // Only surface an error when enabled with a recorded failure.
         let status: URLFilterUIStatus = switch state.status {
         case .invalid, .unknown:   (state.enabled && state.lastDisconnectError != nil) ? .error : .loading
-        case .stopped:             state.lastDisconnectError.isNil ? .loading : .error
+        case .stopped:             (state.enabled && state.lastDisconnectError != nil) ? .error : .loading
         case .starting, .stopping: .loading
         case .running:             .running
         }

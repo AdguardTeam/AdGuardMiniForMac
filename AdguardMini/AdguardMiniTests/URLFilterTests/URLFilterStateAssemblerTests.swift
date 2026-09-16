@@ -34,7 +34,8 @@ private final class FakeURLFilterService: URLFilterService {
     func start() async {}
     func loadConfiguration() async throws -> URLFilterConfiguration? { nil }
     func removeConfiguration() async throws {}
-    func setEnabled(_: Bool) async throws {}
+    func setEnabledByUser(_: Bool) async throws {}
+    func reconcile() async {}
     func setProtectionLevel(_: URLFilterProtectionLevel) async throws {}
     func getState() async throws -> URLFilterState {
         if let error = self.getStateError {
@@ -109,6 +110,21 @@ final class URLFilterStateAssemblerTests: XCTestCase {
         let state = await assembler.makeState()
 
         XCTAssertEqual(state.status, .error)
+        XCTAssertFalse(state.enabled)
+    }
+
+    func testDisabledStoppedWithStaleErrorStaysLoading() async {
+        let service = FakeURLFilterService()
+        service.state = makeState(
+            enabled: false,
+            status: .stopped,
+            lastDisconnectError: .configurationDisabled
+        )
+        let assembler = makeAssembler(service: service)
+
+        let state = await assembler.makeState()
+
+        XCTAssertEqual(state.status, .loading)
         XCTAssertFalse(state.enabled)
     }
 

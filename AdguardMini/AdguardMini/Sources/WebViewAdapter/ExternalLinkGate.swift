@@ -8,15 +8,11 @@
 //
 
 import Foundation
-import os
+import AML
 
 /// Validates external links before opening them.
 final class ExternalLinkGate {
     private let linkOpener: LinkOpening
-    private let logger = Logger(
-        subsystem: Subsystem.mainApp.name,
-        category: "ExternalLinkGate"
-    )
 
     private enum Constants {
         /// Allowed schemes.
@@ -33,33 +29,29 @@ final class ExternalLinkGate {
         // Reject non-string payloads from script messages.
         guard let string = candidate as? String else {
             // Rejection payloads may embed sensitive data (activation codes,
-            // Tokens, PII); keep them private-redacted in the unified log.
-            logger.error(
-                "External link rejected: body is not a string, got \(String(describing: candidate), privacy: .private)"
+            // Tokens, PII); log only the payload type so the raw value never
+            // Lands in the exported diagnostics.
+            LogError(
+                "External link rejected: body is not a string, got type \(String(describing: type(of: candidate)))"
             )
             return
         }
         // Reject malformed URL values.
         guard let url = URL(string: string) else {
-            logger.error(
-                "External link rejected: unparseable value \(string, privacy: .private)"
-            )
+            LogError("External link rejected: unparseable value")
             return
         }
         guard let scheme = url.scheme?.lowercased(),
               Constants.permittedSchemes.contains(scheme) else {
-            logger.error(
-                "External link rejected: disallowed scheme in \(string, privacy: .private)"
-            )
+            // Log only the scheme; the full URL may embed tokens or PII.
+            LogError("External link rejected: disallowed scheme \(url.scheme ?? "nil")")
             return
         }
         // Http/https must carry a non-empty host (mailto legitimately has
         // None); an empty-host URL like "http://" would open an ambiguous
         // Destination in the browser.
         guard scheme == "mailto" || !(url.host?.isEmpty ?? true) else {
-            logger.error(
-                "External link rejected: no host in \(string, privacy: .private)"
-            )
+            LogError("External link rejected: URL without a host")
             return
         }
         linkOpener.openURL(url)

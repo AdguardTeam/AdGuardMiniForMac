@@ -251,7 +251,7 @@ extension SafariApiProvider: MainAppApi {
 
     func setProtectionStatus(_ enabled: Bool, reply: @escaping (EBATimestamp, Error?) -> Void) {
         Task {
-            LogError("Not fully implemented")
+            LogInfo("Set protection status \(enabled)")
             await self.protectionService.setProtectionStatus(isEnabled: enabled)
             reply(Date().timeIntervalSince1970, nil)
         }

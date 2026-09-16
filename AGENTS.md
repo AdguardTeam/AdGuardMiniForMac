@@ -614,15 +614,33 @@ Blocker JSON consumed by the extension targets.
   **Rationale**: Keeps code understandable during maintenance and review,
   and makes API usage clearer for all contributors.
 
-5. **Issue references in comments**: Comments MUST NOT carry a JIRA issue
-   number, with exactly one exception: a `TODO`, where it is required (see
-   the `todo_jira` SwiftLint rule above). Describe what the code does and
-   why; the ticket that prompted the change belongs in the commit message
-   and the pull request.
+5. **Comments in code**: An in-code comment justifies the statement it
+   accompanies; it does not narrate what the code does.
+   - Answer *why* — a non-obvious constraint, a workaround, an invariant.
+     The *what* is already in the code and belongs there.
+   - Keep them short: one or two lines by default; a longer comment needs
+     a concrete reason to exist.
+   - Keep them self-contained: comments are read without the discussion
+     that produced them. Do not cite reviews, PRs, or commits, do not say
+     "as agreed" or "as discussed", and do not record what was changed or
+     reverted.
+   - Do not carry a JIRA issue number, with exactly one exception: a
+     `TODO`, where it is required (see the `todo_jira` SwiftLint rule
+     above). The ticket that prompted the change belongs in the commit
+     message and the pull request.
    ```swift
-   // Good: the reason stands on its own.
+   // Good: short, self-contained, and explains why.
    // `orderOut` alone frees nothing — AppKit still owns an ordered-out
    // Window — so teardown closes it instead.
+
+   // Bad: restates what the code already says.
+   // Increment the counter and return it.
+   counter += 1
+   return counter
+
+   // Bad: references a discussion that is not part of the code.
+   // Per the review thread, we no longer await the reload here.
+   self.scheduleReload()
 
    // Bad: a ticket number readers cannot act on.
    // Close the window on teardown (AG-12345).
@@ -631,12 +649,12 @@ Blocker JSON consumed by the extension targets.
    // TODO: AG-1234 Validate the icon rect instead of sleeping.
    ```
 
-   **Rationale**: A ticket number in a comment ages badly — it points at a
-   tracker many readers cannot open, goes stale when the issue is closed or
-   migrated, and records the history of a change rather than the behavior of
-   the code. `git blame` already ties every line to its commit and ticket, so
-   the reference is not lost. A `TODO` is different: it is a promise about
-   work not yet done, so it needs somewhere to track that work.
+   **Rationale**: A comment that restates the code is noise that goes
+   stale on the next edit, and a comment that references a review thread
+   or records the change history is unreadable without that context —
+   commits and `git blame` already carry it. A ticket number ages badly
+   for the same reason. `TODO` is different: it is a promise about work
+   not yet done, so it needs somewhere to track that work.
 
 6. **Explicit `self` in Swift**: Inside a class, every reference to an
    instance method or stored property MUST be written with `self.` — not

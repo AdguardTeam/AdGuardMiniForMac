@@ -28,6 +28,9 @@ protocol SharedKeychainStorage: AnyObject {
     /// Raw integer value of the selected protection level.
     var urlFilterProtectionLevelOption: Int { get set }
 
+    /// Whether the user last enabled the URL filter (SWP) explicitly.
+    var urlFilterEnabled: Bool { get set }
+
     /// Removes all Keychain items owned by this storage.
     func reset()
 }
@@ -47,6 +50,24 @@ final class SharedKeychainStorageImpl: SharedKeychainStorage {
         set {
             Keychain.setShared(
                 key: KeychainKey.Base.urlFilterProtectionLevelOption.key,
+                data: Data("\(newValue)".utf8)
+            )
+        }
+    }
+
+    var urlFilterEnabled: Bool {
+        get {
+            let value: String? = Keychain.getValueShared(
+                for: KeychainKey.Base.urlFilterEnabled.key
+            )
+            guard let value, let boolValue = Bool(value) else {
+                return Constants.defaultUrlFilterEnabled
+            }
+            return boolValue
+        }
+        set {
+            Keychain.setShared(
+                key: KeychainKey.Base.urlFilterEnabled.key,
                 data: Data("\(newValue)".utf8)
             )
         }

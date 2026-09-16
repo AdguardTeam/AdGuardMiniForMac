@@ -23,7 +23,8 @@ private final class FakeURLFilterService: URLFilterService {
             throw error
         }
     }
-    func setEnabled(_: Bool) async throws {}
+    func setEnabledByUser(_: Bool) async throws {}
+    func reconcile() async {}
     func setProtectionLevel(_: URLFilterProtectionLevel) async throws {}
     func getState() async throws -> URLFilterState {
         URLFilterState(
@@ -39,6 +40,7 @@ private final class FakeURLFilterService: URLFilterService {
 
 private final class FakeKeychainStorage: SharedKeychainStorage {
     var urlFilterProtectionLevelOption = 0
+    var urlFilterEnabled = true
     var resetCalls = 0
 
     func reset() {
@@ -47,8 +49,8 @@ private final class FakeKeychainStorage: SharedKeychainStorage {
 }
 
 private final class FakeBloomMetadataStorage: URLFilterBloomMetadataStorage {
-    private var metadata: URLFilterBloomMetadata?
-    var removeCalls = 0
+    nonisolated(unsafe) private var metadata: URLFilterBloomMetadata?
+    nonisolated(unsafe) var removeCalls = 0
 
     func load() -> URLFilterBloomMetadata? { self.metadata }
     func save(_ metadata: URLFilterBloomMetadata) { self.metadata = metadata }
@@ -190,7 +192,7 @@ final class URLFilterResetServiceTests: XCTestCase {
             fileService: fileService
         )
 
-        await resetService.reset()
+        _ = await resetService.reset()
 
         XCTAssertEqual(fileService.removeFileCalls, 0)
     }

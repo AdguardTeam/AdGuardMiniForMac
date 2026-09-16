@@ -9,7 +9,7 @@
 
 import Foundation
 import WebKit
-import os
+import AML
 
 /// Decides navigation policy and handles cancelled links.
 final class NavigationPolicy {
@@ -18,11 +18,6 @@ final class NavigationPolicy {
 
     /// External link gate.
     private let externalLinkGate: ExternalLinkGate
-
-    private let logger = Logger(
-        subsystem: Subsystem.mainApp.name,
-        category: "NavigationPolicy"
-    )
 
     private enum Constants {
         /// Web schemes handled by gate.
@@ -52,7 +47,7 @@ final class NavigationPolicy {
     /// Routes cancelled navigation.
     private func handoffCancelled(destination: URL?) {
         guard let url = destination else {
-            logger.error("Navigation cancelled: nil destination")
+            LogError("Navigation cancelled: nil destination")
             return
         }
         let scheme = url.scheme?.lowercased()
@@ -60,10 +55,9 @@ final class NavigationPolicy {
             externalLinkGate.open(candidate: url.absoluteString)
         } else {
             // Non-web destinations can embed local file paths or other
-            // Sensitive data; keep them private-redacted in the log.
-            logger.error(
-                "Navigation cancelled: non-web destination \(url.absoluteString, privacy: .private)"
-            )
+            // Sensitive data; log only the scheme so the raw destination
+            // Never lands in the exported diagnostics.
+            LogError("Navigation cancelled: non-web destination scheme \(url.scheme ?? "unknown")")
         }
     }
 }

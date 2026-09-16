@@ -310,11 +310,16 @@ export class SettingsStore {
     /**
      * Update SystemWideProtection setting
      */
-    public enableSystemWideProtection() {
+    public async enableSystemWideProtection() {
         const newConfiguration = this.urlFilterState.clone();
+        const prevConfiguration = this.urlFilterState.clone();
         newConfiguration.enabled = true;
         this.setURLFilterState(newConfiguration);
-        window.API.Execute(new SetURLFilterEnabledRequest({ value: true }));
+        const resp = await window.API.Execute(new SetURLFilterEnabledRequest({ value: true }));
+        if (resp.hasError) {
+            this.setURLFilterState(prevConfiguration);
+            await this.getURLFilterState();
+        }
     }
 
     /**

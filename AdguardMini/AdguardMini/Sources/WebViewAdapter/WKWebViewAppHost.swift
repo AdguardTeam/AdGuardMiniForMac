@@ -10,7 +10,6 @@
 import Foundation
 import WebKit
 import AppKit
-import os
 import AML
 import ProtoSchema
 
@@ -112,16 +111,10 @@ final class WKWebViewAppHost: NSObject {
     /// does not instantly close it.
     private var lastShownTime: Date = .distantPast
 
-    /// Logs `WKWebView` load failures.
-    private let logger = Logger(
-        subsystem: Subsystem.mainApp.name,
-        category: "WKWebViewAppHost"
-    )
-
     private(set) var state: HostState = .unloaded
 
     /// Failure presenter — routes load failures, JS-runtime errors,
-    /// and recurring-RPC-timeout notifications to telemetry + native
+    /// and recurring-RPC-timeout notifications to logging + native
     /// alert + (optional) app restart. `.noOp` default keeps existing
     /// tests and Sciter paths untouched.
     private let failurePresenter: any WKWebViewFailurePresenting
@@ -324,7 +317,7 @@ final class WKWebViewAppHost: NSObject {
     /// Coming back.
     deinit {
         let moduleName = self.module.rawValue
-        self.logger.info("host.deinit module=\(moduleName, privacy: .public)")
+        LogInfo("host.deinit module=\(moduleName)")
     }
 
     // MARK: - Public methods
@@ -355,7 +348,7 @@ final class WKWebViewAppHost: NSObject {
         self.loadEntryIfNeeded()
         let moduleName = self.module.rawValue
         let stateDesc = String(describing: self.state)
-        self.logger.info("host.show module=\(moduleName, privacy: .public) state=\(stateDesc, privacy: .public)")
+        LogInfo("host.show module=\(moduleName) state=\(stateDesc)")
         self.lastShownTime = Date()
         // The app runs with `.accessory` activation policy. Without
         // Activating the app, the window server leaves windows marked
@@ -412,7 +405,7 @@ final class WKWebViewAppHost: NSObject {
         guard self.state != .tearingDown, self.state != .destroyed else { return }
         let moduleName = self.module.rawValue
         let stateDesc = String(describing: self.state)
-        self.logger.info("host.hide module=\(moduleName, privacy: .public) state=\(stateDesc, privacy: .public)")
+        LogInfo("host.hide module=\(moduleName) state=\(stateDesc)")
         self.removeOutsideClickMonitor()
         self.window.orderOut(nil)
         self.state = .hidden
@@ -545,7 +538,7 @@ final class WKWebViewAppHost: NSObject {
         ) { [weak self] _ in
             guard let self else { return }
             if self.shouldIgnoreOutsideClick() { return }
-            self.logger.error("host.outsideClick global — hiding tray")
+            LogDebug("host.outsideClick global — hiding tray")
             self.hide()
         }
     }
@@ -582,7 +575,7 @@ final class WKWebViewAppHost: NSObject {
         if self.isInStatusBarStrip(location) {
             return event
         }
-        self.logger.error("host.outsideClick local — hiding tray")
+        LogDebug("host.outsideClick local — hiding tray")
         self.hide()
         return event
     }
@@ -643,21 +636,21 @@ final class WKWebViewAppHost: NSObject {
 
     /// Test seam invoked by
     /// `WKNavigationDelegate.webView(_:didFailProvisionalNavigation:withError:)`.
-    /// Logs the failure and transitions `loading → error`. `loadEntryIfNeeded()`
-    /// allows retry from this state.
+    /// Routes the failure to the failure presenter (logging + alert) and
+    /// Transitions `loading → error`. `loadEntryIfNeeded()` allows retry from
+    /// This state.
     func didFailProvisionalNavigation(error: Error) {
         // `.hidden` is reachable when the user hides a host mid-load; the
         // Pending navigation keeps running and can still fail. Handling it
         // Here guarantees the next `show()` reloads instead of presenting a
         // Dead page (and the failure is still surfaced).
         guard self.state == .loading || self.state == .hidden else { return }
-        self.logger.error(
-            "WKWebView provisional navigation failed: \(error.localizedDescription, privacy: .public)"
-        )
         self.pendingVisibilityChange = false
         self.state = .error
-        // Route to the failure presenter for telemetry + native alert
-        // + (optional) app restart.
+        // Route to the failure presenter for logging (error domain/code) +
+        // Native alert + (optional) app restart. The presenter is the single
+        // Log surface for this failure, so no separate log line is emitted
+        // Here.
         let moduleName = self.module.rawValue
         Task { @MainActor in
             await self.failurePresenter.handleLoadFailure(module: moduleName, error: error)
@@ -885,12 +878,11 @@ extension WKWebViewAppHost: WKNavigationDelegate {
         // Navigation started). Defers ENTIRELY to the existing
         // `didFailProvisionalNavigation(error:)` seam, which already
         // Performs: the `state` transition to `.error`, the
-        // `logger.error` log, `pendingVisibilityChange = false`, and
-        // The `failurePresenter.handleLoadFailure` call.
+        // `failurePresenter.handleLoadFailure` call (its single log
+        // Surface for this failure), and `pendingVisibilityChange = false`.
         // Intentionally does NOT invoke `failurePresenter` directly:
         // `didFailProvisionalNavigation(error:)` already routes to it,
-        // So an additional call here would double-fire the alert
-        // (review Finding 5).
+        // So an additional call here would double-fire the alert.
         self.didFailProvisionalNavigation(error: error)
     }
 }

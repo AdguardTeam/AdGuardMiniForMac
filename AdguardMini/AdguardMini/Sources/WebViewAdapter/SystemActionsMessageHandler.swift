@@ -10,7 +10,7 @@
 import Foundation
 import AppKit
 import WebKit
-import os
+import AML
 import ProtoSchema // ScriptMessageHandling test seam (same module).
 
 // MARK: - Test seams
@@ -61,11 +61,6 @@ final class SystemActionsMessageHandler: NSObject, WKScriptMessageHandler {
     /// Absent only in unit tests that construct the handler without a host.
     private let webViewEvaluator: (any WebViewAsyncInvoking)?
     private let clipboardLimiter: TokenBucketLimiter
-    // Logs unknown names and bad body types.
-    private let logger = Logger(
-        subsystem: Subsystem.mainApp.name,
-        category: "SystemActionsMessageHandler"
-    )
 
     init(
         externalLinkGate: ExternalLinkGate,
@@ -102,7 +97,7 @@ final class SystemActionsMessageHandler: NSObject, WKScriptMessageHandler {
         // Triggered by the module page itself, not by any subframe whose
         // Content is not under our control.
         guard message.frameInfo.isMainFrame else {
-            logger.error("Ignoring system action from non-main frame: \(message.name, privacy: .public)")
+            LogError("Ignoring system action from non-main frame: \(message.name)")
             return
         }
         handle(message: message)
@@ -118,7 +113,7 @@ final class SystemActionsMessageHandler: NSObject, WKScriptMessageHandler {
         case "systemClipboardRead":
             self.handleClipboardRead(message: message)
         default:
-            logger.debug("Unknown WKScriptMessage name: \(message.name, privacy: .public)")
+            LogDebug("Unknown WKScriptMessage name: \(message.name)")
             return
         }
     }
@@ -127,13 +122,13 @@ final class SystemActionsMessageHandler: NSObject, WKScriptMessageHandler {
         guard let string = message.body as? String else {
             // Log only the body's type, never its content (JS-provided
             // Data may carry sensitive information).
-            logger.error(
-                "systemClipboard: bad body, got \(String(describing: type(of: message.body)), privacy: .public)"
+            LogError(
+                "systemClipboard: bad body, got \(String(describing: type(of: message.body)))"
             )
             return
         }
         guard string.utf8.count <= Constants.maxClipboardPayloadBytes else {
-            logger.error(
+            LogError(
                 "systemClipboard: payload too large (\(string.utf8.count) bytes) — rejected"
             )
             return
@@ -143,7 +138,7 @@ final class SystemActionsMessageHandler: NSObject, WKScriptMessageHandler {
             pasteboard.writeString(string)
         case .limited(let shouldLog):
             if shouldLog {
-                logger.error("systemClipboard: write rate limited — dropping")
+                LogDebug("systemClipboard: write rate limited — dropping")
             }
         }
     }
@@ -153,11 +148,11 @@ final class SystemActionsMessageHandler: NSObject, WKScriptMessageHandler {
         // Could otherwise drain the system pasteboard silently, without a
         // User gesture, at an unbounded rate.
         guard let evaluator = self.webViewEvaluator else {
-            logger.error("systemClipboardRead: no web view evaluator configured")
+            LogError("systemClipboardRead: no web view evaluator configured")
             return
         }
         guard let id = Self.coerceReadId(message.body) else {
-            logger.error("systemClipboardRead: bad body, got \(String(describing: type(of: message.body)), privacy: .public)")
+            LogError("systemClipboardRead: bad body, got \(String(describing: type(of: message.body)))")
             return
         }
         switch self.clipboardLimiter.tryConsume() {
@@ -167,7 +162,7 @@ final class SystemActionsMessageHandler: NSObject, WKScriptMessageHandler {
             // A dropped read gets no reply; the JS side resolves empty after
             // Its own timeout, so a paste simply inserts nothing.
             if shouldLog {
-                logger.error("systemClipboardRead: read rate limited — dropping")
+                LogDebug("systemClipboardRead: read rate limited — dropping")
             }
             return
         }
@@ -179,9 +174,15 @@ final class SystemActionsMessageHandler: NSObject, WKScriptMessageHandler {
         evaluator.invoke(
             body: InstructionBodies.resolveClipboardReadBody,
             arguments: ["id": id, "text": text]
-        ) { [weak self] result in
+        ) { result in
             if case .failure(let error) = result {
-                self?.logger.error("systemClipboardRead: reply failed \(error)")
+                // Log safe identifiers only; the error can embed a JS
+                // Exception message or session data.
+                let nsError = error as NSError
+                LogError(
+                    "systemClipboardRead: reply failed domain=\(nsError.domain) "
+                        + "code=\(nsError.code)"
+                )
             }
         }
     }

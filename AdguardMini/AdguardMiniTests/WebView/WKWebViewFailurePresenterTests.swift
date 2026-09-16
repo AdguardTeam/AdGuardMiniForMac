@@ -10,10 +10,9 @@
 import XCTest
 import AppKit
 
-/// Verifies telemetry, alert, and restart behavior of live failure presenter.
+/// Verifies alert and restart behavior of the live failure presenter.
 final class WKWebViewFailurePresenterTests: XCTestCase {
     private final class Recorder {
-        var telemetryEvents: [Telemetry.Event] = []
         var presentedAlertsCount = 0
         var restartInvokedCount = 0
     }
@@ -23,9 +22,6 @@ final class WKWebViewFailurePresenterTests: XCTestCase {
         alertResponse: NSApplication.ModalResponse = .alertSecondButtonReturn
     ) -> WKWebViewFailurePresenter {
         WKWebViewFailurePresenter(
-            recordTelemetry: { event in
-                recorder.telemetryEvents.append(event)
-            },
             presentAlert: { _ in
                 recorder.presentedAlertsCount += 1
                 return alertResponse
@@ -36,24 +32,17 @@ final class WKWebViewFailurePresenterTests: XCTestCase {
         )
     }
 
-    func testHandleLoadFailure_RecordsDistinctTelemetryCustomEvent_PresentsAlert() async {
+    func testHandleLoadFailure_PresentsAlert() async {
         let recorder = Recorder()
         let presenter = makePresenter(recorder)
         await presenter.handleLoadFailure(
             module: "settings",
             error: NSError(domain: "test", code: 42)
         )
-        XCTAssertEqual(recorder.telemetryEvents.count, 1)
-        guard case .customEvent(let ev) = recorder.telemetryEvents.first else {
-            XCTFail("expected .customEvent")
-            return
-        }
-        XCTAssertEqual(ev.name, "wkwebview_load_failure")
-        XCTAssertEqual(ev.refName, "settings")
         XCTAssertEqual(recorder.presentedAlertsCount, 1)
     }
 
-    func testHandleJSRuntimeError_RecordsTelemetryWithStackAndPresentsAlert() async {
+    func testHandleJSRuntimeError_PresentsAlert() async {
         let recorder = Recorder()
         let presenter = makePresenter(recorder)
         await presenter.handleJSRuntimeError(
@@ -61,37 +50,19 @@ final class WKWebViewFailurePresenterTests: XCTestCase {
             stack: "at foo (bar.ts:1:2)"
         )
         XCTAssertEqual(recorder.presentedAlertsCount, 1)
-        XCTAssertEqual(recorder.telemetryEvents.count, 1)
-        guard case .customEvent(let ev) = recorder.telemetryEvents.first else {
-            XCTFail("expected .customEvent")
-            return
-        }
-        XCTAssertEqual(ev.name, "wkwebview_js_runtime_error")
-        // Stack should remain in telemetry label.
-        XCTAssertTrue(
-            String(describing: ev.label).contains("at foo (bar.ts:1:2)"),
-            "stack MUST be present in the telemetry label"
-        )
     }
 
-    func testHandleRecurringRpcTimeout_RecordsTelemetry_DoesNotPresentAlert() async {
+    func testHandleRecurringRpcTimeout_DoesNotPresentAlert() async {
         let recorder = Recorder()
         let presenter = makePresenter(recorder)
         await presenter.handleRecurringRpcTimeout()
-        // Recurring RPC timeouts are telemetry/logging-only: a
-        // Slow-but-alive module (e.g. the user-rules editor's initial load)
-        // Must NOT surface a blocking "not responding / restart" dialog.
+        // Recurring RPC timeouts are log-only: a slow-but-alive module (e.g.
+        // The user-rules editor's initial load) must NOT surface a blocking
+        // Restart dialog.
         XCTAssertEqual(recorder.presentedAlertsCount, 0)
-        XCTAssertEqual(recorder.telemetryEvents.count, 1)
-        guard case .customEvent(let ev) = recorder.telemetryEvents.first else {
-            XCTFail("expected .customEvent")
-            return
-        }
-        XCTAssertEqual(ev.name, "rpc_recurring_timeout")
-        XCTAssertEqual(ev.refName, "webView")
     }
 
-    func testHandleCSPViolation_RecordsTelemetry_DoesNotPresentAlert() async {
+    func testHandleCSPViolation_DoesNotPresentAlert() async {
         let recorder = Recorder()
         let presenter = makePresenter(recorder)
         await presenter.handleCSPViolation(
@@ -99,40 +70,21 @@ final class WKWebViewFailurePresenterTests: XCTestCase {
                 + "effectiveDirective=style-src-attr",
             stack: "at animate (lottie.js:1:1)"
         )
-        // CSP violations are telemetry/logging-only. A blocked inline style
-        // From a third-party animation library (e.g. on macOS 12) is not a
-        // Load failure and must not show a blocking dialog.
+        // A blocked inline style from a third-party animation library (e.g.
+        // On macOS 12) is not a load failure and must not show a blocking
+        // Dialog.
         XCTAssertEqual(recorder.presentedAlertsCount, 0)
-        XCTAssertEqual(recorder.telemetryEvents.count, 1)
-        guard case .customEvent(let ev) = recorder.telemetryEvents.first else {
-            XCTFail("expected .customEvent")
-            return
-        }
-        XCTAssertEqual(ev.name, "wkwebview_csp_violation")
-        XCTAssertEqual(ev.refName, "webView")
     }
 
-    func testHandleRpcError_RecordsTelemetry_DoesNotPresentAlert() async {
+    func testHandleRpcError_DoesNotPresentAlert() async {
         let recorder = Recorder()
         let presenter = makePresenter(recorder)
         await presenter.handleRpcError(
             message: "RPC \"ThemeService.GetEffectiveTheme\" timed out after 600000 ms",
             stack: "at rpcCall (rpcPostMessage.ts:1:1)"
         )
-        // RPC transport failures are telemetry/logging-only: a transient
-        // Timeout must not offer a "restart the app" dialog.
+        // A transient RPC transport failure must not offer a restart dialog.
         XCTAssertEqual(recorder.presentedAlertsCount, 0)
-        XCTAssertEqual(recorder.telemetryEvents.count, 1)
-        guard case .customEvent(let ev) = recorder.telemetryEvents.first else {
-            XCTFail("expected .customEvent")
-            return
-        }
-        XCTAssertEqual(ev.name, "wkwebview_rpc_error")
-        XCTAssertEqual(ev.refName, "webView")
-        XCTAssertTrue(
-            String(describing: ev.label).contains("at rpcCall (rpcPostMessage.ts:1:1)"),
-            "stack MUST be present in the telemetry label"
-        )
     }
 
     func testRestartButton_ClickInvokesRestartApp_NonRestartDoesNot() async {

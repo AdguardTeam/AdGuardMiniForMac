@@ -701,6 +701,7 @@
 				URLFilter/URLFilterInfo.swift,
 				URLFilter/URLFilterLevelConfiguration.swift,
 				URLFilter/URLFilterProtectionLevel.swift,
+				URLFilter/URLFilterReconcileDecision.swift,
 				URLFilter/URLFilterResetService.swift,
 				URLFilter/URLFilterService.swift,
 				URLFilter/URLFilterServiceError.swift,

@@ -13,7 +13,7 @@
 ///
 /// `NEURLFilterManager.Error` is only available on macOS 26+, so the raw value
 /// is bridged into this enum inside an availability guard, keeping the mapper available on any OS version.
-enum URLFilterError: Error {
+enum URLFilterError: Error, Equatable {
     /// The filter configuration is unchanged.
     case configurationUnchanged
 

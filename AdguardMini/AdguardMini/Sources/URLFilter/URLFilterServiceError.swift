@@ -27,6 +27,8 @@ enum URLFilterServiceError: Error, LocalizedError, CustomStringConvertible {
     case setEnabledFailed(Error)
     /// Resetting the prefilter cache failed.
     case resetCacheFailed(Error)
+    /// The operation was superseded by a newer transition before it landed.
+    case superseded
 
     /// The error message surfaced to logs.
     var errorDescription: String? { self.description }
@@ -48,6 +50,8 @@ enum URLFilterServiceError: Error, LocalizedError, CustomStringConvertible {
             "URLFilter enable/disable failed: \(error)"
         case let .resetCacheFailed(error):
             "URLFilter prefilter cache reset failed: \(error)"
+        case .superseded:
+            "URLFilter transition was superseded by a newer one"
         }
     }
 }

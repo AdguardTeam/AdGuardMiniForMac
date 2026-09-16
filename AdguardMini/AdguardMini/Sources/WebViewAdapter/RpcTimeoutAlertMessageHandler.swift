@@ -9,7 +9,7 @@
 
 import Foundation
 import WebKit
-import os
+import AML
 import ProtoSchema // ScriptMessageHandling test seam (same module).
 
 /// Handles recurring RPC timeout alerts.
@@ -29,10 +29,6 @@ final class RpcTimeoutAlertMessageHandler: NSObject, WKScriptMessageHandler {
     private let rateLimiter: TokenBucketLimiter
     private let now: () -> Date
     private var lastAlertAt: Date?
-    private let logger = Logger(
-        subsystem: Subsystem.mainApp.name,
-        category: "RpcTimeoutAlertMessageHandler"
-    )
 
     init(
         presenter: any WKWebViewFailurePresenting,
@@ -62,8 +58,9 @@ final class RpcTimeoutAlertMessageHandler: NSObject, WKScriptMessageHandler {
               let count = Self.coerceCount(body[Constants.messageBodyCountKey]),
               count > 0,
               count <= Constants.maxPlausibleCount else {
-            logger.error(
-                "rpcTimeoutAlert: malformed count \(String(describing: message.body), privacy: .public)"
+            // Log the payload type only; the body is untrusted page content.
+            LogError(
+                "rpcTimeoutAlert: malformed count, body type \(String(describing: type(of: message.body)))"
             )
             return
         }
@@ -73,7 +70,7 @@ final class RpcTimeoutAlertMessageHandler: NSObject, WKScriptMessageHandler {
             break
         case .limited(let shouldLog):
             if shouldLog {
-                logger.error("rpcTimeoutAlert: rate limited — dropping")
+                LogDebug("rpcTimeoutAlert: rate limited — dropping")
             }
             return
         }
@@ -84,12 +81,12 @@ final class RpcTimeoutAlertMessageHandler: NSObject, WKScriptMessageHandler {
            current.timeIntervalSince(last) < Constants.alertMinIntervalSeconds {
             // Within-window throttling is an expected occurrence, not an error
             // (a misbehaving page could otherwise sustain error-level log spam).
-            logger.debug("rpcTimeoutAlert: alert throttled (recent alert)")
+            LogDebug("rpcTimeoutAlert: alert throttled (recent alert)")
             return
         }
         lastAlertAt = current
 
-        logger.error("rpcTimeoutAlert: count=\(count, privacy: .public)")
+        LogError("rpcTimeoutAlert: count=\(count)")
         Task { @MainActor in
             await presenter.handleRecurringRpcTimeout()
         }

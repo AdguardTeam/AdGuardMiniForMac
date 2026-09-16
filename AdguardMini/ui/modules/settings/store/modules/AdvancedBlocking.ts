@@ -210,7 +210,7 @@ export class AdvancedBlocking {
         if (resp.hasError) {
             this.notifyURLFilterCallFailed(true);
             this.setURLFilterState(prevValue);
-            this.getURLFilterState();
+            await this.getURLFilterState();
         }
     }
 
@@ -218,6 +218,10 @@ export class AdvancedBlocking {
      * Update level of protection for SystemWideProtection setting
      */
     public async updateSystemWideProtectionLevel(protectionLevel: URLFilterProtectionLevel) {
+        // Re-selecting the active level must not dispatch: it would restart the filter.
+        if (protectionLevel === this.urlFilterState.protectionLevel) {
+            return;
+        }
         const newValue = this.urlFilterState.clone();
         const prevValue = this.urlFilterState.clone();
         newValue.protectionLevel = protectionLevel;
@@ -226,7 +230,7 @@ export class AdvancedBlocking {
         if (resp.hasError) {
             this.notifyURLFilterCallFailed(true);
             this.setURLFilterState(prevValue);
-            this.getURLFilterState();
+            await this.getURLFilterState();
         }
     }
 
@@ -236,7 +240,7 @@ export class AdvancedBlocking {
     public async resetURLFilterCache() {
         const resp = await window.API.Execute(new ResetURLFilterCacheRequest());
         if (resp.hasError) {
-            this.getURLFilterState();
+            await this.getURLFilterState();
             this.notifyURLFilterCallFailed();
         }
     }
@@ -247,7 +251,7 @@ export class AdvancedBlocking {
     public async removeURLFilter() {
         const resp = await window.API.Execute(new RemoveURLFilterRequest());
         if (resp.hasError) {
-            this.getURLFilterState();
+            await this.getURLFilterState();
             this.notifyURLFilterCallFailed();
         }
     }

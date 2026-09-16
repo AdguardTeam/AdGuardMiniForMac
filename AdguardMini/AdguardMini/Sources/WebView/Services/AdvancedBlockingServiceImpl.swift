@@ -107,7 +107,7 @@ final class AdvancedBlockingServiceImpl: AdvancedBlockingService.ServiceType {
                              _ promise: @escaping (OptionalError) -> Void) {
         Task { @MainActor in
             do {
-                try await self.urlFilterService.setEnabled(message.value)
+                try await self.urlFilterService.setEnabledByUser(message.value)
                 promise(.noError)
             } catch {
                 LogError("Failed to update URLFilter configuration: \(error)")
