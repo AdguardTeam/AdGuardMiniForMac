@@ -17,4 +17,6 @@ service InternalService {
     rpc ShowInFinder(Path) returns (EmptyValue);
     /* Opens report page in default browser */
     rpc reportAnIssue(EmptyValue) returns (EmptyValue);
+    /* Opens the hidden diagnostics window */
+    rpc OpenDiagnosticsWindow(EmptyValue) returns (EmptyValue);
 }

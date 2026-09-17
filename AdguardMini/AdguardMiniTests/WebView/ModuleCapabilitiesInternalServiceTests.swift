@@ -15,7 +15,7 @@ final class ModuleCapabilitiesInternalServiceTests: XCTestCase {
     func testInternalServiceSubsets_MatchAuditedCallers() {
         XCTAssertEqual(
             ModuleCapabilities.internalServiceMethods(for: .settings),
-            Set(["OpenUserRulesWindow", "ShowInFinder", "reportAnIssue"])
+            Set(["OpenUserRulesWindow", "ShowInFinder", "reportAnIssue", "OpenDiagnosticsWindow"])
         )
         XCTAssertEqual(
             ModuleCapabilities.internalServiceMethods(for: .tray),

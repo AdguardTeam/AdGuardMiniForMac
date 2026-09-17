@@ -706,6 +706,7 @@
 				URLFilter/URLFilterService.swift,
 				URLFilter/URLFilterServiceError.swift,
 				URLFilter/URLFilterState.swift,
+				"URLFilter/URLFilterState+Diagnostics.swift",
 				URLFilter/URLFilterStateAssembler.swift,
 				URLFilter/URLFilterStatus.swift,
 				URLFilter/URLFilterUIState.swift,

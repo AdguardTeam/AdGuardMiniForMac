@@ -1162,3 +1162,13 @@ humans and AI agents that consume project documentation.
     logged — yet disables logging itself and every action that logs first;
     guarding the Emscripten print path keeps diagnostics and user actions
     alive.
+16. **Terminology**: `SWP` stands for **System Wide Protection** — the macOS 26+
+    URL filter feature (`Sources/URLFilter/`, the URLFilter extension) backed by
+    the PIR backend. Do NOT expand SWP as "Safari Web Protection" and do not
+    equate SWP with the PIR server: SWP is the on-device filtering feature; PIR
+    is only the backend it talks to.
+
+    **Rationale**: "System Wide Protection" is the established product name in
+    the UI (`system_wide_protection` route) and code comments; "Safari Web
+    Protection" is a stale label that misleads readers about what the feature
+    is.

@@ -5,6 +5,7 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState, useCallback } from 'preact/hooks';
 
+import { OpenDiagnosticsWindowRequest } from 'Apis/requests/InternalService';
 import { Channel, ReleaseVariants } from 'Apis/types';
 import { ADGUARD_MINI_TITLE } from 'Common/utils/consts';
 import { TDS_PARAMS, getTdsLink } from 'Common/utils/links';
@@ -20,6 +21,12 @@ import { SettingsItem } from '../SettingsItem/SettingsItem';
 import s from './About.module.pcss';
 
 import type { NotificationsQueue } from 'SettingsStore/modules';
+
+/**
+ * Number of clicks on the About version text that opens the hidden
+ * diagnostics window.
+ */
+const DIAGNOSTICS_REVEAL_CLICKS = 7;
 
 const channelToText = (ch: Channel): string => {
     const texts = {
@@ -89,6 +96,7 @@ export function AboutComponent() {
         }
     }, [appInfo, releaseVariant]);
     const [showDependencies, setShowDependencies] = useState(false);
+    const [versionClickCount, setVersionClickCount] = useState(0);
 
     const year = (new Date()).getFullYear();
 
@@ -138,7 +146,25 @@ export function AboutComponent() {
                     />
                 )}
                 <div className={s.About_version}>
-                    <Text className={s.About_textSpace} type="h5">
+                    {/*
+                        Deliberately not exposed to the accessibility tree (no
+                        `role`/`tabIndex`): this is a hidden debug feature that
+                        only opens the diagnostics window after repeated clicks.
+                    */}
+                    <Text
+                        className={s.About_textSpace}
+                        type="h5"
+                        onClick={() => {
+                            const nextCount = versionClickCount + 1;
+                            setVersionClickCount(nextCount);
+                            if (nextCount === DIAGNOSTICS_REVEAL_CLICKS) {
+                                window.API.Execute(new OpenDiagnosticsWindowRequest()).catch((err) => {
+                                    // eslint-disable-next-line no-console
+                                    console.error('[About] OpenDiagnosticsWindow RPC failed:', err);
+                                });
+                            }
+                        }}
+                    >
                         {ADGUARD_MINI_TITLE}
                         {' '}
                         {version}

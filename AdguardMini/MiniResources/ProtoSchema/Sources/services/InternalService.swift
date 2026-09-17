@@ -38,6 +38,10 @@ public protocol InternalServiceProtocol
 	func reportAnIssue (
 						_ message: EmptyValue,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void
+	/// Opens the hidden diagnostics window
+	func openDiagnosticsWindow (
+						_ message: EmptyValue,
+						_ promise: @escaping (EmptyValue) -> Void) -> Void
 }
 
 // MARK: Protobuf Bridge definition
@@ -140,6 +144,21 @@ open class InternalService: WebViewBridge
 				}
 			} catch {
 				BridgeLog.error("InternalService.reportAnIssue: failed to deserialize request: \(error)")
+				promise(Data())
+			}
+		case "OpenDiagnosticsWindow":
+			do {
+				let input = try EmptyValue(serializedBytes: bytes)
+				cast.openDiagnosticsWindow(input) { result in
+					do {
+						promise(try result.serializedData())
+					} catch {
+						BridgeLog.error("InternalService.OpenDiagnosticsWindow: failed to serialize reply: \(error)")
+						promise(Data())
+					}
+				}
+			} catch {
+				BridgeLog.error("InternalService.OpenDiagnosticsWindow: failed to deserialize request: \(error)")
 				promise(Data())
 			}
 		default:

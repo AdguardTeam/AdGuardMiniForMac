@@ -112,8 +112,11 @@ enum ModuleCapabilities {
             // Invokes. `OpenSettingsWindow` is tray-only and
             // `CloseUserRulesWindow`/`GetSystemLanguage` run on the separate
             // `.userrules` child host (which has its own set below).
+            // `OpenDiagnosticsWindow` is the hidden diagnostics entry on the
+            // About screen.
             return [
-                "OpenUserRulesWindow", "ShowInFinder", "reportAnIssue"
+                "OpenUserRulesWindow", "ShowInFinder", "reportAnIssue",
+                "OpenDiagnosticsWindow"
             ]
         case .tray:
             return ["OpenSettingsWindow"]

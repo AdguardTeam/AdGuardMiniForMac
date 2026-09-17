@@ -153,7 +153,9 @@ final class ServiceLocator {
         sharedSettings: SharedDIContainer.shared.sharedSettingsStorage,
         keychain: self.coreDIContainer.keychain,
         safariExtensionStateService: self.safariExtensionStateService,
-        mailExtensionStateService: self.mailExtensionStateService
+        mailExtensionStateService: self.mailExtensionStateService,
+        urlFilterService: self.urlFilterService,
+        urlFilterBloomMetadataStorage: self.urlFilterBloomMetadataStorage
     )
 
     private lazy var groupFolderFileService: GroupFolderFileService = GroupFolderFileServiceImpl(

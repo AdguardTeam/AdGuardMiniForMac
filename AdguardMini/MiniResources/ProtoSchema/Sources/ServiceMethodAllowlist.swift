@@ -36,7 +36,7 @@ public enum ServiceMethodAllowlist {
         case "FiltersService":
             return ["CheckCustomFilter", "ConfirmAddCustomFilter", "DeleteCustomFilters", "GetEnabledFiltersIds", "GetFiltersGroupedByExtensions", "GetFiltersIndex", "GetFiltersMetadata", "RequestFiltersUpdate", "UpdateCustomFilter", "UpdateFilters", "UpdateLanguageSpecific"]
         case "InternalService":
-            return ["CloseUserRulesWindow", "GetSystemLanguage", "OpenSettingsWindow", "OpenUserRulesWindow", "ShowInFinder", "reportAnIssue"]
+            return ["CloseUserRulesWindow", "GetSystemLanguage", "OpenDiagnosticsWindow", "OpenSettingsWindow", "OpenUserRulesWindow", "ShowInFinder", "reportAnIssue"]
         case "OnboardingService":
             return ["GetSystemLanguage", "OnboardingDidComplete"]
         case "SafariExtensionsService":

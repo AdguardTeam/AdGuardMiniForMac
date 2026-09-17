@@ -54,6 +54,9 @@ protocol Support: ReportSiteProtocol {
         description: String,
         addLogs: Bool
     ) async throws
+
+    /// Returns the current app state text (the `state.txt` content).
+    func getState() async -> String
 }
 
 // MARK: - ReportSiteProtocol
@@ -84,6 +87,8 @@ final class SupportImpl {
     private let keychain: KeychainManager
     private let safariExtensionStateService: SafariExtensionStateService
     private let mailExtensionStateService: MailExtensionStateService
+    private let urlFilterService: URLFilterService
+    private let urlFilterBloomMetadataStorage: URLFilterBloomMetadataStorage
 
     init(
         safariFiltersStorage: SafariFiltersStorage,
@@ -95,7 +100,9 @@ final class SupportImpl {
         sharedSettings: SharedSettingsStorage,
         keychain: KeychainManager,
         safariExtensionStateService: SafariExtensionStateService,
-        mailExtensionStateService: MailExtensionStateService
+        mailExtensionStateService: MailExtensionStateService,
+        urlFilterService: URLFilterService,
+        urlFilterBloomMetadataStorage: URLFilterBloomMetadataStorage
     ) {
         self.safariFiltersStorage = safariFiltersStorage
         self.filtersStorage = filtersStorage
@@ -107,6 +114,8 @@ final class SupportImpl {
         self.keychain = keychain
         self.safariExtensionStateService = safariExtensionStateService
         self.mailExtensionStateService = mailExtensionStateService
+        self.urlFilterService = urlFilterService
+        self.urlFilterBloomMetadataStorage = urlFilterBloomMetadataStorage
     }
 
     private func createAdditionalFilesDict(state: String?) async -> [String: Any] {
@@ -194,6 +203,8 @@ final class SupportImpl {
 
         \(safariExtensionsSection)
 
+        \(await self.getWebProtectionSection())
+
         User Rules:
             Enabled count: \(enabledUserRulesCount)
             Status: \(userRulesStatus)
@@ -251,6 +262,21 @@ final class SupportImpl {
         Extensions:
         \(statusLines)
         """
+    }
+
+    private func getWebProtectionSection() async -> String {
+        do {
+            let rawState = try await self.urlFilterService.getState()
+            let metadata = self.urlFilterBloomMetadataStorage.load()
+            return rawState.webProtectionSection(
+                protectionLevel: self.userSettings.urlFilterProtectionLevel,
+                rulesCount: metadata?.rulesCount,
+                lastUpdate: metadata?.timeUpdated
+            )
+        } catch {
+            LogWarn("System Wide Protection state unavailable for diagnostics: \(error)")
+            return "System Wide Protection:\n    State unavailable"
+        }
     }
 
     private func getCustomFiltersSection() async -> String {
@@ -376,6 +402,10 @@ extension SupportImpl: ReportSiteProtocol {
 }
 
 extension SupportImpl: Support {
+    func getState() async -> String {
+        await self.createState()
+    }
+
     func generateLogsArchive(
         fileUrl: URL,
         includeState: Bool,

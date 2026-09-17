@@ -117,4 +117,14 @@ final class InternalServiceImpl: InternalService.ServiceType {
             }
         }
     }
+
+    // MARK: Diagnostics window
+
+    /// Opens the hidden diagnostics window.
+    func openDiagnosticsWindow(_ message: EmptyValue, _ promise: @escaping (EmptyValue) -> Void) {
+        Task { @MainActor in
+            DiagnosticsWindowPresenter.present(support: self.support)
+            promise(EmptyValue())
+        }
+    }
 }
