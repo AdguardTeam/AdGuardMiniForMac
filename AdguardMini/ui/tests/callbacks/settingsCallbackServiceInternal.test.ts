@@ -24,7 +24,10 @@ import {
     ImportMode,
     SafariExtensionUpdate,
     ImportStatus,
+    URLFilterInfo,
+    URLFilterProtectionLevel,
     URLFilterState,
+    URLFilterStatus,
 } from '../../modules/common/apis/types';
 
 /**
@@ -244,4 +247,34 @@ test('OnSettingsWindowOpened enables the Safari extensions screen', async () => 
     await service.OnSettingsWindowOpened(new EmptyValue());
 
     assert.deepEqual(received, [true]);
+});
+
+test('OnURLFilterStateChanged applies the pushed state and notifies on error', async () => {
+    __resetSettingsTestStore();
+    const applied: URLFilterState[] = [];
+    const { notify, calls: notifyCalls } = makeNotifySpy();
+    store.advancedBlocking = { applyPushedURLFilterState: (state: URLFilterState) => { applied.push(state); } };
+    store.notification = { notify };
+
+    const service = new SettingsCallbackServiceInternal();
+    const failed = new URLFilterState({
+        enabled: true,
+        protectionLevel: URLFilterProtectionLevel.safe,
+        status: URLFilterStatus.error,
+        info: new URLFilterInfo({ rulesCount: 1, lastUpdate: 2 }),
+    });
+    await service.OnURLFilterStateChanged(failed);
+
+    assert.deepEqual(applied, [failed]);
+    assert.equal(notifyCalls.length, 1);
+
+    // A healthy push is applied without a notification.
+    await service.OnURLFilterStateChanged(new URLFilterState({
+        enabled: true,
+        protectionLevel: URLFilterProtectionLevel.safe,
+        status: URLFilterStatus.running,
+    }));
+
+    assert.equal(applied.length, 2);
+    assert.equal(notifyCalls.length, 1);
 });

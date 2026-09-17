@@ -97,7 +97,7 @@ async OnSafariExtensionUpdate(param: SafariExtensionUpdate): Promise<EmptyValue>
 
     /* Fires when URL filter state changed */
     async OnURLFilterStateChanged(param: URLFilterState): Promise<EmptyValue> {
-        store.advancedBlocking.setURLFilterState(param);
+        store.advancedBlocking.applyPushedURLFilterState(param);
         if (param.status === URLFilterStatus.error) {
             store.notification.notify({
                 message: translate('advanced.blocking.system.wide.error'),

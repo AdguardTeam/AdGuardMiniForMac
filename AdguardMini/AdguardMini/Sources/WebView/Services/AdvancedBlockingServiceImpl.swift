@@ -116,8 +116,8 @@ final class AdvancedBlockingServiceImpl: AdvancedBlockingService.ServiceType {
         }
     }
 
-    func updateURLFilterProtectionLevel(_ message: URLFilterProtectionLevelUpdate,
-                                        _ promise: @escaping (OptionalError) -> Void) {
+    func requestUpdateURLFilterProtectionLevel(_ message: URLFilterProtectionLevelUpdate,
+                                               _ promise: @escaping (OptionalError) -> Void) {
         Task { @MainActor in
             do {
                 try await self.urlFilterService.setProtectionLevel(message.protectionLevel.toSwift())

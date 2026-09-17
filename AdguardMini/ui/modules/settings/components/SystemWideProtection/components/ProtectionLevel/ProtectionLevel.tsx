@@ -27,16 +27,19 @@ const SystemWideProtectionLevelToTelemetryEventMap: Record<URLFilterProtectionLe
 function ProtectionLevelComponent() {
     const { account, advancedBlocking, telemetry, settings } = useSettingsStore();
     const {
-        enabled: systemWideProtectionEnabled,
-        protectionLevel: systemWideProtectionLevel,
-    } = advancedBlocking.urlFilterState;
+        urlFilterState: {
+            enabled: systemWideProtectionEnabled,
+            protectionLevel: systemWideProtectionLevel,
+        },
+        urlFilterInfo,
+    } = advancedBlocking;
 
     const { isLicenseOrTrialActive } = account;
 
     const isFree = !isLicenseOrTrialActive;
 
     const { settings: { macos25OrLower, non501User } } = settings;
-    const isDisabled = macos25OrLower || non501User || !systemWideProtectionEnabled;
+    const isDisabled = macos25OrLower || non501User || !systemWideProtectionEnabled || !urlFilterInfo;
 
     const muted = !systemWideProtectionEnabled;
 

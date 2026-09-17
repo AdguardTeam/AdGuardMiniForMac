@@ -26,7 +26,7 @@ public enum ServiceMethodAllowlist {
         case "AccountService":
             return ["EnterActivationCode", "GetLicense", "GetSubscriptionsInfo", "GetTrayLicense", "GetTrialAvailableDays", "RefreshLicense", "RequestActivate", "RequestBind", "RequestLogout", "RequestOpenAppStore", "RequestOpenAppStoreReview", "RequestOpenSubscriptions", "RequestRenew", "RequestRestorePurchases", "RequestSubscribe"]
         case "AdvancedBlockingService":
-            return ["GetAdguardExtra", "GetAdvancedRules", "GetMailProtection", "GetRealTimeFiltersUpdate", "GetURLFilterSeen", "GetURLFilterState", "RemoveURLFilter", "ResetURLFilterCache", "SetURLFilterEnabled", "UpdateAdguardExtra", "UpdateAdvancedRules", "UpdateMailProtection", "UpdateRealTimeFiltersUpdate", "UpdateURLFilterProtectionLevel", "UpdateURLFilterSeen"]
+            return ["GetAdguardExtra", "GetAdvancedRules", "GetMailProtection", "GetRealTimeFiltersUpdate", "GetURLFilterSeen", "GetURLFilterState", "RemoveURLFilter", "RequestUpdateURLFilterProtectionLevel", "ResetURLFilterCache", "SetURLFilterEnabled", "UpdateAdguardExtra", "UpdateAdvancedRules", "UpdateMailProtection", "UpdateRealTimeFiltersUpdate", "UpdateURLFilterSeen"]
         case "AppInfoService":
             return ["GetAbout"]
         case "AppUpdateService":

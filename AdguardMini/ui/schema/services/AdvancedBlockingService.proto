@@ -26,8 +26,8 @@ service AdvancedBlockingService {
     rpc GetURLFilterState(EmptyValue) returns (URLFilterState);
     /* Set URLFilter enabled state */
     rpc SetURLFilterEnabled(BoolValue) returns (OptionalError);
-    /* Update URLFilter protection level */
-    rpc UpdateURLFilterProtectionLevel(URLFilterProtectionLevelUpdate) returns (OptionalError);
+    /* Ask for update of URLFilter protection level */
+    rpc RequestUpdateURLFilterProtectionLevel(URLFilterProtectionLevelUpdate) returns (OptionalError);
     /* Reset URLFilter prefilter cache */
     rpc ResetURLFilterCache(EmptyValue) returns (OptionalError);
     /* Remove URLFilter configuration */

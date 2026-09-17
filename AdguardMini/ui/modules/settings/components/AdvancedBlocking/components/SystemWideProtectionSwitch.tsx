@@ -83,7 +83,6 @@ export function SystemWideProtectionSwitch(props: Props) {
                     </div>
                 )}
                 description={translate('advanced.blocking.system.wide.desc')}
-                disabled={disabled}
                 icon="apps"
                 iconColor={orangeIcon ? 'orange' : undefined}
                 internalLink={RouteName.system_wide_protection}

@@ -55,6 +55,7 @@ export function Radio({
             tabIndex={0}
             onClick={onClick ? (e) => {
                 if (!disabled) {
+                    e.preventDefault();
                     focusOnBody();
                     onClick(e);
                 }

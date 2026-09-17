@@ -15,3 +15,8 @@
 export function getNotificationSettingsImportFailedText(): string {
     return 'settings import failed';
 }
+
+/** Fixed text stand-in for the real generic "something went wrong" translation. */
+export function getNotificationSomethingWentWrongText(): string {
+    return 'something went wrong';
+}

@@ -53,8 +53,8 @@ public protocol AdvancedBlockingServiceProtocol
 	func setURLFilterEnabled (
 						_ message: BoolValue,
 						_ promise: @escaping (OptionalError) -> Void) -> Void
-	/// Update URLFilter protection level
-	func updateURLFilterProtectionLevel (
+	/// Ask for update of URLFilter protection level
+	func requestUpdateURLFilterProtectionLevel (
 						_ message: URLFilterProtectionLevelUpdate,
 						_ promise: @escaping (OptionalError) -> Void) -> Void
 	/// Reset URLFilter prefilter cache
@@ -237,19 +237,19 @@ open class AdvancedBlockingService: WebViewBridge
 				BridgeLog.error("AdvancedBlockingService.SetURLFilterEnabled: failed to deserialize request: \(error)")
 				promise(Data())
 			}
-		case "UpdateURLFilterProtectionLevel":
+		case "RequestUpdateURLFilterProtectionLevel":
 			do {
 				let input = try URLFilterProtectionLevelUpdate(serializedBytes: bytes)
-				cast.updateURLFilterProtectionLevel(input) { result in
+				cast.requestUpdateURLFilterProtectionLevel(input) { result in
 					do {
 						promise(try result.serializedData())
 					} catch {
-						BridgeLog.error("AdvancedBlockingService.UpdateURLFilterProtectionLevel: failed to serialize reply: \(error)")
+						BridgeLog.error("AdvancedBlockingService.RequestUpdateURLFilterProtectionLevel: failed to serialize reply: \(error)")
 						promise(Data())
 					}
 				}
 			} catch {
-				BridgeLog.error("AdvancedBlockingService.UpdateURLFilterProtectionLevel: failed to deserialize request: \(error)")
+				BridgeLog.error("AdvancedBlockingService.RequestUpdateURLFilterProtectionLevel: failed to deserialize request: \(error)")
 				promise(Data())
 			}
 		case "ResetURLFilterCache":

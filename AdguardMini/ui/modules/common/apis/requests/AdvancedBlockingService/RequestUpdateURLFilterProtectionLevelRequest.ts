@@ -4,9 +4,9 @@ import { PlatformRequest } from '@adg/webview-utils-kit';
 import { OptionalError as ReturnValue, URLFilterProtectionLevelUpdate as RequestMessage } from '../../types'
 
 /**
- * Update URLFilter protection level
+ * Ask for update of URLFilter protection level
  */
-export class UpdateURLFilterProtectionLevelRequest extends PlatformRequest<ReturnValue, RequestMessage> {
+export class RequestUpdateURLFilterProtectionLevelRequest extends PlatformRequest<ReturnValue, RequestMessage> {
     /**
      * Constructs a new request instance
      * @param requestMessage The request message or its constructor parameters
@@ -22,7 +22,7 @@ export class UpdateURLFilterProtectionLevelRequest extends PlatformRequest<Retur
      * Fully qualified method name to be called on the backend
      * @returns The fully qualified method name
      */
-    public get FQN() { return 'AdvancedBlockingService.UpdateURLFilterProtectionLevel'; }
+    public get FQN() { return 'AdvancedBlockingService.RequestUpdateURLFilterProtectionLevel'; }
 
     /**
      * Processes the response bytes received from the backend

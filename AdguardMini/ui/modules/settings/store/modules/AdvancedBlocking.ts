@@ -9,7 +9,7 @@ import {
     GetURLFilterSeenRequest,
     SetURLFilterEnabledRequest,
     UpdateURLFilterSeenRequest,
-    UpdateURLFilterProtectionLevelRequest,
+    RequestUpdateURLFilterProtectionLevelRequest,
     UpdateRealTimeFiltersUpdateRequest,
     ResetURLFilterCacheRequest,
     RemoveURLFilterRequest,
@@ -32,8 +32,31 @@ import {
 } from 'Common/utils/urlFilterState';
 import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
 
-import type { BoolValue, URLFilterProtectionLevel } from 'Apis/types';
+import type { BoolValue, URLFilterInfo, URLFilterProtectionLevel } from 'Apis/types';
 import type { NotificationsQueue } from 'Common/stores/NotificationsQueue';
+
+/**
+ * How long the stats of a pushed URL filter state are held before they are
+ * shown without waiting for the next push.
+ *
+ * The platform pushes the state more than once for one change: the first
+ * push carries the previous stats (the URL filter extension persists the new
+ * metadata only after the bloom filter download) and the next one carries the
+ * fresh stats.
+ */
+export const URL_FILTER_INFO_FALLBACK_TIMEOUT_MS = 10_000;
+
+/**
+ * Checks whether a pushed stats snapshot carries any filtering rules data.
+ *
+ * The platform omits both fields when the prefilter metadata is absent, for
+ * example before the first download.
+ *
+ * @param info Stats snapshot from the platform.
+ */
+function hasURLFilterStats(info: URLFilterInfo): boolean {
+    return info.has_rules_count || info.has_last_update;
+}
 
 /**
  *  AdvancedBlocking store
@@ -49,6 +72,21 @@ export class AdvancedBlocking {
      */
     private readonly notification: NotificationsQueue;
 
+    /**
+     * Whether the stats of a pushed state are being held: the next push — or
+     * the timeout — shows them.
+     */
+    private isStatsHeld = false;
+
+    /**
+     * Stats of the held pushed state.
+     */
+    private pendingStats: URLFilterInfo | null = null;
+
+    /**
+     * Timer that shows the held stats when no further push arrives.
+     */
+    private statsHoldTimer: ReturnType<typeof setTimeout> | null = null;
 
     /**
      * Advanced rules state
@@ -69,6 +107,12 @@ export class AdvancedBlocking {
      * URL filter state for system-wide protection settings.
      */
     public urlFilterState = new URLFilterState();
+
+    /**
+     * URL filter info for system-wide protection settings.
+     * null for loading
+     */
+    public urlFilterInfo: null | URLFilterInfo = null;
 
     /**
      * URL filter seen.
@@ -109,12 +153,92 @@ export class AdvancedBlocking {
         );
     }
 
+    /**
+     * Holds the stats of a pushed state: they are shown only when the next
+     * push arrives or the timeout passes, never on their own. The first push
+     * carries the previous stats (the URL filter extension persists the new
+     * metadata only after the bloom filter download), so showing it would end
+     * the loader with a stale count.
+     *
+     * @param info Pushed stats.
+     */
+    private holdStats(info: URLFilterInfo) {
+        this.isStatsHeld = true;
+        this.pendingStats = hasURLFilterStats(info) ? info : null;
+        this.cancelStatsHoldTimeout();
+        this.statsHoldTimer = setTimeout(() => {
+            this.statsHoldTimer = null;
+            if (!this.isStatsHeld) {
+                return;
+            }
+            // Nothing else arrived: show the held stats.
+            this.showStats(this.pendingStats ?? this.urlFilterState.info);
+        }, URL_FILTER_INFO_FALLBACK_TIMEOUT_MS);
+    }
+
+    /**
+     * Shows the given stats and drops any held ones.
+     *
+     * @param info Stats to display.
+     */
+    private showStats(info: URLFilterInfo) {
+        this.isStatsHeld = false;
+        this.pendingStats = null;
+        this.cancelStatsHoldTimeout();
+        this.setURLFilterInfo(info);
+    }
+
+    /**
+     * Cancels the pending hold timeout, if any.
+     */
+    private cancelStatsHoldTimeout() {
+        if (this.statsHoldTimer === null) {
+            return;
+        }
+        clearTimeout(this.statsHoldTimer);
+        this.statsHoldTimer = null;
+    }
 
     /**
      * URL filter state setter
      */
     public setURLFilterState(data: URLFilterState) {
         this.urlFilterState = data;
+    }
+
+    /**
+     * Setter for URL filter info.
+     * @param data URL filter info to set.
+     */
+    public setURLFilterInfo(data: typeof this.urlFilterInfo) {
+        this.urlFilterInfo = data;
+    }
+
+    /**
+     * Applies a URL filter state pushed by the platform.
+     *
+     * The platform pushes the state more than once for one change: the first
+     * push carries the previous stats (the URL filter extension persists the
+     * new metadata only after the bloom filter download) and the next one
+     * carries the fresh stats. The stats of the first push are therefore only
+     * held, and the display is updated by the next push — or by the timeout,
+     * when it never comes. A single push never ends the loader with a stale
+     * count, and the number of pushes does not matter.
+     *
+     * @param data URL filter state from the platform.
+     */
+    public applyPushedURLFilterState(data: URLFilterState) {
+        this.setURLFilterState(data);
+
+        if (!this.isStatsHeld) {
+            // First pushed state: hold its stats until the next push.
+            this.holdStats(data.info);
+            return;
+        }
+
+        // Next pushed state: show its stats — the held ones when it carries none.
+        const resolved = hasURLFilterStats(data.info) ? data.info : this.pendingStats;
+        this.showStats(resolved ?? data.info);
     }
 
     /**
@@ -157,7 +281,6 @@ export class AdvancedBlocking {
         this.realTimeFiltersUpdate = resp.value;
     }
 
-
     /**
      * Update AdvancedRules setting
      */
@@ -188,6 +311,7 @@ export class AdvancedBlocking {
     public async getURLFilterState() {
         const resp = await window.API.Execute(new GetURLFilterStateRequest());
         this.setURLFilterState(resp);
+        this.showStats(resp.info);
     }
 
     /**
@@ -224,12 +348,15 @@ export class AdvancedBlocking {
         }
         const newValue = this.urlFilterState.clone();
         const prevValue = this.urlFilterState.clone();
+        // The loader covers the window until the pushed stats are resolved.
+        this.setURLFilterInfo(null);
         newValue.protectionLevel = protectionLevel;
         this.setURLFilterState(newValue);
-        const resp = await window.API.Execute(new UpdateURLFilterProtectionLevelRequest({ protectionLevel }));
+        const resp = await window.API.Execute(new RequestUpdateURLFilterProtectionLevelRequest({ protectionLevel }));
         if (resp.hasError) {
             this.notifyURLFilterCallFailed(true);
             this.setURLFilterState(prevValue);
+            this.showStats(prevValue.info);
             await this.getURLFilterState();
         }
     }
