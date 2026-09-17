@@ -18,6 +18,7 @@ final class WKWebViewAppHostExtraHandlersTests: XCTestCase {
             module: .settings,
             entryURL: URL(fileURLWithPath: "/tmp/"),
             onVisibilityChange: nil,
+            integrityVerifier: WebUIIntegrityVerifier.noOp,
             bridgeSetup: { _ in },
             extraMessageHandlersSetup: { _ in
                 callCount += 1
@@ -32,6 +33,7 @@ final class WKWebViewAppHostExtraHandlersTests: XCTestCase {
             module: .settings,
             entryURL: URL(fileURLWithPath: "/tmp/"),
             onVisibilityChange: nil,
+            integrityVerifier: WebUIIntegrityVerifier.noOp,
             bridgeSetup: { _ in },
             extraMessageHandlersSetup: { controller in
                 captured.controller = controller
@@ -51,6 +53,7 @@ final class WKWebViewAppHostExtraHandlersTests: XCTestCase {
             module: .settings,
             entryURL: URL(fileURLWithPath: "/tmp/"),
             onVisibilityChange: nil,
+            integrityVerifier: WebUIIntegrityVerifier.noOp,
             bridgeSetup: { _ in },
             extraMessageHandlersSetup: nil
         )
@@ -61,6 +64,7 @@ final class WKWebViewAppHostExtraHandlersTests: XCTestCase {
             module: .userrules,
             entryURL: URL(fileURLWithPath: "/tmp/"),
             onVisibilityChange: nil,
+            integrityVerifier: WebUIIntegrityVerifier.noOp,
             bridgeSetup: { _ in },
             extraMessageHandlersSetup: nil
         )

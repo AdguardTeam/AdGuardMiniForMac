@@ -1093,7 +1093,48 @@ humans and AI agents that consume project documentation.
     paste seam; writes triggered by a gesture are permitted by WebKit, so the
     standard copy/cut behavior needs no rerouting.
 
-15. **Emscripten/WASM console clobbering (TS)**: The onigasm tokenizer
+15. **WebUI bundle anti-tampering (Swift)**: The frontend bundle
+    (`Contents/Resources/WebUI/`) is sealed with the app's code signature:
+    `buildResourcesPhase.sh` copies it in before signing, so every shipped
+    variant carries it under the seal. `WebUIIntegrityVerifier` re-validates
+    the seal (`SecStaticCodeCheckValidityWithErrors`) against the app's
+    team-pinned requirement (`BuildConfig.AG_HELPER_REQ`). Re-signing
+    replaces a bundle's signature, so one re-signed ad-hoc or with a
+    foreign certificate has a *valid* signature that still fails the
+    requirement (`errSecCSReqFailed`) and is rejected just like a broken
+    seal (`errSecCSBadResource`). `WKWebViewAppHost` re-checks before EVERY
+    load — hosts are reused across shows, so never at init — and on failure
+    refuses to load the module, routing to
+    `WKWebViewFailurePresenter.handleBundleIntegrityFailure` (log + quit
+    alert). The synchronous check is never cached (a cached verdict is
+    exactly what tampering while the app runs would exploit) and has no
+    timeout: a slow check says nothing about tampering. The seal covers the
+    files on disk at check time — the WebContent process reads them
+    afterwards — so the guarantee is "modified before the check never
+    loads", not "a modified bundle can never execute".
+
+    The verdict is fail-closed in every configuration, dev builds included:
+    a dev build is signed by the team exactly like a shipped one — the
+    extensions need team provisioning profiles, so an unsigned or
+    foreign-signed app cannot be built at all — and `syncWebUI.sh` re-signs
+    the app with its existing identity after injecting a fresh bundle, so
+    the hot-swap flow passes the check too. An unparseable `AG_HELPER_REQ`
+    in `makeProduction()` is a build defect that hits
+    `preconditionFailure` in every configuration. CI does not re-verify its
+    own export — the runtime check is the actual protection in both
+    variants, and for MAS it alone catches a bundle modified after
+    installation.
+
+    Threat model: this stops casual and intermediate modification — edited
+    bundles, ad-hoc or foreign re-signing, in-place malware patching. It
+    cannot stop someone who patches the executable and re-signs the whole
+    app; that is inherent to any client-side check.
+
+    **Rationale**: The seal is applied automatically at build time and
+    covers every sealed file without a manifest that would go stale on
+    in-place WebUI syncs.
+
+16. **Emscripten/WASM console clobbering (TS)**: The onigasm tokenizer
     bundled in `@adguard/rules-editor` is built with Emscripten's
     `ENVIRONMENT_IS_SHELL=true`, so its glue runs on any macOS. During
     `loadWASM` the glue synchronously assigns `console.log = print` (its

@@ -20,6 +20,7 @@ final class ChildWindowCloseCallbackTests: XCTestCase {
                     module: $0,
                     entryURL: URL(fileURLWithPath: "/tmp/"),
                     onVisibilityChange: nil,
+                    integrityVerifier: WebUIIntegrityVerifier.noOp,
                     bridgeSetup: { _ in },
                     extraMessageHandlersSetup: nil
                 )

@@ -48,6 +48,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     var loginItemService: LoginItemService!
     var urlSchemesProcessorInjector: (() -> any UrlSchemesProcessor)!
     var webViewAppsController: WebViewAppsController!
+    var webUIIntegrityVerifier: WebUIIntegrityVerifier!
     var appLifecycleService: AppLifecycleService!
     var statusBarItemController: StatusBarItemController!
     var backendService: BackendService!
@@ -87,6 +88,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     override init() {
         super.init()
         self.setupServices()
+        // One verifier is shared by all hosts; it pins the app's team
+        // Designated requirement (see `WebUIIntegrityVerifier`).
+        self.webUIIntegrityVerifier = WebUIIntegrityVerifier.makeProduction()
         self.webViewCallbackCoordinator = WebViewCallbackCoordinator(
             eventBus: self.eventBus,
             licenseStateProvider: self.licenseStateProvider,
@@ -718,12 +722,16 @@ extension AppDelegate {
             presentAlert: { alert in await alert.show() },
             restartApp: { [weak self] in
                 self?.appLifecycleService?.terminate(restart: true)
+            },
+            terminateApp: { [weak self] in
+                self?.appLifecycleService?.terminate(restart: false)
             }
         )
         return WKWebViewAppHost(
             module: module,
             onVisibilityChange: onVisibilityChange,
             failurePresenter: presenter,
+            integrityVerifier: self.webUIIntegrityVerifier,
             bridgeSetup: { bridge in
                 // Wire the bridge's evaluateJavaScript-timeout closures to
                 // The monitor. `recordTimeout()`/`recordSuccess()` drive

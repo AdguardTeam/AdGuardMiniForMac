@@ -185,6 +185,7 @@ private final class RealHostFactory {
             module: module,
             entryURL: URL(fileURLWithPath: "/tmp/"),
             onVisibilityChange: nil,
+            integrityVerifier: WebUIIntegrityVerifier.noOp,
             bridgeSetup: { _ in },
             extraMessageHandlersSetup: nil
         )

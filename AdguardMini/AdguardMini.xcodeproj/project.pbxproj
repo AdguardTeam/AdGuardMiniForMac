@@ -730,6 +730,7 @@
 				WebViewAdapter/RpcTimeoutAlertMessageHandler.swift,
 				WebViewAdapter/SystemActionsMessageHandler.swift,
 				WebViewAdapter/TokenBucketLimiter.swift,
+				WebViewAdapter/WebUIIntegrityVerifier.swift,
 				WebViewAdapter/WebViewAppsController.swift,
 				WebViewAdapter/WKWebViewAppHost.swift,
 				WebViewAdapter/WKWebViewFailurePresenter.swift,

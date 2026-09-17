@@ -27,6 +27,10 @@ protocol WKWebViewFailurePresenting: AnyObject {
 
     /// Handles recurring RPC timeout alerts.
     func handleRecurringRpcTimeout() async
+
+    /// Handles a WebUI bundle integrity failure: the bundle did not pass the
+    /// code-signature check, so it is never loaded.
+    func handleBundleIntegrityFailure() async
 }
 
 // MARK: - WKWebViewFailurePresenter
@@ -35,13 +39,16 @@ protocol WKWebViewFailurePresenting: AnyObject {
 final class WKWebViewFailurePresenter: WKWebViewFailurePresenting {
     private let presentAlert: @MainActor @Sendable (AppAlert) async -> NSApplication.ModalResponse
     private let restartApp: @MainActor @Sendable () async -> Void
+    private let terminateApp: @MainActor @Sendable () async -> Void
 
     init(
         presentAlert: @escaping @MainActor @Sendable (AppAlert) async -> NSApplication.ModalResponse,
-        restartApp: @escaping @MainActor @Sendable () async -> Void
+        restartApp: @escaping @MainActor @Sendable () async -> Void,
+        terminateApp: @escaping @MainActor @Sendable () async -> Void
     ) {
         self.presentAlert = presentAlert
         self.restartApp = restartApp
+        self.terminateApp = terminateApp
     }
 
     @MainActor
@@ -97,6 +104,16 @@ final class WKWebViewFailurePresenter: WKWebViewFailurePresenting {
     }
 
     @MainActor
+    func handleBundleIntegrityFailure() async {
+        LogError(
+            "WebUI bundle integrity failure: the bundle does not match the app signature"
+        )
+        let alert = await AppAlert.webUIIntegrityFailureRequest()
+        _ = await self.presentAlert(alert)
+        await self.terminateApp()
+    }
+
+    @MainActor
     private func presentAndMaybeRestart(
         _ alertFactory: @escaping @MainActor () async -> AppAlert
     ) async {
@@ -123,4 +140,5 @@ final class NoOpFailurePresenter: WKWebViewFailurePresenting {
     func handleCSPViolation(message: String, stack: String?) async {}
     func handleRpcError(message: String, stack: String?) async {}
     func handleRecurringRpcTimeout() async {}
+    func handleBundleIntegrityFailure() async {}
 }

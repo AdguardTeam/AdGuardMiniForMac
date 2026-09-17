@@ -19,7 +19,7 @@ extension AppAlert {
     /// - First button is for **"Close"**.
     /// - Second button is for **"Reset"**.
     static func resetRequest() async -> AppAlert {
-        await createAlert(
+        await self.createAlert(
             firstButtonText:  .localized.base.close_button,
             secondButtonText: .localized.base.reset_setting_button,
             messageText:      .localized.base.reset_settings_message,
@@ -51,11 +51,24 @@ extension AppAlert {
         moduleName: String,
         errorMessage: String
     ) async -> AppAlert {
-        await createAlert(
+        await self.createAlert(
             firstButtonText:  .localized.base.report_issue_button,
             secondButtonText: .localized.base.restart_button,
             messageText:      .localized.base.webview_load_failure_message_title,
             informativeText:  "\(String.localized.base.webview_load_failure_message_text) [module=\(moduleName), error=\(Self.sanitized(errorMessage))]"
+        )
+    }
+
+    /// Configured alert that appears when the WebUI bundle fails the
+    /// code-signature integrity check (tamper detection).
+    ///
+    /// Buttons:
+    /// - First button is for **"Quit"**.
+    static func webUIIntegrityFailureRequest() async -> AppAlert {
+        await self.createAlert(
+            firstButtonText:  .localized.base.terminate_app_alert_button_title_quit,
+            messageText:      .localized.base.webui_integrity_failure_message_title,
+            informativeText:  .localized.base.webui_integrity_failure_message_text
         )
     }
 
@@ -121,7 +134,7 @@ private extension AppAlert {
     @MainActor
     static func createAlert(
         firstButtonText: String,
-        secondButtonText: String,
+        secondButtonText: String? = nil,
         messageText: String,
         informativeText: String,
         alertStyle: NSAlert.Style = .critical,
@@ -129,7 +142,9 @@ private extension AppAlert {
     ) async -> AppAlert {
         let alert = AppAlert()
         alert.addButton(withTitle: firstButtonText).keyEquivalent = "\r"
-        alert.addButton(withTitle: secondButtonText)
+        if let secondButtonText {
+            alert.addButton(withTitle: secondButtonText)
+        }
         alert.alertStyle = .critical
         alert.messageText = messageText
         alert.informativeText = informativeText

@@ -17,6 +17,7 @@ final class WKWebViewAppHostUiDelegateTests: XCTestCase {
             module: module,
             entryURL: URL(fileURLWithPath: "/tmp/"),
             onVisibilityChange: nil,
+            integrityVerifier: WebUIIntegrityVerifier.noOp,
             bridgeSetup: { _ in },
             extraMessageHandlersSetup: module == .settings
                 ? { _ in }

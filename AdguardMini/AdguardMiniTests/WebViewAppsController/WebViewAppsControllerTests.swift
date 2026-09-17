@@ -25,7 +25,8 @@ final class WebViewAppsControllerTests: XCTestCase {
             WKWebViewAppHost(
                 module: module,
                 entryURL: synthURL,
-                onVisibilityChange: nil
+                onVisibilityChange: nil,
+                integrityVerifier: WebUIIntegrityVerifier.noOp
             ) { bridge in
                 bridge.register(service: TestThemeService(), serviceName: "ThemeService")
                 OnboardingCallbackService().attach(webViewBridge: bridge)

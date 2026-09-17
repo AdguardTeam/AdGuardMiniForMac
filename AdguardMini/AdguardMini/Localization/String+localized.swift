@@ -163,6 +163,16 @@ extension String.localized
         /** WebView failure alert - Informative text */
         static public let webview_load_failure_message_text : String = { .localized.string ("webview_load_failure_message_text", in: "Localizable") }()
 
+        /** `"AdGuard Mini was changed externally"` */
+        /** */
+        /** WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
+        static public let webui_integrity_failure_message_title : String = { .localized.string ("webui_integrity_failure_message_title", in: "Localizable") }()
+
+        /** `"The application files were modified after installation. Reinstall AdGuard Mini to restore its functionality."` */
+        /** */
+        /** WebUI integrity Alert - Informative text */
+        static public let webui_integrity_failure_message_text : String = { .localized.string ("webui_integrity_failure_message_text", in: "Localizable") }()
+
         /** `"AdGuard Mini is not responding"` */
         /** */
         /** RPC recurring-timeout alert - Title */

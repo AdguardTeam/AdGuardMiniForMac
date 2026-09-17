@@ -119,6 +119,10 @@ final class WKWebViewAppHost: NSObject {
     /// tests and Sciter paths untouched.
     private let failurePresenter: any WKWebViewFailurePresenting
 
+    /// Verifies the WebUI bundle against the app's code-signature seal
+    /// before every load (see `WebUIIntegrityVerifier`).
+    private let integrityVerifier: any WebUIIntegrityVerifying
+
     /// Pure decision function for document navigations. Allows only the
     /// entry page; cancels and routes everything else.
     private let navigationPolicy: NavigationPolicy
@@ -144,6 +148,7 @@ final class WKWebViewAppHost: NSObject {
         entryURL: URL? = nil,
         onVisibilityChange: VisibilityChange? = nil,
         failurePresenter: any WKWebViewFailurePresenting = WKWebViewFailurePresenter.noOp,
+        integrityVerifier: any WebUIIntegrityVerifying,
         bridgeSetup: (WKWebViewBridge) -> Void,
         externalLinkGate: ExternalLinkGate? = nil,
         extraMessageHandlersSetup: ((WKUserContentController) -> Void)? = nil
@@ -182,6 +187,7 @@ final class WKWebViewAppHost: NSObject {
         self.window = window
         self.entryURL = entry
         self.failurePresenter = failurePresenter
+        self.integrityVerifier = integrityVerifier
         self.navigationPolicy = NavigationPolicy(
             entryURL: entry,
             externalLinkGate: linkGate
@@ -325,10 +331,30 @@ final class WKWebViewAppHost: NSObject {
     /**
      * Load the module entry HTML, restricting read access to the `WebUI/`
      * resource directory (per US8.3). Idempotent. Allows retry from the
-     * `.error` state.
+     * `.error` state. Re-validates the WebUI bundle integrity before every
+     * load.
+     *
+     * - Returns: `false` when the load was refused (bundle not intact); the
+     *   host stays in its current state and must not be shown.
      */
-    func loadEntryIfNeeded() {
-        guard self.state == .unloaded || self.state == .error else { return }
+    @discardableResult
+    func loadEntryIfNeeded() -> Bool {
+        guard self.state == .unloaded || self.state == .error else { return true }
+
+        // A bundle that fails the check must never run: the host stays
+        // Unloaded and the failure is routed to the presenter, which alerts
+        // The user and quits.
+        guard self.integrityVerifier.verifyWebUIBundle() else {
+            let moduleName = self.module.rawValue
+            LogError(
+                "WebUI bundle integrity check failed; refusing to load module=\(moduleName)"
+            )
+            Task { @MainActor in
+                await self.failurePresenter.handleBundleIntegrityFailure()
+            }
+            return false
+        }
+
         self.state = .loading
 
         let allowedDir = self.entryURL.deletingLastPathComponent()
@@ -337,6 +363,7 @@ final class WKWebViewAppHost: NSObject {
             self.entryURL,
             allowingReadAccessTo: allowedDir
         )
+        return true
     }
 
     /**
@@ -345,7 +372,9 @@ final class WKWebViewAppHost: NSObject {
      */
     func show() {
         guard self.state != .tearingDown, self.state != .destroyed else { return }
-        self.loadEntryIfNeeded()
+        // A refused bundle is reported by `loadEntryIfNeeded()`, so the host
+        // Must not present a window for it.
+        guard self.loadEntryIfNeeded() else { return }
         let moduleName = self.module.rawValue
         let stateDesc = String(describing: self.state)
         LogInfo("host.show module=\(moduleName) state=\(stateDesc)")

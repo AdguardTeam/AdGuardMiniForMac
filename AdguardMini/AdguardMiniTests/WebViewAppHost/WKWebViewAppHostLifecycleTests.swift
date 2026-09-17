@@ -17,7 +17,8 @@ final class WKWebViewAppHostLifecycleTests: XCTestCase {
         let host = WKWebViewAppHost(
             module: .settings,
             entryURL: URL(fileURLWithPath: "/tmp/WebUI/settings.html"),
-            onVisibilityChange: nil
+            onVisibilityChange: nil,
+            integrityVerifier: WebUIIntegrityVerifier.noOp
         ) { _ in }
         // Tear down each host so the `didBecomeMain` observer, the window and
         // In-flight WebKit loads are cleaned up (teardown() is idempotent).
@@ -157,7 +158,8 @@ final class WKWebViewAppHostLifecycleTests: XCTestCase {
         let host = WKWebViewAppHost(
             module: .userrules,
             entryURL: URL(fileURLWithPath: "/tmp/WebUI/userrules.html"),
-            onVisibilityChange: nil
+            onVisibilityChange: nil,
+            integrityVerifier: WebUIIntegrityVerifier.noOp
         ) { _ in }
         addTeardownBlock { host.teardown() }
         host.loadEntryIfNeeded()
@@ -181,7 +183,8 @@ final class WKWebViewAppHostLifecycleTests: XCTestCase {
         let host = WKWebViewAppHost(
             module: .userrules,
             entryURL: URL(fileURLWithPath: "/tmp/WebUI/userrules.html"),
-            onVisibilityChange: nil
+            onVisibilityChange: nil,
+            integrityVerifier: WebUIIntegrityVerifier.noOp
         ) { _ in }
         addTeardownBlock { host.teardown() }
         host.loadEntryIfNeeded()
@@ -198,7 +201,8 @@ final class WKWebViewAppHostLifecycleTests: XCTestCase {
         let host = WKWebViewAppHost(
             module: .settings,
             entryURL: URL(fileURLWithPath: "/tmp/WebUI/settings.html"),
-            onVisibilityChange: { visible in visibleCalls.append(visible) }
+            onVisibilityChange: { visible in visibleCalls.append(visible) },
+            integrityVerifier: WebUIIntegrityVerifier.noOp
         ) { _ in }
         host.loadEntryIfNeeded()
         host.didFinishNavigation()
@@ -220,7 +224,8 @@ final class WKWebViewAppHostLifecycleTests: XCTestCase {
         let host = WKWebViewAppHost(
             module: .settings,
             entryURL: URL(fileURLWithPath: "/tmp/WebUI/settings.html"),
-            onVisibilityChange: { visible in visibleCalls.append(visible) }
+            onVisibilityChange: { visible in visibleCalls.append(visible) },
+            integrityVerifier: WebUIIntegrityVerifier.noOp
         ) { _ in }
         host.loadEntryIfNeeded()
         host.didFinishNavigation()
@@ -242,7 +247,8 @@ final class WKWebViewAppHostLifecycleTests: XCTestCase {
         let host = WKWebViewAppHost(
             module: .tray,
             entryURL: URL(fileURLWithPath: "/tmp/WebUI/tray.html"),
-            onVisibilityChange: { visible in visibleCalls.append(visible) }
+            onVisibilityChange: { visible in visibleCalls.append(visible) },
+            integrityVerifier: WebUIIntegrityVerifier.noOp
         ) { _ in }
         host.loadEntryIfNeeded()
         host.didFinishNavigation()

@@ -64,7 +64,8 @@ final class SettingsWindowHostConfigurationTests: XCTestCase {
         WKWebViewAppHost(
             module: .settings,
             entryURL: URL(fileURLWithPath: "/tmp/WebUI/settings.html"),
-            onVisibilityChange: nil
+            onVisibilityChange: nil,
+            integrityVerifier: WebUIIntegrityVerifier.noOp
         ) { _ in
             // No services needed for config test.
         }

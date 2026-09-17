@@ -15,6 +15,7 @@ final class WKWebViewFailurePresenterTests: XCTestCase {
     private final class Recorder {
         var presentedAlertsCount = 0
         var restartInvokedCount = 0
+        var terminateInvokedCount = 0
     }
 
     private func makePresenter(
@@ -28,6 +29,9 @@ final class WKWebViewFailurePresenterTests: XCTestCase {
             },
             restartApp: {
                 recorder.restartInvokedCount += 1
+            },
+            terminateApp: {
+                recorder.terminateInvokedCount += 1
             }
         )
     }
@@ -105,5 +109,17 @@ final class WKWebViewFailurePresenterTests: XCTestCase {
             error: NSError(domain: "test", code: 1)
         )
         XCTAssertEqual(reportRecorder.restartInvokedCount, 0)
+    }
+
+    func testHandleBundleIntegrityFailure_PresentsAlert_TerminatesApp() async {
+        // A tampered bundle can never load, so the presenter must surface a
+        // Visible alert and quit (like macOS does for a damaged app) instead
+        // Of leaving the user with a running app that shows nothing.
+        let recorder = Recorder()
+        let presenter = makePresenter(recorder)
+        await presenter.handleBundleIntegrityFailure()
+        XCTAssertEqual(recorder.presentedAlertsCount, 1)
+        XCTAssertEqual(recorder.terminateInvokedCount, 1)
+        XCTAssertEqual(recorder.restartInvokedCount, 0)
     }
 }

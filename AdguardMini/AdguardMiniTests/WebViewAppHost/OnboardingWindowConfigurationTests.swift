@@ -76,7 +76,8 @@ final class OnboardingWindowHostConfigurationTests: XCTestCase {
         WKWebViewAppHost(
             module: .onboarding,
             entryURL: URL(fileURLWithPath: "/tmp/WebUI/onboarding.html"),
-            onVisibilityChange: nil
+            onVisibilityChange: nil,
+            integrityVerifier: WebUIIntegrityVerifier.noOp
         ) { _ in
             // No services needed for config test.
         }

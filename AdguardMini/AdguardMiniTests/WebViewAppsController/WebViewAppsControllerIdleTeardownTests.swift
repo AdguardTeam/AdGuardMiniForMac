@@ -49,7 +49,8 @@ final class WebViewAppsControllerIdleTeardownTests: XCTestCase {
                 let host = WKWebViewAppHost(
                     module: module,
                     entryURL: synthURL,
-                    onVisibilityChange: nil
+                    onVisibilityChange: nil,
+                    integrityVerifier: WebUIIntegrityVerifier.noOp
                 ) { _ in }
                 created.append(host)
                 return host

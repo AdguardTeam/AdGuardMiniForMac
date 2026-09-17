@@ -88,6 +88,11 @@
 /* WebView failure alert - Informative text */
 "webview_load_failure_message_text" = "Something went wrong while loading the AdGuard Mini window. You can restart the app or report the issue.";
 
+/* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
+"webui_integrity_failure_message_title" = "AdGuard Mini was changed externally";
+
+/* WebUI integrity Alert - Informative text */
+"webui_integrity_failure_message_text" = "The application files were modified after installation. Reinstall AdGuard Mini to restore its functionality.";
 /* RPC recurring-timeout alert - Title */
 "rpc_timeout_message_title" = "AdGuard Mini is not responding";
 

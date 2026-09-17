@@ -26,6 +26,7 @@ private final class RecordingFailurePresenter: WKWebViewFailurePresenting {
     struct RpcErrorCall { let message: String; let stack: String? }
     var rpcErrorCalls: [RpcErrorCall] = []
     var rpcTimeoutAlertCalls = 0
+    var bundleIntegrityFailureCalls = 0
     /// Optional hook so tests can synchronize on routing (replaces fixed sleeps).
     var onLoadFailure: (() -> Void)?
 
@@ -51,8 +52,14 @@ private final class RecordingFailurePresenter: WKWebViewFailurePresenting {
     func handleRecurringRpcTimeout() async {
         rpcTimeoutAlertCalls += 1
     }
+    func handleBundleIntegrityFailure() async {
+        bundleIntegrityFailureCalls += 1
+    }
 }
 
+// The message handlers conform to the main-actor-isolated
+// `WKScriptMessageHandler`, so the whole suite is main-actor isolated.
+@MainActor
 final class WKWebViewAppHostNavigationFailureTests: XCTestCase {
     @MainActor
     private func makeHost(presenter: RecordingFailurePresenter) -> WKWebViewAppHost {
@@ -61,6 +68,7 @@ final class WKWebViewAppHostNavigationFailureTests: XCTestCase {
             entryURL: URL(fileURLWithPath: "/tmp/WebUI/settings.html"),
             onVisibilityChange: nil,
             failurePresenter: presenter,
+            integrityVerifier: WebUIIntegrityVerifier.noOp,
             // Labeled parameter `bridgeSetup` describes the closure's role explicitly.
             // swiftlint:disable:next trailing_closure
             bridgeSetup: { _ in }
@@ -137,7 +145,7 @@ final class WKWebViewAppHostNavigationFailureTests: XCTestCase {
     }
 
     func testRpcTimeoutAlertMessageHandler_ClampsAlertsToOnePerWindow() async {
-        var current = Date(timeIntervalSince1970: 0)
+        let current = Date(timeIntervalSince1970: 0)
         let presenter = RecordingFailurePresenter()
         let handler = RpcTimeoutAlertMessageHandler(presenter: presenter) { current }
         let message = MockScriptMessageForHandler(name: "rpcTimeoutAlert", body: ["count": 3])
@@ -163,7 +171,7 @@ final class WKWebViewAppHostNavigationFailureTests: XCTestCase {
     }
 
     func testJsRuntimeErrorMessageHandler_RateLimit_DropsAfterBurst() async {
-        var current: TimeInterval = 0
+        let current: TimeInterval = 0
         // `refillPerSecond` must be > 0 per `TokenBucketLimiter`'s precondition.
         // A non-advancing clock keeps the rate limiter from ever refilling.
         let limiter = TokenBucketLimiter(capacity: 1, refillPerSecond: 1) { current }
@@ -178,7 +186,7 @@ final class WKWebViewAppHostNavigationFailureTests: XCTestCase {
     }
 
     func testJsRuntimeErrorMessageHandler_RpcErrorSkipsTokenBucket() async {
-        var current: TimeInterval = 0
+        let current: TimeInterval = 0
         // A non-advancing clock keeps the rate limiter from ever refilling,
         // So a single genuine error exhausts the bucket for good.
         let limiter = TokenBucketLimiter(capacity: 1, refillPerSecond: 1) { current }
@@ -284,7 +292,7 @@ final class WKWebViewAppHostNavigationFailureTests: XCTestCase {
     }
 
     func testJsRuntimeErrorMessageHandler_RpcErrorSkipsAlertThrottle() async {
-        var current: TimeInterval = 0
+        let current: TimeInterval = 0
         let presenter = RecordingFailurePresenter()
         let handler = JsRuntimeErrorMessageHandler(presenter: presenter) { current }
         let rpcError = MockScriptMessageForHandler(
@@ -305,7 +313,7 @@ final class WKWebViewAppHostNavigationFailureTests: XCTestCase {
     }
 
     func testJsRuntimeErrorMessageHandler_CSPViolationSkipsAlertThrottle() async {
-        var current: TimeInterval = 0
+        let current: TimeInterval = 0
         let presenter = RecordingFailurePresenter()
         let handler = JsRuntimeErrorMessageHandler(presenter: presenter) { current }
         let cspViolation = MockScriptMessageForHandler(

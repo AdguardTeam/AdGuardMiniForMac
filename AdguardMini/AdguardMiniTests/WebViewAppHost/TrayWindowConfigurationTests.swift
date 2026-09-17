@@ -53,7 +53,8 @@ final class TrayWindowHostConfigurationTests: XCTestCase {
         WKWebViewAppHost(
             module: .tray,
             entryURL: URL(fileURLWithPath: "/tmp/WebUI/tray.html"),
-            onVisibilityChange: nil
+            onVisibilityChange: nil,
+            integrityVerifier: WebUIIntegrityVerifier.noOp
         ) { _ in
             // No services needed for config test.
         }
@@ -101,7 +102,8 @@ final class TrayVisibilityLifecycleTests: XCTestCase {
         WKWebViewAppHost(
             module: .tray,
             entryURL: URL(fileURLWithPath: "/tmp/WebUI/tray.html"),
-            onVisibilityChange: { recorder.handle($0) }
+            onVisibilityChange: { recorder.handle($0) },
+            integrityVerifier: WebUIIntegrityVerifier.noOp
         ) { _ in }
     }
 
@@ -109,7 +111,8 @@ final class TrayVisibilityLifecycleTests: XCTestCase {
         WKWebViewAppHost(
             module: .tray,
             entryURL: URL(fileURLWithPath: "/tmp/WebUI/tray.html"),
-            onVisibilityChange: nil
+            onVisibilityChange: nil,
+            integrityVerifier: WebUIIntegrityVerifier.noOp
         ) { _ in }
     }
 
