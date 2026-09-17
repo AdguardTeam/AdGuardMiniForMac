@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { buttonProps } from 'Common/lib/keyboardActivation';
+
 import s from './UnsavedChangesModal.module.pcss';
 
 type CloseIconProps = {
@@ -18,9 +20,7 @@ export function CloseIcon({ onClick, ariaLabel }: CloseIconProps) {
         <div
             aria-label={ariaLabel}
             className={s.UnsavedChangesModal_modal_close}
-            role="button"
-            tabIndex={0}
-            onClick={onClick}
+            {...buttonProps(onClick)}
         >
             <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M6.42857 6.42857L17.6043 17.6043" stroke="#A4A4A4" stroke-linecap="round" stroke-width="1.5" />

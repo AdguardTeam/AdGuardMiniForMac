@@ -39,6 +39,14 @@
         display: flex;
         align-items: center;
 
+        /*
+         * Keyboard focus indicator: a menu row inside the rounded panel, so
+         * the contained preset keeps the ring within the row.
+         */
+        --focus-ring-offset: var(--focus-ring-offset-contained);
+
+        @mixin focus-ring;
+
         &:hover {
             background: var(--fills-menus-dropdown-menu-background-hovered);
         }

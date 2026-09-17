@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { buttonProps } from 'Common/lib/keyboardActivation';
 import theme from 'Theme';
 import { Text } from 'UILib';
 
@@ -43,11 +44,10 @@ export function MiscSection(props: Props) {
                     link: (text: string) => (
                         <div
                             className={s.Settings_telemetryModalLink}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                onOpenTelemetryModal();
-                            }}
+                            {...buttonProps(onOpenTelemetryModal, {
+                                preventDefault: true,
+                                stopPropagation: true,
+                            })}
                         >
                             {text}
                         </div>

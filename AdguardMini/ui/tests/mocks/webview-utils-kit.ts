@@ -63,6 +63,19 @@ export class HiddenStringValue extends String {
     }
 }
 
+/**
+ * Runtime stand-in for the vendored keyboard code map (`event.code` values).
+ * The real map lives in the `@adg/webview-utils-kit` bundle, which is not
+ * Node-loadable; the values mirror the bundle's exported object.
+ */
+export const KEYBOARD_CODES = {
+    enter: 'Enter',
+    escape: 'Escape',
+    space: 'Space',
+    backspace: 'Backspace',
+    f: 'KeyF',
+};
+
 import type {
     LottieAnimationData,
     UseLottieElementParams,

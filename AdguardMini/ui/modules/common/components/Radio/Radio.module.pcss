@@ -9,6 +9,17 @@
     cursor: pointer;
     padding: var(--m-s);
 
+    /* The native outline is replaced by the shared keyboard ring below. */
+    outline: none;
+
+    /*
+     * Keyboard focus indicator: the label is the tab stop, so the ring wraps
+     * the whole control. The contained preset keeps it inside the row.
+     */
+    --focus-ring-offset: var(--focus-ring-offset-contained);
+
+    @mixin focus-ring;
+
      &:hover {            
         border-radius: 8px;
         background: var(--fills-backgrounds-page-background-hovered);

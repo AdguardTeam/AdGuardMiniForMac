@@ -7,6 +7,7 @@ import { useId, useState } from 'preact/hooks';
 
 import { UpdateAllowTelemetryRequest } from 'Apis/requests/ConsentService';
 import { useFocusOnMount } from 'Common/hooks/useFocusOnMount';
+import { buttonProps } from 'Common/lib/keyboardActivation';
 import { getTdsLink, TDS_PARAMS } from 'Modules/common/utils/links';
 import { useOnboardingStore } from 'OnboardingLib/hooks';
 import { OnboardingSteps } from 'OnboardingStore/modules';
@@ -57,6 +58,15 @@ function StartComponent({ trackPage }: StartProps) {
     };
 
     const primaryButton = { action, label: translate('onboarding.start.btn'), disabled: !checked };
+
+    // The modal link runs the same action on pointer and keyboard activation,
+    // and both paths stop before the enclosing checkbox label: the press must
+    // not also toggle the consent it explains.
+    const modalLinkProps = buttonProps(() => setShowModal(true), {
+        preventDefault: true,
+        stopPropagation: true,
+    });
+
     return (
         <div className={s.Start_container}>
             <div className={s.Start_content}>
@@ -80,7 +90,7 @@ function StartComponent({ trackPage }: StartProps) {
                             onChange={() => setChecked(!checked)}
                             withHover
                             title={(
-                                <Text className={s.Start_content_checkbox_text} id={eulaLabelId} type="t2" onClick={() => setChecked(!checked)}>
+                                <Text className={s.Start_content_checkbox_text} id={eulaLabelId} type="t2">
                                     {translate('onboarding.accept', {
                                         eula: (text: string) => (
                                             <ExternalLink href={getTdsLink(TDS_PARAMS.eula)} textType="t2">{text}</ExternalLink>
@@ -100,19 +110,10 @@ function StartComponent({ trackPage }: StartProps) {
                             onChange={() => setTelemetry(!telemetry)}
                             withHover
                             title={(
-                                <Text className={s.Start_content_checkbox_text} id={telemetryLabelId} type="t2" onClick={() => setTelemetry(!telemetry)}>
+                                <Text className={s.Start_content_checkbox_text} id={telemetryLabelId} type="t2">
                                     {translate('telemetry.accept.send.data', {
                                         link: (text: string) => (
-                                            <div
-                                                className={s.Start_content_checkbox_link}
-                                                role="button"
-                                                tabIndex={0}
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    setShowModal(true);
-                                                }}
-                                            >
+                                            <div className={s.Start_content_checkbox_link} {...modalLinkProps}>
                                                 {text}
                                             </div>
                                         ),

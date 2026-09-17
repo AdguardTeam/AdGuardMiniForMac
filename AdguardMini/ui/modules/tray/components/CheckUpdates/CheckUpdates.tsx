@@ -8,6 +8,7 @@ import { useEffect, useId } from 'preact/hooks';
 import { RequestApplicationUpdateRequest } from 'Apis/requests/AppUpdateService';
 import { ReleaseVariants } from 'Apis/types';
 import { useFocusOnMount } from 'Common/hooks/useFocusOnMount';
+import { activateOnKeyDown } from 'Common/lib/keyboardActivation';
 import { ADGUARD_MINI_TITLE } from 'Common/utils/consts';
 import { resolveLastFiltersUpdateTimestamp } from 'Modules/tray/components/CheckUpdates/resolveLastFiltersUpdateTimestamp';
 import theme from 'Theme';
@@ -134,6 +135,15 @@ function CheckUpdatesComponent() {
 
     const filtersHoverable = !filtersUpdating && (filtersStatus === 'updated' || filtersStatus === 'error') && filtersMap;
 
+    const handleFiltersRowActivation = () => {
+        if (!filtersHoverable) {
+            return;
+        }
+
+        onShowResults();
+        telemetry.trackEvent(TrayEvent.UpdatesFiltersClick);
+    };
+
     return (
         <div className={s.CheckUpdates}>
             <div className={s.CheckUpdates_header}>
@@ -165,7 +175,6 @@ function CheckUpdatesComponent() {
                             aria-labelledby={appSectionId}
                             className={s.CheckUpdates_element_title}
                             id={appSectionId}
-                            tabIndex={0}
                         >
                             {newVersionAvailable === undefined ? (
                                 <Loader className={s.CheckUpdates_element_title_icon} />
@@ -189,6 +198,11 @@ function CheckUpdatesComponent() {
                     </div>
                 )}
                 <div className={s.CheckUpdates_element}>
+                    {/* Role, tab stop and key handler appear exactly while the
+                        row is actionable (`filtersHoverable`); the rule cannot
+                        resolve the conditional role. The click handler no-ops
+                        for the status-only state. */}
+                    {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
                     <div
                         aria-labelledby={filtersSectionId}
                         className={cx(s.CheckUpdates_element_title,
@@ -197,13 +211,11 @@ function CheckUpdatesComponent() {
                         // Once the results are in, the row navigates to the
                         // per-filter list; until then it is only a status.
                         role={filtersHoverable ? 'button' : undefined}
-                        tabIndex={0}
-                        onClick={() => {
-                            if (filtersHoverable) {
-                                onShowResults();
-                                telemetry.trackEvent(TrayEvent.UpdatesFiltersClick);
-                            }
-                        }}
+                        // A tab stop only while the row is actionable; a
+                        // status row stays out of the keyboard path.
+                        tabIndex={filtersHoverable ? 0 : undefined}
+                        onClick={handleFiltersRowActivation}
+                        onKeyDown={filtersHoverable ? activateOnKeyDown(handleFiltersRowActivation) : undefined}
                     >
                         {filtersUpdating || !filtersMap ? (
                             <Loader className={s.CheckUpdates_element_title_icon} />

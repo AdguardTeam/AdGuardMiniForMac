@@ -1,0 +1,29 @@
+/*
+SPDX-FileCopyrightText: AdGuard Software Limited
+SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+/*
+ * Mixins shared by the UI modules.
+ *
+ * This file is not imported by the theme bundle: `postcss-mixins` loads it
+ * through the webpack PostCSS configuration (see `getPostcssLoader` in
+ * `AdguardMini/ui/scripts/webpack/webpack.config.base.js`), which makes every
+ * mixin below available to every `.pcss` and `.css` file at build time.
+ */
+
+/*
+ * Keyboard focus indicator: a 2px ring, drawn for keyboard focus only
+ * (`:focus-visible`), so pointer focus shows nothing.
+ *
+ * The offset is read from `--focus-ring-offset` so a component can pick one
+ * of the theme presets (`contained`, `floating`, `title`) or pin its own
+ * value instead of repeating the ring's geometry. The token and the presets
+ * live in `variables.css`.
+ */
+@define-mixin focus-ring {
+    &:focus-visible {
+        outline: var(--focus-ring-width) solid var(--focus-ring-color);
+        outline-offset: var(--focus-ring-offset);
+    }
+}

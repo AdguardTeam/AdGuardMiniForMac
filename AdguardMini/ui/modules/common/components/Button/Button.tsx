@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { activateOnKeyDown } from 'Common/lib/keyboardActivation';
 import { Icon } from 'UILib';
 
 import s from './Button.module.pcss';
@@ -85,9 +86,11 @@ export function Button({
                     className,
                 )}
                 disabled={disabled}
-                tabIndex={tabIndex}
+                role="button"
+                tabIndex={disabled ? -1 : (tabIndex ?? 0)}
                 type="button"
                 onClick={onClick}
+                onKeyDown={!disabled ? activateOnKeyDown(() => onClick?.()) : undefined}
                 {...restProps}
             >
                 {icon && <Icon className={iconClassName} icon={icon} small={type === 'iconSmall'} />}

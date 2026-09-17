@@ -57,6 +57,9 @@ export function TooltipArea({
 
     // Use captureLeave here, because in win7 bubbleLeave doesn't work
     return (
+        // The wrapper only dismisses the hover tooltip on pointer events; it
+        // is not a control and has no keyboard interaction or tab stop.
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
         <div
             {...restProps}
             onClick={closeTooltip}

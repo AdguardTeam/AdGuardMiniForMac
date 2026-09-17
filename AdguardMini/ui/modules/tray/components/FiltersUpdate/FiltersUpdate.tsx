@@ -68,7 +68,6 @@ function FiltersUpdateComponent() {
                             className={s.FiltersUpdate_filter}
                             id={rowId}
                             role="listitem"
-                            tabIndex={0}
                         >
                             <Text className={s.FiltersUpdate_filter_name} type="t2">{filter.name}</Text>
                             <Text className={filter.success ? undefined : s.FiltersUpdate_filter__orange} type="t2">{filter.version}</Text>

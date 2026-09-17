@@ -5,6 +5,7 @@
 import { useEscape } from '@adg/webview-utils-kit';
 import { observer } from 'mobx-react-lite';
 
+import { buttonProps } from 'Common/lib/keyboardActivation';
 import { Icon, Text } from 'UILib';
 
 import s from './NavigationHeader.module.pcss';
@@ -35,20 +36,13 @@ function NavigationHeaderComponent({
     router,
     onClick,
 }: NavigationHeaderProps) {
-    useEscape(() => {
-        if (onClick) {
-            onClick();
-        } else {
-            router?.changePath(route!);
-        }
-    });
+    /** Back action: a custom `onClick` or the route path. */
+    const activate = onClick ?? (() => router?.changePath(route!));
+
+    useEscape(activate);
+
     return (
-        <div
-            className={s.NavigationHeader}
-            role="button"
-            tabIndex={0}
-            onClick={onClick ?? (() => router?.changePath(route!))}
-        >
+        <div className={s.NavigationHeader} {...buttonProps(activate)}>
             <Icon className={s.NavigationHeader_icon} icon="arrow_left" />
             <Text className={s.NavigationHeader_text} type="t2">{title}</Text>
         </div>

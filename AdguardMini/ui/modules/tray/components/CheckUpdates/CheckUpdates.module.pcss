@@ -46,6 +46,16 @@
             padding: var(--m-s);
             display: flex;
 
+            /*
+             * Keyboard focus indicator: the row is a tab stop only while it
+             * is an actionable "button" (`filtersHoverable`), so the ring
+             * never decorates the read-only status row; the contained preset
+             * keeps it inside the bordered list row.
+             */
+            --focus-ring-offset: var(--focus-ring-offset-contained);
+
+            @mixin focus-ring;
+
              &__hover {
                 cursor: pointer;
 

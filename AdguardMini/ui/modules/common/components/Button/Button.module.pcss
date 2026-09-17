@@ -6,7 +6,8 @@
 .Button {
     cursor: pointer;
     text-decoration: none;
-    outline: 0px solid transparent;
+    /* The native outline is replaced by the shared keyboard ring below. */
+    outline: none;
     padding: 0;
     display: block;
     text-align: center;
@@ -15,6 +16,15 @@
     transition: background-color linear 0.1s,
                 border-color linear 0.1s,
                 color linear 0.1s;
+
+    /*
+     * Local pin: the ring is flush with the control (offset 0), and the
+     * explicit value stops a nested button from inheriting an ancestor's
+     * local offset (e.g. the contained value on `.SettingsItem`).
+     */
+    --focus-ring-offset: 0px;
+
+    @mixin focus-ring;
 
     &:disabled {
         opacity: .5;

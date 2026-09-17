@@ -27,10 +27,14 @@ export default defineConfig([
             "@stylistic/multiline-ternary": "off",
             "@typescript-eslint/strict-boolean-expressions": "off",
             "@typescript-eslint/no-unnecessary-condition": "off",
-            "jsx-a11y/click-events-have-key-events": "off",
-            "jsx-a11y/no-static-element-interactions": "off",
-            "jsx-a11y/no-noninteractive-element-interactions": "off",
-            "jsx-a11y/control-has-associated-label": "off",
+            // Keyboard-handling a11y rules fail production lint so the CI
+            // `yarn lint --quiet` lane rejects a new interactive element
+            // without key handling. They are `warn` in `common-config.mjs`;
+            // `--quiet` ignores warnings, so this override must be `error`.
+            "jsx-a11y/click-events-have-key-events": "error",
+            "jsx-a11y/no-static-element-interactions": "error",
+            "jsx-a11y/no-noninteractive-element-interactions": "error",
+            "jsx-a11y/control-has-associated-label": "error",
         }
     }
 ]);

@@ -144,7 +144,7 @@ adguard-mini/
 ├── Support/Scripts/                      # Developer utility scripts (locales, proto schema, deps)
 │   └── webview-screenshots/              # Live WebView screenshot tool (tray/settings)
 ├── .github/skills/                       # Copilot skills (figma-webview-diff, …)
-├── docs/                                 # Technical docs (production build & deploy)
+├── docs/                                 # Technical docs (build/deploy, keyboard QA)
 ├── support-scripts/                      # Internal developer scripts (localization, workflows)
 ├── sciter-adguard-mini-private-template/ # Private repo template (Sciter era)
 ├── configure.sh                          # Project setup script
@@ -1162,7 +1162,65 @@ humans and AI agents that consume project documentation.
     logged — yet disables logging itself and every action that logs first;
     guarding the Emscripten print path keeps diagnostics and user actions
     alive.
-16. **Terminology**: `SWP` stands for **System Wide Protection** — the macOS 26+
+
+16. **Keyboard focus and activation (TS)**: Every control the user can Tab to
+    MUST show the shared keyboard focus ring: a 2px outline in
+    `--focus-ring-color` (`#7884CB`), drawn for keyboard focus only via
+    `:focus-visible`. The ring rule is declared once as the `focus-ring`
+    mixin in `AdguardMini/ui/modules/common/theme/default/mixins.css`, which
+    `postcss-mixins` loads in the webpack PostCSS pipeline; a component MUST
+    apply it with `@mixin focus-ring;` and MUST NOT repeat the declaration.
+    The tokens stay in the hand-authored
+    `AdguardMini/ui/modules/common/theme/default/variables.css`
+    (`--focus-ring-width`, `--focus-ring-color`, the component-local
+    `--focus-ring-offset` and the per-class offset presets). A component MUST
+    reuse those tokens — it MAY override the local offset with its class
+    preset but MUST NOT redefine the color or width. Text-entry controls
+    (`Input`, `Textarea`, `Select`) are the exception: they keep their
+    existing focus border and MUST NOT be double-decorated with the ring.
+    Removing the native outline (`outline: none` / `outline: 0`) is allowed
+    only when the same stylesheet pairs it with the ring (non-text controls)
+    or the text-entry border; an unpaired suppression is a review defect.
+    Custom controls activate on Enter and Space, never on `Alt+Space` or
+    while the key auto-repeats, and MUST prevent Space from scrolling the
+    page. Activation comes from the shared helpers rather than inline
+    handlers: `buttonProps(action, options)` for a non-interactive element
+    that becomes a button (role, tab stop and both activation paths),
+    `activateOnKeyDown(action, options)` where the role or tab stop is
+    conditional, and `useToggleControlKeyboard(disabled, action)` for the
+    wrapper of a `Checkbox`/`Radio`/`Switch`. All three ignore a keypress
+    that came from a control nested inside the wrapper (a link inside a
+    label), so the nested control keeps its own Enter/Space behaviour. On
+    WebKit versions without `:focus-visible` the fallback reuses the same
+    tokens through the root keyboard-modality attribute instead of
+    duplicating per-component rules.
+
+    **Rationale**: The v3.0 rewrite dropped the legacy Sciter keyboard layer,
+    leaving keyboard users unable to see where focus is. One token-based
+    definition keeps the indicator consistent across the four WebView
+    modules, lets the native and fallback mechanisms render the same ring,
+    and makes any outline removal without a replacement reviewable. Sharing
+    the ring as a mixin and the activation as helpers keeps a whole class of
+    double-activation and nested-control bugs fixable in one place.
+
+17. **Stateful overlays (TS)**: Dropdown lists, selects and context menus
+    MUST drive their open state through `useOverlay`
+    (`AdguardMini/ui/modules/common/hooks/useOverlay.ts`), which owns the
+    `isOpen` state, the `open`/`close`/`toggle` operations, the close paths
+    (outside press, Escape, and scroll through `closeOnScroll`) and the focus
+    bookkeeping they share. A component keeps only its own placement
+    measurement (`onOpen`) and list-specific keyboard handling. Every close
+    passes a reason from `Common/lib/overlayFocus`, and the reason alone
+    decides where focus goes; focus restore MUST NOT scroll the page.
+
+    **Rationale**: The three overlays previously repeated the same close,
+    toggle and focus-restore wiring, so a fix to one path (a new close
+    reason, a scroll quirk) had to be applied three times and could drift.
+    Funnelling the paths through one hook keeps the focus rules — including
+    the guard against restoring focus while an outside press is still
+    settling — in a single implementation.
+
+18. **Terminology**: `SWP` stands for **System Wide Protection** — the macOS 26+
     URL filter feature (`Sources/URLFilter/`, the URLFilter extension) backed by
     the PIR backend. Do NOT expand SWP as "Safari Web Protection" and do not
     equate SWP with the PIR server: SWP is the on-device filtering feature; PIR

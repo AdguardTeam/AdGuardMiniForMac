@@ -9,6 +9,21 @@
     height: 24px;
     user-select: none;
 
+    /* The native outline is replaced by the shared keyboard ring below. */
+    outline: none;
+
+    /*
+     * Focusable icons (`isFocusable`, e.g. the Paywall close) are small
+     * floating controls: the ring sits clear of the glyph (the floating
+     * preset), and only a focusable icon can ever match it — the same
+     * `Icon` inside `Button`/`Pagination` is not focusable and never shows
+     * the ring. The local override is what the keyboard-modality fallback
+     * reuses.
+     */
+    --focus-ring-offset: var(--focus-ring-offset-floating);
+
+    @mixin focus-ring;
+
     svg {
         background: transparent;
         margin: 0 auto;

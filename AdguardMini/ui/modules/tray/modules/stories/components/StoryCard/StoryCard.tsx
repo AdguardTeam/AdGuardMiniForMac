@@ -5,6 +5,7 @@
 import { observer } from 'mobx-react-lite';
 import { useCallback } from 'preact/hooks';
 
+import { buttonProps } from 'Common/lib/keyboardActivation';
 import { useTrayStore } from 'Modules/tray/lib/hooks';
 import { Text, Icon } from 'UILib';
 
@@ -43,10 +44,13 @@ function StoryCardComponent({
         }
     }, [setSelectedStoryId, storyId, telemetry, telemetryEvent]);
 
-    const handleHide = useCallback((e: MouseEvent) => {
-        e.stopPropagation();
+    const handleHide = useCallback(() => {
         onHide?.();
     }, [onHide]);
+
+    // Both paths stop before the card's own handler, so hiding a story cannot
+    // also open it.
+    const hideProps = buttonProps(handleHide, { stopPropagation: true });
 
     return (
         // The role sits on the card itself so it is the first tab stop and
@@ -56,9 +60,7 @@ function StoryCardComponent({
         <div
             aria-label={translate('tray.story.card.aria', { title: ariaText ?? text })}
             className={cx(s.StoryCard, s[`StoryCard__${style}`], className)}
-            role="button"
-            tabIndex={0}
-            onClick={onClick}
+            {...buttonProps(onClick)}
         >
             <div className={s.StoryCard_header}>
                 <Icon className={cx(s.StoryCard_icon, s[`StoryCard_icon__${style}`])} icon={icon} big />
@@ -66,10 +68,8 @@ function StoryCardComponent({
                     <Text
                         ariaLabel={translate('tray.story.hide.aria')}
                         className={s.StoryCard_hideText}
-                        role="button"
-                        tabIndex={0}
                         type="t3"
-                        onClick={handleHide}
+                        {...hideProps}
                     >
                         {translate('tray.story.hide')}
                     </Text>

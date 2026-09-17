@@ -5,6 +5,7 @@
 import { observer } from 'mobx-react-lite';
 import { useState, useEffect, useMemo, useLayoutEffect } from 'preact/hooks';
 
+import { buttonProps } from 'Common/lib/keyboardActivation';
 import { SettingsTitle } from 'Modules/settings/components/SettingsTitle';
 import { useSettingsStore } from 'Modules/settings/lib/hooks';
 import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
@@ -111,7 +112,10 @@ function FilterGroupPageComponent({
             ))}
             {isCustomGroup && (
                 <>
-                    <div className={s.FilterGroupPage_addFilter} role="button" tabIndex={0} onClick={() => setAddFilterModal(true)}>
+                    <div
+                        className={s.FilterGroupPage_addFilter}
+                        {...buttonProps(() => setAddFilterModal(true))}
+                    >
                         <Icon icon="plus" />
                         <Text className={s.FilterGroupPage_addFilter_text} lineHeight="none" type="t1">{translate('filters.add.custom')}</Text>
                     </div>

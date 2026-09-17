@@ -19,6 +19,15 @@
         }
         padding: var(--m-xxs) var(--m-s);
 
+        /*
+         * Keyboard focus indicator: a padded list-row action (same row shape
+         * as the `SettingsItem` rows below), so the contained preset keeps
+         * the ring inside the row.
+         */
+        --focus-ring-offset: var(--focus-ring-offset-contained);
+
+        @mixin focus-ring;
+
         &_text {
             margin-left: var(--m-xs);
         }

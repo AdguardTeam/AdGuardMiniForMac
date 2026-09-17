@@ -4,6 +4,8 @@
 
 import { useEffect } from 'preact/hooks';
 
+import { rememberFocusedHeading } from 'Common/lib/focusRestore';
+
 /**
  * Moves focus to the element with the given id once it mounts.
  *
@@ -21,13 +23,24 @@ import { useEffect } from 'preact/hooks';
  * The element must be focusable — `tabIndex` of `-1` is enough and adds no tab
  * stop.
  *
+ * The focused heading is also recorded as the fallback target for focus
+ * restore (see `focusRestore`): when the control that opened a dialog is gone
+ * by the time it closes, focus lands on the heading of the surface behind.
+ *
  * @param elementId - Id of the element to focus.
  * @param isActive - Whether to focus at all. Defaults to `true`.
  */
 export function useFocusOnMount(elementId: string, isActive: boolean = true) {
     useEffect(() => {
-        if (isActive) {
-            document.getElementById(elementId)?.focus();
+        if (!isActive) {
+            return;
+        }
+
+        const heading = document.getElementById(elementId);
+        heading?.focus();
+
+        if (heading !== null) {
+            rememberFocusedHeading(heading);
         }
     }, [elementId, isActive]);
 }

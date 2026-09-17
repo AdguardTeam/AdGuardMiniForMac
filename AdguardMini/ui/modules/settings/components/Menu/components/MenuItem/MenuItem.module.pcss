@@ -19,6 +19,14 @@
         &__active {
             background: var(--fills-backgrounds-page-background-default);
         }
+
+        /*
+         * Keyboard focus indicator: the item is a menu row, so the contained
+         * (inset) offset wraps the padded row.
+         */
+        --focus-ring-offset: var(--focus-ring-offset-contained);
+
+        @mixin focus-ring;
     }
 
     &_text {

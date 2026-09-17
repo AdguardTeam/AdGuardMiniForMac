@@ -6,6 +6,7 @@ import { observer } from 'mobx-react-lite';
 
 import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SafariExtensionsService';
 import { SafariExtensionStatus } from 'Apis/types';
+import { buttonProps } from 'Common/lib/keyboardActivation';
 import { TDS_PARAMS, getTdsLink } from 'Common/utils/links';
 import { useSettingsStore } from 'SettingsLib/hooks';
 import { RouteName } from 'SettingsStore/modules';
@@ -55,6 +56,18 @@ const smthWrongErrors = [
     SafariExtensionStatus.converter_error,
     SafariExtensionStatus.safari_error,
 ];
+
+/**
+ * Inline fix action inside a status line: a real keyboard control (role,
+ * tab stop and Enter/Space activation) instead of a click-only div.
+ */
+function FixLink({ action, text }: { action(): void; text: string }) {
+    return (
+        <div className={s.SafariExtension_rules_link} {...buttonProps(action)}>
+            {text}
+        </div>
+    );
+}
 
 /**
  * SafariExtension page in settings module
@@ -112,12 +125,26 @@ export function SafariExtensionComponent() {
                 </Text>
                 {extension.status === SafariExtensionStatus.disabled && (
                     <Text className={cx(s.SafariExtension_rules, s.SafariExtension_rules__orange)} type="t2" div>
-                        {translate('settings.disabled.fix', { nav: (text: string) => (<div className={s.SafariExtension_rules_link} onClick={() => openSafariPref(extension.id)}>{text}</div>) })}
+                        {translate('settings.disabled.fix', {
+                            nav: (text: string) => (
+                                <FixLink action={() => openSafariPref(extension.id)} text={text} />
+                            ),
+                        })}
                     </Text>
                 )}
                 {extension.status === SafariExtensionStatus.limit_exceeded && (
                     <Text className={cx(s.SafariExtension_rules, s.SafariExtension_rules__red)} type="t2" div>
-                        {translate('settings.rule.limit.exceeded', { nav: (text: string) => (<div className={s.SafariExtension_rules_link} onClick={() => router.changePath(RouteName.filters, { filtersIds, backLink: RouteName.safari_extensions })}>{text}</div>) })}
+                        {translate('settings.rule.limit.exceeded', {
+                            nav: (text: string) => (
+                                <FixLink
+                                    action={() => router.changePath(
+                                        RouteName.filters,
+                                        { filtersIds, backLink: RouteName.safari_extensions },
+                                    )}
+                                    text={text}
+                                />
+                            ),
+                        })}
                     </Text>
                 )}
                 {smthWrongErrors.includes(extension.status) && (
@@ -190,7 +217,11 @@ export function SafariExtensionComponent() {
                 {...iconFromStatus(adguardForSafari.status)}
                 additionalText={adguardForSafari.status === SafariExtensionStatus.disabled && (
                     <Text className={cx(s.SafariExtension_rules, s.SafariExtension_rules__orange)} type="t2" div>
-                        {translate('settings.disabled.fix', { nav: (text: string) => (<div className={s.SafariExtension_rules_link} onClick={() => openSafariPref(adguardForSafari.id)}>{text}</div>) })}
+                        {translate('settings.disabled.fix', {
+                            nav: (text: string) => (
+                                <FixLink action={() => openSafariPref(adguardForSafari.id)} text={text} />
+                            ),
+                        })}
                     </Text>
                 )}
                 contentClassName={s.SafariExtension_settings}

@@ -301,6 +301,10 @@ function EditorComponent({
 
     return (
         <div className={cx(className, editorStore.loading && s.Editor__loading)}>
+            {/* The rules-editor's CodeMirror mount and fallback textarea; the
+                editor library owns the internal accessibility contract, so no
+                separate label is attached here. */}
+            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
             <textarea className={s.Editor__fallback} id="area" />
         </div>
     );

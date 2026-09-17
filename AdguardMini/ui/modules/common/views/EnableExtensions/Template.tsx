@@ -5,6 +5,7 @@
 import { useId, useRef } from 'preact/hooks';
 
 import { useFocusOnMount } from 'Common/hooks/useFocusOnMount';
+import { useFocusRestore } from 'Common/hooks/useFocusRestore';
 import { useFocusTrap } from 'Common/hooks/useFocusTrap';
 import { Text } from 'UILib';
 
@@ -53,6 +54,16 @@ export function Template({
     const dialogRef = useRef<HTMLDivElement>(null);
 
     useFocusTrap(dialogRef, asDialog);
+
+    // Only the dialog instance participates in focus restore: as an
+    // onboarding page the template unmounts on step change, where the next
+    // step's own heading focus is the correct behavior.
+    //
+    // Coerce the optional prop: the onboarding step omits `asDialog` entirely
+    // (`Extensions.tsx`), and passing `undefined` straight through would take
+    // the hook's `isActive = true` default, making the page instance capture
+    // and restore after all.
+    useFocusRestore(Boolean(asDialog));
 
     // Focused whether this is a page or a dialog. As a dialog it matters most:
     // the overlay can appear while the window is in the background (extensions

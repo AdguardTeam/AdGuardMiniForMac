@@ -5,6 +5,7 @@
 import { useId, useRef } from 'preact/hooks';
 
 import { useFocusOnMount } from 'Common/hooks/useFocusOnMount';
+import { useFocusRestore } from 'Common/hooks/useFocusRestore';
 import { useFocusTrap } from 'Common/hooks/useFocusTrap';
 
 import { CloseIcon } from './CloseIcon';
@@ -25,6 +26,11 @@ export function UnsavedChangesModal({ onCloseModal, onSaveChanges, onDiscardChan
     const dialogRef = useRef<HTMLDivElement>(null);
 
     useFocusTrap(dialogRef);
+
+    // Hand-rolled like the trap above: closing returns focus to the control
+    // that was focused when the close request arrived (or to the heading/body
+    // when it is gone).
+    useFocusRestore();
 
     // This modal is hand-rolled rather than built on the shared `Modal`, so it
     // needs the same treatment on its own: focus lands on the title, which is

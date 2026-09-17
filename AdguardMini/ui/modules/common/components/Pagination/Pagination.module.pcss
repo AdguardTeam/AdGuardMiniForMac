@@ -29,9 +29,17 @@
         line-height: var(--size);
         border-radius: 8px;
         padding: 0;
+        /* The native outline is replaced by the shared keyboard ring below. */
         outline: none;
         border: 1px solid transparent;
         transition: background .3s ease, color .3s ease;
+
+        /*
+         * Keyboard focus indicator; the item is a standalone button, so the
+         * ring is flush with its edge (offset 0, the component default). The
+         * existing `:focus` background stays as a supplemental cue.
+         */
+        @mixin focus-ring;
     }
 
     &_arrow {

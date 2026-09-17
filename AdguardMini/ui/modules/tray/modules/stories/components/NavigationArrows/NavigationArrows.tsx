@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { buttonProps } from 'Common/lib/keyboardActivation';
 import theme from 'Theme';
 import { Icon } from 'UILib';
 
@@ -25,9 +26,7 @@ export function NavigationArrows({ onPrevious, onNext, hideLeft }: NavigationArr
                 <div
                     aria-label={translate('back')}
                     className={s.NavigationArrows_left}
-                    role="button"
-                    tabIndex={0}
-                    onClick={onPrevious}
+                    {...buttonProps(onPrevious)}
                 >
                     <Icon className={cx(theme.button.whiteIcon, s.NavigationArrows_left_icon)} icon="arrow_left" />
                 </div>
@@ -35,9 +34,7 @@ export function NavigationArrows({ onPrevious, onNext, hideLeft }: NavigationArr
             <div
                 aria-label={translate('next')}
                 className={s.NavigationArrows_right}
-                role="button"
-                tabIndex={0}
-                onClick={onNext}
+                {...buttonProps(onNext)}
             >
                 <Icon className={cx(theme.button.whiteIcon, s.NavigationArrows_right_icon)} icon="arrow_left" />
             </div>

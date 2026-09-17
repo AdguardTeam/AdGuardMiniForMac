@@ -14,3 +14,28 @@ h1, h2, h3, h4, h5, h6, p {
 	font-family: inherit;
 	vertical-align: baseline;
 }
+
+/*
+ * The `Text` control path (see `Text.tsx`): clickable text and deliberate tab
+ * stops. The typography reset above removes the native outline from `p` and
+ * the headings, so this rule pairs that suppression with the shared keyboard
+ * ring.
+ */
+.Text_control {
+    --focus-ring-offset: var(--focus-ring-offset-floating);
+
+    @mixin focus-ring;
+}
+
+/*
+ * Title-level text controls — the onboarding step headings and the Paywall
+ * heading, which are tab stops — use the larger title offset.
+ */
+h1.Text_control,
+h2.Text_control,
+h3.Text_control,
+h4.Text_control,
+h5.Text_control,
+h6.Text_control {
+    --focus-ring-offset: var(--focus-ring-offset-title);
+}

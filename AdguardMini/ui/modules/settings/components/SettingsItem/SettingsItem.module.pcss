@@ -12,6 +12,15 @@
     display: flex;
     min-height: 28px;
 
+    /*
+     * Keyboard focus indicator for the container-as-button path (only those
+     * rows have `tabIndex`); the contained preset wraps the padded row, and
+     * the `Button` pin keeps nested buttons on the button default.
+     */
+    --focus-ring-offset: var(--focus-ring-offset-contained);
+
+    @mixin focus-ring;
+
     &__pointer {
         cursor: pointer;
     }
@@ -63,6 +72,15 @@
         &_line {
             display: flex;
             min-height: 28px;
+
+            /*
+             * Keyboard focus indicator for the route-title path (`role` and
+             * `tabIndex` are set only when `routeName` is present, so a plain
+             * title line can never match); the contained preset wraps the row.
+             */
+            --focus-ring-offset: var(--focus-ring-offset-contained);
+
+            @mixin focus-ring;
 
             &_icon {
                 margin-right: var(--m-xs); 

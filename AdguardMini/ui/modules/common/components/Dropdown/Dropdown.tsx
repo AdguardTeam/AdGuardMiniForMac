@@ -2,15 +2,23 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { KEYBOARD_CODES, useClickOutside, useEscape, useScrollListener } from '@adg/webview-utils-kit';
-import { useRef, useState, useCallback } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 
+import { useOverlay } from 'Common/hooks/useOverlay';
+import { activateOnKeyDown } from 'Common/lib/keyboardActivation';
+import { shouldCloseOnOptionTab } from 'Common/lib/overlayFocus';
 import { Icon, Text, Checkbox } from 'UILib';
 
 import s from './Dropdown.module.pcss';
 
 import type { ComponentChild } from 'preact';
 import type { JSXInternal } from 'preact/src/jsx';
+
+/**
+ * `KeyboardEvent.code` of the Tab key. The kit's `KEYBOARD_CODES` does not
+ * list it.
+ */
+const TAB = 'Tab';
 
 export type IOption<T> = {
     value: T;
@@ -52,35 +60,104 @@ export function Dropdown<T>({
 }: DropdownProps<T>) {
     const isMulti = Array.isArray(currentValue);
 
-    const [isOpen, setIsOpen] = useState(false);
     const [ulStyles, setUlStyles] = useState<JSXInternal.CSSProperties>();
 
     const dropdownRef = useRef<HTMLDivElement>(null);
     const optionsRef = useRef<HTMLUListElement>(null);
 
-    const closeDropdown = useCallback(() => setIsOpen(false), []);
-    const toggleOptions = () => {
-        if (dropdownRef.current && optionsRef.current) {
-            const WINDOW_HEIGHT = window.innerHeight;
-            let optionsStyles: JSXInternal.CSSProperties = {};
+    // Placement is the only overlay concern left here: the open state, the
+    // close paths (outside press, Escape, scroll) and the focus bookkeeping
+    // they share all come from `useOverlay`.
+    const { isOpen, close, toggle } = useOverlay(dropdownRef, {
+        closeOnScroll: true,
+        onOpen: () => {
+            if (!dropdownRef.current || !optionsRef.current) {
+                return;
+            }
+
             const dropdownRect = dropdownRef.current.getBoundingClientRect();
             const optionsHeight = optionsRef.current.offsetHeight;
-            const availableBottomSpace = WINDOW_HEIGHT - dropdownRect.bottom;
+            const availableBottomSpace = window.innerHeight - dropdownRect.bottom;
 
-            optionsStyles = {
+            setUlStyles({
                 top: (availableBottomSpace < optionsHeight
                     ? dropdownRect.top - optionsHeight : dropdownRect.bottom),
                 width: dropdownRect.width,
                 left: dropdownRect.left,
-            };
-            setUlStyles(optionsStyles);
-        }
-        setIsOpen(!isOpen);
-    };
+            });
+        },
+    });
 
-    useClickOutside(dropdownRef, closeDropdown);
-    useEscape(closeDropdown);
-    useScrollListener(dropdownRef, closeDropdown);
+    // While the list is open, focus leaving it closes it. `focusin` is read
+    // instead of `focusout`+`relatedTarget` because it reports the element
+    // that actually received focus after WebKit has settled it, and the body
+    // exclusion keeps clicks on non-focusable option padding (and focus
+    // falling off the page) from closing the list. The Tab keydown makes the
+    // two list-edge exits deterministic: Tab past the last option (which may
+    // land on browser chrome, where no `focusin` fires) and Shift+Tab off the
+    // first option (which lands on the header, inside the dropdown root,
+    // where the `focusin` rule must not close by itself).
+    useEffect(() => {
+        if (!isOpen) {
+            return;
+        }
+
+        const handleFocusIn = (event: FocusEvent) => {
+            const dropdown = dropdownRef.current;
+            const target = event.target;
+
+            if (dropdown === null || !(target instanceof Node)) {
+                return;
+            }
+
+            // Focus on the body/root means the page lost focus rather than a
+            // control receiving it (for example, a click on option padding).
+            if (target === document.body || target === document.documentElement) {
+                return;
+            }
+
+            if (!dropdown.contains(target)) {
+                close('focus-leave');
+            }
+        };
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.code !== TAB) {
+                return;
+            }
+
+            const active = document.activeElement;
+            const options = optionsRef.current;
+
+            if (!(active instanceof HTMLElement) || options === null || !options.contains(active)) {
+                return;
+            }
+
+            const option = active.closest('li');
+
+            if (option === null) {
+                return;
+            }
+
+            const closes = shouldCloseOnOptionTab(
+                event.shiftKey,
+                option === options.firstElementChild,
+                option === options.lastElementChild,
+            );
+
+            if (closes) {
+                close('focus-leave');
+            }
+        };
+
+        document.addEventListener('focusin', handleFocusIn, true);
+        document.addEventListener('keydown', handleKeyDown, true);
+
+        return () => {
+            document.removeEventListener('focusin', handleFocusIn, true);
+            document.removeEventListener('keydown', handleKeyDown, true);
+        };
+    }, [isOpen, close]);
 
     const renderLabelValue = () => {
         if (isMulti) {
@@ -131,13 +208,8 @@ export function Dropdown<T>({
                     className={s.Dropdown_header}
                     role="button"
                     tabIndex={disabled ? -1 : 0}
-                    onClick={!disabled ? toggleOptions : undefined}
-                    onKeyDown={!disabled ? (e: KeyboardEvent) => {
-                        if (e.code === KEYBOARD_CODES.enter || e.code === KEYBOARD_CODES.space) {
-                            e.preventDefault();
-                            toggleOptions();
-                        }
-                    } : undefined}
+                    onClick={!disabled ? toggle : undefined}
+                    onKeyDown={!disabled ? activateOnKeyDown(toggle) : undefined}
                 >
                     <Text className={cx(s.Dropdown_text)} lineHeight="none" type="t1">
                         {renderLabelValue()}
@@ -171,11 +243,17 @@ export function Dropdown<T>({
                         const handleChange = () => {
                             onChange(option);
                             if (!isMulti) {
-                                setIsOpen(false);
+                                close('action');
                             }
                         };
 
                         return (
+                            // The option row is not focusable: the Checkbox
+                            // inside is the tab stop and runs the same
+                            // `handleChange`; the row click only covers the
+                            // padding around it.
+                            /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
+                                jsx-a11y/no-noninteractive-element-interactions */
                             <li
                                 key={option.value}
                                 className={cx(s.Dropdown_option)}

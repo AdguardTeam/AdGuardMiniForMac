@@ -13,6 +13,7 @@ import {
     __getRpcTimeoutAlertSurface,
     __resetForTests,
 } from '../../modules/common/apis/rpcPostMessage';
+import { INPUT_MODALITY_ATTRIBUTE } from '../../modules/common/lib/inputModality';
 
 const setupFakeWindow = () => {
     const w: Record<string, unknown> = {
@@ -20,13 +21,19 @@ const setupFakeWindow = () => {
         dispatchEvent: () => true,
     };
     const listeners: Record<string, Array<(evt: unknown) => void>> = {};
+    const attributes: Array<{ name: string; value: string }> = [];
     (globalThis as Record<string, unknown>).window = w;
     (globalThis as Record<string, unknown>).document = {
         addEventListener: (type: string, fn: (evt: unknown) => void) => {
             (listeners[type] ??= []).push(fn);
         },
+        documentElement: {
+            setAttribute: (name: string, value: string) => {
+                attributes.push({ name, value });
+            },
+        },
     } as unknown as Document;
-    return { w, listeners };
+    return { w, listeners, attributes };
 };
 
 test('installs all in-use globals', () => {
@@ -53,6 +60,7 @@ test('default launch routes OpenLinkInBrowser through the Swift bridge', () => {
     (globalThis as Record<string, unknown>).window = w;
     (globalThis as Record<string, unknown>).document = {
         addEventListener: () => {},
+        documentElement: { setAttribute: () => {} },
     } as unknown as Document;
 
     webViewBootstrap();
@@ -139,6 +147,7 @@ test('posts a jsRuntimeError message when an uncaught error event fires', () => 
     (globalThis as Record<string, unknown>).window = w;
     (globalThis as Record<string, unknown>).document = {
         addEventListener: () => {},
+        documentElement: { setAttribute: () => {} },
     };
 
     webViewBootstrap({ env: { launch: () => {} } });
@@ -183,6 +192,7 @@ test('installs rpcTimeoutAlert surface that posts to webkit', () => {
     (globalThis as Record<string, unknown>).window = w;
     (globalThis as Record<string, unknown>).document = {
         addEventListener: () => {},
+        documentElement: { setAttribute: () => {} },
     };
 
     webViewBootstrap({ env: { launch: () => {} } });
@@ -222,6 +232,7 @@ test('a securitypolicyviolation event is reported through the jsRuntimeError cha
     (globalThis as Record<string, unknown>).window = w;
     (globalThis as Record<string, unknown>).document = {
         addEventListener: () => {},
+        documentElement: { setAttribute: () => {} },
     };
 
     webViewBootstrap({ env: { launch: () => {} } });
@@ -286,6 +297,7 @@ test('an unhandled RPC rejection is tagged rpc-error (non-fatal kind)', () => {
     (globalThis as Record<string, unknown>).window = w;
     (globalThis as Record<string, unknown>).document = {
         addEventListener: () => {},
+        documentElement: { setAttribute: () => {} },
     };
 
     webViewBootstrap({ env: { launch: () => {} } });
@@ -339,6 +351,7 @@ test('a repackaged RpcError (name marker, lost prototype) is still tagged rpc-er
     (globalThis as Record<string, unknown>).window = w;
     (globalThis as Record<string, unknown>).document = {
         addEventListener: () => {},
+        documentElement: { setAttribute: () => {} },
     };
 
     webViewBootstrap({ env: { launch: () => {} } });
@@ -358,4 +371,14 @@ test('a repackaged RpcError (name marker, lost prototype) is still tagged rpc-er
     assert.equal(posted.length, 1);
     assert.equal(posted[0].name, 'jsRuntimeError');
     assert.equal((posted[0].body as { kind?: string }).kind, 'rpc-error');
+});
+
+test('installs the input-modality tracker on the root element', () => {
+    const { listeners, attributes } = setupFakeWindow();
+
+    webViewBootstrap({ env: { launch: () => {} } });
+
+    assert.deepEqual(attributes, [{ name: INPUT_MODALITY_ATTRIBUTE, value: 'pointer' }]);
+    assert.ok((listeners.keydown?.length ?? 0) >= 1, 'must observe key presses');
+    assert.ok((listeners.pointerdown?.length ?? 0) >= 1, 'must observe pointer presses');
 });

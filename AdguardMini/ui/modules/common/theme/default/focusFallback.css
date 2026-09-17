@@ -1,0 +1,29 @@
+/*
+ * SPDX-FileCopyrightText: AdGuard Software Limited
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+/*
+ * Old-WebKit keyboard-focus fallback. `:focus-visible` exists only from the
+ * WebKit shipped with Safari 15.4; on macOS 12.0-12.2 (Safari 15.0-15.2) a
+ * keyboard user would otherwise get no ring at all. Where the native selector
+ * is unsupported this rule reconstructs the ring from the same tokens, gated
+ * on the keyboard modality the bootstrap reflects on the root element, so no
+ * per-component rules are duplicated: the ring offset resolves from the
+ * focused element's own local override.
+ *
+ * Text-entry controls keep their border-only focus treatment and never match:
+ * native fields (`input`, `textarea`, `select`) and the custom Select
+ * (`role="combobox"`). Programmatic focus targets (`tabindex="-1"`, e.g. page
+ * headings focused on mount) are excluded so no ring appears without a
+ * keyboard Tab stop. `selector()` is supported since Safari 14.1, before the
+ * app's oldest supported WebKit, so the condition always evaluates.
+ */
+@supports not selector(:focus-visible) {
+    :root[data-input-modality="keyboard"]
+        :focus:not(input):not(textarea):not(select):not([role="combobox"]):not([tabindex="-1"]) {
+        outline: var(--focus-ring-width) solid var(--focus-ring-color);
+        outline-offset: var(--focus-ring-offset);
+    }
+}

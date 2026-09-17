@@ -51,6 +51,14 @@
         cursor: pointer;
         font-size: var(--ft-m) !important;
         color: inherit;
+
+        /*
+         * Keyboard focus indicator: an inline, link-styled text action, so
+         * the floating offset keeps the ring clear of the text.
+         */
+        --focus-ring-offset: var(--focus-ring-offset-floating);
+
+        @mixin focus-ring;
     }
     &_switch {
         margin: var(--m-xxxl) auto auto;

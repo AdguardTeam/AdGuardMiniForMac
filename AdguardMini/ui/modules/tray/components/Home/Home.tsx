@@ -10,6 +10,7 @@ import { Fragment } from 'preact/jsx-runtime';
 import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
 import { OpenSafariExtensionPreferencesRequest } from 'Apis/requests/SafariExtensionsService';
 import { OptionalStringValue } from 'Apis/types';
+import { buttonProps } from 'Common/lib/keyboardActivation';
 import { getCountableEntityStatuses } from 'Common/utils/utils';
 import theme from 'Theme';
 import { useTrayStore } from 'TrayLib/hooks';
@@ -161,6 +162,11 @@ function HomeComponent() {
         telemetry.trackEvent(TrayEvent.SettingsClick);
     }, [telemetry]);
 
+    const handleFixIt = useCallback(() => {
+        telemetry.trackEvent(TrayEvent.FixItClick);
+        openSafariPreferences();
+    }, [telemetry]);
+
     const handleToggleSwitch = useCallback((checked: boolean) => {
         settings.updateSettings(checked);
         telemetry.trackEvent(TrayEvent.MainProtectionClick);
@@ -269,12 +275,7 @@ function HomeComponent() {
                         <div
                             aria-describedby={statusTextId}
                             className={s.Home_link}
-                            role="button"
-                            tabIndex={0}
-                            onClick={() => {
-                                telemetry.trackEvent(TrayEvent.FixItClick);
-                                openSafariPreferences();
-                            }}
+                            {...buttonProps(handleFixIt)}
                         >
                             {text}
                         </div>
@@ -285,7 +286,15 @@ function HomeComponent() {
 
         if (allExtensionsDisabled) {
             return translate('tray.home.title.protection.extensions.all.disabled', {
-                link: (text: string) => (<div aria-describedby={statusTextId} className={s.Home_link} role="button" tabIndex={0} onClick={openSafariPreferences}>{text}</div>),
+                link: (text: string) => (
+                    <div
+                        aria-describedby={statusTextId}
+                        className={s.Home_link}
+                        {...buttonProps(openSafariPreferences)}
+                    >
+                        {text}
+                    </div>
+                ),
             });
         }
     };

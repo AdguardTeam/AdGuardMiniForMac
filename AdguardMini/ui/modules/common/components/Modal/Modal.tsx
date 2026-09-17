@@ -5,6 +5,7 @@
 import { useEnter, useEscape } from '@adg/webview-utils-kit';
 import { useEffect, useId, useRef } from 'preact/hooks';
 
+import { useFocusRestore } from 'Common/hooks/useFocusRestore';
 import { useFocusTrap } from 'Common/hooks/useFocusTrap';
 import theme from 'Theme';
 import { Button, Loader, Text } from 'UILib';
@@ -108,6 +109,11 @@ export function Modal({
     const dialogRef = useRef<HTMLDivElement>(null);
 
     useFocusTrap(dialogRef);
+
+    // Closing the modal returns focus to the control that opened it; the
+    // snapshot runs in a layout effect, before the title effect below claims
+    // focus, and prefers the opener recorded at activation time.
+    useFocusRestore();
 
     // A modal appears without touching focus, so VoiceOver stays wherever it
     // was and never announces that a dialog opened. Move focus to the title

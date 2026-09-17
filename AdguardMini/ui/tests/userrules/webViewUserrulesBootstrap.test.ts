@@ -157,6 +157,11 @@ describe('webViewUserrulesBootstrap', () => {
             'SettingsCallbackService.OnEffectiveThemeChanged',
             Buffer.from(value.serializeBinary()).toString('base64'),
         );
-        assert.deepEqual(applied, [['theme', 'dark']]);
+        // The bootstrap also writes the tracker's initial modality attribute
+        // through this override, so scope the assertion to the theme write.
+        assert.deepEqual(
+            applied.filter(([name]) => name === 'theme'),
+            [['theme', 'dark']],
+        );
     });
 });

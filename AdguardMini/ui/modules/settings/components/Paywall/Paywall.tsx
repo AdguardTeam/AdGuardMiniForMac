@@ -6,6 +6,7 @@ import { observer } from 'mobx-react-lite';
 import { useEffect, useId, useRef, useState } from 'preact/hooks';
 
 import { useFocusOnMount } from 'Common/hooks/useFocusOnMount';
+import { useFocusRestore } from 'Common/hooks/useFocusRestore';
 import { useFocusTrap } from 'Common/hooks/useFocusTrap';
 import { getTdsLink, TDS_PARAMS } from 'Common/utils/links';
 import { RouteName, SettingsLayer } from 'Modules/settings/store/modules';
@@ -72,6 +73,11 @@ function PaywallComponent() {
 
     const titleId = useId();
     const descId = useId();
+
+    // The paywall is a full-window dialog too: closing it returns focus to
+    // the control that opened it, and the snapshot is taken before its own
+    // title claims focus.
+    useFocusRestore();
 
     // The paywall covers the window without touching focus, so nothing
     // announced that it opened. Focus its title, which carries both the title
@@ -198,7 +204,6 @@ function PaywallComponent() {
                                 key={label}
                                 className={s.Paywall_advantages_advantage}
                                 role="listitem"
-                                tabIndex={0}
                             >
                                 <Icon
                                     className={s.Paywall_advantages_advantage_icon}

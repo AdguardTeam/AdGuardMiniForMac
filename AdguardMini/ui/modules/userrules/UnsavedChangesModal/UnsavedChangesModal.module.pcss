@@ -34,6 +34,14 @@
             top: 16px;
             right: 16px;
             cursor: pointer;
+
+            /*
+             * Keyboard focus indicator: a small floating icon action, so the
+             * floating offset keeps the ring clear of the glyph.
+             */
+            --focus-ring-offset: var(--focus-ring-offset-floating);
+
+            @mixin focus-ring;
         }
 
         &_title {
@@ -68,6 +76,12 @@
                 padding: 16px 20px;
                 border-radius: 8px;
                 cursor: pointer;
+
+                /*
+                 * Keyboard focus indicator: a standard button, so the ring is
+                 * flush with its edge (offset 0).
+                 */
+                @mixin focus-ring;
 
                 &:hover {
                     background-color: var(--fills-buttons-main-button-hovered);

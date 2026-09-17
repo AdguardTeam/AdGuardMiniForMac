@@ -42,6 +42,15 @@
         cursor: pointer;
         padding: var(--m-xxs) var(--m-s);
 
+        /*
+         * Keyboard focus indicator: a padded list-row action (same row shape
+         * as the settings rows), so the contained preset keeps the ring
+         * inside the row.
+         */
+        --focus-ring-offset: var(--focus-ring-offset-contained);
+
+        @mixin focus-ring;
+
         &:hover {
             color: var(--fills-buttons-main-button-hovered);
             cursor: pointer;

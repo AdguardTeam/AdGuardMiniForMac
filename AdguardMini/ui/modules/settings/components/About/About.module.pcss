@@ -22,12 +22,16 @@
 
     &_libraries {
         cursor: pointer;
+
+        @mixin focus-ring;
     }
 
     &_dependencies {
         display: flex;
         cursor: pointer;
         margin-top: var(--m-l);
+
+        @mixin focus-ring;
 
         &_arrow {
             margin-left: auto;
@@ -61,6 +65,14 @@
             color: var(--fills-buttons-main-button-default);
             cursor: pointer;
             text-decoration: underline;
+
+            /*
+             * Keyboard focus indicator: an inline, link-styled text action,
+             * so the floating offset keeps the ring clear of the text.
+             */
+            --focus-ring-offset: var(--focus-ring-offset-floating);
+
+            @mixin focus-ring;
 
             &:hover {
                 text-decoration: none;

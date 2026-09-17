@@ -20,6 +20,14 @@
         }
     }
 
+    /*
+     * Keyboard focus indicator: the label is the tab stop, so the ring wraps
+     * the whole control. The contained preset keeps it inside the row.
+     */
+    --focus-ring-offset: var(--focus-ring-offset-contained);
+
+    @mixin focus-ring;
+
     &_title {
         display: flex;
         align-items: center;

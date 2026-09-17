@@ -60,6 +60,15 @@
                 cursor: pointer;
                 text-decoration-color: var(--fills-buttons-main-button-default);
 
+                /*
+                 * Keyboard focus indicator: an inline, link-styled text
+                 * action, so the floating offset keeps the ring clear of the
+                 * text.
+                 */
+                --focus-ring-offset: var(--focus-ring-offset-floating);
+
+                @mixin focus-ring;
+
                 &:hover {
                     text-decoration: none;
                 }

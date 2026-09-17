@@ -7,6 +7,7 @@ import { useEffect, useState, useCallback } from 'preact/hooks';
 
 import { OpenDiagnosticsWindowRequest } from 'Apis/requests/InternalService';
 import { Channel, ReleaseVariants } from 'Apis/types';
+import { buttonProps } from 'Common/lib/keyboardActivation';
 import { ADGUARD_MINI_TITLE } from 'Common/utils/consts';
 import { TDS_PARAMS, getTdsLink } from 'Common/utils/links';
 import { notifySuccess } from 'Common/utils/notifications';
@@ -133,9 +134,7 @@ export function AboutComponent() {
                             a: (text: string) => (
                                 <div
                                     className={s.About_update_requestUpdate}
-                                    role="button"
-                                    tabIndex={0}
-                                    onClick={appInfo.requestUpdate}
+                                    {...buttonProps(appInfo.requestUpdate)}
                                 >
                                     {text}
                                 </div>
@@ -182,12 +181,18 @@ export function AboutComponent() {
                     <Text className={s.About_updateSection} type="t1" div>{translate('about.use.last.verion')}</Text>
                 )}
                 <Text className={s.About_rights} type="t1">{translate('about.rights', { year })}</Text>
-                <div className={s.About_dependencies} onClick={() => setShowDependencies(!showDependencies)}>
+                <div
+                    className={s.About_dependencies}
+                    {...buttonProps(() => setShowDependencies(!showDependencies))}
+                >
                     <Text className={s.About_textSpace} type="t1">{translate('about.dependencies')}</Text>
                     <Icon className={showDependencies ? s.About_dependencies_arrow__active : s.About_dependencies_arrow} icon="arrow_left" />
                 </div>
                 {showDependencies && (
-                    <div className={s.About_libraries} onClick={copyLibraries}>
+                    <div
+                        className={s.About_libraries}
+                        {...buttonProps(copyLibraries)}
+                    >
                         {dependencies.map((dep) => (
                             <Text key={dep.name} className={cx(s.About_textSpace, s.About_dependencies_item)} type="t1">
                                 {dep.name}

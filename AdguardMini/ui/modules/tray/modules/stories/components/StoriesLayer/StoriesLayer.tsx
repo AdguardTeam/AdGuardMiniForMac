@@ -4,6 +4,7 @@
 
 import { useCallback, useId, useReducer, useEffect, useRef } from 'preact/hooks';
 
+import { useFocusRestore } from 'Common/hooks/useFocusRestore';
 import { useFocusTrap } from 'Common/hooks/useFocusTrap';
 import { actions, navigationReducer } from 'Modules/tray/modules/stories/reducers';
 import { resolveBackTransition } from 'Modules/tray/modules/stories/utils/navigationBoundary';
@@ -44,6 +45,13 @@ export function StoriesLayer({
     const layerRef = useRef<HTMLDivElement>(null);
 
     useFocusTrap(layerRef);
+
+    // Closing the layer returns focus to the story card that opened it. The
+    // layer remounts on every story change (keyed by story id); a clicked
+    // navigation arrow is already detached when the new instance captures, so
+    // the new instance remembers the restored story card instead.
+    useFocusRestore();
+
     const { currentFrameIndex, length, id, isFirstFrameReturnedBack } = navigation;
     const { backgroundColor, frame } = navigation;
 

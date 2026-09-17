@@ -4,11 +4,12 @@
 
 import { focusOnBody } from '@adg/webview-utils-kit';
 
+import { useToggleControlKeyboard } from 'Common/hooks/useToggleControlKeyboard';
 import { Icon } from 'UILib';
 
 import s from './Radio.module.pcss';
 
-import type { ComponentChildren, JSX } from 'preact';
+import type { ComponentChildren } from 'preact';
 
 type RadioProps = {
     children?: ComponentChildren;
@@ -19,7 +20,12 @@ type RadioProps = {
     muted?: boolean;
     id?: string;
     name?: string;
-    onClick?(e: JSX.TargetedMouseEvent<HTMLElement>): void;
+    /**
+     * Selection action, run by both the pointer and keyboard paths. Call
+     * sites ignore the click event, so it is not part of the contract and
+     * the keyboard path can run it without fabricating a mouse event.
+     */
+    onClick?(): void;
 };
 
 /**
@@ -36,12 +42,35 @@ export function Radio({
     name,
     onClick,
 }: RadioProps) {
+    /** Runs the selection action. */
+    const select = () => {
+        onClick?.();
+    };
+
+    /** Pointer path: clears the browser focus ring a mouse click would leave. */
+    const handleClick = (e: MouseEvent) => {
+        if (disabled) {
+            return;
+        }
+
+        e.preventDefault();
+        focusOnBody();
+        select();
+    };
+
+    // Keyboard selection does not call `focusOnBody`: it is the click path's
+    // focus reset and would blur the chosen radio.
+    const keyboard = useToggleControlKeyboard(disabled, select);
+
     return (
         // `.Radio_input` below is `display: none` for the custom `Icon`
         // handler to replace it visually — but a `display: none` element is
         // excluded from the accessibility tree entirely, so without a role on
         // this wrapper the whole control was invisible to VoiceOver: no name,
         // no "radio button" role, no checked/unchecked state, nothing.
+        // The rule cannot see the Enter/Space handler: it arrives in the
+        // `keyboard` spread at the end of the element.
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
         <label
             aria-checked={checked}
             aria-disabled={disabled}
@@ -52,15 +81,13 @@ export function Radio({
             // while the actual radio input it labels is hidden (see above).
             // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
             role="radio"
-            tabIndex={0}
-            onClick={onClick ? (e) => {
-                if (!disabled) {
-                    e.preventDefault();
-                    focusOnBody();
-                    onClick(e);
-                }
-            } : focusOnBody}
+            onClick={onClick ? handleClick : focusOnBody}
+            {...keyboard}
         >
+            {/* The hidden input is `display: none`, so it is absent from the
+                accessibility tree; the wrapper label carries the role, name
+                and state that assistive tech announces. */}
+            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
             <input
                 checked={checked}
                 className={s.Radio_input}

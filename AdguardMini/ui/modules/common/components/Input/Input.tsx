@@ -68,12 +68,17 @@ export function Input({
     return (
         <div className={className}>
             {label && (
-                <label className={s.Input_label} htmlFor={id}>
+                <label className={s.Input_label} htmlFor={id} id={`${id}-label`}>
                     <Text type="t2">
                         {label}
                     </Text>
                 </label>
             )}
+            {/* Pointer convenience: clicking the field frame focuses the
+                native input inside. Keyboard users reach that input directly,
+                and the frame is not a control of its own. */}
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
+                jsx-a11y/no-static-element-interactions */}
             <div
                 className={cx(
                     s.Input_container,
@@ -92,6 +97,7 @@ export function Input({
             >
                 <input
                     ref={inputRef}
+                    aria-labelledby={label ? `${id}-label` : undefined}
                     className={cx(theme.typo.t1, s.Input_input)}
                     disabled={disabled}
                     id={id}
@@ -109,6 +115,11 @@ export function Input({
                     }}
                 />
                 {allowClear && value && (
+                    // Pointer-only clear affordance: keyboard users clear the
+                    // field with native editing, and the cross is
+                    // intentionally not a tab stop.
+                    /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
+                        jsx-a11y/no-static-element-interactions */
                     <div className={cx(s.Input_clear)} onClick={handleClear}>
                         <Icon className={s.Input_cross} icon="cross" />
                     </div>

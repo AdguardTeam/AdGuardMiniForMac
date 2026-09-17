@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import './Text.module.pcss';
+import s from './Text.module.pcss';
 
 import type { ComponentChildren, JSX } from 'preact';
 
@@ -38,6 +38,12 @@ export type TextProps = {
     lineHeight?: 's' | 'm' | 'l' | 'none';
     onClick?: JSX.DOMAttributes<HTMLElement>['onClick'];
     /**
+     * Key handler forwarded to the rendered element. `Text` renders its own
+     * element and spreads no extra props, so text that acts as a control and
+     * needs Enter/Space activation wires its handler through this prop.
+     */
+    onKeyDown?: JSX.DOMAttributes<HTMLElement>['onKeyDown'];
+    /**
      * ARIA role — pair with `tabIndex` when the text acts as a control
      * (`onClick`), otherwise screen readers see it as plain text.
      */
@@ -62,9 +68,17 @@ export function Text({
     lineHeight,
     div,
     onClick,
+    onKeyDown,
     role,
     tabIndex,
 }: TextProps): JSX.Element {
+    /*
+     * The control path: clickable text (`onClick`) and deliberate tab stops
+     * (`tabIndex >= 0`). Programmatically focused text (`tabIndex={-1}`,
+     * e.g. page headings) stays ringless, matching the navigation behavior.
+     */
+    const isControl = !!onClick || (tabIndex !== undefined && tabIndex >= 0);
+
     let lineHeightClass: string | undefined = lineHeight;
 
     if (!lineHeightClass) {
@@ -95,6 +109,7 @@ export function Text({
             tx.typo[type],
             semibold && tx.typo.semibold,
             lineHeightClass && tx.typo[lineHeightClass],
+            isControl && s.Text_control,
             className,
         ),
         'aria-label': ariaLabel,
@@ -104,6 +119,7 @@ export function Text({
         role,
         tabIndex,
         onClick,
+        onKeyDown,
     };
     switch (type) {
         case 'h0':

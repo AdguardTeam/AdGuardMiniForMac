@@ -44,7 +44,7 @@ export function Textarea({
     return (
         <div className={className}>
             {label && (
-                <div className={s.Textarea_label}>
+                <div className={s.Textarea_label} id={`${id}-label`}>
                     <Text className={s.Textarea_labelText} type="t2">
                         {label}
                     </Text>
@@ -58,6 +58,7 @@ export function Textarea({
                 )}
             >
                 <textarea
+                    aria-labelledby={label ? `${id}-label` : undefined}
                     className={cx(s.Textarea_textarea, theme.typo.t1, textAreaClassName)}
                     id={id}
                     name={id}

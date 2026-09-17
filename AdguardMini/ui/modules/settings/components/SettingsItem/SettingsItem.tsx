@@ -5,6 +5,7 @@
 import { observer } from 'mobx-react-lite';
 import { useId } from 'preact/hooks';
 
+import { activateOnKeyDown } from 'Common/lib/keyboardActivation';
 import { useSettingsStore } from 'SettingsLib/hooks';
 import { Icon, Switch, Text } from 'UILib';
 
@@ -85,15 +86,37 @@ function SettingsItemComponent({
     const autoDescriptionId = useId();
     const descId = (description || additionalText) ? descriptionId ?? autoDescriptionId : undefined;
 
-    const handleRouteChange = (e: MouseEvent) => {
-        e.stopPropagation();
+    /** Runs the route navigation; shared by the pointer and keyboard paths. */
+    const handleRouteActivation = () => {
         if (trackEventOnRouteChange) {
             telemetry.trackEvent(trackEventOnRouteChange);
         }
         router.changePath(routeName!);
     };
 
+    const handleRouteChange = (e: MouseEvent) => {
+        // The pointer path stops the row-level click from navigating again;
+        // the keyboard path has no click to stop.
+        e.stopPropagation();
+        handleRouteActivation();
+    };
+
+    /** Runs the row action without a click event (keyboard activation). */
+    const runContainerAction = () => {
+        if (routeName) {
+            handleRouteActivation();
+            return;
+        }
+
+        onContainerClick?.();
+    };
+
     return (
+        // The wrapper is the control only when `containerAsButton` is set
+        // (it then owns the role, tab stop and key handler below); otherwise
+        // it is a pointer convenience over the title line or the inner
+        // switch. The rule cannot resolve the conditional role.
+        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
         <div
             aria-describedby={containerAsButton ? descId : undefined}
             // Some callers pass JSX as `title`; a name is only derivable from a
@@ -109,6 +132,10 @@ function SettingsItemComponent({
             role={containerAsButton ? 'button' : undefined}
             tabIndex={containerAsButton ? 0 : undefined}
             onClick={routeName ? handleRouteChange : onContainerClick}
+            // The guard in `activateOnKeyDown` keeps a press that belongs to
+            // the route line (or the switch) inside the row from running the
+            // row action as well.
+            onKeyDown={containerAsButton ? activateOnKeyDown(runContainerAction) : undefined}
         >
             <div className={cx(
                 s.SettingsItem_title,
@@ -122,12 +149,16 @@ function SettingsItemComponent({
                   * a row can also hold a switch in `children`, and marking the
                   * container as a button would nest that switch inside it.
                   */}
+                {/* Role, tab stop, click and key handler are gated together on
+                    `routeName`; the rule does not evaluate conditional roles. */}
+                {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
                 <div
                     aria-describedby={routeName ? descId : undefined}
                     className={cx(s.SettingsItem_container_line, routeName && s.SettingsItem_container__route)}
                     role={routeName ? 'button' : undefined}
                     tabIndex={routeName ? 0 : undefined}
                     onClick={routeName ? handleRouteChange : undefined}
+                    onKeyDown={routeName ? activateOnKeyDown(handleRouteActivation) : undefined}
                 >
                     {icon && (
                         <Icon
@@ -152,6 +183,11 @@ function SettingsItemComponent({
                     {newLabel && (<div className={s.SettingsItem_container_newLabel}><Text type="t3">New</Text></div>)}
                 </div>
                 {(description || additionalText) && (
+                    // The description block is a pointer convenience for the
+                    // row's title-line button above; it is not a control and
+                    // has no tab stop of its own.
+                    /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
+                        jsx-a11y/no-static-element-interactions */
                     <div
                         className={cx(
                             s.SettingsItem_container_desc,
@@ -167,6 +203,11 @@ function SettingsItemComponent({
                 )}
             </div>
             {routeName && (<div className={routeName && s.SettingsItem_container_routeBorder} />)}
+            {/* The children slot forwards pointer clicks to the row action;
+                the inner control (e.g. the switch) is the tab stop that carries
+                the keyboard path. */}
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
+                jsx-a11y/no-static-element-interactions */}
             <div
                 className={cx(
                     s.SettingsItem_container,

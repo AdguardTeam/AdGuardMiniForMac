@@ -55,6 +55,12 @@ const USERRULES = 'userrules'
 /**
  * Get postcss setup
  *
+ * `postcss-mixins` loads the shared mixins declared in
+ * `theme/default/mixins.css`, so components can use `@mixin focus-ring;`
+ * instead of repeating the ring block. It runs before `postcss-nested`
+ * because a mixin body may hold nested selectors (`&:focus-visible`) that
+ * only `postcss-nested` can unwrap afterwards.
+ *
  * @returns {{loader: string, options: {postcssOptions: {plugins: ([string,{}]|[((function({}=): Plugin | Processor)|{postcss?: boolean}),{enabled}])[]}}}}
  */
 const getPostcssLoader = () => ({
@@ -62,6 +68,9 @@ const getPostcssLoader = () => ({
     options: {
         postcssOptions: {
             plugins: [
+                ['postcss-mixins', {
+                    mixinsFiles: [path.join(commonPath, 'theme', 'default', 'mixins.css')],
+                }],
                 ['postcss-nested', {}],
             ],
         },

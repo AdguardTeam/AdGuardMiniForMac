@@ -4,6 +4,7 @@
 
 import { observer } from 'mobx-react-lite';
 
+import { buttonProps } from 'Common/lib/keyboardActivation';
 import { useSettingsStore } from 'SettingsLib/hooks';
 import { Icon, Text } from 'UILib';
 
@@ -41,9 +42,7 @@ function MenuItemComponent({
         <div
             aria-current={active ? 'page' : undefined}
             className={cx(s.MenuItem_item, active && s.MenuItem_item__active)}
-            role="button"
-            tabIndex={0}
-            onClick={() => router.changePath(route)}
+            {...buttonProps(() => router.changePath(route))}
         >
             <Icon className={s.MenuItem_icon} icon={icon} />
             <Text className={s.MenuItem_text} lineHeight="none" semibold={active} type="t2">{title}</Text>

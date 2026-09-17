@@ -4,6 +4,8 @@
 
 import { useRef } from 'preact/hooks';
 
+import { useToggleControlKeyboard } from 'Common/hooks/useToggleControlKeyboard';
+
 import s from './Checkbox.module.pcss';
 import { CheckboxIcon } from './CheckboxIcon';
 
@@ -45,6 +47,7 @@ export function Checkbox({
     withHover,
 }: CheckboxProps) {
     const ref = useRef<HTMLLabelElement>(null);
+    const keyboard = useToggleControlKeyboard(disabled, () => onChange(!checked));
 
     return (
         // `.Checkbox_input` below is `display: none` for `CheckboxIcon` to
@@ -64,8 +67,12 @@ export function Checkbox({
             // VoiceOver press, since the label itself carries the role.
             // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
             role="checkbox"
-            tabIndex={0}
+            {...keyboard}
         >
+            {/* The hidden input is `display: none`, so it is absent from the
+                accessibility tree; the wrapper label carries the role, name
+                and state that assistive tech announces. */}
+            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
             <input
                 checked={checked}
                 className={s.Checkbox_input}

@@ -13,13 +13,14 @@ import {
 import { RecordEventRequest } from 'Apis/requests/TelemetryService';
 import { GetUserRulesRequest, UpdateUserRulesRequest } from 'Apis/requests/UserRulesService';
 import { UserRules, PageView, CustomTelemetryEvent } from 'Apis/types';
+import { buttonProps } from 'Common/lib/keyboardActivation';
 import { UserRulesPages, UserRulesEvents } from 'Common/utils/consts';
+import { Icon } from 'UILib';
 
 import s from './App.module.pcss';
 import { Editor } from './Editor';
 import { editorStore } from './editorStore';
 import { FaqIcon } from './FaqIcon';
-import { FlagIcon } from './FlagIcon';
 import { debouncedEditorSync } from './lib/debouncedEditorSync';
 import { useTheme } from './lib/hooks/useTheme';
 import { Loader } from './Loader';
@@ -156,14 +157,14 @@ function AppComponent() {
             )}
             <div className={s.App_header}>
                 <p className={s.App_header_title}>{translate('user.rules.rule.editor')}</p>
-                <p
+                <div
                     className={cx(s.App_header_subtitle, s.App__link)}
-                    onClick={() => {
+                    {...buttonProps(() => {
                         window.OpenLinkInBrowser(DNS_FILTERING_KB_URL);
-                    }}
+                    })}
                 >
                     {translate('user.rules.rule.editor.desc')}
-                </p>
+                </div>
                 <div className={cx(s.App_header_hotkeys)}>
                     <div className={cx(s.App__link, s.App_header_hotkeys_label)}>
                         {translate('user.rules.editor.hotkeys')}
@@ -181,7 +182,14 @@ function AppComponent() {
                     </div>
                 </div>
                 <div className={s.App_ContextMenu}>
-                    <FlagIcon onClick={() => { void window.API.Execute(new reportAnIssueRequest()); }} />
+                    <Icon
+                        ariaLabel={translate('context.menu.report.problem')}
+                        className={s.App_ContextMenu_icon}
+                        icon="flag"
+                        role="button"
+                        isFocusable
+                        onClick={() => { void window.API.Execute(new reportAnIssueRequest()); }}
+                    />
                     <div className={s.App_ContextMenu_context}>
                         <div className={s.App_ContextMenu_action}>
                             {translate('context.menu.report.problem')}

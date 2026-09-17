@@ -9,6 +9,16 @@
     width: max-content;
     transition: color linear 0.3s, text-decoration-color linear 0.3s;
 
+    /*
+     * Links are floating controls: the ring sits clear of the text
+     * (floating preset). This local override is what the keyboard-modality
+     * fallback reuses.
+     */
+    --focus-ring-offset: var(--focus-ring-offset-floating);
+
+    /* Keyboard focus indicator; replaces the browser's default outline. */
+    @mixin focus-ring;
+
     &:hover {
         text-decoration: none;
     }

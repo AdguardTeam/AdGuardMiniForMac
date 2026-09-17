@@ -50,6 +50,9 @@ export function Rule({
             >
                 {getIconByType(type, s.icon, muted)}
             </TooltipArea>
+            {/* Double-click-to-edit is a pointer shortcut; the adjacent edit
+                Button is the keyboard path to the same action. */}
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div className={cx(s.text, theme.typo.t2)} title={rule.rule} onDblClick={() => onEdit(rule.index)}>
                 <RuleHighlighter rule={rule.rule} />
             </div>

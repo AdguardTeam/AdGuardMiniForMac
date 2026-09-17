@@ -17,6 +17,7 @@ const setupFakeWindow = () => {
     (globalThis as Record<string, unknown>).window = w;
     (globalThis as Record<string, unknown>).document = {
         addEventListener: () => {},
+        documentElement: { setAttribute: () => {} },
     } as unknown as Document;
     const posted: Array<{ name: string; body: unknown }> = [];
     w.webkit = {

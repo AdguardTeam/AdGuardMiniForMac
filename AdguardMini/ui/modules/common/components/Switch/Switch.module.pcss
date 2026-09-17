@@ -10,6 +10,14 @@
     width: max-content;
     outline: none;
 
+    /*
+     * Keyboard focus indicator: the label is the tab stop, so the ring wraps
+     * the toggle. The contained preset keeps it inside the row.
+     */
+    --focus-ring-offset: var(--focus-ring-offset-contained);
+
+    @mixin focus-ring;
+
     &.disabledSwitch {
         cursor: default;
 

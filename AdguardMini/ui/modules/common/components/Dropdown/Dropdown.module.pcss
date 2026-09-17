@@ -42,6 +42,21 @@
         width: auto;
         cursor: pointer;
         box-sizing: content-box;
+
+        /* The native outline is replaced by the shared keyboard ring below. */
+        outline: none;
+
+        /*
+         * Ring-offset adaptation: the reference maps its dropdown header to
+         * the default offset on a header carrying `border-radius: 8px`; our
+         * header has no radius and sits flush inside the rounded, bordered
+         * `.Dropdown` frame, so an offset-0 ring would cross the frame
+         * border. The 2px inset keeps the ring inside the frame. The local
+         * override is what the keyboard-modality fallback reuses.
+         */
+        --focus-ring-offset: var(--focus-ring-offset-contained);
+
+        @mixin focus-ring;
     }
 
     &_text {

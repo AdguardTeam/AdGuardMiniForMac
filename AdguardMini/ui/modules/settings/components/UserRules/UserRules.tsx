@@ -7,6 +7,7 @@ import { observer } from 'mobx-react-lite';
 import { useState, useEffect, useRef } from 'preact/hooks';
 
 import { ShowInFinderRequest } from 'Apis/requests/InternalService';
+import { buttonProps } from 'Common/lib/keyboardActivation';
 import { getFormattedDateTime } from 'Common/utils/date';
 import { TDS_PARAMS, getTdsLink } from 'Common/utils/links';
 import { dirname } from 'Common/utils/path';
@@ -260,9 +261,7 @@ function UserRulesComponent() {
                 {!isRuleEditorWindowOpened && (
                     <div
                         className={cx(s.UserRules_addRule, isScrolling && s.UserRules_addRule__scroll)}
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => navigateToUserRule()}
+                        {...buttonProps(() => navigateToUserRule())}
                     >
                         <Icon className={s.UserRules_addRule_icon} icon="plus" />
                         <Text className={s.UserRules_addRule_text} type="t1">{translate('user.rules.create')}</Text>

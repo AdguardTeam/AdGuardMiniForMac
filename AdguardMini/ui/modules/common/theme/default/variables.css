@@ -77,3 +77,24 @@
     --bs-small: 4px 4px 8px rgba(0, 0, 0, 0.1);
     --bs-big: 8px 8px 24px rgba(0, 0, 0, 0.1);
 }
+
+/* Keyboard focus ring; see the keyboard focus convention in AGENTS.md. */
+:root {
+    --focus-ring-color: #7884CB;
+    --focus-ring-width: 2px;
+    /*
+     * Component-local offset. Components override it with one of the presets
+     * below so the ring geometry stays defined in one place.
+     */
+    --focus-ring-offset: 0px;
+
+    /*
+     * Offset presets, chosen by control shape: the ring sits inside padded
+     * rows and cards (contained), clear of link text (floating), and around
+     * title-level surfaces (title). Adjust a preset here rather than per
+     * component.
+     */
+    --focus-ring-offset-contained: -2px; /* Checkbox, switch, radio, menu rows. */
+    --focus-ring-offset-floating: 2px; /* Links and small floating controls. */
+    --focus-ring-offset-title: 4px; /* Title-level surfaces. */
+}

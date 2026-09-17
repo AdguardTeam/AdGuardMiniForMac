@@ -5,6 +5,7 @@
 import { observer } from 'mobx-react-lite';
 import { useState } from 'preact/hooks';
 
+import { buttonProps } from 'Common/lib/keyboardActivation';
 import { NotificationContext, NotificationsQueueType, NotificationsQueueIconType, RouteName } from 'Modules/settings/store/modules';
 import { useSettingsStore, useDateFormat, DATE_FORMAT } from 'SettingsLib/hooks';
 import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
@@ -108,10 +109,10 @@ function FilterComponent({
                                     btn: (text: string) => (
                                         <span
                                             className={cx(s.Filter_link, theme.color.orange)}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                router.changePath(RouteName.language_specific);
-                                            }}
+                                            {...buttonProps(
+                                                () => router.changePath(RouteName.language_specific),
+                                                { stopPropagation: true },
+                                            )}
                                         >
                                             {text}
                                         </span>

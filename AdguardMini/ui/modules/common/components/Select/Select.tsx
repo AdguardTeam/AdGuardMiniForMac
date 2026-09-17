@@ -2,9 +2,10 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { KEYBOARD_CODES, useClickOutside, useEscape, useScrollListener } from '@adg/webview-utils-kit';
-import { useCallback, useRef, useState } from 'preact/hooks';
+import { KEYBOARD_CODES } from '@adg/webview-utils-kit';
+import { useRef, useState } from 'preact/hooks';
 
+import { useOverlay } from 'Common/hooks/useOverlay';
 import { Text, Icon } from 'UILib';
 
 import s from './Select.module.pcss';
@@ -56,18 +57,22 @@ export function Select<T,>({
     className,
     label,
 }: SelectProps<T>) {
-    const [isOpen, setIsOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(-1);
     const [menuStyles, setMenuStyles] = useState<JSXInternal.CSSProperties>();
 
     const selectRef = useRef<HTMLDivElement>(null);
     const optionsRef = useRef<HTMLUListElement>(null);
 
-    const closeOptions = useCallback(() => setIsOpen(false), []);
+    // Placement and the initially highlighted option are the only overlay
+    // concerns left here; the open state, the close paths and the focus they
+    // restore come from `useOverlay`.
+    const { isOpen, close, toggle } = useOverlay(selectRef, {
+        closeOnScroll: true,
+        onOpen: () => {
+            if (!selectRef.current || !optionsRef.current) {
+                return;
+            }
 
-    /** Toggle and place menu. */
-    const toggleOptions = () => {
-        if (!isOpen && selectRef.current && optionsRef.current) {
             const fieldRect = selectRef.current.getBoundingClientRect();
             const optionsHeight = optionsRef.current.offsetHeight;
             const availableBottomSpace = window.innerHeight - fieldRect.bottom;
@@ -80,14 +85,13 @@ export function Select<T,>({
                 width: fieldRect.width,
             });
             setActiveIndex(itemList.findIndex((item) => String(item.value) === String(currentValue)));
-        }
-        setIsOpen(!isOpen);
-    };
+        },
+    });
 
     /** Select option and close. */
     const selectItem = (item: SelectItem<T>) => {
         onChange(item.value);
-        setIsOpen(false);
+        close('action');
     };
 
     /** Handle keyboard interaction. */
@@ -99,7 +103,7 @@ export function Select<T,>({
                 if (isOpen && activeIndex >= 0 && activeIndex < itemList.length) {
                     selectItem(itemList[activeIndex]);
                 } else {
-                    toggleOptions();
+                    toggle();
                 }
                 break;
             case ARROW_DOWN:
@@ -128,10 +132,6 @@ export function Select<T,>({
                 break;
         }
     };
-
-    useClickOutside(selectRef, closeOptions);
-    useEscape(closeOptions);
-    useScrollListener(selectRef, closeOptions);
 
     const selectedItem = itemList.find((item) => String(item.value) === String(currentValue));
 
@@ -168,7 +168,7 @@ export function Select<T,>({
                 tabIndex={0}
                 onClick={(e) => {
                     e.stopPropagation();
-                    toggleOptions();
+                    toggle();
                 }}
                 onKeyDown={handleKeyDown}
             >
@@ -187,6 +187,11 @@ export function Select<T,>({
                     {itemList.map((item, index) => {
                         const isSelected = String(item.value) === String(currentValue);
                         return (
+                            // Options are not tab stops: the combobox
+                            // container owns the keyboard path (arrow keys
+                            // move `aria-activedescendant`, Enter commits);
+                            // this click is the pointer equivalent.
+                            // eslint-disable-next-line jsx-a11y/click-events-have-key-events
                             <li
                                 key={item.value}
                                 aria-selected={isSelected}

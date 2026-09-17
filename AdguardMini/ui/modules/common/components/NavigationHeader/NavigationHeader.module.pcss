@@ -14,6 +14,13 @@
     height: 40px;
     align-items: center;
 
+    /*
+     * Keyboard focus indicator: a standalone button-like header (its own
+     * rounded hover surface), so the ring uses the button default (offset 0)
+     * and no local override.
+     */
+    @mixin focus-ring;
+
     &:hover {
         border-radius: 8px;
         background: var(--fills-buttons-secondary-button-hovered);

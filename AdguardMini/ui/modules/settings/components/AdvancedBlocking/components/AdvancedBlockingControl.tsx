@@ -5,6 +5,7 @@
 import { observer } from 'mobx-react-lite';
 import { useState } from 'preact/hooks';
 
+import { buttonProps } from 'Common/lib/keyboardActivation';
 import { SettingsEvent } from 'Modules/settings/store/modules';
 import { usePayedFuncsTitle, useSettingsStore } from 'SettingsLib/hooks';
 import theme from 'Theme';
@@ -107,12 +108,9 @@ export function AdvancedBlockingControlComponent() {
                         {translate('settings.real.time.filter.updates.enable.update.filters', {
                             b: (text: string) => (
                                 <span
-                                    className={theme.button.underline}
+                                    className={cx(theme.button.underline, s.AdvancedBlockingControl_link)}
                                     id="real-time-updates-link"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        onUpdateAutoFilters(true);
-                                    }}
+                                    {...buttonProps(() => onUpdateAutoFilters(true), { stopPropagation: true })}
                                 >
                                     {text}
                                 </span>
