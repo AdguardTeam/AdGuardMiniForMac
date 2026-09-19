@@ -48,7 +48,7 @@ body:
       value: |
         Select enabled filters if they are related to the application bug.
         If the issue is related to the filtering (missed ads, cookie, etc.)
-        use the [Web Reporting Tool](https://kb.adguard.com/technical-support/reporting-tool) please.
+        use the [Web Reporting Tool](https://link.adtidy.org/forward.html?action=report&app=home&from=github) please.
 
   - type: dropdown
     id: filters_adblock
