@@ -11,24 +11,30 @@
 </p>
 
 <p align="center">
-    <a href="https://adguard.com/">AdGuard.com</a> |
+    <a href="https://adguard.com/">Website</a> |
     <a href="https://reddit.com/r/Adguard">Reddit</a> |
-    <a href="https://twitter.com/AdGuard">Twitter</a> |
+    <a href="https://x.com/AdGuard">X</a> |
     <a href="https://t.me/adguard_en">Telegram</a>
     <br /><br />
-    <a href="https://agrd.io/mini_mac">
-        <img src="https://img.shields.io/badge/download-app%20store-blue.svg" alt="Download on the App Store" />
-    </a>
-    <a href="https://agrd.io/adguard_mini_for_mac">
-        <img src="https://img.shields.io/github/release/AdguardTeam/AdGuardMiniForMac.svg?label=release&filter=%2Arelease" alt="Release version" />
-    </a>
-    <a href="https://agrd.io/adguard_mini_for_mac_beta">
-        <img src="https://img.shields.io/github/release/AdguardTeam/AdGuardMiniForMac.svg?label=beta&filter=%2Abeta&color=orange" alt="Beta version" />
-    </a>
-    <a href="https://agrd.io/adguard_mini_for_mac_nightly">
-        <img src="https://img.shields.io/github/tag-pre/AdguardTeam/AdGuardMiniForMac.svg?label=nightly&filter=%2Anightly&color=green" alt="Nightly version" />
-    </a>
+    <a href="https://agrd.io/mini_mac"><img src="https://img.shields.io/badge/download-app%20store-blue.svg" alt="Download on the App Store" /></a>
+    <a href="https://agrd.io/adguard_mini_for_mac"><img src="https://img.shields.io/github/release/AdguardTeam/AdGuardMiniForMac.svg?label=release&filter=%2Arelease" alt="Release version" /></a>
+    <a href="https://agrd.io/adguard_mini_for_mac_beta"><img src="https://img.shields.io/github/release/AdguardTeam/AdGuardMiniForMac.svg?label=beta&filter=%2Abeta&color=orange" alt="Beta version" /></a>
+    <a href="https://agrd.io/adguard_mini_for_mac_nightly"><img src="https://img.shields.io/github/tag-pre/AdguardTeam/AdGuardMiniForMac.svg?label=nightly&filter=%2Anightly&color=green" alt="Nightly version" /></a>
 </p>
+
+* [Key features](#key)
+* [Pro features](#pro)
+* [For ad blocking beyond Safari](#beyond)
+* [Contribution](#contribution)
+  * [How to report an issue](#issue)
+  * [Translating AdGuard](#contribution-translating)
+  * [Other options](#contribution-other)
+  * [How to become a Beta tester](#beta-tester)
+* [Technical documentation](#developers)
+
+<br />
+
+AdGuard Mini (formerly AdGuard for Safari) is the same open-source Safari extension — but redesigned, faster, and with Pro capabilities. On top of core ad-blocking power, advanced features are now available as an optional in-app purchase.
 
 <br />
 
@@ -39,16 +45,13 @@
   </picture>
 </p>
 
-<hr />
-
-# AdGuard Mini for Mac
-
-AdGuard Mini (formerly AdGuard for Safari) is the same open-source Safari extension — but redesigned, faster, and with Pro capabilities. On top of core ad-blocking power, advanced features are now available as an optional in-app purchase.
+<br />
 
 AdGuard Mini keeps all kinds of ads away from your Safari browser. It removes all visual clutter, such as banners, popups, and autoplay videos, so only the important content stays. AdGuard Mini also protects your privacy by blocking trackers to prevent unnecessary data collection.
 
 With AdGuard Mini you can manage ad blocking directly from Safari – pause protection, allowlist websites, block elements manually, and report issues.
 
+<a id="key"></a>
 ## Key features
 
 * Block all kinds of ads in Safari: banners, video ads, popups, autoplay videos, and overlays
@@ -59,6 +62,7 @@ With AdGuard Mini you can manage ad blocking directly from Safari – pause prot
 * Choose from popular filter lists or add your own
 * Create custom filtering rules with an advanced rule editor
 
+<a id="pro"></a>
 ## Pro features
 
 * Real-time filter updates for precise ad blocking
@@ -67,6 +71,7 @@ With AdGuard Mini you can manage ad blocking directly from Safari – pause prot
 
 Pro features can be unlocked by an AdGuard Ad Blocker license, which can be obtained on our website or through in-app purchase.
 
+<a id="beyond"></a>
 ## For ad blocking beyond Safari — there is full-fledged AdGuard for Mac
 
 With all of the above being said, there is a solution that is even more effective than AdGuard Mini extension — [AdGuard for Mac](https://adguard.com/adguard-mac/overview.html). It’s an app that:
@@ -75,14 +80,34 @@ With all of the above being said, there is a solution that is even more effectiv
 * provides better filtering quality in some cases (due to the lack of browser API restrictions)
 * is not limited regarding the number of filtering rules
 
-You can [try it out for free](https://adguard.com/en/download.html?os=mac&show=1).
+You can [try it out for free](https://adguard.com/download.html?os=mac&show=1).
 
-## How to report an issue
+<a id="contribution"></a>
+## Contribution
+
+<a id="issue"></a>
+### How to report an issue
 
 To report an issue or submit a feature request, [go to the *Issues* section of this repository](https://github.com/AdguardTeam/AdGuardMiniForMac/issues) and click *New issue* there.
 
->**Note:** for filter-related issues (missed ads, false positives, etc.) click the AdGuard Mini icon in Safari’s toolbar menu and select *Report an issue*, or go to ⚙️→ *Support* → *Report incorrect blocking* in the AdGuard Mini app.
+>**Note:** for filter-related issues (missed ads, false positives, etc.) click the AdGuard Mini icon in Safari’s toolbar menu and select *Report an issue*, or go to ⚙️→ *Support* → *Report incorrect blocking* in the AdGuard Mini app. Alternatively, use our [reporting tool](https://link.adtidy.org/forward.html?action=report&app=home&from=github).
 
+<a id="contribution-translating"></a>
+### Translating AdGuard
+
+If you want to help with AdGuard translations, please learn more about translating our products [here](https://adguard.com/kb/miscellaneous/contribute/translate/program/).
+
+<a id="contribution-other"></a>
+### Other options
+
+Here is a [dedicated page](https://adguard.com/contribute.html) for those who are willing to contribute.
+
+<a id="beta-tester"></a>
+### How to become a beta tester
+
+You can submit an application to participate in AdGuard Mini for Mac beta-testing program. All necessary information on this topic can be found on the [dedicated page](https://adguard.com/beta.html).
+
+<a id="developers"></a>
 ## Technical documentation for developers
 
 See [DEVELOPMENT.md](./DEVELOPMENT.md)
