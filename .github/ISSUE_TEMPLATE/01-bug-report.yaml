@@ -19,7 +19,7 @@ body:
     attributes:
       label: AdGuard version
       description: What version of our application are you running?
-      placeholder: For example, 2.0.0
+      placeholder: For example, 2.3.0
     validations:
       required: true
   - type: input
@@ -27,7 +27,7 @@ body:
     attributes:
       label: Safari version
       description: What version of Safari do you use?
-      placeholder: For example, Safari 18.0
+      placeholder: For example, Safari 27.0
     validations:
       required: true
   - type: input
@@ -35,7 +35,7 @@ body:
     attributes:
       label: macOS version
       description: What version of macOS do you use?
-      placeholder: For example, macOS Sequoia 15.0
+      placeholder: For example, macOS Golden Gate 27.0
     validations:
       required: true
 
@@ -48,7 +48,7 @@ body:
       value: |
         Select enabled filters if they are related to the application bug.
         If the issue is related to the filtering (missed ads, cookie, etc.)
-        use the [Web Reporting Tool](https://kb.adguard.com/technical-support/reporting-tool) please.
+        use the [Web Reporting Tool](https://link.adtidy.org/forward.html?action=report&app=home&from=github) please.
 
   - type: dropdown
     id: filters_adblock
@@ -69,9 +69,10 @@ body:
       multiple: true
       options:
         - AdGuard Tracking Protection filter
+        - AdGuard Mail Tracking Protection filter
         - EasyPrivacy
-        - Peter Lowe's Blocklist
-        - Fanboy's Anti-Facebook List
+        - Peter Lowe’s Blocklist
+        - Fanboy’s Anti-Facebook List
         - uBlock Origin – Block Outsider Intrusion into LAN
     validations:
       required: false
@@ -83,7 +84,7 @@ body:
       multiple: true
       options:
         - AdGuard Social Media filter
-        - Fanboy's Social Blocking List
+        - Fanboy’s Social Blocking List
     validations:
       required: false
 
@@ -99,10 +100,10 @@ body:
         - AdGuard Other Annoyances filter
         - AdGuard Widgets filter
         - Adblock Warning Removal List
-        - Fanboy's Annoyances
+        - Fanboy’s Annoyances
         - Web Annoyances Ultralist
         - EasyList Cookie List
-        - Dandelion Sprout's Annoyances List
+        - Dandelion Sprout’s Annoyances List
     validations:
       required: false
 
@@ -116,7 +117,7 @@ body:
         - Phishing URL Blocklist
         - Scam Blocklist by DurableNapkin
         - uBlock Origin – Badware risks
-        - Dandelion Sprout's Anti-Malware List
+        - Dandelion Sprout’s Anti-Malware List
     validations:
       required: false
 
@@ -128,7 +129,7 @@ body:
       options:
         - Filter unblocking search ads and self-promotion
         - AdGuard Experimental filter
-        - Fanboy's Anti-thirdparty Fonts
+        - Fanboy’s Anti-thirdparty Fonts
     validations:
       required: false
 
@@ -152,9 +153,9 @@ body:
         - Adblock List for Finland
         - AdBlockID
         - Bulgarian list
-        - CJX's Annoyances List
-        - Dandelion Sprout's Nordic Filters
-        - Dandelion Sprout's Serbo-Croatian List
+        - CJX’s Annoyances List
+        - Dandelion Sprout’s Nordic Filters
+        - Dandelion Sprout’s Serbo-Croatian List
         - EasyList China
         - EasyList Czech and Slovak
         - EasyList Dutch
@@ -167,7 +168,7 @@ body:
         - EasyList Spanish
         - EasyList Thailand
         - Estonian List
-        - Frellwit's Swedish Filter
+        - Frellwit’s Swedish Filter
         - Greek AdBlock Filter
         - Hungarian filter
         - Icelandic ABP List
@@ -188,7 +189,7 @@ body:
         - road-block light
         - ROList
         - ROLIST2
-        - RU AdList: Counters
+        - RU AdList - Counters
         - xinggsf
         - Xfiles
         - YousList
@@ -226,13 +227,14 @@ body:
     attributes:
       label: Screenshots
       description: |
-        If applicable add screenshots explaining your problem.
+        If applicable, add screenshots explaining your problem.
         You can drag and drop images or paste them from clipboard.
         Use `<details> </details>` tag to hide screenshots under the spoiler.
       value: |
           <details><summary>Screenshot 1:</summary>
+          <!-- Paste screenshot below. -->
 
-          <!-- paste screenshot here -->
+
 
           </details>
     validations:
