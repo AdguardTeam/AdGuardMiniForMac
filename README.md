@@ -21,6 +21,14 @@
     <a href="https://agrd.io/adguard_mini_for_mac_beta"><img src="https://img.shields.io/github/release/AdguardTeam/AdGuardMiniForMac.svg?label=beta&filter=%2Abeta&color=orange" alt="Beta version" /></a>
     <a href="https://agrd.io/adguard_mini_for_mac_nightly"><img src="https://img.shields.io/github/tag-pre/AdguardTeam/AdGuardMiniForMac.svg?label=nightly&filter=%2Anightly&color=green" alt="Nightly version" /></a>
 </p>
+<br />
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://cdn.adtidy.org/content/release_notes/ad_blocker/mini_for_mac/ag-mini-gh-dark.png" width="800">
+    <img src="https://cdn.adtidy.org/content/release_notes/ad_blocker/mini_for_mac/ag-mini-gh.png" width="800">
+  </picture>
+</p>
+<br />
 
 * [Key features](#key)
 * [Pro features](#pro)
@@ -35,17 +43,6 @@
 <br />
 
 AdGuard Mini (formerly AdGuard for Safari) is the same open-source Safari extension — but redesigned, faster, and with Pro capabilities. On top of core ad-blocking power, advanced features are now available as an optional in-app purchase.
-
-<br />
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://cdn.adtidy.org/content/release_notes/ad_blocker/mini_for_mac/ag-mini-gh-dark.png" width="800">
-    <img src="https://cdn.adtidy.org/content/release_notes/ad_blocker/mini_for_mac/ag-mini-gh.png" width="800">
-  </picture>
-</p>
-
-<br />
 
 AdGuard Mini keeps all kinds of ads away from your Safari browser. It removes all visual clutter, such as banners, popups, and autoplay videos, so only the important content stays. AdGuard Mini also protects your privacy by blocking trackers to prevent unnecessary data collection.
 
