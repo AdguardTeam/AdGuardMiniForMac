@@ -56,3 +56,12 @@ enum URLFilterError: Error, Equatable {
     /// Unknown error.
     case unknown
 }
+
+// MARK: - URLFilterError + Logging
+
+extension URLFilterError {
+    /// A stable, secret-free token for log lines: the enum case name.
+    var logName: String {
+        String(describing: self)
+    }
+}

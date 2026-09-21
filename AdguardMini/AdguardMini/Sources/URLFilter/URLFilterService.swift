@@ -111,6 +111,9 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
 
     private var disconnectErrorSnapshot: DisconnectErrorSnapshot?
     private var disconnectErrorSnapshotTask: Task<Void, Never>?
+    /// The effective (UI-visible) disconnect error from the last state
+    /// derivation, so the log records only real error transitions.
+    private var lastDerivedDisconnectError: URLFilterError?
     /// A newer transition supersedes any in-flight `setEnabled` retry, so a
     /// pending enable cannot complete after a disable/removal or a later toggle.
     private var transitionGeneration = 0
@@ -162,13 +165,24 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
             loadSucceeded = false
         }
         if loadSucceeded {
+            let rawError = self.rawLastDisconnectError(from: await manager.lastDisconnectError)
+            let rawStatus = self.rawStatus(from: await manager.status)
+            let isEnabled = manager.isEnabled
             // Snapshot any pre-existing error so it is not surfaced as fresh.
-            if manager.isEnabled {
-                self.recordDisconnectErrorSnapshot(
-                    error: self.rawLastDisconnectError(from: await manager.lastDisconnectError),
-                    status: self.rawStatus(from: await manager.status)
-                )
+            if isEnabled {
+                self.recordDisconnectErrorSnapshot(error: rawError, status: rawStatus)
             }
+            // The just-recorded snapshot is what marks the error stale here.
+            let isStale = self.isStaleDisconnectError(
+                rawError: rawError,
+                rawStatus: rawStatus,
+                isEnabled: isEnabled
+            )
+            LogInfo(
+                "URLFilter startup disconnect error: "
+                    + "disconnectError=\(rawError.map(\.logName) ?? "none"), stale=\(isStale), "
+                    + "enabled=\(isEnabled), status=\(rawStatus)"
+            )
             let state = await self.makeState(from: manager)
             self.cachedState = state
             // A configuration removed in System Settings while the app was
@@ -687,13 +701,16 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
         // A real bring-up from disabled re-stages the current level and
         // Re-fetches its prefilter, so a pending level restart is fulfilled.
         let wasEnabled = manager.isEnabled
+        let rawError = self.rawLastDisconnectError(from: await manager.lastDisconnectError)
+        let rawStatus = self.rawStatus(from: await manager.status)
+        LogInfo(
+            "URLFilter setEnabled(\(enabled)) disconnect error at start: "
+                + "disconnectError=\(rawError.map(\.logName) ?? "none"), status=\(rawStatus)"
+        )
         // Snapshot any pre-existing error so the bring-up does not surface
         // It as a failure of this run; only errors after enable are fresh.
         if enabled {
-            self.recordDisconnectErrorSnapshot(
-                error: self.rawLastDisconnectError(from: await manager.lastDisconnectError),
-                status: self.rawStatus(from: await manager.status)
-            )
+            self.recordDisconnectErrorSnapshot(error: rawError, status: rawStatus)
         }
         if manager.pirServerURL.isNil {
             // A concurrent removal must not be reverted by recreating the config.
@@ -1092,21 +1109,35 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
         // The framework can re-emit the same status on every query.
         // Only real transitions are published, so observers do not spin.
         guard status != self.lastObservedStatus else { return }
+        let rawStatus = self.rawStatus(from: status)
         self.lastObservedStatus = status
-        LogInfo("URLFilter status changed: \(status)")
         // Any status change makes the old error attributable to the new run;
         // `.running` also clears it, so recurring failures stay visible.
-        if status == .running || self.disconnectErrorSnapshot?.status != self.rawStatus(from: status) {
+        if status == .running || self.disconnectErrorSnapshot?.status != rawStatus {
             self.clearDisconnectErrorSnapshot()
         }
-
+        let manager = NEURLFilterManager.shared
         if self.cachedState != nil {
             // Rebuild from the manager so status, enabled flag, and latest
             // `lastDisconnectError` reflect the transition, not a stale snapshot.
-            let manager = NEURLFilterManager.shared
             try? await manager.loadFromPreferences()
             self.cachedState = await self.makeState(from: manager)
         }
+        // Sample after the reload so the log describes the same manager state
+        // As the derivation it explains.
+        let rawError = self.rawLastDisconnectError(from: await manager.lastDisconnectError)
+        // The snapshot may survive the transition (same recorded status), so
+        // The same error stays stale; a cleared snapshot always yields fresh.
+        let isStale = self.isStaleDisconnectError(
+            rawError: rawError,
+            rawStatus: rawStatus,
+            isEnabled: manager.isEnabled
+        )
+        LogInfo(
+            "URLFilter status changed: \(rawStatus), "
+                + "disconnectError=\(rawError.map(\.logName) ?? "none"), "
+                + "stale=\(isStale), enabled=\(manager.isEnabled)"
+        )
 
         self.invalidDisableTask?.cancel()
         if status == .invalid {
@@ -1249,14 +1280,22 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
         let isEnabled = manager.isEnabled
         let serverURL = manager.pirServerURL
         let issuerURL = manager.pirPrivacyPassIssuerURL
-        // An error unchanged while the status stays the same is stale, not a
-        // New failure. Any status change makes it attributable to the new run.
-        let snapshot = self.disconnectErrorSnapshot
-        let isStaleError = isEnabled
-            && rawError != nil
-            && rawError == snapshot?.error
-            && rawStatus == snapshot?.status
+        let isStaleError = self.isStaleDisconnectError(
+            rawError: rawError,
+            rawStatus: rawStatus,
+            isEnabled: isEnabled
+        )
         let effectiveError = isStaleError ? nil : rawError
+        if effectiveError != self.lastDerivedDisconnectError {
+            LogInfo(
+                "URLFilter disconnect error changed: "
+                    + "\(self.lastDerivedDisconnectError.map(\.logName) ?? "none") -> "
+                    + "\(effectiveError.map(\.logName) ?? "none"), "
+                    + "rawError=\(rawError.map(\.logName) ?? "none"), stale=\(isStaleError), "
+                    + "status=\(rawStatus), enabled=\(isEnabled)"
+            )
+        }
+        self.lastDerivedDisconnectError = effectiveError
         return URLFilterState(
             enabled: isEnabled,
             status: rawStatus,
@@ -1282,6 +1321,19 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
         self.disconnectErrorSnapshot = nil
     }
 
+    /// Whether the raw error is still attributable to the previous run: an
+    /// enabled filter reporting the same error and status as the recorded
+    /// snapshot, which stays suppressed until the status changes.
+    private func isStaleDisconnectError(
+        rawError: URLFilterError?,
+        rawStatus: URLFilterRawStatus,
+        isEnabled: Bool
+    ) -> Bool {
+        guard isEnabled, let rawError else { return false }
+        let snapshot = self.disconnectErrorSnapshot
+        return rawError == snapshot?.error && rawStatus == snapshot?.status
+    }
+
     /// Clears the snapshot when the grace period passes without a status
     /// change, so a filter that never attempts bring-up still shows the reason.
     private func scheduleDisconnectErrorSnapshotExpiry() {
@@ -1294,11 +1346,15 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
     }
 
     private func expireDisconnectErrorSnapshot() async {
-        guard self.disconnectErrorSnapshot != nil else { return }
+        guard let snapshot = self.disconnectErrorSnapshot else { return }
         self.clearDisconnectErrorSnapshot()
         // The error is no longer stale: rebuild so it can surface.
         let manager = NEURLFilterManager.shared
         try? await manager.loadFromPreferences()
+        LogInfo(
+            "URLFilter stale disconnect error expired: "
+                + "disconnectError=\(snapshot.error.logName), status=\(snapshot.status)"
+        )
         self.cachedState = await self.makeState(from: manager)
         guard self.statePublishingSuspensions == 0 else { return }
         self.eventBus.post(event: .urlFilterStatusChanged, userInfo: nil)
