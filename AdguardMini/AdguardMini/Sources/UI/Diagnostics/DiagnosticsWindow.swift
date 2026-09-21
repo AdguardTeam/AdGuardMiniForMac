@@ -9,7 +9,6 @@
 
 import AppKit
 import Foundation
-import NetworkExtension
 import SwiftUI
 
 // MARK: - DiagnosticsWindowPresenter
@@ -57,10 +56,7 @@ private struct DiagnosticsView: View {
 
     @State private var stateText = ""
     @State private var stateError = ""
-    @State private var url = ""
-    @State private var verdictText = ""
     @State private var isStateLoading = false
-    @State private var isVerdictLoading = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: Constants.spacing) {
@@ -82,22 +78,6 @@ private struct DiagnosticsView: View {
                 .disabled(self.isStateLoading)
                 Spacer()
             }
-
-            Divider()
-
-            Text("System Wide Protection verdict").font(.headline)
-            TextField("Enter a URL", text: self.$url)
-                .onSubmit {
-                    Task { await self.getVerdict() }
-                }
-            HStack {
-                Button("Get verdict") {
-                    Task { await self.getVerdict() }
-                }
-                .disabled(self.isVerdictLoading)
-                Spacer()
-            }
-            Text(self.verdictText)
         }
         .padding(Constants.padding)
         .frame(minWidth: Constants.minWidth, minHeight: Constants.minHeight)
@@ -113,44 +93,6 @@ private struct DiagnosticsView: View {
         self.stateError = ""
         defer { self.isStateLoading = false }
         self.stateText = await self.support.getState()
-    }
-
-    /// Evaluates the entered URL with the local URL filter.
-    private func getVerdict() async {
-        guard !self.isVerdictLoading else { return }
-        self.isVerdictLoading = true
-        defer { self.isVerdictLoading = false }
-        let trimmedURL = self.url.trimmingCharacters(in: .whitespacesAndNewlines)
-        let inputURL = URL(string: trimmedURL)
-        let normalizedURL: String
-        normalizedURL = if let scheme = inputURL?.scheme, !scheme.isEmpty {
-            trimmedURL
-        } else {
-            "https://\(trimmedURL)"
-        }
-        guard let url = URL(string: normalizedURL),
-              let scheme = url.scheme?.lowercased(),
-              scheme == "http" || scheme == "https",
-              url.host != nil else {
-            self.verdictText = "Error: invalid URL"
-            return
-        }
-        guard #available(macOS 26, *) else {
-            self.verdictText = "Error: URL filter is unavailable on this macOS version"
-            return
-        }
-
-        let verdict = await NEURLFilter.verdict(for: url)
-        switch verdict {
-        case .deny:
-            self.verdictText = "Blocked"
-        case .allow:
-            self.verdictText = "Allowed"
-        case .unknown:
-            self.verdictText = "Error: unknown verdict"
-        @unknown default:
-            self.verdictText = "Error: unknown verdict"
-        }
     }
 
     private enum Constants {
