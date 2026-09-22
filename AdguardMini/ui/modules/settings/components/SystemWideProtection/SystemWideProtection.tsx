@@ -33,7 +33,7 @@ function SystemWideProtectionComponent() {
     }, [advancedBlocking, urlFilterNew]);
 
     return (
-        <Layout navigation={{ router, route: RouteName.safari_protection, title: translate('menu.advanced.blocking.title') }} type="settingsPage">
+        <Layout navigation={{ router, route: RouteName.advanced_blocking, title: translate('menu.advanced.blocking.title') }} type="settingsPage">
             <Title
                 setShowNotSupportedModal={setShowNotSupportedModal}
                 setShowRemoveFilterModal={setShowRemoveFilterModal}
