@@ -16,7 +16,7 @@ extension PopupCell.Configuration {
     static func upsell(
         content: Content,
         leftIconColor: StatefulColor = Palette.Icon.productIcon,
-        rightIconColor: StatefulColor = Palette.Icon.grayIcon,
+        rightIconColor: StatefulColor = Palette.PrimaryButton.font,
         isEnabled: Bool = true
     ) -> Self {
         .init(

@@ -18,7 +18,7 @@ private enum Constants {
             enabledColor: .clear,
             disabledColor: .clear,
             pressedColor: Palette.fillsButtonsSecondaryButtonPressed,
-            hoveredColor: Palette.fillsButtonsSecondaryButtonHovered
+            hoveredColor: Palette.fillsButtonsSecondaryButtonHovered.opacity(Palette.hoverOpacity)
         )
     }
 }

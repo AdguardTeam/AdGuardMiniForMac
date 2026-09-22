@@ -11,6 +11,9 @@ import SwiftUI
 import ColorPalette
 
 extension Palette {
+    /// Opacity of hover highlights, so the system popover material shows through.
+    static let hoverOpacity: Double = 0.5
+
     enum PrimaryButton {
         enum Main {
             static let background = StatefulColor(
@@ -35,11 +38,14 @@ extension Palette {
         }
 
         enum Footer {
+            // Translucent so the system popover material shows through.
+            private static let tintOpacity: Double = 0.5
+
             static let background = StatefulColor(
-                enabledColor: Palette.fillsBackgroundsFooterDefault,
-                disabledColor: Palette.fillsBackgroundsFooterDefault,
-                pressedColor: Palette.fillsBackgroundsFooterDefault,
-                hoveredColor: Palette.fillsBackgroundsFooterDefault
+                enabledColor: Palette.fillsBackgroundsFooterDefault.opacity(tintOpacity),
+                disabledColor: Palette.fillsBackgroundsFooterDefault.opacity(tintOpacity),
+                pressedColor: Palette.fillsBackgroundsFooterDefault.opacity(tintOpacity),
+                hoveredColor: Palette.fillsBackgroundsFooterDefault.opacity(Palette.hoverOpacity)
             )
 
             static let font = PrimaryButton.font
