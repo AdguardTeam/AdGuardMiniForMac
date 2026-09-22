@@ -21,7 +21,12 @@ enum RefreshPolicy {
     /// Per-URL protection status is already computed locally from `pausedUrls`
     /// in `handleTabContextUpdated`; XPC refresh here is a consistency check.
     static func onToolbarValidation(state: Store.State) -> [Store.Effect] {
-        [.refreshAppState(), .refreshPrereqs(markStale: false, tabUrl: state.tabStats.url)]
+        // Skip the prereqs read while a protection toggle is in flight.
+        // Reading now can observe the allow list before the write commits.
+        if state.isProtectionToggleInFlight {
+            return [.refreshAppState()]
+        }
+        return [.refreshAppState(), .refreshPrereqs(markStale: false, tabUrl: state.tabStats.url)]
     }
 
     /// Main app just started — full refresh, state may be completely stale.

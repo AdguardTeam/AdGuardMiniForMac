@@ -443,8 +443,10 @@ private extension PopupReducer {
         // Sync per-URL filtering state from the main app.
         // Falls back to tabStats.url when tabContext.url is nil.
         // Reason: validateToolbarItem can fire before page.properties().url resolves.
+        // While a protection toggle is in flight, its optimistic state is authoritative.
+        // Stale server responses must not override it, or the switch oscillates.
         var filteringChanged = false
-        if !tabUrl.isEmpty {
+        if !state.isProtectionToggleInFlight, !tabUrl.isEmpty {
             let wasPaused = next.pausedUrls.contains(tabUrl)
             if !isFilteringEnabled {
                 if !wasPaused {

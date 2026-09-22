@@ -22,7 +22,7 @@ let package = Package(
             dependencies: [.product(name: "ColorPalette", package: "mac.sp-color-palette")],
             path: "Sources",
             resources: [
-                .copy("AGSEDesignSystem/Resources/Assets.xcassets")
+                .process("AGSEDesignSystem/Resources/Assets.xcassets")
             ],
             swiftSettings: [
                 .unsafeFlags([

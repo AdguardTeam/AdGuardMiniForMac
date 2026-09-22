@@ -209,8 +209,10 @@ extension SafariApiProvider: MainAppApi {
 
     func getCurrentFilteringState(withUrl url: String, reply: @escaping (EBACurrentFilteringState?, Error?) -> Void) {
         Task {
+            let host = URL(string: url)?.host ?? "(invalid url)"
             let filteringState = EBACurrentFilteringState()
             filteringState.isFilteringEnabled = await !self.checkIsUrlInAllowList(url: url)
+            LogDebug("Filtering state for \(host): \(filteringState.isFilteringEnabled)")
             reply(filteringState, nil)
         }
     }
@@ -262,7 +264,7 @@ extension SafariApiProvider: MainAppApi {
             var commonError: Error?
 
             let hostToUpdate = URL(string: url)?.host ?? ""
-            LogInfo("Set filtering status \(isEnabled) for \(!hostToUpdate.isEmpty ? hostToUpdate : "(invalid url)")")
+            LogInfo("Set filtering status \(isEnabled)")
             let result = if isEnabled {
                 await self.enableFiltering(for: hostToUpdate)
             } else {
@@ -272,6 +274,7 @@ extension SafariApiProvider: MainAppApi {
 
             if !result {
                 commonError = ExtensionSafariApiProtocolError.cantSetFilteringStatus
+                LogWarn("Set filtering status \(isEnabled) failed")
             }
             reply(Date().timeIntervalSince1970, commonError)
         }

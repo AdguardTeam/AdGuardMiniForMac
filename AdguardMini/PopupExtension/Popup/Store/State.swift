@@ -53,3 +53,11 @@ extension Store {
         )
     }
 }
+
+extension Store.State {
+    /// Whether the per-URL protection toggle request is still in flight,
+    /// whose optimistic state is authoritative until the write commits.
+    var isProtectionToggleInFlight: Bool {
+        self.inFlight == .enabling || self.inFlight == .disabling
+    }
+}

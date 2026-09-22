@@ -598,6 +598,18 @@ final class PopupReducerTests: XCTestCase {
         )
     }
 
+    func testToolbarValidationRequestedSkipsPrereqsRefreshWhileProtectionToggleInFlight() {
+        var stats = TabStats()
+        stats.url = Constants.siteAURL.absoluteString
+        let initial = self.state(tabStats: stats, inFlight: .enabling)
+        let (next, effects) = PopupReducer.reduce(
+            state: initial,
+            action: .toolbarValidationRequested(window: Constants.anyWindowToken)
+        )
+        XCTAssertEqual(next, initial)
+        XCTAssertEqual(effects, [.refreshAppState()])
+    }
+
     // MARK: Error routing on .domain
 
     func testSetProtectionStatusFailureOnDomainLayoutResolvesToSomethingWentWrong() {
@@ -923,6 +935,80 @@ final class PopupReducerTests: XCTestCase {
         )
         XCTAssertFalse(next.pausedUrls.contains(url.absoluteString), "Stale entry must be removed")
         XCTAssertTrue(next.protectionEnabledForCurrentUrl, "Toggle must flip back to enabled")
+        XCTAssertEqual(effects, [.requestToolbarUpdate])
+    }
+
+    func testPrereqsRefreshedKeepsOptimisticStateWhileDisablingInFlight() {
+        // A stale "enabled" read arrives while the disabling write is in flight.
+        // It must not flip the switch back, or the popup oscillates.
+        let url = Constants.siteAURL
+        let initial = self.state(
+            protectionEnabledForCurrentUrl: false,
+            tabContext: Store.TabContext(
+                windowToken: nil, url: url, domain: url.host!, isSystemPage: false
+            ),
+            pausedUrls: [url.absoluteString],
+            inFlight: .disabling
+        )
+        let (next, effects) = PopupReducer.reduce(
+            state: initial,
+            action: .prereqsRefreshed(
+                onboardingCompleted: true,
+                tabUrl: url.absoluteString,
+                isFilteringEnabled: true
+            )
+        )
+        XCTAssertTrue(next.pausedUrls.contains(url.absoluteString), "Paused URL must stay paused")
+        XCTAssertFalse(next.protectionEnabledForCurrentUrl, "Toggle must not flip back to enabled")
+        XCTAssertTrue(effects.isEmpty)
+    }
+
+    func testPrereqsRefreshedKeepsOptimisticStateWhileEnablingInFlight() {
+        // A stale "disabled" read arrives while the enabling write is in flight.
+        // It must not flip the switch back, or the popup oscillates.
+        let url = Constants.siteAURL
+        let initial = self.state(
+            protectionEnabledForCurrentUrl: true,
+            tabContext: Store.TabContext(
+                windowToken: nil, url: url, domain: url.host!, isSystemPage: false
+            ),
+            inFlight: .enabling
+        )
+        let (next, effects) = PopupReducer.reduce(
+            state: initial,
+            action: .prereqsRefreshed(
+                onboardingCompleted: true,
+                tabUrl: url.absoluteString,
+                isFilteringEnabled: false
+            )
+        )
+        XCTAssertFalse(next.pausedUrls.contains(url.absoluteString), "URL must not become paused")
+        XCTAssertTrue(next.protectionEnabledForCurrentUrl, "Toggle must stay enabled")
+        XCTAssertTrue(effects.isEmpty)
+    }
+
+    func testPrereqsRefreshedStillUpdatesOnboardingWhileToggleInFlight() {
+        // The per-URL sync is skipped, but onboarding must still be applied.
+        let url = Constants.siteAURL
+        let initial = self.state(
+            onboardingStatus: .unknown,
+            protectionEnabledForCurrentUrl: false,
+            tabContext: Store.TabContext(
+                windowToken: nil, url: url, domain: url.host!, isSystemPage: false
+            ),
+            pausedUrls: [url.absoluteString],
+            inFlight: .disabling
+        )
+        let (next, effects) = PopupReducer.reduce(
+            state: initial,
+            action: .prereqsRefreshed(
+                onboardingCompleted: true,
+                tabUrl: url.absoluteString,
+                isFilteringEnabled: true
+            )
+        )
+        XCTAssertEqual(next.onboardingStatus, .completed)
+        XCTAssertTrue(next.pausedUrls.contains(url.absoluteString), "Per-URL sync must be skipped")
         XCTAssertEqual(effects, [.requestToolbarUpdate])
     }
 
