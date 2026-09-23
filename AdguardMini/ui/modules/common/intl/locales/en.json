@@ -383,7 +383,7 @@
     "advanced.blocking.system.wide.remove.filter": "Remove URL filter",
     "advanced.blocking.system.wide.remove.filter.modal.title": "Remove URL filter?",
     "advanced.blocking.system.wide.remove.filter.modal.desc": "AdGuard’s URL filter will be removed from your device’s settings. System-wide protection will be disabled",
-    "advanced.blocking.system.wide.error": "Couldn’t enable System‑wide protection. Check your Internet connection or try again later",
+    "advanced.blocking.system.wide.error": "Couldn’t enable System‑wide protection. Check your Internet connection or restart your Mac",
     "settings.app": "App",
     "settings.export.settings": "Export settings",
     "settings.import.settings": "Import settings",
