@@ -124,8 +124,9 @@ jobs:
           PUBLIC_GITHUB_REPO="AdguardTeam/AdGuardMiniForMac"
           SENTRY_PROJECT="adguard-mac-mini"
           APP_NAME="AdGuard Mini"
-          ZIP_NAME="AdGuardMini-${VERSION}.${BUILD_NUMBER}.zip"
-          ZIP_STABLE_NAME="AdGuardMini.zip"
+          # `.app.zip` is required by the mac-mini-* deployer module file patterns.
+          ZIP_NAME="AdGuardMini-${VERSION}.${BUILD_NUMBER}.app.zip"
+          ZIP_STABLE_NAME="AdGuardMini.app.zip"
           APPCAST_NAME="adguard-mini-appcast.xml"
           RELEASE_NOTES_URL="https://link.adtidy.info/forward.html?app=mini_mac&v=&action=mac_release_notes&from=updater&channel=${CHANNEL}"
           DOWNLOAD_URL="${STATIC_URL}/${CHANNEL}/${ZIP_NAME}"
