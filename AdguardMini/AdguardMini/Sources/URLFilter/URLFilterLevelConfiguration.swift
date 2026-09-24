@@ -15,29 +15,13 @@ import AML
 private enum Constants {
     // MARK: PIR endpoints
 
-    static let defaultPIRServerURL: URL = {
-        #if DEBUG
-        return URL(string: "https://pirgateway.service.agrd.dev")!
-        #else
-        // TODO: AG-57473 - Restore prod host below.
-        // Commented-out code.
-        // swiftlint:disable:next comments_capitalized_ignore_possible_code
-        // return URL(string: "https://pirgateway.service.agrd.dev")!
-        return URL(string: "https://pir-service.adtidy.org")!
-        #endif
-    }()
+    /// PIR server URL; the `AG_PIR_SERVER_URL` build setting, also expanded by
+    /// `Info.plist` under `NSPIRConfiguration`.
+    static let defaultPIRServerURL: URL = URL(string: BuildConfig.AG_PIR_SERVER_URL)!
 
-    static let defaultPrivacyPassIssuerURL: URL = {
-        #if DEBUG
-        return URL(string: "https://pirgateway.service.agrd.dev")!
-        #else
-        // TODO: AG-57473 - Restore prod issuer below.
-        // Commented-out code.
-        // swiftlint:disable:next comments_capitalized_ignore_possible_code
-        // return URL(string: "https://pirgateway.service.agrd.dev")!
-        return URL(string: "https://pir-issuer.adtidy.org")!
-        #endif
-    }()
+    /// Privacy Pass issuer URL; the `AG_PIR_ISSUER_URL` build setting, also
+    /// expanded by `Info.plist` under `NSPIRConfiguration`.
+    static let defaultPrivacyPassIssuerURL: URL = URL(string: BuildConfig.AG_PIR_ISSUER_URL)!
 
     /// Bloom parameters URL for the given protection level.
     static func bloomParamsURL(for level: URLFilterProtectionLevel) -> URL {

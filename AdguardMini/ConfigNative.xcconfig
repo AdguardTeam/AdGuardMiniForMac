@@ -19,5 +19,8 @@ AG_ALTERNATE_UPDATE_DOMAIN = static.adtidy.info
 
 AG_HELPER_REQ = anchor apple generic and certificate leaf[subject.OU] = "$(AG_TEAM)"
 
+AG_PIR_SERVER_URL[config=Debug-Standalone] = https:$(SLASH)/pirgateway.service.agrd.dev
+AG_PIR_ISSUER_URL[config=Debug-Standalone] = https:$(SLASH)/pirgateway.service.agrd.dev
+
 GCC_PREPROCESSOR_DEFINITIONS[config=Debug-Standalone] = $(ADGUARD_GCC_PREPROCESSOR_DEFINITIONS) DEBUG
 GCC_PREPROCESSOR_DEFINITIONS[config=Release] = $(ADGUARD_GCC_PREPROCESSOR_DEFINITIONS) RELEASE NDEBUG
