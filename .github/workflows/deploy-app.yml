@@ -259,6 +259,7 @@ jobs:
       - ephemeral-limit-memory-8192
       - ephemeral-limit-cpu-4
       - ephemeral-limit-disk-gb-20
+      - ephemeral-job-key-${{ github.run_id }}-${{ github.job }}-${{ strategy.job-index || 0 }}
     outputs:
       ed-signature: ${{ steps.sparkle-sign.outputs.ed-signature }}
       file-length: ${{ steps.sparkle-sign.outputs.file-length }}

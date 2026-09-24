@@ -112,7 +112,8 @@ jobs:
           "${{ needs.resolve-runner.outputs.image }}",
           "ephemeral-limit-memory-7168",
           "ephemeral-limit-cpu-4",
-          "ephemeral-limit-disk-gb-20"
+          "ephemeral-limit-disk-gb-20",
+          "ephemeral-job-key-${{ github.run_id }}-${{ github.job }}-${{ strategy.job-index || 0 }}"
         ]
       test-command: >-
         set -o pipefail &&
