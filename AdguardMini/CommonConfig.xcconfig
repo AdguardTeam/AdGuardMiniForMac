@@ -115,6 +115,14 @@ SENS_BACKEND_REQUEST_KEY = $(CONFIG_BACKEND_REQUEST_KEY)
 
 SENS_SENTRY_DSN = $(CONFIG_SENTRY_DSN_MAC_MINI)
 
+//============ URL Filter (PIR) =================
+
+// Prod endpoints; Debug configurations override them with the dev gateway.
+// The same settings are expanded by `Info.plist` under `NSPIRConfiguration`.
+// macOS 27.3+ rejects a runtime configuration that differs from it.
+AG_PIR_SERVER_URL = https:$(SLASH)/pir-service.adtidy.org
+AG_PIR_ISSUER_URL = https:$(SLASH)/pir-issuer.adtidy.org
+
 //================== Resources ==================
 
 AG_DEFAULT_FILTERSDB_DIRNAME = filtersdb

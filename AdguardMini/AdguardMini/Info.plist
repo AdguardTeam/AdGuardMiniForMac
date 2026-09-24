@@ -29,6 +29,13 @@
 	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSPIRConfiguration</key>
+	<dict>
+		<key>PIRServerURL</key>
+		<string>$(AG_PIR_SERVER_URL)</string>
+		<key>PrivacyPassIssuerURL</key>
+		<string>$(AG_PIR_ISSUER_URL)</string>
+	</dict>
 	<key>SUEnableInstallerLauncherService</key>
 	<true/>
 	<key>SUFeedURL</key>

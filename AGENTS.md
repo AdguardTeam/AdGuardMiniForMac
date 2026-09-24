@@ -310,7 +310,8 @@ release checklist, see `docs/production-build-and-deploy.md`.
 
 You MUST follow the following rules for EVERY task that you perform:
 
-- PR title format: `AG-<task number>: <commit title in lowercase English>`.
+- PR title format: `AG-<task number> <summary>`, no colon, summary starts with
+  a capital letter (e.g. `AG-59492 Add static PIR service URLs to Info.plist`).
 
 - Before analyzing any TypeScript files, check custom type definitions at
   `AdguardMini/ui/@types`.

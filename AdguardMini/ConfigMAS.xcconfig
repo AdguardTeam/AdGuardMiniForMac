@@ -17,6 +17,9 @@ AG_HELPER_REQ[config=MAS] = anchor apple generic and ($(AGP_TESTFLIGHT_CERT_REQ)
 
 AG_HELPER_REQ[config=Debug-MAS] = anchor apple generic and certificate leaf[subject.OU] = "$(AG_TEAM)"
 
+AG_PIR_SERVER_URL[config=Debug-MAS] = https:$(SLASH)/pirgateway.service.agrd.dev
+AG_PIR_ISSUER_URL[config=Debug-MAS] = https:$(SLASH)/pirgateway.service.agrd.dev
+
 ADGUARD_DISTRIBUTION_TYPE = MAS
 GCC_PREPROCESSOR_DEFINITIONS[config=MAS] = $(ADGUARD_GCC_PREPROCESSOR_DEFINITIONS) RELEASE NDEBUG
 

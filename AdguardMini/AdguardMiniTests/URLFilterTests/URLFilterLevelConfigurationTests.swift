@@ -48,6 +48,23 @@ final class URLFilterLevelConfigurationTests: XCTestCase {
         }
     }
 
+    func testCompiledDefaultLevelsUseBuildConfigEndpoints() {
+        let levels = URLFilterLevelConfiguration.compiledDefaultLevels
+
+        for level in URLFilterProtectionLevel.allCases {
+            XCTAssertEqual(
+                levels[level]?.pirServerURL.absoluteString,
+                BuildConfig.AG_PIR_SERVER_URL,
+                "The PIR server URL must come from the AG_PIR_SERVER_URL build setting"
+            )
+            XCTAssertEqual(
+                levels[level]?.pirPrivacyPassIssuerURL?.absoluteString,
+                BuildConfig.AG_PIR_ISSUER_URL,
+                "The issuer URL must come from the AG_PIR_ISSUER_URL build setting"
+            )
+        }
+    }
+
     func testBloomParamsURLIsDistinctPerLevel() {
         let levels = URLFilterLevelConfiguration.compiledDefaultLevels
         let expected: [URLFilterProtectionLevel: String] = [
@@ -300,5 +317,37 @@ extension URLFilterLevelConfigurationTests {
         let overrides = try? JSONDecoder().decode(URLFilterLevelOverrides.self, from: Data(json.utf8))
 
         XCTAssertNil(overrides, "Malformed level must abort the whole override decode")
+    }
+}
+
+// MARK: - Info.plist wiring
+
+extension URLFilterLevelConfigurationTests {
+    /// macOS 27.3+ rejects a runtime configuration that differs from the
+    /// `Info.plist` values, so the plist must expand the same build settings
+    /// the runtime reads through `BuildConfig`.
+    func testAppInfoPlistExpandsTheBuildConfigEndpoints() throws {
+        let repoRoot = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()  // URLFilterTests
+            .deletingLastPathComponent()  // AdguardMiniTests
+            .deletingLastPathComponent()  // AdguardMini
+            .deletingLastPathComponent()  // repo root
+        let plistURL = repoRoot
+            .appendingPathComponent("AdguardMini")
+            .appendingPathComponent("AdguardMini")
+            .appendingPathComponent("Info.plist")
+
+        let data = try Data(contentsOf: plistURL)
+        let plist = try XCTUnwrap(
+            try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
+            "Info.plist at \(plistURL.path) is not a dictionary"
+        )
+        let configuration = try XCTUnwrap(
+            plist["NSPIRConfiguration"] as? [String: Any],
+            "Info.plist must declare a top-level NSPIRConfiguration dictionary"
+        )
+
+        XCTAssertEqual(configuration["PIRServerURL"] as? String, "$(AG_PIR_SERVER_URL)")
+        XCTAssertEqual(configuration["PrivacyPassIssuerURL"] as? String, "$(AG_PIR_ISSUER_URL)")
     }
 }
