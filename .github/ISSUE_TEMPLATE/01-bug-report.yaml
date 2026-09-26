@@ -71,8 +71,8 @@ body:
         - AdGuard Tracking Protection filter
         - AdGuard Mail Tracking Protection filter
         - EasyPrivacy
-        - Peter Lowe’s Blocklist
-        - Fanboy’s Anti-Facebook List
+        - Peter Lowe's Blocklist
+        - Fanboy's Anti-Facebook List
         - uBlock Origin – Block Outsider Intrusion into LAN
     validations:
       required: false
@@ -84,7 +84,7 @@ body:
       multiple: true
       options:
         - AdGuard Social Media filter
-        - Fanboy’s Social Blocking List
+        - Fanboy's Social Blocking List
     validations:
       required: false
 
@@ -100,10 +100,10 @@ body:
         - AdGuard Other Annoyances filter
         - AdGuard Widgets filter
         - Adblock Warning Removal List
-        - Fanboy’s Annoyances
+        - Fanboy's Annoyances
         - Web Annoyances Ultralist
         - EasyList Cookie List
-        - Dandelion Sprout’s Annoyances List
+        - Dandelion Sprout's Annoyances List
     validations:
       required: false
 
@@ -117,7 +117,7 @@ body:
         - Phishing URL Blocklist
         - Scam Blocklist by DurableNapkin
         - uBlock Origin – Badware risks
-        - Dandelion Sprout’s Anti-Malware List
+        - Dandelion Sprout's Anti-Malware List
     validations:
       required: false
 
@@ -129,7 +129,7 @@ body:
       options:
         - Filter unblocking search ads and self-promotion
         - AdGuard Experimental filter
-        - Fanboy’s Anti-thirdparty Fonts
+        - Fanboy's Anti-thirdparty Fonts
     validations:
       required: false
 
@@ -153,9 +153,9 @@ body:
         - Adblock List for Finland
         - AdBlockID
         - Bulgarian list
-        - CJX’s Annoyances List
-        - Dandelion Sprout’s Nordic Filters
-        - Dandelion Sprout’s Serbo-Croatian List
+        - CJX's Annoyances List
+        - Dandelion Sprout's Nordic Filters
+        - Dandelion Sprout's Serbo-Croatian List
         - EasyList China
         - EasyList Czech and Slovak
         - EasyList Dutch
@@ -168,7 +168,7 @@ body:
         - EasyList Spanish
         - EasyList Thailand
         - Estonian List
-        - Frellwit’s Swedish Filter
+        - Frellwit's Swedish Filter
         - Greek AdBlock Filter
         - Hungarian filter
         - Icelandic ABP List
