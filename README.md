@@ -102,7 +102,7 @@ Here is a [dedicated page](https://adguard.com/contribute.html) for those who ar
 <a id="beta-tester"></a>
 ### How to become a beta tester
 
-You can submit an application to participate in AdGuard Mini for Mac beta-testing program. All necessary information on this topic can be found on the [dedicated page](https://adguard.com/beta.html).
+You can use TestFlight to participate in the AdGuard Mini for Mac beta-testing program. All necessary information on this topic can be found on the [dedicated page](https://adguard.com/beta.html?platform=mini_mac).
 
 <a id="developers"></a>
 ## Technical documentation for developers
