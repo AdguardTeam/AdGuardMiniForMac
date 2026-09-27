@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "フィッシングや詐欺、悪意あるウェブサイトのブロックに役立ちます";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard セキュリティ";

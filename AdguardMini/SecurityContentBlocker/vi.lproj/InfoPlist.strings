@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "Giúp chặn các trang web độc hại, lừa đảo và lừa đảo";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "Bảo mật";

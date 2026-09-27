@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Seznamy filtrů sociálních médií pro pravidla blokování";
+"NSHumanReadableDescription" = "Pomáhá blokovat tlačítka, widgety, skripty a ikony sociálních sítí";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard – Sociální";

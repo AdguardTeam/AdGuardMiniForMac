@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "מכיל כללי חסימה של מסננים מותאמים אישית";
+"NSHumanReadableDescription" = "מאפשר ל-AdGuard Mini להחיל את המסננים המותאמים אישית שלך";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard מותאם אישית";

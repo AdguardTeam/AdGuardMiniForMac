@@ -22,11 +22,35 @@
 /* App Menu - "Quit AdGuard Mini" title. */
 "app_menu_quit_title" = "AdGuard Mini beenden";
 
+/* App Menu - "Edit" title. */
+"app_menu_edit_title" = "Bearbeiten";
+
+/* App Menu - "Undo" title. */
+"app_menu_undo_title" = "Rückgängig";
+
+/* App Menu - "Redo" title. */
+"app_menu_redo_title" = "Wiederholen";
+
+/* App Menu - "Cut" title. */
+"app_menu_cut_title" = "Ausschneiden";
+
+/* App Menu - "Copy" title. */
+"app_menu_copy_title" = "Kopieren";
+
+/* App Menu - "Paste" title. */
+"app_menu_paste_title" = "Einfügen";
+
+/* App Menu - "Delete" title. */
+"app_menu_delete_title" = "Löschen";
+
+/* App Menu - "Select All" title. */
+"app_menu_select_all_title" = "Alle auswählen";
+
 /* Terminating app Alert - Message text "Quit AdGuard Mini?" */
 "terminate_app_alert_message_text" = "AdGuard Mini beenden?";
 
 /* Terminating app Alert - Informative text */
-"terminate_app_alert_informative_text" = "Um das Filtern zu verwalten und automatisch nach Filter-Updates zu suchen, lassen Sie AdGuard Mini im Hintergrund laufen";
+"terminate_app_alert_informative_text" = "Damit AdGuard Mini die Filterung verwalten und automatisch nach Filter-Updates suchen kann, erlaube der App, im Hintergrund zu laufen";
 
 /* Terminating app Alert - Button title "Run in background" */
 "terminate_app_alert_button_title_run_in_background" = "Im Hintergrund ausführen";
@@ -53,7 +77,27 @@
 "restarting_request_message_title" = "AdGuard Mini neu starten";
 
 /* Request user about restarting AdGuard Mini */
-"restarting_request_message_text" = "Die Einstellungen wurden zurückgesetzt. Bitte starten Sie AdGuard Mini neu, um seine Funktionalität wiederherzustellen";
+"restarting_request_message_text" = "Die Einstellungen wurden zurückgesetzt. Starte AdGuard Mini neu, um die Funktionen wiederherzustellen";
+
+/* WebView failure alert - "Report issue" button title */
+"report_issue_button" = "Problem melden";
+
+/* WebView failure alert - Title */
+"webview_load_failure_message_title" = "Oberfläche kann nicht geladen werden";
+
+/* WebView failure alert - Informative text */
+"webview_load_failure_message_text" = "Etwas ist beim Laden des AdGuard Mini-Fensters schiefgelaufen. Du kannst die App neu starten oder den Fehler melden";
+
+/* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
+"webui_integrity_failure_message_title" = "AdGuard Mini wurde extern geändert";
+
+/* WebUI integrity Alert - Informative text */
+"webui_integrity_failure_message_text" = "Die App-Dateien wurden nach der Installation verändert. Installiere AdGuard Mini neu, um die Funktionalität wiederherzustellen";
+/* RPC recurring-timeout alert - Title */
+"rpc_timeout_message_title" = "AdGuard Mini reagiert nicht";
+
+/* RPC recurring-timeout alert - Informative text */
+"rpc_timeout_message_text" = "Die Verbindung zwischen der App und der Benutzeroberfläche hat mehrmals nicht rechtzeitig geantwortet. Starte die App neu oder melde das Problem";
 
 /* Title on Close button in error message */
 "close_button" = "Schließen";
@@ -71,4 +115,16 @@
 "error_running_app" = "AdGuard Mini in den Ordner „Programme“ verschieben";
 
 /* Notify the user that the application should be moved to the Applications folder. */
-"error_running_app_message" = "AdGuard Mini muss sich im Ordner „Programme“ befinden, um ausgeführt zu werden.\nBitte verschieben Sie es dorthin und versuchen Sie es erneut";
+"error_running_app_message" = "Damit AdGuard Mini läuft, muss sich die App im Programme-Ordner befinden.\nBitte verschieben und erneut versuchen";
+
+/* User rules editor window title. */
+"user_rules_editor_title" = "Benutzerregel-Editor";
+
+/* VoiceOver name of the menu bar tray window. */
+"window_accessibility_title_tray" = "AdGuard Mini Statusmenü";
+
+/* VoiceOver name of the settings window. */
+"window_accessibility_title_settings" = "Einstellungen von AdGuard Mini";
+
+/* VoiceOver name of the onboarding window. */
+"window_accessibility_title_onboarding" = "Einführung in AdGuard Mini";

@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Umożliwia tworzenie własnych reguł filtrowania.";
+"NSHumanReadableDescription" = "Pozwala AdGuard Mini zastosować Twoje własne filtry";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Własne wtyczki";

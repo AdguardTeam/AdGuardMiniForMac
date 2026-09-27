@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "Pomaga blokirati sledilce in spletno analitiko";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Zasebnost";

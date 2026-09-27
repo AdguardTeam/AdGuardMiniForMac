@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Innehåller Anpassadsfilters blockeringsregler";
+"NSHumanReadableDescription" = "Låter AdGuard Mini tillämpa dina anpassade filter";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Anpassad";

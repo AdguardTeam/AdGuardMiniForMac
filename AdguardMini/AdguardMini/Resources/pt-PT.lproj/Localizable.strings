@@ -22,6 +22,30 @@
 /* App Menu - "Quit AdGuard Mini" title. */
 "app_menu_quit_title" = "Sair do AdGuard Mini";
 
+/* App Menu - "Edit" title. */
+"app_menu_edit_title" = "Editar";
+
+/* App Menu - "Undo" title. */
+"app_menu_undo_title" = "Anular";
+
+/* App Menu - "Redo" title. */
+"app_menu_redo_title" = "Refazer";
+
+/* App Menu - "Cut" title. */
+"app_menu_cut_title" = "Cortar";
+
+/* App Menu - "Copy" title. */
+"app_menu_copy_title" = "Copiar";
+
+/* App Menu - "Paste" title. */
+"app_menu_paste_title" = "Colar";
+
+/* App Menu - "Delete" title. */
+"app_menu_delete_title" = "Apagar";
+
+/* App Menu - "Select All" title. */
+"app_menu_select_all_title" = "Selecionar todos";
+
 /* Terminating app Alert - Message text "Quit AdGuard Mini?" */
 "terminate_app_alert_message_text" = "Sair do AdGuard Mini?";
 
@@ -58,6 +82,23 @@
 /* WebView failure alert - "Report issue" button title */
 "report_issue_button" = "Relatar problema";
 
+/* WebView failure alert - Title */
+"webview_load_failure_message_title" = "O AdGuard Mini não consegue carregar sua interface";
+
+/* WebView failure alert - Informative text */
+"webview_load_failure_message_text" = "Algo deu errado ao carregar a janela do AdGuard Mini. Você pode reiniciar o aplicativo ou relatar o problema.";
+
+/* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
+"webui_integrity_failure_message_title" = "O AdGuard Mini foi alterado externamente";
+
+/* WebUI integrity Alert - Informative text */
+"webui_integrity_failure_message_text" = "Os arquivos do aplicativo foram modificados após a instalação. Reinstale o AdGuard Mini para restaurar sua funcionalidade.";
+/* RPC recurring-timeout alert - Title */
+"rpc_timeout_message_title" = "O AdGuard Mini não está respondendo";
+
+/* RPC recurring-timeout alert - Informative text */
+"rpc_timeout_message_text" = "A comunicação entre o app e sua interface expirou repetidamente. Você pode reiniciar o app ou relatar o problema.";
+
 /* Title on Close button in error message */
 "close_button" = "Fechar";
 
@@ -75,3 +116,15 @@
 
 /* Notify the user that the application should be moved to the Applications folder. */
 "error_running_app_message" = "O AdGuard Mini precisa estar na pasta Aplicativos para ser executado.\nPor favor, mova-o para lá e tente novamente";
+
+/* User rules editor window title. */
+"user_rules_editor_title" = "Editor de regras do utilizador";
+
+/* VoiceOver name of the menu bar tray window. */
+"window_accessibility_title_tray" = "Bandeja do AdGuard Mini";
+
+/* VoiceOver name of the settings window. */
+"window_accessibility_title_settings" = "Configurações do AdGuard Mini";
+
+/* VoiceOver name of the onboarding window. */
+"window_accessibility_title_onboarding" = "Introdução ao AdGuard Mini";

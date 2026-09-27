@@ -5,7 +5,7 @@
 "item_hint_domain_protection_off" = "Website-Schutz deaktiviert";
 
 /* Domain view - Item title "Still seeing ads? Learn how to fix this" */
-"item_attention_title_health_check_trouble" = "Immer noch Werbung? So beheben Sie das";
+"item_attention_title_health_check_trouble" = "Immer noch Werbung? So behebst du das";
 
 /* Domain view - Item title "Block element" */
 "item_title_block_element" = "Element blockieren";
@@ -53,7 +53,7 @@
 "info_title_failed_restart_main_app" = "AdGuard Mini konnte nicht neu gestartet werden";
 
 /* Info view - Subtitle "Please restart the app or contact support" */
-"info_subtitle_restart_app" = "Bitte starten Sie die App neu oder kontaktieren Sie den Support";
+"info_subtitle_restart_app" = "Bitte starte die App neu oder kontaktiere den Support";
 
 /* Info view - Button title "Restart AdGuard Mini" */
 "info_button_title_restart" = "AdGuard Mini neu starten";
@@ -65,17 +65,17 @@
 "info_common_button_title_try_again" = "Erneut versuchen";
 
 /* Info view - Base common subtitle "Your data may be exposed" */
-"info_base_common_subtitle" = "Ihre Daten können offengelegt werden";
+"info_base_common_subtitle" = "Deine Daten könnten gefährdet sein";
 
 /* Info view - Common subtitle after an error occurs */
-"info_error_subtitle" = "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support";
+"info_error_subtitle" = "Versuche es erneut oder kontaktiere den Support";
 
 /* Info view - Title "Set up your ad blocker" */
 "info_title_set_up_ad_blocker" = "Werbeblocker einrichten";
 
 /* info_subtitle_set_up_ad_blocker
 Info view - Subtitle "To get AdGuard Mini up and running properly, you’ll need to enable a few settings" */
-"info_subtitle_set_up_ad_blocker" = "Damit AdGuard Mini ordnungsgemäß funktioniert, müssen Sie einige Einstellungen aktivieren";
+"info_subtitle_set_up_ad_blocker" = "Damit AdGuard Mini ordnungsgemäß funktioniert, musst du einige Einstellungen aktivieren";
 
 /* Info view - Button title "Open AdGuard Mini" */
 "info_button_title_open_main_app" = "AdGuard Mini öffnen";

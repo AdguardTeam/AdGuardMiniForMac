@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Enthält die Regeln der Eigenen Filter";
+"NSHumanReadableDescription" = "Ermöglicht AdGuard Mini, deine eigene Filter anzuwenden";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Benutzerdefiniert";

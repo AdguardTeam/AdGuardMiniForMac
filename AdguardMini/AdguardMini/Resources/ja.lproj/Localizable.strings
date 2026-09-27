@@ -22,6 +22,30 @@
 /* App Menu - "Quit AdGuard Mini" title. */
 "app_menu_quit_title" = "AdGuard Mini を終了する";
 
+/* App Menu - "Edit" title. */
+"app_menu_edit_title" = "編集";
+
+/* App Menu - "Undo" title. */
+"app_menu_undo_title" = "元に戻す";
+
+/* App Menu - "Redo" title. */
+"app_menu_redo_title" = "やり直す";
+
+/* App Menu - "Cut" title. */
+"app_menu_cut_title" = "カット";
+
+/* App Menu - "Copy" title. */
+"app_menu_copy_title" = "コピー";
+
+/* App Menu - "Paste" title. */
+"app_menu_paste_title" = "ペースト";
+
+/* App Menu - "Delete" title. */
+"app_menu_delete_title" = "削除する";
+
+/* App Menu - "Select All" title. */
+"app_menu_select_all_title" = "すべて選択";
+
 /* Terminating app Alert - Message text "Quit AdGuard Mini?" */
 "terminate_app_alert_message_text" = "AdGuard Mini を終了しますか？";
 
@@ -55,6 +79,26 @@
 /* Request user about restarting AdGuard Mini */
 "restarting_request_message_text" = "設定がリセットされました。AdGuard Mini の機能を復元するには AdGuard Mini を再起動してください。";
 
+/* WebView failure alert - "Report issue" button title */
+"report_issue_button" = "問題を報告する";
+
+/* WebView failure alert - Title */
+"webview_load_failure_message_title" = "AdGuard Miniのインターフェースを読み込めません";
+
+/* WebView failure alert - Informative text */
+"webview_load_failure_message_text" = "AdGuard Mini ウィンドウの読み込み中に問題が発生しました。アプリを再起動するか、問題を報告することができます。";
+
+/* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
+"webui_integrity_failure_message_title" = "AdGuard Mini が外部から変更されました";
+
+/* WebUI integrity Alert - Informative text */
+"webui_integrity_failure_message_text" = "インストール後にアプリケーションファイルが変更されました。機能を復元するには AdGuard Mini を再インストールしてください。";
+/* RPC recurring-timeout alert - Title */
+"rpc_timeout_message_title" = "AdGuard Miniが応答していません";
+
+/* RPC recurring-timeout alert - Informative text */
+"rpc_timeout_message_text" = "アプリとインターフェース間の通信が繰り返しタイムアウトしました。アプリを再起動するか、問題を報告することができます。";
+
 /* Title on Close button in error message */
 "close_button" = "閉じる";
 
@@ -72,3 +116,15 @@
 
 /* Notify the user that the application should be moved to the Applications folder. */
 "error_running_app_message" = "AdGuard Mini を実行するには、「アプリケーション」フォルダに入っている必要があります。\nそのフォルダに AdGuard Mini を移動して、再度お試しください。";
+
+/* User rules editor window title. */
+"user_rules_editor_title" = "ユーザールールエディタ";
+
+/* VoiceOver name of the menu bar tray window. */
+"window_accessibility_title_tray" = "AdGuard Miniのトレイ";
+
+/* VoiceOver name of the settings window. */
+"window_accessibility_title_settings" = "AdGuard Mini の設定";
+
+/* VoiceOver name of the onboarding window. */
+"window_accessibility_title_onboarding" = "AdGuard Mini のオンボーディング";

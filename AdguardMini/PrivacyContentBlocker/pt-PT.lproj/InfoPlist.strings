@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "Ajuda a bloquear monitorizadores e análise Web";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "Privacidade do AdGuard";

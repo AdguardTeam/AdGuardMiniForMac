@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "Pomaga blokirati zlonamerne, lažno predstavljene in prevarantske spletne strani";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Varnost";

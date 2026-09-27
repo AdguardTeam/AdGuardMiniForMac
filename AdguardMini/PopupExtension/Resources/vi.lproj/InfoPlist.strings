@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "Cho phép bạn quản lý tính năng bảo vệ AdGuard Mini từ thanh công cụ Safari, xem số liệu thống kê và áp dụng các quy tắc chặn nâng cao.";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard cho Safari";

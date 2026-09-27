@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "Ajuda a bloquear sites maliciosos, rastreadores e golpes";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "Segurança";

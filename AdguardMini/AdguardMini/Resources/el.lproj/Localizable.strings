@@ -22,6 +22,30 @@
 /* App Menu - "Quit AdGuard Mini" title. */
 "app_menu_quit_title" = "Έξοδος από το AdGuard Mini";
 
+/* App Menu - "Edit" title. */
+"app_menu_edit_title" = "Επεξεργασία";
+
+/* App Menu - "Undo" title. */
+"app_menu_undo_title" = "Αναίρεση";
+
+/* App Menu - "Redo" title. */
+"app_menu_redo_title" = "Επανάληψη";
+
+/* App Menu - "Cut" title. */
+"app_menu_cut_title" = "Αποκοπή";
+
+/* App Menu - "Copy" title. */
+"app_menu_copy_title" = "Αντιγραφή";
+
+/* App Menu - "Paste" title. */
+"app_menu_paste_title" = "Επικόλληση";
+
+/* App Menu - "Delete" title. */
+"app_menu_delete_title" = "Διαγραφή";
+
+/* App Menu - "Select All" title. */
+"app_menu_select_all_title" = "Επιλογή όλων";
+
 /* Terminating app Alert - Message text "Quit AdGuard Mini?" */
 "terminate_app_alert_message_text" = "Έξοδος από το AdGuard Mini;";
 
@@ -55,6 +79,26 @@
 /* Request user about restarting AdGuard Mini */
 "restarting_request_message_text" = "Απαιτείται επανεκκίνηση ώστε το AdGuard να συνεχίσει τη λειτουργία του. Κάντε κλικ στο «Επανεκκίνηση» για να το εκτελέσετε.";
 
+/* WebView failure alert - "Report issue" button title */
+"report_issue_button" = "Αναφορά προβλήματος";
+
+/* WebView failure alert - Title */
+"webview_load_failure_message_title" = "Το AdGuard Mini δεν μπορεί να φορτώσει τη διεπαφή του";
+
+/* WebView failure alert - Informative text */
+"webview_load_failure_message_text" = "Κάτι πήγε στραβά κατά τη φόρτωση του παραθύρου του AdGuard Mini. Μπορείτε να κάνετε επανεκκίνηση της εφαρμογής ή να αναφέρετε το πρόβλημα.";
+
+/* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
+"webui_integrity_failure_message_title" = "Το AdGuard Mini τροποποιήθηκε εξωτερικά";
+
+/* WebUI integrity Alert - Informative text */
+"webui_integrity_failure_message_text" = "Τα αρχεία της εφαρμογής τροποποιήθηκαν μετά την εγκατάσταση. Επανεγκαταστήστε το AdGuard Mini για να επαναφέρετε τη λειτουργία του.";
+/* RPC recurring-timeout alert - Title */
+"rpc_timeout_message_title" = "Το AdGuard Mini δεν αποκρίνεται";
+
+/* RPC recurring-timeout alert - Informative text */
+"rpc_timeout_message_text" = "Η επικοινωνία μεταξύ της εφαρμογής και της διεπαφής της έληξε επανειλημμένα λόγω χρονικού ορίου. Μπορείτε να κάνετε επανεκκίνηση της εφαρμογής ή να αναφέρετε το πρόβλημα.";
+
 /* Title on Close button in error message */
 "close_button" = "Κλείσιμο";
 
@@ -72,3 +116,15 @@
 
 /* Notify the user that the application should be moved to the Applications folder. */
 "error_running_app_message" = "Το AdGuard Mini πρέπει να βρίσκεται στο φάκελο Εφαρμογές για να εκτελεστεί.\nΠαρακαλώ μετακινήστε το εκεί και προσπαθήστε ξανά.";
+
+/* User rules editor window title. */
+"user_rules_editor_title" = "Επεξεργαστής κανόνων χρήστη";
+
+/* VoiceOver name of the menu bar tray window. */
+"window_accessibility_title_tray" = "Περιοχή ειδοποιήσεων AdGuard Mini";
+
+/* VoiceOver name of the settings window. */
+"window_accessibility_title_settings" = "Ρυθμίσεις AdGuard Mini";
+
+/* VoiceOver name of the onboarding window. */
+"window_accessibility_title_onboarding" = "Εισαγωγή στο AdGuard Mini";

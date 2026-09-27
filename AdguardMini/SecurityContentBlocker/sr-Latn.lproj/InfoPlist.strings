@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "Pomaže u blokiranju zlonamernih, phishing i prevarantskih veb-sajtova";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard bezbednost";

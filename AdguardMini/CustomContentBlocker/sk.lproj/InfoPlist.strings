@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Obsahuje blokovacie pravidlá vlastných filtrov";
+"NSHumanReadableDescription" = "Umožňuje AdGuardu Mini použiť Vaše vlastné filtre";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard vlastné";

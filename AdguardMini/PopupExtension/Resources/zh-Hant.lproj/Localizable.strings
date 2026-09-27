@@ -1,6 +1,9 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "安全的頁面";
 
+/* Domain view - Domain Item hint "Website protection disabled" */
+"item_hint_domain_protection_off" = "網站防護已停用";
+
 /* Domain view - Item title "Still seeing ads? Learn how to fix this" */
 "item_attention_title_health_check_trouble" = "仍有廣告？了解如何解決";
 
@@ -12,6 +15,12 @@
 
 /* Domain view - Item title "Rate AdGuard Mini" */
 "item_title_rate_adguard_mini" = "為 AdGuard Mini 評分";
+
+/* Domain view - Stats label "{count} ad(s) blocked" */
+"item_stats_ads_blocked" = "已封鎖 %d 個廣告";
+
+/* Domain view - Stats label "{count} tracker(s) blocked" */
+"item_stats_trackers_blocked" = "已封鎖 %d 個追蹤器";
 
 /* Info view - Title "Protection is disabled" */
 "info_title_protection_disabled" = "防護已停用";

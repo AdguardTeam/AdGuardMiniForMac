@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Blokuje widżety mediów społecznościowych (przyciski „Lubię to” itp.).";
+"NSHumanReadableDescription" = "Pomaga blokować przyciski portali społecznościowych, widgety, skrypty i ikony";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Funkcje społecznościowe";

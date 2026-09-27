@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "Estä haitalliset-, tietojenkalastelu- ja huijausverkkotunnukset";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Tietoturva";

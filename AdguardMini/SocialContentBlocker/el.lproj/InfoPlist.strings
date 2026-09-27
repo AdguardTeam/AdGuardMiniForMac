@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Περιέχει κανόνες αποκλεισμού φίλτρων κοινωνικής δικτύωσης";
+"NSHumanReadableDescription" = "Βοηθά στον αποκλεισμό κουμπιών κοινωνικών μέσων, γραφικών στοιχείων, scripts και εικονιδίων";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Κοινωνικά";

@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "Pomaga blokować trackery i analitykę Sieci";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Prywatność";

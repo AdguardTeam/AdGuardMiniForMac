@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Az egyéni szűrőszabályokat tartalmazza";
+"NSHumanReadableDescription" = "Lehetővé teszi, hogy az AdGuard Mini alkalmazza az Ön egyéni szűrőit";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Egyéni";

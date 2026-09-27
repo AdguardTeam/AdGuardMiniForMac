@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "Hilft dabei, die meiste Werbung auf Websites zu blockieren";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Allgemein";

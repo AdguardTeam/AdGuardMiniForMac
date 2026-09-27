@@ -1,5 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-  <dict/>
+  <dict>
+    <key>item_stats_ads_blocked</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%2$@ hirdetés letiltva</string>
+        <key>other</key>
+        <string>%2$@ hirdetés letiltva</string>
+      </dict>
+    </dict>
+    <key>item_stats_trackers_blocked</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%2$@ nyomkövető letiltva</string>
+        <key>other</key>
+        <string>%2$@ nyomkövető letiltva</string>
+      </dict>
+    </dict>
+    <key>item_upsell_description_trial</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Próbáld ki %1$d napig ingyenesen</string>
+        <key>other</key>
+        <string>Próbáld ki %1$d napig ingyenesen</string>
+      </dict>
+    </dict>
+  </dict>
 </plist>

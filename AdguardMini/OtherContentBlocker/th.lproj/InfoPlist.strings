@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "ตัวกรองอื่น ๆ แสดงรายการกฎการปิดกั้น";
+"NSHumanReadableDescription" = "อนุญาตให้ AdGuard Mini นำตัวกรองอื่น ๆ ที่ไม่ได้จัดหมวดหมู่ไปใช้";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard อื่น ๆ";

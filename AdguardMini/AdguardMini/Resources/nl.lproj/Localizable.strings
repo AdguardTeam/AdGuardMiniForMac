@@ -22,6 +22,30 @@
 /* App Menu - "Quit AdGuard Mini" title. */
 "app_menu_quit_title" = "AdGuard Mini afsluiten";
 
+/* App Menu - "Edit" title. */
+"app_menu_edit_title" = "Bewerken";
+
+/* App Menu - "Undo" title. */
+"app_menu_undo_title" = "Ongedaan maken";
+
+/* App Menu - "Redo" title. */
+"app_menu_redo_title" = "Opnieuw uitvoeren";
+
+/* App Menu - "Cut" title. */
+"app_menu_cut_title" = "Knippen";
+
+/* App Menu - "Copy" title. */
+"app_menu_copy_title" = "Kopiëren";
+
+/* App Menu - "Paste" title. */
+"app_menu_paste_title" = "Plakken";
+
+/* App Menu - "Delete" title. */
+"app_menu_delete_title" = "Verwijderen";
+
+/* App Menu - "Select All" title. */
+"app_menu_select_all_title" = "Alles selecteren";
+
 /* Terminating app Alert - Message text "Quit AdGuard Mini?" */
 "terminate_app_alert_message_text" = "AdGuard Mini afsluiten?";
 
@@ -64,6 +88,11 @@
 /* WebView failure alert - Informative text */
 "webview_load_failure_message_text" = "Er is een fout opgetreden bij het laden van het AdGuard Mini-venster. Je kunt de app opnieuw starten of het probleem melden.";
 
+/* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
+"webui_integrity_failure_message_title" = "AdGuard Mini is extern gewijzigd";
+
+/* WebUI integrity Alert - Informative text */
+"webui_integrity_failure_message_text" = "De applicatiebestanden zijn na de installatie gewijzigd. Installeer AdGuard Mini opnieuw om de functionaliteit te herstellen.";
 /* RPC recurring-timeout alert - Title */
 "rpc_timeout_message_title" = "AdGuard Mini reageert niet";
 
@@ -87,3 +116,15 @@
 
 /* Notify the user that the application should be moved to the Applications folder. */
 "error_running_app_message" = "AdGuard Mini moet in de map Programma's staan om te kunnen worden uitgevoerd.\nVerplaats het daarheen en probeer het opnieuw";
+
+/* User rules editor window title. */
+"user_rules_editor_title" = "Gebruikersregel-editor";
+
+/* VoiceOver name of the menu bar tray window. */
+"window_accessibility_title_tray" = "AdGuard Mini: systeembalk";
+
+/* VoiceOver name of the settings window. */
+"window_accessibility_title_settings" = "AdGuard Mini: instellingen";
+
+/* VoiceOver name of the onboarding window. */
+"window_accessibility_title_onboarding" = "AdGuard Mini: eerste stappen";

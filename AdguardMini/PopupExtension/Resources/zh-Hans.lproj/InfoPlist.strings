@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "从 Safari 工具栏管理 AdGuard Mini 保护、查看统计信息，并应用高级拦截规则。";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Safari 版";

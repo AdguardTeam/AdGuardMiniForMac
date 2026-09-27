@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "รายการตัวกรองที่กำหนดเองจะปิดกั้นกฎ";
+"NSHumanReadableDescription" = "ให้ AdGuard Mini นำตัวกรองที่คุณกำหนดเองไปใช้";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "กำหนด AdGuard เอง";

@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "أضف وصفًا لما تقوم به الإضافة هنا.";
+"NSHumanReadableDescription" = "يسمح لـ AdGuard Mini بتطبيق فلاتر أخرى غير مصنفة";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard أخرى";

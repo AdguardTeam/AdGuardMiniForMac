@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Indeholder blokeringsregler for Sociale filtre";
+"NSHumanReadableDescription" = "Assisterer med at blokere knapper, widgets, scripts og ikoner på sociale medier";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Social";

@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Chứa các quy tắc chặn trong Bộ lọc Mạng xã hội";
+"NSHumanReadableDescription" = "Trợ giúp chặn nút mạng xã hội, tiện ích, scripts và biểu tượng";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "Mạng xã hội";

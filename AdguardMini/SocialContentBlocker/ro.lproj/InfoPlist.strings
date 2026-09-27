@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Conține reguli de blocare filtre SOCIALE";
+"NSHumanReadableDescription" = "Ajută la blocarea butoanelor, widget-urilor, scripturilor și icon-urilor din rețelele sociale";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Social";

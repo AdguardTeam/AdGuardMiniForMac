@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Bevat blokkeringsregels voor Social filters";
+"NSHumanReadableDescription" = "Helpt bij het blokkeren van knoppen, widgets, scripts en pictogrammen van sociale media";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Sociaal";

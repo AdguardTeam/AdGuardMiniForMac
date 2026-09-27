@@ -1,5 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-  <dict/>
+  <dict>
+    <key>item_stats_ads_blocked</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%2$@ reklama Zablokowane</string>
+        <key>few</key>
+        <string>%2$@ reklamy Zablokowane</string>
+        <key>many</key>
+        <string>%2$@ reklam Zablokowane</string>
+        <key>other</key>
+        <string>%2$@ reklam Zablokowane</string>
+      </dict>
+    </dict>
+    <key>item_stats_trackers_blocked</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%2$@ trackery Zablokowane</string>
+        <key>few</key>
+        <string>%2$@ trackery zablokowane</string>
+        <key>many</key>
+        <string>%2$@ trackery Zablokowane</string>
+        <key>other</key>
+        <string>%2$@ trackery Zablokowane</string>
+      </dict>
+    </dict>
+    <key>item_upsell_description_trial</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Wypróbuj %1$d-dniowy darmowy okres</string>
+        <key>few</key>
+        <string>Wypróbuj %1$d-dniowy darmowy okres</string>
+        <key>many</key>
+        <string>Wypróbuj %1$d-dniowy darmowy okres</string>
+        <key>other</key>
+        <string>Wypróbuj %1$d-dniowy darmowy okres</string>
+      </dict>
+    </dict>
+  </dict>
 </plist>

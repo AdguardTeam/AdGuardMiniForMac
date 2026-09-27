@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "Safari araç çubuğundan AdGuard Mini korumasını yönet, istatistikleri görüntüle ve gelişmiş engelleme kurallarını uygula";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "Safari için AdGuard";
