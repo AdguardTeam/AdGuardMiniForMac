@@ -5,7 +5,7 @@ import { NotificationContext, NotificationsQueueType, NotificationsQueueIconType
 import { getNotificationSettingsImportFailedText } from 'SettingsLib/utils/translate';
 
 import { ISettingsCallbackServiceInternal } from './SettingsCallbackService';;
-import { SafariExtensionUpdate, EmptyValue, BoolValue, ImportStatus, ImportMode, StringValue, EffectiveThemeValue, URLFilterState, URLFilterStatus } from '../types'
+import { SafariExtensionUpdate, EmptyValue, BoolValue, ImportStatus, ImportMode, StringValue, EffectiveThemeValue, URLFilterState } from '../types'
 
 const debouncedGroupedFilters = debounce(() => {
     store.filters.getFiltersGroupedByExtension();
@@ -97,16 +97,8 @@ async OnSafariExtensionUpdate(param: SafariExtensionUpdate): Promise<EmptyValue>
 
     /* Fires when URL filter state changed */
     async OnURLFilterStateChanged(param: URLFilterState): Promise<EmptyValue> {
+        // The store reports a failure itself, deduplicated per error state.
         store.advancedBlocking.applyPushedURLFilterState(param);
-        if (param.status === URLFilterStatus.error) {
-            store.notification.notify({
-                message: translate('advanced.blocking.system.wide.error'),
-                notificationContext: NotificationContext.info,
-                type: NotificationsQueueType.warning,
-                iconType: NotificationsQueueIconType.error,
-                closeable: true,
-            }, true);
-        }
         return new EmptyValue();
     }
 }

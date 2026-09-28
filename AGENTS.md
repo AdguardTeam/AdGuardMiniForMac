@@ -1231,3 +1231,22 @@ humans and AI agents that consume project documentation.
     the UI (`system_wide_protection` route) and code comments; "Safari Web
     Protection" is a stale label that misleads readers about what the feature
     is.
+
+19. **Deduplicated failure notifications (TS)**: When one failure reaches the
+    UI through several sources — the request response and one or more
+    platform pushes — the notification MUST be owned by the store that owns
+    the state and deduplicated by error kind while its snack is shown, so the
+    repeated reports of one failure show a single snack. Once the snack is
+    gone — auto-closed, dismissed, or dropped by another notification — the
+    next failure is reported again: a control that rolls back silently leaves
+    no other feedback. The key also clears when the state recovers (a push or
+    a pull reports the feature running, or the user's call lands). A
+    different error replaces the shown snack instead of stacking another one.
+
+    **Rationale**: A failed System-wide Protection enable arrives as both an
+    RPC error and a pushed error state, and the platform repeats the push for
+    one change. Notifying from each source replaced identical snacks back to
+    back, which reads as blinking; one store-owned, error-keyed slot makes
+    the number of reporting sources irrelevant, and tying it to the snack's
+    lifetime keeps a repeated attempt silent only while the user can still
+    see why it failed.

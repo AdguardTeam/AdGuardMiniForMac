@@ -249,7 +249,7 @@ test('OnSettingsWindowOpened enables the Safari extensions screen', async () => 
     assert.deepEqual(received, [true]);
 });
 
-test('OnURLFilterStateChanged applies the pushed state and notifies on error', async () => {
+test('OnURLFilterStateChanged applies the pushed state and leaves the failure notification to the store', async () => {
     __resetSettingsTestStore();
     const applied: URLFilterState[] = [];
     const { notify, calls: notifyCalls } = makeNotifySpy();
@@ -266,9 +266,11 @@ test('OnURLFilterStateChanged applies the pushed state and notifies on error', a
     await service.OnURLFilterStateChanged(failed);
 
     assert.deepEqual(applied, [failed]);
-    assert.equal(notifyCalls.length, 1);
+    // The store reports the failure itself, deduplicated per error state, so
+    // the bridge must not add a notification of its own.
+    assert.equal(notifyCalls.length, 0);
 
-    // A healthy push is applied without a notification.
+    // A healthy push is applied the same way.
     await service.OnURLFilterStateChanged(new URLFilterState({
         enabled: true,
         protectionLevel: URLFilterProtectionLevel.safe,
@@ -276,5 +278,5 @@ test('OnURLFilterStateChanged applies the pushed state and notifies on error', a
     }));
 
     assert.equal(applied.length, 2);
-    assert.equal(notifyCalls.length, 1);
+    assert.equal(notifyCalls.length, 0);
 });
