@@ -18,8 +18,8 @@ body:
     id: app_version
     attributes:
       label: AdGuard version
-      description: What version of our application are you running?
-      placeholder: For example, 2.3.0
+      description: What version of AdGuard Mini for Mac are you running?
+      placeholder: For example, 3.0.0
     validations:
       required: true
   - type: input
@@ -27,7 +27,7 @@ body:
     attributes:
       label: Safari version
       description: What version of Safari do you use?
-      placeholder: For example, Safari 27.0
+      placeholder: For example, Safari 27.2
     validations:
       required: true
   - type: input
@@ -35,7 +35,7 @@ body:
     attributes:
       label: macOS version
       description: What version of macOS do you use?
-      placeholder: For example, macOS Golden Gate 27.0
+      placeholder: For example, macOS Golden Gate 27.2
     validations:
       required: true
 
