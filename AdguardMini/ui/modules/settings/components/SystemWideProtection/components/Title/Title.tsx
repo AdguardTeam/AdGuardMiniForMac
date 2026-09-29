@@ -28,7 +28,7 @@ type TitleProps = {
  */
 function TitleComponent({ setShowNotSupportedModal, setShowResetCacheModal, setShowRemoveFilterModal }: TitleProps) {
     const { advancedBlocking, settings } = useSettingsStore();
-    const { urlFilterNew: isSystemWideProtectionPageNew } = advancedBlocking;
+    const { urlFilterNew: isSystemWideProtectionPageNew, urlFilterState: { isInstalled }, } = advancedBlocking;
     const {
         macos25OrLower,
         non501User,
@@ -39,7 +39,7 @@ function TitleComponent({ setShowNotSupportedModal, setShowResetCacheModal, setS
         s.Title_payedTitle_text,
     );
 
-    const isUnsupported = macos25OrLower || non501User;
+    const isUnsupported = macos25OrLower || non501User || !isInstalled;
 
     // Same as on the Advanced protection row: "Why?" alone says nothing about
     // what is not supported.
