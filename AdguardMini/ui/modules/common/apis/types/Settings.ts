@@ -48,6 +48,7 @@ export class Settings extends pb_1.Message {
         loginItemEnabled?: boolean;
         non501User?: boolean;
         macos25OrLower?: boolean;
+        reportProblemLabelShown?: boolean;
     }) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [9], this.#one_of_decls);
@@ -105,6 +106,9 @@ export class Settings extends pb_1.Message {
             }
             if ("macos25OrLower" in data && data.macos25OrLower != undefined) {
                 this.macos25OrLower = data.macos25OrLower;
+            }
+            if ("reportProblemLabelShown" in data && data.reportProblemLabelShown != undefined) {
+                this.reportProblemLabelShown = data.reportProblemLabelShown;
             }
         }
     }
@@ -216,6 +220,12 @@ export class Settings extends pb_1.Message {
     set macos25OrLower(value: boolean) {
         pb_1.Message.setField(this, 18, value);
     }
+    get reportProblemLabelShown() {
+        return pb_1.Message.getFieldWithDefault(this, 19, false) as boolean;
+    }
+    set reportProblemLabelShown(value: boolean) {
+        pb_1.Message.setField(this, 19, value);
+    }
     static fromObject(data: {
         launchOnStartup?: boolean;
         showInMenuBar?: boolean;
@@ -235,6 +245,7 @@ export class Settings extends pb_1.Message {
         loginItemEnabled?: boolean;
         non501User?: boolean;
         macos25OrLower?: boolean;
+        reportProblemLabelShown?: boolean;
     }): Settings {
         const message = new Settings({});
         if (data.launchOnStartup != null) {
@@ -291,6 +302,9 @@ export class Settings extends pb_1.Message {
         if (data.macos25OrLower != null) {
             message.macos25OrLower = data.macos25OrLower;
         }
+        if (data.reportProblemLabelShown != null) {
+            message.reportProblemLabelShown = data.reportProblemLabelShown;
+        }
         return message;
     }
     toObject() {
@@ -313,6 +327,7 @@ export class Settings extends pb_1.Message {
             loginItemEnabled?: boolean;
             non501User?: boolean;
             macos25OrLower?: boolean;
+            reportProblemLabelShown?: boolean;
         } = {};
         if (this.launchOnStartup != null) {
             data.launchOnStartup = this.launchOnStartup;
@@ -368,6 +383,9 @@ export class Settings extends pb_1.Message {
         if (this.macos25OrLower != null) {
             data.macos25OrLower = this.macos25OrLower;
         }
+        if (this.reportProblemLabelShown != null) {
+            data.reportProblemLabelShown = this.reportProblemLabelShown;
+        }
         return data;
     }
     serialize(): Uint8Array;
@@ -410,6 +428,8 @@ export class Settings extends pb_1.Message {
             writer.writeBool(17, this.non501User);
         if (this.macos25OrLower != false)
             writer.writeBool(18, this.macos25OrLower);
+        if (this.reportProblemLabelShown != false)
+            writer.writeBool(19, this.reportProblemLabelShown);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -472,6 +492,9 @@ export class Settings extends pb_1.Message {
                     break;
                 case 18:
                     message.macos25OrLower = reader.readBool();
+                    break;
+                case 19:
+                    message.reportProblemLabelShown = reader.readBool();
                     break;
                 default: reader.skipField();
             }

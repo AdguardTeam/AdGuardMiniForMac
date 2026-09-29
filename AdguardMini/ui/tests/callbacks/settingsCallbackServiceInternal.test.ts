@@ -186,7 +186,6 @@ test('OnWindowDidBecomeMain runs the light refresh sequence', async () => {
         getSettings: () => { calls.push('getSettings'); },
     };
     store.userRules = { getUserRules: () => { calls.push('userRules'); } };
-    store.ui = { tryShowProblemLabel: () => { calls.push('tryShowProblemLabel'); } };
 
     const service = new SettingsCallbackServiceInternal();
     await service.OnWindowDidBecomeMain(new EmptyValue());
@@ -195,7 +194,6 @@ test('OnWindowDidBecomeMain runs the light refresh sequence', async () => {
         'getSafariExtensions',
         'getSettings',
         'userRules',
-        'tryShowProblemLabel',
     ]);
 });
 

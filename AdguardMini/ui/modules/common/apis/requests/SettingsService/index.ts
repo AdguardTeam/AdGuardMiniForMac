@@ -19,6 +19,7 @@ export * from './UpdateHealthCheckDismissedCardsRequest';
 export * from './UpdateLaunchOnStartupRequest';
 export * from './UpdatePromoDismissedCardsRequest';
 export * from './UpdateQuitReactionRequest';
+export * from './UpdateReportProblemLabelShownRequest';
 export * from './UpdateShowInMenuBarRequest';
 export * from './UpdateShowSafariToolbarBadgeRequest';
 export * from './UpdateThemeRequest';

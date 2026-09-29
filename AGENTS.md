@@ -521,6 +521,21 @@ Blocker JSON consumed by the extension targets.
    app-domain services (`FLM`, app services) — with the sole generic-utility
    exception of AML `UIUtils` — and eases a future package extraction.
 
+8. **Persisted one-time UI flags**: A flag that makes the UI show something
+   only once (a tooltip, a hint, a one-off label) MUST be persisted on the
+   platform side — a `UserDefaults` key in `Resources/Defaults.plist` exposed
+   through `UserSettingsService` and carried to the module over the bridge —
+   never held in WebView module state. The module renders the element from
+   the persisted value and MUST NOT show it while that value is still unknown
+   (an unanswered flag would arm the element on every window open), then
+   writes the flag back once the element has been shown or dismissed.
+
+   **Rationale**: WKWebView modules are destroyed with their window, so
+   "shown once" state kept in a MobX store is re-armed every time the window
+   is reopened, and never survives a relaunch. Persisting the flag in
+   `UserDefaults` makes the intended semantics — shown on the first open,
+   never again afterwards — hold for every module.
+
 **Known exclusions** (acceptable today, to be improved over time):
 
 - `ServiceLocator` is a large Service Locator / God Object that lazily builds

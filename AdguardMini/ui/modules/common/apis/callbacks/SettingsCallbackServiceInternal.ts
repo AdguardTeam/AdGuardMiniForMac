@@ -67,8 +67,6 @@ async OnSafariExtensionUpdate(param: SafariExtensionUpdate): Promise<EmptyValue>
         store.settings.getSafariExtensions();
         store.settings.getSettings();
         store.userRules.getUserRules();
-        // On first open status will change from 'notShown' to 'show', needed label will be shown only once on opening
-        store.ui.tryShowProblemLabel();
         return new EmptyValue();
     }
 

@@ -26,15 +26,6 @@ type SupportContactFormData = {
 };
 
 /**
- * Report problem label status, used to show report problem popup once open
- */
-export enum ReportProblemVariant {
-    NotShown = 'notShown',
-    Show = 'show',
-    Hidden = 'hidden',
-}
-
-/**
  * Store that manages UI settings
  */
 export class UI {
@@ -43,9 +34,6 @@ export class UI {
     public supportContactFormData: Nullable<SupportContactFormData> = null;
 
     public userRulesScrollTop = 0;
-
-    // Used in Safari protection page to show report problem button once open
-    public reportProblemLabelStatus: ReportProblemVariant = ReportProblemVariant.NotShown;
 
     // Used to show the screen with instructions on how to enable Safari extensions
     // when the user has all extensions disabled
@@ -95,21 +83,5 @@ export class UI {
      */
     public setSupportContactFormData(data: SupportContactFormData | null) {
         this.supportContactFormData = data;
-    }
-
-    /**
-     * Updates reportProblemLabel to show only if it was NotShown
-     */
-    public tryShowProblemLabel() {
-        if (this.reportProblemLabelStatus === ReportProblemVariant.NotShown) {
-            this.reportProblemLabelStatus = ReportProblemVariant.Show;
-        }
-    }
-
-    /**
-     * Updates reportProblemLabel to hidden
-     */
-    public hideProblemLabel() {
-        this.reportProblemLabelStatus = ReportProblemVariant.Hidden;
     }
 }

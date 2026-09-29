@@ -97,6 +97,10 @@ public protocol SettingsServiceProtocol
 	func updateShowSafariToolbarBadge (
 						_ message: BoolValue,
 						_ promise: @escaping (EmptyValue) -> Void) -> Void
+	/// Mark the report problem label as shown, so it is displayed only once
+	func updateReportProblemLabelShown (
+						_ message: BoolValue,
+						_ promise: @escaping (EmptyValue) -> Void) -> Void
 	/// Get dismissed Safari Protection health check cards
 	func getHealthCheckDismissedCards (
 						_ message: EmptyValue,
@@ -440,6 +444,21 @@ open class SettingsService: WebViewBridge
 				}
 			} catch {
 				BridgeLog.error("SettingsService.UpdateShowSafariToolbarBadge: failed to deserialize request: \(error)")
+				promise(Data())
+			}
+		case "UpdateReportProblemLabelShown":
+			do {
+				let input = try BoolValue(serializedBytes: bytes)
+				cast.updateReportProblemLabelShown(input) { result in
+					do {
+						promise(try result.serializedData())
+					} catch {
+						BridgeLog.error("SettingsService.UpdateReportProblemLabelShown: failed to serialize reply: \(error)")
+						promise(Data())
+					}
+				}
+			} catch {
+				BridgeLog.error("SettingsService.UpdateReportProblemLabelShown: failed to deserialize request: \(error)")
 				promise(Data())
 			}
 		case "GetHealthCheckDismissedCards":

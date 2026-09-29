@@ -50,6 +50,8 @@ service SettingsService {
     rpc SelectFile(SelectFileParams) returns (SelectFilePath);
     /* Updates Safari toolbar badge visibility */
     rpc UpdateShowSafariToolbarBadge(BoolValue) returns (EmptyValue);
+    /* Mark the report problem label as shown, so it is displayed only once */
+    rpc UpdateReportProblemLabelShown(BoolValue) returns (EmptyValue);
     /* Get dismissed Safari Protection health check cards */
     rpc GetHealthCheckDismissedCards(EmptyValue) returns (StringValueArray);
     /* Update dismissed Safari Protection health check cards */
