@@ -56,6 +56,10 @@ export function NotificationIcon({ notification }: Props) {
             customClassName = s.NotificationIcon__loader;
             break;
         }
+        case NQIconType.update: {
+            icon = 'update';
+            break;
+        }
     }
 
     return <Icon className={cx(color, customClassName)} icon={icon} />;

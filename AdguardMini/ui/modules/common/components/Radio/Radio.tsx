@@ -96,9 +96,16 @@ export function Radio({
                 name={name}
                 type="radio"
             />
-            <Icon className={cx(s.Radio_handler, checked && !muted && s.Radio_handler__checked)} icon={checked ? 'radioChecked' : 'radioUnchecked'} />
+            <Icon
+                className={cx(
+                    s.Radio_handler,
+                    checked && !muted && s.Radio_handler__checked,
+                    (disabled && !muted) && (checked ? s.Radio_handler__disabled : s.Radio_handler__transparent)
+                )}
+                icon={checked ? 'radioChecked' : 'radioUnchecked'}
+            />
             {children && (
-                <div className={cx(s.Radio_label, disabled && s.Radio_label__disabled, labelClassName)}>
+                <div className={cx(s.Radio_label, labelClassName)}>
                     {children}
                 </div>
             )}

@@ -23,7 +23,7 @@ export function useMoreFrequentUpdatesNotify() {
                 notificationContext: NotificationContext.ctaButton,
                 message: translate('tray.frequent.updates'),
                 type: NotificationsQueueType.success,
-                iconType: NotificationsQueueIconType.loading,
+                iconType: NotificationsQueueIconType.update,
                 variant: NotificationsQueueVariant.textOnly,
                 btnLabel: translate('buy'),
                 timeout: false,
