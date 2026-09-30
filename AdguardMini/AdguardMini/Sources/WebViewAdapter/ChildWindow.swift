@@ -21,7 +21,11 @@ enum ChildWindow {
 /// Child window open parameters.
 struct ChildWindowParams {
     let id: WindowId
+    /// Initial content width, applied only when the child has no frame
+    /// persisted from an earlier open.
     let width: Int
+    /// Initial content height, applied only when the child has no frame
+    /// persisted from an earlier open.
     let height: Int
     let caption: String
 }

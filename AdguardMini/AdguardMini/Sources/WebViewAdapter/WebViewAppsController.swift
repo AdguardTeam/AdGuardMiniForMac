@@ -356,30 +356,22 @@ final class WebViewAppsController: ChildWindowControlling {
         // Child entry URL is resolved by host factory; `html` stays for API shape.
         let childHost = self.makeHost(Constants.userrulesEditorType)
 
-        // Apply caller-provided title and initial content size.
+        // Apply the caller-provided title.
         childHost.window.title = params.caption
 
-        let defaultFrame = NSWindow.frameRect(
-            forContentRect: childHost.windowConfiguration.contentFrame,
-            styleMask: childHost.windowConfiguration.styleMask
-        )
-        if childHost.window.frame == defaultFrame {
-            let parentFrame = parentHost.window.frame
-            let childSize = childHost.window.frame.size
-            childHost.window.setFrameOrigin(
-                CGPoint(
-                    x: parentFrame.midX - childSize.width / 2,
-                    y: parentFrame.midY - childSize.height / 2
-                )
-            )
-        }
-        // Honor a caller-requested content size (the `ChildWindowParams`
-        // Width/height) so the advertised size control is not a silent no-op.
         if params.width > 0, params.height > 0 {
             childHost.window.setContentSize(
                 NSSize(width: params.width, height: params.height)
             )
         }
+        let parentFrame = parentHost.window.frame
+        let childSize = childHost.window.frame.size
+        childHost.window.setFrameOrigin(
+            CGPoint(
+                x: parentFrame.midX - childSize.width / 2,
+                y: parentFrame.midY - childSize.height / 2
+            )
+        )
 
         self.childWindows[params.id] = childHost
         self.parentChildIndex[parent] = params.id

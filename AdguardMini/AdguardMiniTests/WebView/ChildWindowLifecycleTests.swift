@@ -7,6 +7,7 @@
 //  AdguardMiniTests
 //
 
+import AppKit
 import XCTest
 
 /// Lifecycle tests for `openChildWindow` and `closeChildWindow`.
@@ -169,11 +170,119 @@ final class ChildWindowLifecycleTests: XCTestCase {
     }
 }
 
+// MARK: - Geometry persistence across close/reopen
+
+/// The user-rules editor must reopen with the size and position the user
+/// left it in, not with the configured default.
+final class ChildWindowGeometryPersistenceTests: XCTestCase {
+    /// Unique autosave key for this test, so a persisted frame neither reads
+    /// nor writes the real module's slot (tests run in parallel processes
+    /// sharing one defaults domain).
+    private var autosaveKey = ""
+
+    override func setUp() {
+        super.setUp()
+        self.autosaveKey = "AdguardMiniTests.UserRulesEditor.\(UUID().uuidString)"
+    }
+
+    override func tearDown() {
+        NSWindow.removeFrame(usingName: self.autosaveKey)
+        super.tearDown()
+    }
+
+    /// Persists `frame` under the test's autosave key — the same write
+    /// AppKit performs when the user moves or resizes the editor.
+    private func seedSavedFrame(_ frame: CGRect) {
+        let window = NSWindow(
+            contentRect: .zero,
+            styleMask: [.titled, .resizable],
+            backing: .buffered,
+            defer: false
+        )
+        window.isReleasedWhenClosed = false
+        window.setFrame(frame, display: false)
+        window.saveFrame(usingName: self.autosaveKey)
+    }
+
+    /// The frame size a window with `host`'s style mask gets for `contentSize`.
+    private func frameSize(forContentSize contentSize: CGSize, of host: WKWebViewAppHost) -> CGSize {
+        NSWindow.frameRect(
+            forContentRect: CGRect(origin: .zero, size: contentSize),
+            styleMask: host.window.styleMask
+        ).size
+    }
+
+    func testOpenChildWindow_NoSavedFrame_AppliesRequestedSizeAndCentersOverParent() throws {
+        let scenario = ChildWindowScenario.given(
+            parentShown: true,
+            userrulesFrameAutosaveKey: self.autosaveKey
+        )
+        _ = try scenario.controller.openChildWindow(
+            parent: .settings, html: nil,
+            params: ChildWindowParams(id: "0", width: 640, height: 480, caption: "Rules")
+        )
+        let childHost = try XCTUnwrap(scenario.factory.childHosts.first)
+        let expectedSize = self.frameSize(
+            forContentSize: CGSize(width: 640, height: 480),
+            of: childHost
+        )
+        XCTAssertEqual(childHost.window.frame.width, expectedSize.width, accuracy: 0.5)
+        XCTAssertEqual(childHost.window.frame.height, expectedSize.height, accuracy: 0.5)
+
+        let parentFrame = try XCTUnwrap(scenario.controller.host(for: .settings)).window.frame
+        XCTAssertEqual(childHost.window.frame.midX, parentFrame.midX, accuracy: 0.5)
+        XCTAssertEqual(childHost.window.frame.midY, parentFrame.midY, accuracy: 0.5)
+    }
+
+    func testOpenChildWindow_RestoredFrame_WinsOverRequestedSize() throws {
+        let saved = CGRect(x: 300, y: 300, width: 620, height: 460)
+        self.seedSavedFrame(saved)
+
+        let scenario = ChildWindowScenario.given(
+            parentShown: true,
+            userrulesFrameAutosaveKey: self.autosaveKey
+        )
+        _ = try scenario.controller.openChildWindow(
+            parent: .settings, html: nil,
+            params: ChildWindowParams(id: "0", width: 800, height: 670, caption: "Rules")
+        )
+        let childHost = try XCTUnwrap(scenario.factory.childHosts.first)
+        XCTAssertEqual(childHost.window.frame.width, saved.width, accuracy: 0.5)
+        XCTAssertEqual(childHost.window.frame.height, saved.height, accuracy: 0.5)
+    }
+
+    func testCloseThenReopen_KeepsUserResizedFrame() throws {
+        let scenario = ChildWindowScenario.given(
+            parentShown: true,
+            userrulesFrameAutosaveKey: self.autosaveKey
+        )
+        _ = try scenario.controller.openChildWindow(
+            parent: .settings, html: nil,
+            params: ChildWindowParams(id: "0", width: 800, height: 670, caption: "Rules")
+        )
+        let firstHost = try XCTUnwrap(scenario.factory.childHosts.first)
+        let resized = CGRect(x: 260, y: 240, width: 620, height: 460)
+        firstHost.window.setFrame(resized, display: false)
+        try scenario.controller.closeChildWindow("0")
+
+        _ = try scenario.controller.openChildWindow(
+            parent: .settings, html: nil,
+            params: ChildWindowParams(id: "0", width: 800, height: 670, caption: "Rules")
+        )
+        let secondHost = try XCTUnwrap(scenario.factory.childHosts.last)
+        XCTAssertEqual(secondHost.window.frame.width, resized.width, accuracy: 0.5)
+        XCTAssertEqual(secondHost.window.frame.height, resized.height, accuracy: 0.5)
+    }
+}
+
 // MARK: - Test scenario + real-host factory
 
 private final class RealHostFactory {
     /// Captures hosts created by the factory.
     var createdHosts: [WKWebViewAppHost] = []
+    /// Frame autosave key for `.userrules` hosts. Tests that need hermetic
+    /// frame persistence pass a unique key; `nil` keeps the module's own.
+    var userrulesFrameAutosaveKey: String?
     /// Child (`.userrules`) hosts only.
     var childHosts: [WKWebViewAppHost] {
         createdHosts.filter { $0.module == .userrules }
@@ -187,7 +296,8 @@ private final class RealHostFactory {
             onVisibilityChange: nil,
             integrityVerifier: WebUIIntegrityVerifier.noOp,
             bridgeSetup: { _ in },
-            extraMessageHandlersSetup: nil
+            extraMessageHandlersSetup: nil,
+            frameAutosaveKeyOverride: module == .userrules ? self.userrulesFrameAutosaveKey : nil
         )
         createdHosts.append(host)
         return host
@@ -198,8 +308,13 @@ private struct ChildWindowScenario {
     let controller: WebViewAppsController
     let factory: RealHostFactory
 
-    static func given(parentShown: Bool, secondParentShown: Bool = false) -> ChildWindowScenario {
+    static func given(
+        parentShown: Bool,
+        secondParentShown: Bool = false,
+        userrulesFrameAutosaveKey: String? = nil
+    ) -> ChildWindowScenario {
         let factory = RealHostFactory()
+        factory.userrulesFrameAutosaveKey = userrulesFrameAutosaveKey
         let controller = WebViewAppsController { module in
             factory.make(module: module)
         }

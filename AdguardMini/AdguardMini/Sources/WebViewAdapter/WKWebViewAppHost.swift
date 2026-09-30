@@ -62,6 +62,13 @@ final class WKWebViewAppHost: NSObject {
     let entryURL: URL
     let windowConfiguration: ModuleWindowConfiguration
 
+    /// The key the window frame is persisted under, `nil` when the window
+    /// does not persist its frame.
+    private let frameAutosaveKey: String?
+
+    /// Whether the persisted frame was already restored;
+    private var hasRestoredAutosavedFrame = false
+
     /// Captured from `WKWebView.loadFileURL` for test verification (US8.3).
     private(set) var lastLoadFileURLAllowingReadAccessTo: URL = URL(fileURLWithPath: "/")
 
@@ -143,6 +150,9 @@ final class WKWebViewAppHost: NSObject {
 
     // MARK: - Init
 
+    /// - Parameter frameAutosaveKeyOverride: Replaces the frame autosave key
+    ///   from the module's window preset. Pass a key to persist this window's
+    ///   frame in a slot of its own; `nil` keeps the preset's key.
     init(
         module: ModuleId,
         entryURL: URL? = nil,
@@ -151,7 +161,8 @@ final class WKWebViewAppHost: NSObject {
         integrityVerifier: any WebUIIntegrityVerifying,
         bridgeSetup: (WKWebViewBridge) -> Void,
         externalLinkGate: ExternalLinkGate? = nil,
-        extraMessageHandlersSetup: ((WKUserContentController) -> Void)? = nil
+        extraMessageHandlersSetup: ((WKUserContentController) -> Void)? = nil,
+        frameAutosaveKeyOverride: String? = nil
     ) {
         let config = ModuleWindowConfigurator.config(for: module)
         let webView = WKWebViewAppHost.makeWebView()
@@ -184,6 +195,7 @@ final class WKWebViewAppHost: NSObject {
         self.bridge = bridge
         self.onVisibilityChange = onVisibilityChange
         self.vibrancyView = vibrancyResult
+        self.frameAutosaveKey = frameAutosaveKeyOverride ?? config.frameAutosaveKey
         self.window = window
         self.entryURL = entry
         self.failurePresenter = failurePresenter
@@ -397,6 +409,7 @@ final class WKWebViewAppHost: NSObject {
         if self.module == .tray {
             self.window.hidesOnDeactivate = false
         }
+        self.restoreAutosavedFrameIfNeeded()
         self.window.makeKeyAndOrderFront(nil)
         // Point the window's first responder at the web view. A freshly shown
         // Window leaves it on the content view or the window itself, so key
@@ -424,6 +437,20 @@ final class WKWebViewAppHost: NSObject {
         self.installWindowMainObserver()
         // Cancels any pending idle teardown for the whole module group.
         self.onIdleActivity?(self.module, true)
+    }
+
+    /// Restores the frame saved under the autosave key, if any.
+    private func restoreAutosavedFrameIfNeeded() {
+        guard !self.hasRestoredAutosavedFrame, let key = self.frameAutosaveKey else { return }
+        self.hasRestoredAutosavedFrame = true
+        // Explicit restore: `setFrameAutosaveName` does nothing while
+        // Another window still claims the name (a closed child host may not
+        // Be released yet).
+        let restored = self.window.setFrameUsingName(key)
+        if !self.window.setFrameAutosaveName(key) {
+            LogWarn("Can't set frame autosave name: \(key)")
+        }
+        LogDebug("host frame restore key=\(key) restored=\(restored)")
     }
 
     /**
@@ -498,6 +525,11 @@ final class WKWebViewAppHost: NSObject {
             UIUtils.removeWindow(self.window)
         }
         self.webView.stopLoading()
+
+        // Persist the user's last geometry for the next open.
+        if let key = self.frameAutosaveKey {
+            self.window.saveFrame(usingName: key)
+        }
 
         // Detach the delegates before the window closes so no AppKit or
         // WebKit callback lands in a half-destroyed host. Both properties are
@@ -788,8 +820,8 @@ final class WKWebViewAppHost: NSObject {
         webView: WKWebView
     ) -> NSVisualEffectView? {
         window.styleMask = config.styleMask
-        // Apply the native minimum content size BEFORE restoring the autosaved
-        // Frame so a persisted frame is clamped to the module's minimum.
+        // Apply the native minimum content size before the persisted frame is
+        // Restored on first show, so that frame is clamped to the minimum.
         // Settings uses 800x640, matching the CSS `min-width`/`min-height`
         // In `App.pcss`. Modules with a `nil` minimum keep AppKit's default.
         if let contentMinSize = config.contentMinSize {
@@ -819,9 +851,6 @@ final class WKWebViewAppHost: NSObject {
         // Same. Give each its own AX name; the visible titlebar is untouched.
         window.setAccessibilityTitle(config.accessibilityTitle)
         window.level = config.level
-        if let key = config.frameAutosaveKey {
-            window.setFrameAutosaveName(key)
-        }
         window.isMovable = config.isMovable
         window.collectionBehavior = config.collectionBehavior
         window.titleVisibility = config.titleVisibility

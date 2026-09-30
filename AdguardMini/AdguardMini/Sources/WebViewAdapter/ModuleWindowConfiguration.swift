@@ -31,6 +31,9 @@ struct ModuleWindowConfiguration {
     /// leaving nothing to tell the windows apart.
     let accessibilityTitle: String
     let level: NSWindow.Level
+    /// AppKit frame autosave key. When set, the window's frame persists in
+    /// `UserDefaults` across closes and is restored when the host is next
+    /// created.
     let frameAutosaveKey: String?
     let isMovable: Bool
     let collectionBehavior: NSWindow.CollectionBehavior
@@ -138,8 +141,8 @@ enum ModuleWindowConfigurator {
             contentMinSize: CGSize(width: 800, height: 640),
             // Center on first launch: with no autosaved frame the 800×640
             // Window at (500,100) extends past the right edge / above the
-            // Visible area on smaller displays. `apply` centers before
-            // `setFrameAutosaveName`, so a saved frame still wins later.
+            // Visible area on smaller displays. The host restores the saved
+            // Frame on first show, so a saved frame still wins later.
             centerOnScreen: true
         )
     }

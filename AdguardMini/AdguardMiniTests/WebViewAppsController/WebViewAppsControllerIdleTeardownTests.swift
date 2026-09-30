@@ -234,9 +234,9 @@ final class WebViewAppsControllerIdleTeardownTests: XCTestCase {
             return
         }
         settings.window.miniaturize(nil)
-        try? await Task.sleep(seconds: Constants.pollInterval)
-
-        XCTAssertTrue(settings.window.isMiniaturized, "precondition: the window is minimized")
+        await self.waitUntil("precondition: the window is minimized") {
+            settings.window.isMiniaturized
+        }
         XCTAssertFalse(settings.window.isVisible, "precondition: `isVisible` lies once minimized")
 
         // A path that arms the countdown. Before the `isMiniaturized` check
