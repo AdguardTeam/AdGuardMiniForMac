@@ -431,6 +431,8 @@ export class AdvancedBlocking {
         if (resp.hasError) {
             await this.getURLFilterState();
             this.notifyURLFilterError(URLFilterErrorKind.maintenance);
+        } else {
+            return true;
         }
     }
 
@@ -442,6 +444,8 @@ export class AdvancedBlocking {
         if (resp.hasError) {
             await this.getURLFilterState();
             this.notifyURLFilterError(URLFilterErrorKind.maintenance);
+        } else {
+            return true;
         }
     }
 

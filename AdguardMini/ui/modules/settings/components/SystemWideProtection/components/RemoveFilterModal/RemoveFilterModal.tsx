@@ -10,6 +10,7 @@ import theme from 'Theme';
 import { Modal } from 'UILib';
 
 import s from './RemoveFilterModal.module.pcss';
+import { notifySuccess } from 'Modules/common/utils/notifications';
 
 /**
  * Props for RemoveFilterModal component
@@ -22,12 +23,15 @@ type RemoveFilterModalProps = {
  * Remove URL filter modal for System-wide Protection settings page
  */
 function RemoveFilterModalComponent({ setShowRemoveFilterModal }: RemoveFilterModalProps) {
-    const { advancedBlocking, telemetry } = useSettingsStore();
+    const { advancedBlocking, telemetry, notification } = useSettingsStore();
 
-    const onSubmit = () => {
+    const onSubmit = async () => {
         telemetry.trackEvent(SettingsEvent.RemoveURLFilterClick);
-        advancedBlocking.removeURLFilter();
         setShowRemoveFilterModal(false);
+        const result = await advancedBlocking.removeURLFilter();
+        if (result) {
+            notifySuccess(notification, translate('advanced.blocking.system.wide.remove.notification.success'));
+        }
     };
 
     const onClose = () => setShowRemoveFilterModal(false);

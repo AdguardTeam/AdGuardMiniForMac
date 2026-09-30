@@ -6,6 +6,7 @@ import { observer } from 'mobx-react-lite';
 
 import { useSettingsStore } from 'SettingsLib/hooks';
 import theme from 'Theme';
+import { notifySuccess } from 'Modules/common/utils/notifications';
 import { Modal } from 'UILib';
 
 import s from './ResetCacheModal.module.pcss';
@@ -21,11 +22,14 @@ type ResetCacheModalProps = {
  * Reset cache modal for System-wide Protection settings page
  */
 function ResetCacheModalComponent({ setShowResetCacheModal }: ResetCacheModalProps) {
-    const { advancedBlocking } = useSettingsStore();
+    const { advancedBlocking, notification } = useSettingsStore();
 
-    const onSubmit = () => {
-        advancedBlocking.resetURLFilterCache();
+    const onSubmit = async () => {
         setShowResetCacheModal(false);
+        const result = await advancedBlocking.resetURLFilterCache();
+        if (result) {
+            notifySuccess(notification, translate('advanced.blocking.system.wide.reset.cache.notification.success'));
+        }
     };
 
     const onClose = () => setShowResetCacheModal(false);
