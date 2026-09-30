@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "A közösségi hálózatokkal kapcsolatos szűrőszabályokat tartalmazza";
+"NSHumanReadableDescription" = "Segít blokkolni a közösségi média gombokat, widgeteket, scripteket és ikonokat";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Közösségi";

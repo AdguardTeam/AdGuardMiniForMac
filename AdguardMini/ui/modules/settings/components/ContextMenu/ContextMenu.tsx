@@ -46,7 +46,7 @@ export type ContextMenuProps = {
  * Context dropdown menu
  */
 function ContextMenuComponent({ elements, reportBug, className, showReportBugTooltip }: ContextMenuProps) {
-    const { router, ui, telemetry } = useSettingsStore();
+    const { router, settings, telemetry } = useSettingsStore();
 
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -64,7 +64,10 @@ function ContextMenuComponent({ elements, reportBug, className, showReportBugToo
     debounceRef.current = debounce(() => {
         if (!open) {
             openContextMenu();
-            ui.hideProblemLabel();
+            // The user found the report button on their own, so the one-time
+            // tooltip has nothing left to teach; persisting the flag keeps it
+            // from coming back on the next window open.
+            settings.updateReportProblemLabelShown(true);
         }
     }, TOOLTIP_WAIT_TIME);
 
@@ -84,13 +87,16 @@ function ContextMenuComponent({ elements, reportBug, className, showReportBugToo
                 }
             }, TIMEOUT_REPORT_TOOLTIP_SHOW);
             setTimeout(() => {
-                ui.hideProblemLabel();
+                // The tooltip has had its one showing: the persisted flag is
+                // what keeps it away from now on, so the next window open does
+                // not arm it again.
+                settings.updateReportProblemLabelShown(true);
             }, TIMEOUT_REPORT_TOOLTIP_TEXT);
         }
         return () => {
             canUpdate = false;
         };
-    }, [showReportBugTooltip, ui, openContextMenu, closeContextMenu]);
+    }, [showReportBugTooltip, settings, openContextMenu, closeContextMenu]);
 
     const handleAction = (action: () => void) => () => {
         // Restore first: the surface this action opens (a modal, usually)

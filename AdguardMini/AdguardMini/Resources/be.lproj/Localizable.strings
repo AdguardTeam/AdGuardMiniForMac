@@ -22,6 +22,30 @@
 /* App Menu - "Quit AdGuard Mini" title. */
 "app_menu_quit_title" = "Выйсці з AdGuard Mini";
 
+/* App Menu - "Edit" title. */
+"app_menu_edit_title" = "Рэдагаваць";
+
+/* App Menu - "Undo" title. */
+"app_menu_undo_title" = "Адрабіць";
+
+/* App Menu - "Redo" title. */
+"app_menu_redo_title" = "Узнавіць";
+
+/* App Menu - "Cut" title. */
+"app_menu_cut_title" = "Выразаць";
+
+/* App Menu - "Copy" title. */
+"app_menu_copy_title" = "Скапіраваць";
+
+/* App Menu - "Paste" title. */
+"app_menu_paste_title" = "Уставіць";
+
+/* App Menu - "Delete" title. */
+"app_menu_delete_title" = "Выдаліць";
+
+/* App Menu - "Select All" title. */
+"app_menu_select_all_title" = "Выбраць усе";
+
 /* Terminating app Alert - Message text "Quit AdGuard Mini?" */
 "terminate_app_alert_message_text" = "Выйсці з AdGuard Mini?";
 
@@ -55,6 +79,26 @@
 /* Request user about restarting AdGuard Mini */
 "restarting_request_message_text" = "Налады былі скінуты. Перазапусціце AdGuard Mini, каб аднавіць яго функцыянальнасць";
 
+/* WebView failure alert - "Report issue" button title */
+"report_issue_button" = "Паведаміць аб праблеме";
+
+/* WebView failure alert - Title */
+"webview_load_failure_message_title" = "AdGuard Mini не можа загрузіць свой інтэрфейс";
+
+/* WebView failure alert - Informative text */
+"webview_load_failure_message_text" = "Нешта пайшло не так падчас загрузкі акна AdGuard Mini. Вы можаце перазапусціць праграму або паведаміць аб праблеме.";
+
+/* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
+"webui_integrity_failure_message_title" = "AdGuard Mini быў зменены па-за межамі праграмы";
+
+/* WebUI integrity Alert - Informative text */
+"webui_integrity_failure_message_text" = "Файлы праграмы былі зменены пасля ўсталявання. Пераўсталюйце AdGuard Mini, каб аднавіць яго функцыянальнасць.";
+/* RPC recurring-timeout alert - Title */
+"rpc_timeout_message_title" = "AdGuard Mini не адказвае";
+
+/* RPC recurring-timeout alert - Informative text */
+"rpc_timeout_message_text" = "Час чакання адказу паміж праграмай і яе інтэрфейсам неаднаразова вычарпаўся. Вы можаце перазапусціць праграму або паведаміць аб праблеме.";
+
 /* Title on Close button in error message */
 "close_button" = "Закрыць";
 
@@ -72,3 +116,15 @@
 
 /* Notify the user that the application should be moved to the Applications folder. */
 "error_running_app_message" = "AdGuard Mini павінен знаходзіцца ў папцы «Праграмы», каб праграма магла запусціцца.\nПерамясціце праграму туды і паспрабуйце яшчэ раз";
+
+/* User rules editor window title. */
+"user_rules_editor_title" = "Рэдактар правіл карыстальніка";
+
+/* VoiceOver name of the menu bar tray window. */
+"window_accessibility_title_tray" = "AdGuard Mini ў трэі";
+
+/* VoiceOver name of the settings window. */
+"window_accessibility_title_settings" = "Налады AdGuard Mini";
+
+/* VoiceOver name of the onboarding window. */
+"window_accessibility_title_onboarding" = "Уводзіны ў AdGuard Mini";

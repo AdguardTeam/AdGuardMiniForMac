@@ -22,6 +22,30 @@
 /* App Menu - "Quit AdGuard Mini" title. */
 "app_menu_quit_title" = "Thoát khỏi AdGuard Mini";
 
+/* App Menu - "Edit" title. */
+"app_menu_edit_title" = "Chỉnh sửa";
+
+/* App Menu - "Undo" title. */
+"app_menu_undo_title" = "Hoàn tác";
+
+/* App Menu - "Redo" title. */
+"app_menu_redo_title" = "Làm lại";
+
+/* App Menu - "Cut" title. */
+"app_menu_cut_title" = "Cắt";
+
+/* App Menu - "Copy" title. */
+"app_menu_copy_title" = "Chép";
+
+/* App Menu - "Paste" title. */
+"app_menu_paste_title" = "Dán";
+
+/* App Menu - "Delete" title. */
+"app_menu_delete_title" = "Xoá";
+
+/* App Menu - "Select All" title. */
+"app_menu_select_all_title" = "Chọn tất cả";
+
 /* Terminating app Alert - Message text "Quit AdGuard Mini?" */
 "terminate_app_alert_message_text" = "Thoát khỏi AdGuard Mini?";
 
@@ -55,6 +79,26 @@
 /* Request user about restarting AdGuard Mini */
 "restarting_request_message_text" = "Cài đặt đã được đặt lại. Vui lòng khởi động lại AdGuard Mini để khôi phục chức năng của nó";
 
+/* WebView failure alert - "Report issue" button title */
+"report_issue_button" = "Báo cáo vấn đề";
+
+/* WebView failure alert - Title */
+"webview_load_failure_message_title" = "AdGuard Mini không thể tải giao diện của ứng dụng";
+
+/* WebView failure alert - Informative text */
+"webview_load_failure_message_text" = "Đã xảy ra lỗi khi tải cửa sổ AdGuard Mini. Bạn có thể khởi động lại ứng dụng hoặc báo cáo sự cố.";
+
+/* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
+"webui_integrity_failure_message_title" = "AdGuard Mini đã được thay đổi từ bên ngoài";
+
+/* WebUI integrity Alert - Informative text */
+"webui_integrity_failure_message_text" = "Các tệp ứng dụng đã bị sửa đổi sau khi cài đặt. Cài đặt lại AdGuard Mini để khôi phục chức năng của nó.";
+/* RPC recurring-timeout alert - Title */
+"rpc_timeout_message_title" = "AdGuard Mini không phản hồi";
+
+/* RPC recurring-timeout alert - Informative text */
+"rpc_timeout_message_text" = "Việc giao tiếp giữa ứng dụng và giao diện của nó đã nhiều lần bị hết thời gian chờ. Bạn có thể khởi động lại ứng dụng hoặc báo cáo sự cố.";
+
 /* Title on Close button in error message */
 "close_button" = "Đóng";
 
@@ -72,3 +116,15 @@
 
 /* Notify the user that the application should be moved to the Applications folder. */
 "error_running_app_message" = "AdGuard Mini cần phải nằm trong thư mục Ứng dụng để chạy.\nVui lòng di chuyển nó vào đó và thử lại";
+
+/* User rules editor window title. */
+"user_rules_editor_title" = "Chỉnh sửa quy tắc người dùng";
+
+/* VoiceOver name of the menu bar tray window. */
+"window_accessibility_title_tray" = "Khay AdGuard Mini";
+
+/* VoiceOver name of the settings window. */
+"window_accessibility_title_settings" = "Cài đặt AdGuard Mini";
+
+/* VoiceOver name of the onboarding window. */
+"window_accessibility_title_onboarding" = "Hội nhập AdGuard Mini";

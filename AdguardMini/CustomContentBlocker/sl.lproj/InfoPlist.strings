@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Seznam pravil zaviranja po meri.";
+"NSHumanReadableDescription" = "Omogoča, da AdGuard Mini uporabi vaše filtre po meri";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Po meri";

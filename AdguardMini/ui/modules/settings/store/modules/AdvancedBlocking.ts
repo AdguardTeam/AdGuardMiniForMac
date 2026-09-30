@@ -21,15 +21,13 @@ import {
 } from 'Apis/requests/AdvancedBlockingService';
 import {
     URLFilterState,
+    URLFilterStatus,
 } from 'Apis/types';
 import {
     NotificationContext,
     NotificationsQueueIconType,
     NotificationsQueueType,
 } from 'Common/stores/NotificationsQueue';
-import {
-    notifySingleActive,
-} from 'Common/utils/urlFilterState';
 import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
 
 import type { BoolValue, URLFilterInfo, URLFilterProtectionLevel } from 'Apis/types';
@@ -59,13 +57,33 @@ function hasURLFilterStats(info: URLFilterInfo): boolean {
 }
 
 /**
+ * Kind of a System-wide Protection failure, used as the deduplication key of
+ * the notification shown for it.
+ */
+enum URLFilterErrorKind {
+    /** System-wide Protection could not be started or reconfigured. */
+    enable = 'enable',
+    /** A maintenance call (cache reset, filter removal) failed. */
+    maintenance = 'maintenance',
+}
+
+/**
  *  AdvancedBlocking store
  */
 export class AdvancedBlocking {
     /**
-     * Active URL-filter failure notification id used to deduplicate toasts.
+     * Kind of the System-wide Protection error the shown snack covers.
+     *
+     * The platform pushes the state several times for one failed change, so
+     * reports of one kind are collapsed into the snack already on screen.
      */
-    private urlFilterCallFailedNotificationId: string | null = null;
+    private reportedURLFilterErrorKind: URLFilterErrorKind | null = null;
+
+    /**
+     * Id of the shown System-wide Protection error notification, so a
+     * different error replaces it instead of stacking another one.
+     */
+    private urlFilterErrorNotificationId: string | null = null;
 
     /**
      * Notifications queue used to surface error toasts.
@@ -134,23 +152,51 @@ export class AdvancedBlocking {
     }
 
     /**
-     * Shows a generic warning when a System-wide Protection backend call fails.
+     * Shows the notification for a System-wide Protection failure.
+     *
+     * One failed change reaches the UI more than once — the request response
+     * and the pushed state both report it — so failures of one kind share a
+     * single notification while it is on screen. Once the snack is gone —
+     * auto-closed, dismissed, or dropped by another notification — the next
+     * failure is reported again: the switch rolls back silently, so a retry
+     * after a gone snack would leave the user without any feedback.
+     *
+     * @param kind Kind of the failure to report.
      */
-    private notifyURLFilterCallFailed(canNotEnable?: boolean) {
-        this.urlFilterCallFailedNotificationId = notifySingleActive(
-            this.urlFilterCallFailedNotificationId,
-            this.notification,
-            {
-                message: canNotEnable ? translate('advanced.blocking.system.wide.error') : getNotificationSomethingWentWrongText(),
-                notificationContext: NotificationContext.info,
-                type: NotificationsQueueType.warning,
-                iconType: NotificationsQueueIconType.error,
-                closeable: true,
-                onClose: () => {
-                    this.urlFilterCallFailedNotificationId = null;
-                },
+    private notifyURLFilterError(kind: URLFilterErrorKind) {
+        // The snack may have been dropped by another notification without
+        // clearing the id, so the queue — not the id — tells whether it shows.
+        const isSnackShown = this.urlFilterErrorNotificationId !== null
+            && this.notification.get(this.urlFilterErrorNotificationId) !== undefined;
+        if (isSnackShown && this.reportedURLFilterErrorKind === kind) {
+            return;
+        }
+        // A different error supersedes the previous one: one error, one snack.
+        if (this.urlFilterErrorNotificationId !== null) {
+            this.notification.closeNotify(this.urlFilterErrorNotificationId);
+        }
+        this.reportedURLFilterErrorKind = kind;
+        this.urlFilterErrorNotificationId = this.notification.notify({
+            message: kind === URLFilterErrorKind.enable
+                ? translate('advanced.blocking.system.wide.error')
+                : getNotificationSomethingWentWrongText(),
+            notificationContext: NotificationContext.info,
+            type: NotificationsQueueType.warning,
+            iconType: NotificationsQueueIconType.error,
+            closeable: true,
+            onClose: () => {
+                this.urlFilterErrorNotificationId = null;
             },
-        );
+        });
+    }
+
+    /**
+     * Clears the deduplication key once the filter recovered, so a failure
+     * after the recovery is reported again — even while the snack of the
+     * previous error is still on screen.
+     */
+    private resetURLFilterError() {
+        this.reportedURLFilterErrorKind = null;
     }
 
     /**
@@ -229,6 +275,12 @@ export class AdvancedBlocking {
      */
     public applyPushedURLFilterState(data: URLFilterState) {
         this.setURLFilterState(data);
+        if (data.status === URLFilterStatus.error) {
+            this.notifyURLFilterError(URLFilterErrorKind.enable);
+        } else if (data.status === URLFilterStatus.running) {
+            // The filter works again: a later failure is a new error.
+            this.resetURLFilterError();
+        }
 
         if (!this.isStatsHeld) {
             // First pushed state: hold its stats until the next push.
@@ -312,6 +364,10 @@ export class AdvancedBlocking {
         const resp = await window.API.Execute(new GetURLFilterStateRequest());
         this.setURLFilterState(resp);
         this.showStats(resp.info);
+        if (resp.status === URLFilterStatus.running) {
+            // The filter works again: a later failure is a new error.
+            this.resetURLFilterError();
+        }
     }
 
     /**
@@ -332,9 +388,12 @@ export class AdvancedBlocking {
         this.setURLFilterState(newValue);
         const resp = await window.API.Execute(new SetURLFilterEnabledRequest({ value }));
         if (resp.hasError) {
-            this.notifyURLFilterCallFailed(true);
+            this.notifyURLFilterError(URLFilterErrorKind.enable);
             this.setURLFilterState(prevValue);
             await this.getURLFilterState();
+        } else {
+            // The toggle landed: the error state of the previous attempt is over.
+            this.resetURLFilterError();
         }
     }
 
@@ -354,10 +413,13 @@ export class AdvancedBlocking {
         this.setURLFilterState(newValue);
         const resp = await window.API.Execute(new RequestUpdateURLFilterProtectionLevelRequest({ protectionLevel }));
         if (resp.hasError) {
-            this.notifyURLFilterCallFailed(true);
+            this.notifyURLFilterError(URLFilterErrorKind.enable);
             this.setURLFilterState(prevValue);
             this.showStats(prevValue.info);
             await this.getURLFilterState();
+        } else {
+            // The level change landed: the error state of the previous attempt is over.
+            this.resetURLFilterError();
         }
     }
 
@@ -368,7 +430,9 @@ export class AdvancedBlocking {
         const resp = await window.API.Execute(new ResetURLFilterCacheRequest());
         if (resp.hasError) {
             await this.getURLFilterState();
-            this.notifyURLFilterCallFailed();
+            this.notifyURLFilterError(URLFilterErrorKind.maintenance);
+        } else {
+            return true;
         }
     }
 
@@ -379,7 +443,9 @@ export class AdvancedBlocking {
         const resp = await window.API.Execute(new RemoveURLFilterRequest());
         if (resp.hasError) {
             await this.getURLFilterState();
-            this.notifyURLFilterCallFailed();
+            this.notifyURLFilterError(URLFilterErrorKind.maintenance);
+        } else {
+            return true;
         }
     }
 

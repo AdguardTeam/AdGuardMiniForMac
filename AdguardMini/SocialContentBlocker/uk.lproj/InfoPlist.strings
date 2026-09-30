@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Містить фільтри соцмереж та подразників";
+"NSHumanReadableDescription" = "Допомагає блокувати кнопки соціальних мереж, віджети, скрипти та іконки";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard - Соціальні";

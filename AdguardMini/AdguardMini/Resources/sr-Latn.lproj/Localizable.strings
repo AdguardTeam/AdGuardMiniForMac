@@ -22,6 +22,30 @@
 /* App Menu - "Quit AdGuard Mini" title. */
 "app_menu_quit_title" = "Izađi iz AdGuard Mini";
 
+/* App Menu - "Edit" title. */
+"app_menu_edit_title" = "Izmeni";
+
+/* App Menu - "Undo" title. */
+"app_menu_undo_title" = "Opozovi";
+
+/* App Menu - "Redo" title. */
+"app_menu_redo_title" = "Ponovi";
+
+/* App Menu - "Cut" title. */
+"app_menu_cut_title" = "Iseci";
+
+/* App Menu - "Copy" title. */
+"app_menu_copy_title" = "Kopiraj";
+
+/* App Menu - "Paste" title. */
+"app_menu_paste_title" = "Nalepi";
+
+/* App Menu - "Delete" title. */
+"app_menu_delete_title" = "Izbriši";
+
+/* App Menu - "Select All" title. */
+"app_menu_select_all_title" = "Izaberi sve";
+
 /* Terminating app Alert - Message text "Quit AdGuard Mini?" */
 "terminate_app_alert_message_text" = "Zatvoriti AdGuard Mini?";
 
@@ -55,6 +79,26 @@
 /* Request user about restarting AdGuard Mini */
 "restarting_request_message_text" = "Podešavanja su resetovana. Molimo Vas da ponovo pokrenete AdGuard Mini da biste vratili svoju funkcionalnost";
 
+/* WebView failure alert - "Report issue" button title */
+"report_issue_button" = "Prijavi problem";
+
+/* WebView failure alert - Title */
+"webview_load_failure_message_title" = "AdGuard Mini ne može da učita svoj interfejs";
+
+/* WebView failure alert - Informative text */
+"webview_load_failure_message_text" = "Došlo je do greške prilikom učitavanja AdGuard Mini prozora. Možete ponovo pokrenuti aplikaciju ili prijaviti problem.";
+
+/* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
+"webui_integrity_failure_message_title" = "AdGuard Mini je izmenjen spolja";
+
+/* WebUI integrity Alert - Informative text */
+"webui_integrity_failure_message_text" = "Datoteke aplikacije su izmenjene nakon instalacije. Ponovo instalirajte AdGuard Mini da biste vratili njegovu funkcionalnost.";
+/* RPC recurring-timeout alert - Title */
+"rpc_timeout_message_title" = "AdGuard Mini ne reaguje";
+
+/* RPC recurring-timeout alert - Informative text */
+"rpc_timeout_message_text" = "Komunikacija između aplikacije i njenog interfejsa je više puta istekla. Možete ponovo pokrenuti aplikaciju ili prijaviti problem.";
+
 /* Title on Close button in error message */
 "close_button" = "Zatvori";
 
@@ -72,3 +116,15 @@
 
 /* Notify the user that the application should be moved to the Applications folder. */
 "error_running_app_message" = "AdGuard Mini mora biti u fascikli Applications da bi radio.\nMolimo vas da ga premestite tamo i pokušate ponovo.";
+
+/* User rules editor window title. */
+"user_rules_editor_title" = "Uređivač korisničkih pravila";
+
+/* VoiceOver name of the menu bar tray window. */
+"window_accessibility_title_tray" = "AdGuard Mini sistemska traka";
+
+/* VoiceOver name of the settings window. */
+"window_accessibility_title_settings" = "AdGuard Mini postavke";
+
+/* VoiceOver name of the onboarding window. */
+"window_accessibility_title_onboarding" = "AdGuard Mini uvod";

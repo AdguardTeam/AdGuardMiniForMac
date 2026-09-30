@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "מכיל כללי חסימה של מסננים חברתיים";
+"NSHumanReadableDescription" = "עוזר לחסום לחצני רשת חברתית, יישומונים, תסריטים ואיקונים";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard חברתי";

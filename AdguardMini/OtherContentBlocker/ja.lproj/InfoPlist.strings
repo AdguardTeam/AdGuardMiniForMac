@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "その他フィルタのブロックルールを含む。";
+"NSHumanReadableDescription" = "AdGuard Mini がその他の未分類フィルターを適用できるようにします";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard その他";

@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "包含社群過濾器之阻擋規則";
+"NSHumanReadableDescription" = "封鎖社群媒體按鈕、小工具、指令碼和圖示";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard 社群";

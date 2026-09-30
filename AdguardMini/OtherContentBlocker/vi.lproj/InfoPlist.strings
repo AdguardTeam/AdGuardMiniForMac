@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Chứa các quy tắc chặn trong các Bộ lọc khác";
+"NSHumanReadableDescription" = "Cho phép AdGuard Mini áp dụng các bộ lọc chưa phân loại khác";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "Khác";

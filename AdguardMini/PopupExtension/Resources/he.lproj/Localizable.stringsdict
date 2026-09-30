@@ -1,5 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-  <dict/>
+  <dict>
+    <key>item_stats_ads_blocked</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%2$@ פרסומת חסומה</string>
+        <key>two</key>
+        <string>%2$@ פרסומות חסומות</string>
+        <key>other</key>
+        <string>%2$@ פרסומות חסומות</string>
+      </dict>
+    </dict>
+    <key>item_stats_trackers_blocked</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%2$@ עוקבנים חסומים</string>
+        <key>two</key>
+        <string>%2$@ עוקבנים חסומים</string>
+        <key>other</key>
+        <string>%2$@ עוקבנים חסומים</string>
+      </dict>
+    </dict>
+    <key>item_upsell_description_trial</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>נסה %1$d יום חינם</string>
+        <key>two</key>
+        <string>נסה %1$d ימים חינם</string>
+        <key>other</key>
+        <string>נסה %1$d ימים חינם</string>
+      </dict>
+    </dict>
+  </dict>
 </plist>

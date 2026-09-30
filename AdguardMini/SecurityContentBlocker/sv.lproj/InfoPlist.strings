@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "Hjälper till att blockera skadliga webbplatser samt nätfiske- och bedrägerisidor";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Säkerhet";

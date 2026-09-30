@@ -28,6 +28,7 @@ protocol UserSettingsService: AnyObject {
     var dismissedHealthCheckCards: [String] { get set }
     var dismissedPromoCards:       [String] { get set }
     var hiddenStories:             [String] { get set }
+    var reportProblemLabelShown:   Bool { get set }
 
     // MARK: Properties with side effects
 
@@ -171,6 +172,11 @@ extension UserSettingsServiceImpl: UserSettingsService {
     var hiddenStories: [String] {
         get { self.hiddenStoriesData }
         set { self.hiddenStoriesData = newValue }
+    }
+
+    var reportProblemLabelShown: Bool {
+        get { self.userSettingsManager.reportProblemLabelShown }
+        set { self.userSettingsManager.reportProblemLabelShown = newValue }
     }
 
     // MARK: Properties with side effects and special setters

@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "カスタムフィルタのブロックルールを含む。";
+"NSHumanReadableDescription" = "AdGuard Miniがお使いのカスタムフィルタを適用できるようにします";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard カスタム";

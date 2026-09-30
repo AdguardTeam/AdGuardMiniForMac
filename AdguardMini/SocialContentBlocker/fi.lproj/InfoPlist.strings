@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Sisältää sosiaalisen median suodatussääntöjä";
+"NSHumanReadableDescription" = "Auttaa estämään sosiaalisen median painikkeita, widgettejä, skriptejä ja kuvakkeita";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Sosiaalinen";

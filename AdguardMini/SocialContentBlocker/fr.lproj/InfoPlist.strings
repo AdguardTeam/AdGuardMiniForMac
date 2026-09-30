@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Ajoutez une description ici pour expliquer ce que fait votre extension.";
+"NSHumanReadableDescription" = "Aide à bloquer les boutons, widgets, scripts et icônes des réseaux sociaux";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Social";

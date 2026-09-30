@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Regras de bloqueio de listas de filtros personalizados.";
+"NSHumanReadableDescription" = "Permite ao AdGuard Mini aplicar seus filtros personalizados";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Personalizado";

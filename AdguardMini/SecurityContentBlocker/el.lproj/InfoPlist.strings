@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "Βοηθά στον αποκλεισμό κακόβουλων ιστοσελίδων, ιστοσελίδων ηλεκτρονικού ψαρέματος και απάτης";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Ασφάλεια";

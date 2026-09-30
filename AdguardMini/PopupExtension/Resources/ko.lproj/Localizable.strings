@@ -1,6 +1,9 @@
 /* Domain view - Item title "Secure page" */
 "item_title_secure_page" = "보안 페이지";
 
+/* Domain view - Domain Item hint "Website protection disabled" */
+"item_hint_domain_protection_off" = "웹사이트 보호 꺼짐";
+
 /* Domain view - Item title "Still seeing ads? Learn how to fix this" */
 "item_attention_title_health_check_trouble" = "아직도 광고가 표시되나요? 해결 방법 알아보기";
 
@@ -12,6 +15,12 @@
 
 /* Domain view - Item title "Rate AdGuard Mini" */
 "item_title_rate_adguard_mini" = "AdGuard Mini 평가";
+
+/* Domain view - Stats label "{count} ad(s) blocked" */
+"item_stats_ads_blocked" = "광고 %d개 차단됨";
+
+/* Domain view - Stats label "{count} tracker(s) blocked" */
+"item_stats_trackers_blocked" = "추적기 %d개 차단됨";
 
 /* Info view - Title "Protection is disabled" */
 "info_title_protection_disabled" = "보호가 비활성화 되었습니다";

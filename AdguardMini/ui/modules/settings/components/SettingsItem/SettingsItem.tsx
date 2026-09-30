@@ -175,7 +175,6 @@ function SettingsItemComponent({
                         className={cx(
                             s.SettingsItem_container_line_text,
                             routeName && s.SettingsItem__pointer,
-                            !(description || additionalText) && s.SettingsItem_container_line__paddingTop,
                         )}
                     >
                         <Text lineHeight="none" type="t1">{title}</Text>

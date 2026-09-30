@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "在此处添加您的扩展程序的说明。";
+"NSHumanReadableDescription" = "拦截社交媒体按钮、小组件、脚本和图标";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard 社交";

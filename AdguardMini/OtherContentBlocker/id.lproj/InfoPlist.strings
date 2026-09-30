@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Berisi aturan pemblokiran filter Lainnya";
+"NSHumanReadableDescription" = "Memungkinkan AdGuard Mini menerapkan filter lain yang tidak dikategorikan";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard lainnya";

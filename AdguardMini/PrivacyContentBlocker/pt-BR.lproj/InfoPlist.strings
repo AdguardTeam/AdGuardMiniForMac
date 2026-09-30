@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "Ajuda a bloquear rastreadores e análises da rede";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "Privacidade";

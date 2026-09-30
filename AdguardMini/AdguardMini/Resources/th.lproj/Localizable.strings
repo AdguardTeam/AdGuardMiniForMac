@@ -22,6 +22,30 @@
 /* App Menu - "Quit AdGuard Mini" title. */
 "app_menu_quit_title" = "ออกจาก AdGuard Mini";
 
+/* App Menu - "Edit" title. */
+"app_menu_edit_title" = "แก้ไข";
+
+/* App Menu - "Undo" title. */
+"app_menu_undo_title" = "เลิกทำ";
+
+/* App Menu - "Redo" title. */
+"app_menu_redo_title" = "ทำซ้ำ";
+
+/* App Menu - "Cut" title. */
+"app_menu_cut_title" = "ตัด";
+
+/* App Menu - "Copy" title. */
+"app_menu_copy_title" = "คัดลอก";
+
+/* App Menu - "Paste" title. */
+"app_menu_paste_title" = "วาง";
+
+/* App Menu - "Delete" title. */
+"app_menu_delete_title" = "ลบ";
+
+/* App Menu - "Select All" title. */
+"app_menu_select_all_title" = "เลือกทั้งหมด";
+
 /* Terminating app Alert - Message text "Quit AdGuard Mini?" */
 "terminate_app_alert_message_text" = "ต้องการออกจาก AdGuard Mini หรือไม่?";
 
@@ -55,6 +79,26 @@
 /* Request user about restarting AdGuard Mini */
 "restarting_request_message_text" = "จำเป็นต้องรีสตาร์ทเพื่อให้ AdGuard กลับมาทำงาน คลิก \"รีสตาร์ท\" เพื่อดำเนินการนี้";
 
+/* WebView failure alert - "Report issue" button title */
+"report_issue_button" = "แจ้งปัญหา";
+
+/* WebView failure alert - Title */
+"webview_load_failure_message_title" = "AdGuard Mini ไม่สามารถโหลดอินเตอร์เฟซได้";
+
+/* WebView failure alert - Informative text */
+"webview_load_failure_message_text" = "เกิดข้อผิดพลาดขณะโหลดหน้าต่าง AdGuard Mini คุณสามารถรีสตาร์ทแอปหรือแจ้งปัญหาได้";
+
+/* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
+"webui_integrity_failure_message_title" = "AdGuard Mini ถูกเปลี่ยนแปลงจากภายนอก";
+
+/* WebUI integrity Alert - Informative text */
+"webui_integrity_failure_message_text" = "ไฟล์ของแอปพลิเคชันถูกแก้ไขหลังจากการติดตั้ง ติดตั้ง AdGuard Mini ใหม่อีกครั้งเพื่อกู้คืนการทำงาน";
+/* RPC recurring-timeout alert - Title */
+"rpc_timeout_message_title" = "AdGuard Mini ไม่ตอบสนอง";
+
+/* RPC recurring-timeout alert - Informative text */
+"rpc_timeout_message_text" = "การสื่อสารระหว่างแอปและอินเตอร์เฟซหมดเวลาซ้ำหลายครั้ง คุณสามารถรีสตาร์ทแอปหรือแจ้งปัญหาได้";
+
 /* Title on Close button in error message */
 "close_button" = "ปิด";
 
@@ -72,3 +116,15 @@
 
 /* Notify the user that the application should be moved to the Applications folder. */
 "error_running_app_message" = "AdGuard Mini จำเป็นต้องอยู่ในโฟลเดอร์ Applications เพื่อใช้งาน\nกรุณาย้ายไปที่นั่นแล้วลองใหม่อีกครั้ง";
+
+/* User rules editor window title. */
+"user_rules_editor_title" = "ตัวแก้ไข User rules";
+
+/* VoiceOver name of the menu bar tray window. */
+"window_accessibility_title_tray" = "ถาด AdGuard Mini";
+
+/* VoiceOver name of the settings window. */
+"window_accessibility_title_settings" = "การตั้งค่า AdGuard Mini";
+
+/* VoiceOver name of the onboarding window. */
+"window_accessibility_title_onboarding" = "การเริ่มต้นใช้งาน AdGuard Mini";

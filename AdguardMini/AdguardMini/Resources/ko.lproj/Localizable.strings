@@ -22,6 +22,30 @@
 /* App Menu - "Quit AdGuard Mini" title. */
 "app_menu_quit_title" = "AdGuard Mini 종료";
 
+/* App Menu - "Edit" title. */
+"app_menu_edit_title" = "편집";
+
+/* App Menu - "Undo" title. */
+"app_menu_undo_title" = "되돌리기";
+
+/* App Menu - "Redo" title. */
+"app_menu_redo_title" = "되돌리기 취소";
+
+/* App Menu - "Cut" title. */
+"app_menu_cut_title" = "잘라내기";
+
+/* App Menu - "Copy" title. */
+"app_menu_copy_title" = "복사";
+
+/* App Menu - "Paste" title. */
+"app_menu_paste_title" = "붙여넣기";
+
+/* App Menu - "Delete" title. */
+"app_menu_delete_title" = "삭제";
+
+/* App Menu - "Select All" title. */
+"app_menu_select_all_title" = "모두 선택";
+
 /* Terminating app Alert - Message text "Quit AdGuard Mini?" */
 "terminate_app_alert_message_text" = "AdGuard Mini를 종료하시겠습니까?";
 
@@ -55,6 +79,26 @@
 /* Request user about restarting AdGuard Mini */
 "restarting_request_message_text" = "설정이 초기화되었습니다. 기능을 복원하려면 AdGuard Mini를 다시 시작하세요.";
 
+/* WebView failure alert - "Report issue" button title */
+"report_issue_button" = "문제 신고";
+
+/* WebView failure alert - Title */
+"webview_load_failure_message_title" = "AdGuard Mini가 인터페이스를 불러올 수 없음";
+
+/* WebView failure alert - Informative text */
+"webview_load_failure_message_text" = "AdGuard Mini 창을 불러오는 동안 문제가 발생했습니다. 앱을 다시 시작하거나 문제를 보고할 수 있습니다.";
+
+/* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
+"webui_integrity_failure_message_title" = "AdGuard Mini가 외부에서 변경됨";
+
+/* WebUI integrity Alert - Informative text */
+"webui_integrity_failure_message_text" = "설치 이후 애플리케이션 파일이 수정되었습니다. 기능을 복원하려면 AdGuard Mini를 다시 설치하세요.";
+/* RPC recurring-timeout alert - Title */
+"rpc_timeout_message_title" = "AdGuard Mini 응답 없음";
+
+/* RPC recurring-timeout alert - Informative text */
+"rpc_timeout_message_text" = "앱과 인터페이스 간 통신에서 반복적으로 응답 시간이 초과되었습니다. 앱을 다시 시작하거나 문제를 신고할 수 있습니다.";
+
 /* Title on Close button in error message */
 "close_button" = "닫기";
 
@@ -72,3 +116,15 @@
 
 /* Notify the user that the application should be moved to the Applications folder. */
 "error_running_app_message" = "AdGuard Mini를 실행하려면 응용 프로그램 폴더에 있어야 합니다.\n해당 폴더로 이동한 후 다시 시도하세요.";
+
+/* User rules editor window title. */
+"user_rules_editor_title" = "사용자 규칙 편집기";
+
+/* VoiceOver name of the menu bar tray window. */
+"window_accessibility_title_tray" = "AdGuard Mini 트레이";
+
+/* VoiceOver name of the settings window. */
+"window_accessibility_title_settings" = "AdGuard Mini 설정";
+
+/* VoiceOver name of the onboarding window. */
+"window_accessibility_title_onboarding" = "AdGuard Mini 초기 설정";

@@ -22,6 +22,30 @@
 /* App Menu - "Quit AdGuard Mini" title. */
 "app_menu_quit_title" = "AdGuard Mini'den çık";
 
+/* App Menu - "Edit" title. */
+"app_menu_edit_title" = "Düzenle";
+
+/* App Menu - "Undo" title. */
+"app_menu_undo_title" = "Geri al";
+
+/* App Menu - "Redo" title. */
+"app_menu_redo_title" = "İleri al";
+
+/* App Menu - "Cut" title. */
+"app_menu_cut_title" = "Kes";
+
+/* App Menu - "Copy" title. */
+"app_menu_copy_title" = "Kopyala";
+
+/* App Menu - "Paste" title. */
+"app_menu_paste_title" = "Yapıştır";
+
+/* App Menu - "Delete" title. */
+"app_menu_delete_title" = "Sil";
+
+/* App Menu - "Select All" title. */
+"app_menu_select_all_title" = "Tümünü Seç";
+
 /* Terminating app Alert - Message text "Quit AdGuard Mini?" */
 "terminate_app_alert_message_text" = "AdGuard Mini'den çıkılsın mı?";
 
@@ -55,8 +79,25 @@
 /* Request user about restarting AdGuard Mini */
 "restarting_request_message_text" = "Ayarlar sıfırlandı. İşlevselliğini geri yüklemek için lütfen AdGuard Mini'yi yeniden başlatın";
 
+/* WebView failure alert - "Report issue" button title */
+"report_issue_button" = "Sorun bildir";
+
+/* WebView failure alert - Title */
+"webview_load_failure_message_title" = "AdGuard Mini arayüzünü yükleyemiyor";
+
+/* WebView failure alert - Informative text */
+"webview_load_failure_message_text" = "AdGuard Mini penceresini yüklerken bir şey yanlış gitti. Uygulamayı yeniden başlatabilir veya sorunu bildirebilirsiniz.";
+
+/* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
+"webui_integrity_failure_message_title" = "AdGuard Mini dışarıdan değiştirildi";
+
+/* WebUI integrity Alert - Informative text */
+"webui_integrity_failure_message_text" = "Uygulama dosyaları kurulumdan sonra değiştirildi. İşlevselliğini geri yüklemek için AdGuard Mini'yi yeniden yükleyin.";
 /* RPC recurring-timeout alert - Title */
 "rpc_timeout_message_title" = "AdGuard Mini yanıt vermiyor";
+
+/* RPC recurring-timeout alert - Informative text */
+"rpc_timeout_message_text" = "Uygulama ve arayüz arasındaki iletişim art arda zaman aşımına uğradı. Uygulamalayı yeniden başlatabilir veya sorunu bildirebilirsiniz.";
 
 /* Title on Close button in error message */
 "close_button" = "Kapat";
@@ -75,3 +116,15 @@
 
 /* Notify the user that the application should be moved to the Applications folder. */
 "error_running_app_message" = "AdGuard Mini'nin çalışması için Uygulamalar klasöründe olması gerekir.\nLütfen oraya taşıyın ve tekrar deneyin";
+
+/* User rules editor window title. */
+"user_rules_editor_title" = "Kullanıcı kuralı düzenleyici";
+
+/* VoiceOver name of the menu bar tray window. */
+"window_accessibility_title_tray" = "AdGuard Mini Tepsisi";
+
+/* VoiceOver name of the settings window. */
+"window_accessibility_title_settings" = "AdGuard Mini Ayarları";
+
+/* VoiceOver name of the onboarding window. */
+"window_accessibility_title_onboarding" = "AdGuard Mini Başlangıç";

@@ -31,5 +31,19 @@
         <string>ブロック済みトラッカー数: %2$@</string>
       </dict>
     </dict>
+    <key>item_upsell_description_trial</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>other</key>
+        <string>%1$d日間無料で試す</string>
+      </dict>
+    </dict>
   </dict>
 </plist>

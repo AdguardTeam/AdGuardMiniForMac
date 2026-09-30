@@ -1,5 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-  <dict/>
+  <dict>
+    <key>item_stats_ads_blocked</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%2$@ oglas onemogočen</string>
+        <key>two</key>
+        <string>%2$@ oglasa onemogočena</string>
+        <key>few</key>
+        <string>%2$@ oglasi onemogočeni</string>
+        <key>other</key>
+        <string>%2$@ oglasov onemogočenih</string>
+      </dict>
+    </dict>
+    <key>item_stats_trackers_blocked</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%2$@ sledilec onemogočen</string>
+        <key>two</key>
+        <string>%2$@ sledilca onemogočena</string>
+        <key>few</key>
+        <string>%2$@ sledilci onemogočeni</string>
+        <key>other</key>
+        <string>%2$@ sledilcev onemogočenih</string>
+      </dict>
+    </dict>
+    <key>item_upsell_description_trial</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Preizkusite %1$d dan brezplačno</string>
+        <key>two</key>
+        <string>Preizkusite %1$d dni brezplačno</string>
+        <key>few</key>
+        <string>Preizkusite %1$d dni brezplačno</string>
+        <key>other</key>
+        <string>Preizkusite %1$d dni brezplačno</string>
+      </dict>
+    </dict>
+  </dict>
 </plist>

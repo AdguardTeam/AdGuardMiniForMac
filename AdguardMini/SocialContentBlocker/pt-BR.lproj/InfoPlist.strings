@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Listas de regras de bloqueio para mídia social.";
+"NSHumanReadableDescription" = "Ajuda a bloquear botões, widgets, scripts e ícones de redes sociais";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "Social";

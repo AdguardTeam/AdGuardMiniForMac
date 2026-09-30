@@ -120,6 +120,12 @@ final class SettingsServiceImpl: SettingsService.ServiceType {
         promise(EmptyValue())
     }
 
+    func updateReportProblemLabelShown(_ message: BoolValue,
+                                       _ promise: @escaping (EmptyValue) -> Void) {
+        self.userSettingsService.reportProblemLabelShown = message.value
+        promise(EmptyValue())
+    }
+
     func getHealthCheckDismissedCards(_ message: EmptyValue,
                                       _ promise: @escaping (StringValueArray) -> Void) {
         var response = StringValueArray()
@@ -163,6 +169,7 @@ final class SettingsServiceImpl: SettingsService.ServiceType {
 
         settings.non501User = Constants.isNon501User
         settings.macos25OrLower = self.systemInfoManager.isMacOS25OrLower
+        settings.reportProblemLabelShown = self.userSettingsService.reportProblemLabelShown
         promise(settings)
     }
 

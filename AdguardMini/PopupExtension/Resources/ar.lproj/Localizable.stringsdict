@@ -1,5 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-  <dict/>
+  <dict>
+    <key>item_stats_ads_blocked</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>zero</key>
+        <string>%2$@ إعلان محظور</string>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%2$@ إعلان محظور</string>
+        <key>two</key>
+        <string>%2$@ إعلانان محظوران</string>
+        <key>few</key>
+        <string>%2$@ إعلانات محظورة</string>
+        <key>many</key>
+        <string>%2$@ إعلانًا محظورًا</string>
+        <key>other</key>
+        <string>%2$@ إعلان محظور</string>
+      </dict>
+    </dict>
+    <key>item_stats_trackers_blocked</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>zero</key>
+        <string>%2$@ متعقب محظور</string>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%2$@ متعقب محظور</string>
+        <key>two</key>
+        <string>%2$@ متعقبان محظوران</string>
+        <key>few</key>
+        <string>%2$@ متعقبات محظورة</string>
+        <key>many</key>
+        <string>%2$@ متعقبًا محظورًا</string>
+        <key>other</key>
+        <string>%2$@ متعقب محظور</string>
+      </dict>
+    </dict>
+    <key>item_upsell_description_trial</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>zero</key>
+        <string>جرّب لمدة %1$d يومًا مجانًا</string>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>جرّب لمدة %1$d يوم مجانًا</string>
+        <key>two</key>
+        <string>جرّب لمدة %1$d يومين مجانًا</string>
+        <key>few</key>
+        <string>جرّب لمدة %1$d أيام مجانًا</string>
+        <key>many</key>
+        <string>جرّب لمدة %1$d يومًا مجانًا</string>
+        <key>other</key>
+        <string>جرّب لمدة %1$d يومًا مجانًا</string>
+      </dict>
+    </dict>
+  </dict>
 </plist>

@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Reglas de bloqueo de listas de filtros de redes sociales";
+"NSHumanReadableDescription" = "Ayuda a bloquear botones, widgets, scripts e iconos de redes sociales";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard - Redes sociales";

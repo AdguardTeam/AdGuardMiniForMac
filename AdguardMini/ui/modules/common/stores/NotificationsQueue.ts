@@ -32,6 +32,7 @@ export enum NotificationsQueueIconType {
     error = 'error',
     loading = 'loading',
     info = 'knowledgebase',
+    update = 'update',
 }
 
 /**

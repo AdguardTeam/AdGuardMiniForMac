@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "웹사이트에서 대부분의 광고를 차단합니다.";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard";

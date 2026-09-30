@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "包含其它的過濾器之阻擋規則";
+"NSHumanReadableDescription" = "讓 AdGuard Mini 套用其他未分類的過濾器";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard 其它的";

@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Sisältää muita suodatussääntöjä";
+"NSHumanReadableDescription" = "Annetaan AdGuard Minin soveltaa muita luokittelemattomia suodattimia";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Muut";

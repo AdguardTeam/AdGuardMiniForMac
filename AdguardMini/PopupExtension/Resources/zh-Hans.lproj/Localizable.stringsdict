@@ -30,5 +30,19 @@
         <string>已拦截 %2$@ 个跟踪器</string>
       </dict>
     </dict>
+    <key>item_upsell_description_trial</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>other</key>
+        <string>免费试用 %1$d 天</string>
+      </dict>
+    </dict>
   </dict>
 </plist>

@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "SafariのツールバーからAdGuard Miniの保護機能を管理したり、統計情報を確認したり、高度なブロックルールを適用したりすることを可能にします。";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard for Safari";

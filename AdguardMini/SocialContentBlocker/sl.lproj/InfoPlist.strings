@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Seznami družbenih filtrov pravil zaviranja";
+"NSHumanReadableDescription" = "Pomaga blokirati gumbe družbenih omrežij, pripomočke, skripte in ikone";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Družbeni";

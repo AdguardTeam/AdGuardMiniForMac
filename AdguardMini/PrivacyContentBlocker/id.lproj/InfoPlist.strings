@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "Membantu memblokir pelacak dan alat analisis web";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Privasi";

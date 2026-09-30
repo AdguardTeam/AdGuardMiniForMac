@@ -28,7 +28,9 @@ function OtherSectionComponent() {
 
     return (
         <div className={cx(s.SafariProtection_block, theme.layout.bottomPadding)}>
-            <Text className={cx(s.SafariProtection_block_title, theme.layout.content)} type="h5">{translate('safari.protection.part.other')}</Text>
+            {(otherEnabledFiltersCount > 0 || enabledCustomFiltersCount > 0) && (
+                <Text className={cx(s.SafariProtection_block_title, theme.layout.content)} type="h5">{translate('safari.protection.part.other')}</Text>
+            )}
             {otherEnabledFiltersCount > 0 && (
                 <SettingsItemLink<FiltersPageParams>
                     description={translate('safari.protection.block.other.desc', { value: otherEnabledFiltersCount })}
@@ -41,12 +43,14 @@ function OtherSectionComponent() {
                     trackTelemetryEvent={SettingsEvent.OtherFiltersClick}
                 />
             )}
-            <SettingsItemLink<FiltersPageParams>
-                description={translate('safari.protection.block.other.desc', { value: enabledCustomFiltersCount })}
-                internalLink={RouteName.filters}
-                internalLinkParams={{ groupId: customGroupId, backLink: RouteName.safari_protection }}
-                title={translate('filters.custom.filters')}
-            />
+            {enabledCustomFiltersCount > 0 && (
+                <SettingsItemLink<FiltersPageParams>
+                    description={translate('safari.protection.block.other.desc', {value: enabledCustomFiltersCount })}
+                    internalLink={RouteName.filters}
+                    internalLinkParams={{ groupId: customGroupId, backLink: RouteName.safari_protection }}
+                    title={translate('filters.custom.filters')}
+                />
+            )}
         </div>
     );
 }

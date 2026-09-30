@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "在此处添加您的扩展程序的说明。";
+"NSHumanReadableDescription" = "让 AdGuard Mini 应用自定义过滤器";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard 自定义";

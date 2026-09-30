@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Berisi aturan pemblokiran filter Sosial";
+"NSHumanReadableDescription" = "Membantu memblokir tombol jejaring sosial, widget, skrip, dan ikon";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Sosial";

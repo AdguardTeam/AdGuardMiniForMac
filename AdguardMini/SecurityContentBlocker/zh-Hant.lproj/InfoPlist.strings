@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "封鎖惡意的內容、網路釣魚和詐騙網站";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard 安全性";

@@ -60,15 +60,17 @@ import WebKit
 import ProtoSchema
 
 final class SettingsWindowHostConfigurationTests: XCTestCase {
-    private func makeSettingsHost() -> WKWebViewAppHost {
+    private func makeSettingsHost(frameAutosaveKeyOverride: String? = nil) -> WKWebViewAppHost {
         WKWebViewAppHost(
             module: .settings,
             entryURL: URL(fileURLWithPath: "/tmp/WebUI/settings.html"),
             onVisibilityChange: nil,
-            integrityVerifier: WebUIIntegrityVerifier.noOp
-        ) { _ in
-            // No services needed for config test.
-        }
+            integrityVerifier: WebUIIntegrityVerifier.noOp,
+            bridgeSetup: { _ in
+                // No services needed for config test.
+            },
+            frameAutosaveKeyOverride: frameAutosaveKeyOverride
+        )
     }
 
     func testSettingsHost_WindowIsNSWindowNotPanel_NormalLevel() {
@@ -88,10 +90,14 @@ final class SettingsWindowHostConfigurationTests: XCTestCase {
     }
 
     func testSettingsHost_A_FrameAutosaveNameIsNonEmpty() {
-        let host = makeSettingsHost()
-        // Runtime autosave name format may vary; assert it is configured.
-        XCTAssertFalse(host.window.frameAutosaveName.isEmpty,
-                       "frameAutosaveName must not be empty")
+        // A unique key keeps the assertion deterministic: the real settings
+        // Slot is contended when test processes run in parallel.
+        let key = "AdguardMiniTests.SettingsApp.\(UUID().uuidString)"
+        defer { NSWindow.removeFrame(usingName: key) }
+        let host = makeSettingsHost(frameAutosaveKeyOverride: key)
+        // The autosave name is claimed when the window is first shown.
+        host.show()
+        XCTAssertEqual(host.window.frameAutosaveName, key)
     }
 
     /// Host should propagate configured title to NSWindow.

@@ -42,7 +42,7 @@ public enum ServiceMethodAllowlist {
         case "SafariExtensionsService":
             return ["GetSafariExtensions", "OpenSafariExtensionPreferences", "RequestReloadContentBlockers"]
         case "SettingsService":
-            return ["ExportLogs", "ExportSettings", "ForceRestartOnHardwareAccelerationImport", "GetContentBlockersRulesLimit", "GetHealthCheckDismissedCards", "GetPromoDismissedCards", "GetSettings", "GetUserActionLastDirectory", "ImportSettings", "ImportSettingsConfirm", "ResetSettings", "ResetStatistics", "SelectFile", "SendFeedbackMessage", "UpdateAutoFiltersUpdate", "UpdateDebugLogging", "UpdateHardwareAcceleration", "UpdateHealthCheckDismissedCards", "UpdateLaunchOnStartup", "UpdatePromoDismissedCards", "UpdateQuitReaction", "UpdateShowInMenuBar", "UpdateShowSafariToolbarBadge", "UpdateTheme", "UpdateUserActionLastDirectory"]
+            return ["ExportLogs", "ExportSettings", "ForceRestartOnHardwareAccelerationImport", "GetContentBlockersRulesLimit", "GetHealthCheckDismissedCards", "GetPromoDismissedCards", "GetSettings", "GetUserActionLastDirectory", "ImportSettings", "ImportSettingsConfirm", "ResetSettings", "ResetStatistics", "SelectFile", "SendFeedbackMessage", "UpdateAutoFiltersUpdate", "UpdateDebugLogging", "UpdateHardwareAcceleration", "UpdateHealthCheckDismissedCards", "UpdateLaunchOnStartup", "UpdatePromoDismissedCards", "UpdateQuitReaction", "UpdateReportProblemLabelShown", "UpdateShowInMenuBar", "UpdateShowSafariToolbarBadge", "UpdateTheme", "UpdateUserActionLastDirectory"]
         case "SystemService":
             return ["OpenLoginItemsSettings", "RequestOpenSettingsPage"]
         case "TelemetryService":

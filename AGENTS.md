@@ -207,6 +207,12 @@ adguard-mini/
   shell out to webpack + `generateUI.sh`; these self-skip by default so
   lint-staged pre-commit stays fast. No CI lane sets `RUN_BUILD=1`
   automatically; the slow suite is developer-invoked.
+- **Component tests (node:test)**: tests that render Preact components import
+  `AdguardMini/ui/tests/mocks/domEnvironment.ts` first — it installs a jsdom
+  document (with animation frames), stubs CSS-module imports, and defines the
+  webpack-injected globals (only `translate` for now). `UILib` and `react`/`react-dom` resolve to the
+  mocks in `AdguardMini/ui/tests/mocks/` via `tsconfig.node-tests.json`.
+  Test files are excluded from ESLint (`.test.ts`/`.test.tsx` ignores).
 - **CI**: `yarn lint --quiet` and `yarn test:node` also run on every pull
   request via the `ts-lint` and `ts-test` jobs in
   `.github/workflows/pr-check.yml` (Linux `team-sciter` pool, Node per
@@ -520,6 +526,21 @@ Blocker JSON consumed by the extension targets.
    project tree (per PR AG-57496 review), keeps the adapter free of
    app-domain services (`FLM`, app services) — with the sole generic-utility
    exception of AML `UIUtils` — and eases a future package extraction.
+
+8. **Persisted one-time UI flags**: A flag that makes the UI show something
+   only once (a tooltip, a hint, a one-off label) MUST be persisted on the
+   platform side — a `UserDefaults` key in `Resources/Defaults.plist` exposed
+   through `UserSettingsService` and carried to the module over the bridge —
+   never held in WebView module state. The module renders the element from
+   the persisted value and MUST NOT show it while that value is still unknown
+   (an unanswered flag would arm the element on every window open), then
+   writes the flag back once the element has been shown or dismissed.
+
+   **Rationale**: WKWebView modules are destroyed with their window, so
+   "shown once" state kept in a MobX store is re-armed every time the window
+   is reopened, and never survives a relaunch. Persisting the flag in
+   `UserDefaults` makes the intended semantics — shown on the first open,
+   never again afterwards — hold for every module.
 
 **Known exclusions** (acceptable today, to be improved over time):
 
@@ -1231,3 +1252,22 @@ humans and AI agents that consume project documentation.
     the UI (`system_wide_protection` route) and code comments; "Safari Web
     Protection" is a stale label that misleads readers about what the feature
     is.
+
+19. **Deduplicated failure notifications (TS)**: When one failure reaches the
+    UI through several sources — the request response and one or more
+    platform pushes — the notification MUST be owned by the store that owns
+    the state and deduplicated by error kind while its snack is shown, so the
+    repeated reports of one failure show a single snack. Once the snack is
+    gone — auto-closed, dismissed, or dropped by another notification — the
+    next failure is reported again: a control that rolls back silently leaves
+    no other feedback. The key also clears when the state recovers (a push or
+    a pull reports the feature running, or the user's call lands). A
+    different error replaces the shown snack instead of stacking another one.
+
+    **Rationale**: A failed System-wide Protection enable arrives as both an
+    RPC error and a pushed error state, and the platform repeats the push for
+    one change. Notifying from each source replaced identical snacks back to
+    back, which reads as blinking; one store-owned, error-keyed slot makes
+    the number of reporting sources irrelevant, and tying it to the snack's
+    lifetime keeps a repeated attempt silent only while the user can still
+    see why it failed.

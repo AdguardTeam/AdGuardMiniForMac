@@ -76,6 +76,7 @@
     "html-loader": "^4.2.0",
     "html-webpack-plugin": "^5.5.1",
     "husky": "^8.0.3",
+    "jsdom": "^22.1.0",
     "lint-staged": "^13.2.1",
     "mini-css-extract-plugin": "^2.7.6",
     "nodemon": "^2.0.22",

@@ -37,16 +37,21 @@
         &__checked {
             color: var(--stroke-icons-product-icon-default);
         }
+
+        &__disabled {
+            color: var(--accent-main-disabled);
+            opacity: 0.5;
+        }
+
+        &__transparent {
+            opacity: 0.3;
+        }
     }
 
     &_label {
         user-select: none;
         text-align: left;
         margin-left: 14px;
-
-        &__disabled {
-            color: var(--text-main-text-main-disabled);
-        }
     }
 
 }

@@ -42,5 +42,25 @@
         <string>%2$@ відстежувачів заблоковано</string>
       </dict>
     </dict>
+    <key>item_upsell_description_trial</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Спробуйте %1$d день безплатно</string>
+        <key>few</key>
+        <string>Спробуйте %1$d дні безплатно</string>
+        <key>many</key>
+        <string>Спробуйте %1$d днів безплатно</string>
+        <key>other</key>
+        <string>Спробуйте %1$d днів безплатно</string>
+      </dict>
+    </dict>
   </dict>
 </plist>

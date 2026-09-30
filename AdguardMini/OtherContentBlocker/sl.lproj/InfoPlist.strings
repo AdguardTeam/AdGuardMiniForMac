@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Drugi seznami filtrov pravil zaviranja.";
+"NSHumanReadableDescription" = "Omogoča, da AdGuard Mini uporabi druge nekategorizirane filtre";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Ostalo";

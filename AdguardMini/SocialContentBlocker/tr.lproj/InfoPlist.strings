@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Sosyal filtrelerdeki engelleme kurallarını içerir";
+"NSHumanReadableDescription" = "Sosyal medya düğmelerini, araçları, betikleri ve simgeleri engellemeye yardım eder";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Sosyal";

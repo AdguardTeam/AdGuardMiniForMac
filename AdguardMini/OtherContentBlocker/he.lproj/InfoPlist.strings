@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "מכיל כללי חסימה של מסננים אחרים";
+"NSHumanReadableDescription" = "מאפשר ל-AdGuard Mini להחיל מסננים אחרים ללא קטגוריה";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard אחר";

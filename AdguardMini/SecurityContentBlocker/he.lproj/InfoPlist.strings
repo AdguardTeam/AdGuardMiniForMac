@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "עוזר לחסום אתרים זדוניים, אתרי דיוג ואתרי הונאה";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "אבטחת AdGuard";

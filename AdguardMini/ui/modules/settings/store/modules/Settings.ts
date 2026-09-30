@@ -7,7 +7,7 @@ import { makeAutoObservable } from 'mobx';
 
 import { UpdateAllowTelemetryRequest, UpdateConsentRequest } from 'Apis/requests/ConsentService';
 import { GetSafariExtensionsRequest } from 'Apis/requests/SafariExtensionsService';
-import { ExportLogsRequest, ExportSettingsRequest, ForceRestartOnHardwareAccelerationImportRequest, GetContentBlockersRulesLimitRequest, GetHealthCheckDismissedCardsRequest, GetSettingsRequest, GetUserActionLastDirectoryRequest, ImportSettingsConfirmRequest, ImportSettingsRequest, ResetSettingsRequest, ResetStatisticsRequest, UpdateAutoFiltersUpdateRequest, UpdateDebugLoggingRequest, UpdateHardwareAccelerationRequest, UpdateHealthCheckDismissedCardsRequest, UpdateLaunchOnStartupRequest, UpdateQuitReactionRequest, UpdateShowInMenuBarRequest, UpdateThemeRequest, UpdateUserActionLastDirectoryRequest, UpdateShowSafariToolbarBadgeRequest, UpdatePromoDismissedCardsRequest, GetPromoDismissedCardsRequest } from 'Apis/requests/SettingsService';
+import { ExportLogsRequest, ExportSettingsRequest, ForceRestartOnHardwareAccelerationImportRequest, GetContentBlockersRulesLimitRequest, GetHealthCheckDismissedCardsRequest, GetSettingsRequest, GetUserActionLastDirectoryRequest, ImportSettingsConfirmRequest, ImportSettingsRequest, ResetSettingsRequest, ResetStatisticsRequest, UpdateAutoFiltersUpdateRequest, UpdateDebugLoggingRequest, UpdateHardwareAccelerationRequest, UpdateHealthCheckDismissedCardsRequest, UpdateLaunchOnStartupRequest, UpdateQuitReactionRequest, UpdateReportProblemLabelShownRequest, UpdateShowInMenuBarRequest, UpdateThemeRequest, UpdateUserActionLastDirectoryRequest, UpdateShowSafariToolbarBadgeRequest, UpdatePromoDismissedCardsRequest, GetPromoDismissedCardsRequest } from 'Apis/requests/SettingsService';
 import { OpenLoginItemsSettingsRequest } from 'Apis/requests/SystemService';
 import { GetEffectiveThemeRequest } from 'Apis/requests/ThemeService/GetEffectiveThemeRequest';
 import {
@@ -80,6 +80,13 @@ export class Settings {
      * Defines dismissed promo cards, contains card ids
      */
     public dismissedPromoCards = new Set<string>();
+
+    /**
+     * Whether the one-time report problem label has already been shown.
+     * `undefined` until the platform answers, so the label is not armed
+     * before the persisted flag is known.
+     */
+    public reportProblemLabelShown: boolean | undefined = undefined;
 
     /**
      * Getter for safari extensions with loading status
@@ -385,6 +392,16 @@ export class Settings {
     }
 
     /**
+     * Marks the report problem label as shown and persists the flag, so the
+     * label is displayed only once.
+     * @param value Whether the label has been shown
+     */
+    public updateReportProblemLabelShown(value: boolean) {
+        this.reportProblemLabelShown = value;
+        window.API.Execute(new UpdateReportProblemLabelShownRequest({ value }));
+    }
+
+    /**
      * Update allowTelemetry setting
      */
     public async updateAllowTelemetry(value: boolean) {
@@ -473,6 +490,7 @@ export class Settings {
     public setSettings(data: SettingsEnt) {
         this.settings = data;
         this.loginItemEnabled = data.loginItemEnabled ?? true;
+        this.reportProblemLabelShown = data.reportProblemLabelShown;
         updateLanguage(data.language);
         log.setLogLevel(data.debugLogging ? LogLevel.DBG : LogLevel.ERR);
     }

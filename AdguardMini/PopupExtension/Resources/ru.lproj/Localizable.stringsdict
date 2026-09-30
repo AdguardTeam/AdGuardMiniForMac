@@ -42,5 +42,25 @@
         <string>%2$@ трекеров заблокировано</string>
       </dict>
     </dict>
+    <key>item_upsell_description_trial</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%1$#@count@</string>
+      <key>count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Попробовать %1$d день бесплатно</string>
+        <key>few</key>
+        <string>Попробовать %1$d дня бесплатно</string>
+        <key>many</key>
+        <string>Попробовать %1$d дней бесплатно</string>
+        <key>other</key>
+        <string>Попробовать %1$d дней бесплатно</string>
+      </dict>
+    </dict>
   </dict>
 </plist>

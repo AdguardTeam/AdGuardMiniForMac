@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Змяшчае правілы блакіроўкі карыстальніцкіх фільтраў";
+"NSHumanReadableDescription" = "Дазваляе AdGuard Mini прымяніць вашы карыстальніцкія фільтры";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard: карыстальніцкія";

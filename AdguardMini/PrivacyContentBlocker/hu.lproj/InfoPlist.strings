@@ -1,2 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "Segít blokkolni a nyomkövetőket és a webanalitikát";
+
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Adatvédelem";

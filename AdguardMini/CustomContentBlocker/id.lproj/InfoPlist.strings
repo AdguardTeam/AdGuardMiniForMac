@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Berisi aturan pemblokiran filter Kustom";
+"NSHumanReadableDescription" = "Memungkinkan AdGuard Mini menerapkan filter kustom Anda";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Kustom";

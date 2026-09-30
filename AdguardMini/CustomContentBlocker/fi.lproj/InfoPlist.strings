@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Sisältää omia suodatussääntöjä";
+"NSHumanReadableDescription" = "AdGuard Mini voi ottaa käyttöön omat suodattimesi";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Mukautettu";

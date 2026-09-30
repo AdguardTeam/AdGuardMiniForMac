@@ -1,5 +1,5 @@
 /* Human Readable Description */
-"NSHumanReadableDescription" = "Contient les régles de blocage du groupe des filtres \"Autres\"";
+"NSHumanReadableDescription" = "Permet à AdGuard Mini d'appliquer d'autres filtres non catégorisés";
 
 /* Bundle display name */
 "CFBundleDisplayName" = "AdGuard Autres";
