@@ -12,6 +12,9 @@ export default defineConfig([
         
         "AdguardMini/ui/modules/common/webViewBootstrap.ts",
         "AdguardMini/ui/tests/mocks/**",
+        // Test files are not linted (the parser project does not include the
+        // tests tree); the `**/*.test.ts` ignore lives in `common-config.mjs`.
+        "**/*.test.tsx",
         "AdguardMini/ui/packages/webview-utils-kit/vendor/**",
         "AdguardMini/ui/packages/proto-generator/**",
         "AdguardMini/ui/scripts/**",

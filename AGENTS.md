@@ -207,6 +207,12 @@ adguard-mini/
   shell out to webpack + `generateUI.sh`; these self-skip by default so
   lint-staged pre-commit stays fast. No CI lane sets `RUN_BUILD=1`
   automatically; the slow suite is developer-invoked.
+- **Component tests (node:test)**: tests that render Preact components import
+  `AdguardMini/ui/tests/mocks/domEnvironment.ts` first — it installs a jsdom
+  document (with animation frames), stubs CSS-module imports, and defines the
+  webpack-injected globals (only `translate` for now). `UILib` and `react`/`react-dom` resolve to the
+  mocks in `AdguardMini/ui/tests/mocks/` via `tsconfig.node-tests.json`.
+  Test files are excluded from ESLint (`.test.ts`/`.test.tsx` ignores).
 - **CI**: `yarn lint --quiet` and `yarn test:node` also run on every pull
   request via the `ts-lint` and `ts-test` jobs in
   `.github/workflows/pr-check.yml` (Linux `team-sciter` pool, Node per
