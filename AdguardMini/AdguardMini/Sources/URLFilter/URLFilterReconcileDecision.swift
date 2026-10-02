@@ -129,4 +129,37 @@ enum URLFilterReconcileDecision {
     static func shouldEnforceDisable(protectionEnabled: Bool, userIntent: Bool, isPaid: Bool) -> Bool {
         !protectionEnabled || !isPaid || !userIntent
     }
+
+    /// Whether an enabled filter must be fail-safe disabled because it cannot
+    /// run. Every non-running status schedules the disable while enabled: the
+    /// grace period and the running re-check keep a filter that recovers in
+    /// time, so the error class does not decide.
+    ///
+    /// - Parameters:
+    ///   - status: The raw filter status.
+    ///   - enabled: Whether the on-disk configuration is enabled.
+    /// - Returns: `true` when the fail-safe disable must be scheduled.
+    static func shouldFailSafeDisable(
+        status: URLFilterRawStatus,
+        enabled: Bool
+    ) -> Bool {
+        guard enabled else { return false }
+        switch status {
+        case .invalid, .stopped, .unknown:
+            return true
+        case .starting, .stopping, .running:
+            return false
+        }
+    }
+
+    /// Whether an observed state resolves a pending fail-safe disable.
+    ///
+    /// Only a running filter or a disabled configuration resolves it; a status
+    /// change alone must not, or a crash loop would postpone the disable.
+    static func isFailSafeDisableResolved(
+        status: URLFilterRawStatus,
+        enabled: Bool
+    ) -> Bool {
+        !enabled || status == .running
+    }
 }

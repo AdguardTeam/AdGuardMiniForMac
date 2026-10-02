@@ -211,6 +211,90 @@ final class URLFilterReconcileDecisionTests: XCTestCase {
         )
     }
 
+    // MARK: shouldFailSafeDisable
+
+    /// Any non-running status while enabled schedules the disable; the grace
+    /// period and the running re-check decide, so the error class is irrelevant.
+    func testShouldFailSafeDisable_DisablesNonRunningStatesWhenEnabled() {
+        for status in [URLFilterRawStatus.invalid, .stopped, .unknown] {
+            XCTAssertTrue(
+                URLFilterReconcileDecision.shouldFailSafeDisable(
+                    status: status,
+                    enabled: true
+                ),
+                "\(status) must trigger the fail-safe disable while enabled"
+            )
+        }
+    }
+
+    func testShouldFailSafeDisable_DoesNotDisableWhenConfigurationIsDisabled() {
+        XCTAssertFalse(
+            URLFilterReconcileDecision.shouldFailSafeDisable(
+                status: .invalid,
+                enabled: false
+            )
+        )
+    }
+
+    func testShouldFailSafeDisable_DoesNotDisableARunningFilter() {
+        XCTAssertFalse(
+            URLFilterReconcileDecision.shouldFailSafeDisable(
+                status: .running,
+                enabled: true
+            )
+        )
+    }
+
+    func testShouldFailSafeDisable_DoesNotDisableDuringTransitions() {
+        for status in [URLFilterRawStatus.starting, .stopping] {
+            XCTAssertFalse(
+                URLFilterReconcileDecision.shouldFailSafeDisable(
+                    status: status,
+                    enabled: true
+                ),
+                "\(status) must not trigger the fail-safe disable"
+            )
+        }
+    }
+
+    // MARK: isFailSafeDisableResolved
+
+    func testIsFailSafeDisableResolved_ResolvesARunningFilter() {
+        XCTAssertTrue(
+            URLFilterReconcileDecision.isFailSafeDisableResolved(
+                status: .running,
+                enabled: true
+            )
+        )
+    }
+
+    func testIsFailSafeDisableResolved_ResolvesADisabledConfiguration() {
+        XCTAssertTrue(
+            URLFilterReconcileDecision.isFailSafeDisableResolved(
+                status: .invalid,
+                enabled: false
+            )
+        )
+    }
+
+    /// The crash-loop regression: a filter that alternates start attempts with
+    /// failures must keep its pending disable on every status change.
+    func testIsFailSafeDisableResolved_KeepsAPendingDisableThroughACrashLoop() {
+        let statuses: [URLFilterRawStatus] = [
+            .invalid, .stopped, .starting, .stopping, .unknown
+        ]
+
+        for status in statuses {
+            XCTAssertFalse(
+                URLFilterReconcileDecision.isFailSafeDisableResolved(
+                    status: status,
+                    enabled: true
+                ),
+                "\(status) must not resolve a pending fail-safe disable"
+            )
+        }
+    }
+
     // MARK: resolveEnablePreconditions
 
     func testResolveEnablePreconditions_ResolvesConsistentSnapshots() {
