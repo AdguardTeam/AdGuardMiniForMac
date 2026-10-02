@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-    <a href="https://adguard.com/">Website</a> |
+    <a href="https://adguard.com/adguard-mini-mac/overview.html">Website</a> |
     <a href="https://reddit.com/r/Adguard">Reddit</a> |
     <a href="https://x.com/AdGuard">X</a> |
     <a href="https://t.me/adguard_en">Telegram</a>
