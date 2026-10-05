@@ -289,6 +289,11 @@ public struct Settings: @unchecked Sendable {
     set {_uniqueStorage()._reportProblemLabelShown = newValue}
   }
 
+  public var protectionEnabled: Bool {
+    get {return _storage._protectionEnabled}
+    set {_uniqueStorage()._protectionEnabled = newValue}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -412,7 +417,7 @@ extension Theme: SwiftProtobuf._ProtoNameProviding {
 
 extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "Settings"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{3}real_time_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0\u{3}show_safari_toolbar_badge\0\u{3}last_update_more_seven_days\0\u{3}mail_protection_enabled\0\u{3}login_item_enabled\0\u{3}non_501_user\0\u{3}macos_25_or_lower\0\u{3}report_problem_label_shown\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{3}real_time_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0\u{3}show_safari_toolbar_badge\0\u{3}last_update_more_seven_days\0\u{3}mail_protection_enabled\0\u{3}login_item_enabled\0\u{3}non_501_user\0\u{3}macos_25_or_lower\0\u{3}report_problem_label_shown\0\u{3}protection_enabled\0")
 
   fileprivate class _StorageClass {
     var _launchOnStartup: Bool = false
@@ -434,6 +439,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     var _non501User: Bool = false
     var _macos25OrLower: Bool = false
     var _reportProblemLabelShown: Bool = false
+    var _protectionEnabled: Bool = false
 
       // This property is used as the initial default value for new instances of the type.
       // The type itself is protecting the reference to its storage via CoW semantics.
@@ -463,6 +469,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       _non501User = source._non501User
       _macos25OrLower = source._macos25OrLower
       _reportProblemLabelShown = source._reportProblemLabelShown
+      _protectionEnabled = source._protectionEnabled
     }
   }
 
@@ -500,6 +507,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         case 17: try { try decoder.decodeSingularBoolField(value: &_storage._non501User) }()
         case 18: try { try decoder.decodeSingularBoolField(value: &_storage._macos25OrLower) }()
         case 19: try { try decoder.decodeSingularBoolField(value: &_storage._reportProblemLabelShown) }()
+        case 20: try { try decoder.decodeSingularBoolField(value: &_storage._protectionEnabled) }()
         default: break
         }
       }
@@ -565,6 +573,9 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       if _storage._reportProblemLabelShown != false {
         try visitor.visitSingularBoolField(value: _storage._reportProblemLabelShown, fieldNumber: 19)
       }
+      if _storage._protectionEnabled != false {
+        try visitor.visitSingularBoolField(value: _storage._protectionEnabled, fieldNumber: 20)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -593,6 +604,7 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         if _storage._non501User != rhs_storage._non501User {return false}
         if _storage._macos25OrLower != rhs_storage._macos25OrLower {return false}
         if _storage._reportProblemLabelShown != rhs_storage._reportProblemLabelShown {return false}
+        if _storage._protectionEnabled != rhs_storage._protectionEnabled {return false}
         return true
       }
       if !storagesAreEqual {return false}

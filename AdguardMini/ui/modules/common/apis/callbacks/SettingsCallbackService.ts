@@ -23,6 +23,8 @@ export interface ISettingsCallbackService {
 	OnSettingsWindowOpened(param: ArrayBuffer): Promise<EmptyValue>;
 	/* Fires when URL filter state changed */
 	OnURLFilterStateChanged(param: ArrayBuffer): Promise<EmptyValue>;
+	/* Fires when the main protection switch changes */
+	OnProtectionStatusChanged(param: ArrayBuffer): Promise<EmptyValue>;
 }
 
 /* Service handles settings lists- private part for operations with unmarshalled params */
@@ -47,6 +49,8 @@ export interface ISettingsCallbackServiceInternal {
 	OnSettingsWindowOpened(param: EmptyValue): Promise<EmptyValue>;
 	/* Fires when URL filter state changed*/
 	OnURLFilterStateChanged(param: URLFilterState): Promise<EmptyValue>;
+	/* Fires when the main protection switch changes*/
+	OnProtectionStatusChanged(param: BoolValue): Promise<EmptyValue>;
 }
 
 /* Service handles settings lists */
@@ -215,6 +219,22 @@ export class SettingsCallbackService implements ISettingsCallbackService {
 		}
 		log.dbg('Callback data', 'SettingsCallbackService.OnURLFilterStateChanged', arg.toObject());
 		await this.settingsCallbackServiceInternal.OnURLFilterStateChanged(arg);
+		return new EmptyValue();
+	};
+	/**
+	 * Fires when the main protection switch changes
+	 * @param ArrayBuffer param
+	 * @returns EmptyValue param
+	 */
+	OnProtectionStatusChanged = async (param: ArrayBuffer): Promise<EmptyValue> => {
+		const bytes = new Uint8Array(param);
+		const arg = BoolValue.deserializeBinary(bytes);
+
+		if (!arg) {
+			throw new Error(`Empty parameter in SettingsCallbackService.OnProtectionStatusChanged: ${ param }`);
+		}
+		log.dbg('Callback data', 'SettingsCallbackService.OnProtectionStatusChanged', arg.toObject());
+		await this.settingsCallbackServiceInternal.OnProtectionStatusChanged(arg);
 		return new EmptyValue();
 	};
 }

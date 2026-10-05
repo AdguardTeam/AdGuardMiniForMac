@@ -23,6 +23,7 @@ message Settings {
     bool non_501_user = 17;
     bool macos_25_or_lower = 18;
     bool report_problem_label_shown = 19;
+    bool protection_enabled = 20;
 }
 
 message UserConsent {

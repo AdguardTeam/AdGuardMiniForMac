@@ -211,4 +211,24 @@ public class SettingsCallbackService: WebViewCallbackBridge
 		}
 		return EmptyValue()
 	}
+	/// Fires when the main protection switch changes
+	/// Dispatch callback through the attached bridge.
+	@discardableResult public func onProtectionStatusChanged (_ message: BoolValue) -> EmptyValue {
+		if let bridge {
+			do {
+				bridge.dispatchCallback(
+					method: "SettingsCallbackService.OnProtectionStatusChanged",
+					data: try message.serializedData()
+				)
+			} catch {
+				BridgeLog.error("SettingsCallbackService.OnProtectionStatusChanged: failed to serialize: \(error)")
+			}
+		} else {
+			// A nil bridge is an expected transient condition during
+			// startup (before the host attaches); debug-level avoids
+			// error-monitoring noise for a routine startup race.
+			BridgeLog.debug("SettingsCallbackService.OnProtectionStatusChanged: bridge is nil — callback dropped")
+		}
+		return EmptyValue()
+	}
 }

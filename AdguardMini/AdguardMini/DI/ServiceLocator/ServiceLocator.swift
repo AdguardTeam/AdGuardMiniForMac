@@ -598,7 +598,8 @@ final class ServiceLocator {
             sharedSettingsStorage: SharedDIContainer.shared.sharedSettingsStorage,
             statusBarItemController: self.statusBarItemController,
             appMetadata: self.appMetadata,
-            urlFilterService: self.urlFilterService
+            urlFilterService: self.urlFilterService,
+            eventBus: self.eventBus
         )
     }()
 

@@ -31,7 +31,7 @@ export function AdvancedBlockingControlComponent() {
         urlFilterNew: isSystemWideProtectionNew,
     } = advancedBlocking;
 
-    const { settings: { macos25OrLower, non501User, autoFiltersUpdate } } = settings;
+    const { settings: { macos25OrLower, non501User, autoFiltersUpdate, protectionEnabled } } = settings;
 
     const [showNotSupportedModal, setShowNotSupportedModal] = useState(false);
     const [showInstallModal, setShowInstallModal] = useState(false);
@@ -40,7 +40,7 @@ export function AdvancedBlockingControlComponent() {
 
     const isFree = !isLicenseOrTrialActive;
 
-    const isSystemWideProtectionDisabled = macos25OrLower || non501User;
+    const isSystemWideProtectionDisabled = macos25OrLower || non501User || !protectionEnabled;
 
     const payedFuncsTitle = usePayedFuncsTitle(SettingsEvent.TryForFreeAbTest);
     const onAdguardExtraChange = (value: boolean) => {

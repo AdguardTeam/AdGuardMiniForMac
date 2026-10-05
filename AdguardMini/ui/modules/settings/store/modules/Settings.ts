@@ -501,4 +501,14 @@ export class Settings {
     public setIncomingHardwareAcceleration(data: boolean | undefined) {
         this.incomeHardwareAcceleration = data;
     }
+
+    /**
+     * Setter for the main protection switch state pushed by the platform,
+     * so the settings screen reacts while another module changes it.
+     */
+    public setProtectionEnabled(value: boolean) {
+        const settings = this.updateHelper();
+        settings.protectionEnabled = value;
+        this.setSettings(settings);
+    }
 }

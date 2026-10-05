@@ -571,18 +571,14 @@ Blocker JSON consumed by the extension targets.
    - Use SPDX license headers, not legacy `Created by` / `Copyright` headers
    - `inclusive_language` is an error
    - No redundant boolean conditions (`== true`, `== false`)
-   - Capitalize the first word in comments. In multi-line `//` comments,
-     each continuation line is checked independently — restructure lines so
-     that every `//` line begins with a capitalized word (or a code reference
-     in backticks):
+   - Capitalize the first word in comments (a leading code reference in
+     backticks is accepted):
      ```swift
-     // Good: restructure so each `//` line starts with a capital letter.
+     // Good: the first word starts with a capital letter.
      // `SMCopyAllJobDictionaries` is the only way to query login item status.
-     // It is deprecated, but there is no alternative on macOS < 13.
 
-     // Bad: second line starts with a lowercase word.
-     // `SMCopyAllJobDictionaries` is deprecated but is the only way
-     // to query login item status on macOS < 13 without side effects.
+     // Bad: the first word starts with a lowercase letter.
+     // this comment would be flagged by SwiftLint.
      ```
    - Analyzer rules enabled: `unused_declaration`, `unused_import`,
      `capture_variable`, `typesafe_array_init`
@@ -638,10 +634,16 @@ Blocker JSON consumed by the extension targets.
 
 5. **Comments in code**: An in-code comment justifies the statement it
    accompanies; it does not narrate what the code does.
-   - Answer *why* — a non-obvious constraint, a workaround, an invariant.
-     The *what* is already in the code and belongs there.
-   - Keep them short: one or two lines by default; a longer comment needs
-     a concrete reason to exist.
+   - Comment only critical, non-obvious places — a constraint, a
+     workaround, an invariant that the code cannot express on its own.
+     Code that reads clearly stays uncommented; the *what* is already in
+     the code.
+   - One line maximum. A comment MUST fit on a single `//` line; never
+     write multi-line comment blocks. If the reason does not fit on one
+     line, restructure the code instead of extending the comment.
+   - Documentation comments (`///`, JSDoc) are governed by the
+     "Top-level documentation" rule above. SPDX headers and `swiftlint`
+     directives are structural, not explanatory, and are exempt.
    - Keep them self-contained: comments are read without the discussion
      that produced them. Do not cite reviews, PRs, or commits, do not say
      "as agreed" or "as discussed", and do not record what was changed or
@@ -651,14 +653,18 @@ Blocker JSON consumed by the extension targets.
      above). The ticket that prompted the change belongs in the commit
      message and the pull request.
    ```swift
-   // Good: short, self-contained, and explains why.
-   // `orderOut` alone frees nothing — AppKit still owns an ordered-out
-   // Window — so teardown closes it instead.
+   // Good: one line, self-contained, and explains why.
+   // AppKit still owns an ordered-out window, so teardown closes it.
 
    // Bad: restates what the code already says.
    // Increment the counter and return it.
    counter += 1
    return counter
+
+   // Bad: a multi-line block where one line would do.
+   // AppKit still owns an ordered-out window even after the
+   // call returns, so teardown closes it.
+   self.window.close()
 
    // Bad: references a discussion that is not part of the code.
    // Per the review thread, we no longer await the reload here.
@@ -676,7 +682,9 @@ Blocker JSON consumed by the extension targets.
    or records the change history is unreadable without that context —
    commits and `git blame` already carry it. A ticket number ages badly
    for the same reason. `TODO` is different: it is a promise about work
-   not yet done, so it needs somewhere to track that work.
+   not yet done, so it needs somewhere to track that work. A comment
+   that needs several lines marks code that does not read clearly, so
+   the one-line limit pushes the explanation back into the code.
 
 6. **Explicit `self` in Swift**: Inside a class, every reference to an
    instance method or stored property MUST be written with `self.` — not
@@ -1271,3 +1279,20 @@ humans and AI agents that consume project documentation.
     the number of reporting sources irrelevant, and tying it to the snack's
     lifetime keeps a repeated attempt silent only while the user can still
     see why it failed.
+
+20. **Platform state pushes over focus-triggered refreshes**: State that the
+    platform owns and a WebView module displays (the main protection switch,
+    login item, hardware acceleration, URL filter state) MUST be pushed to
+    the module's callback service when it changes. A focus- or
+    visibility-triggered recovery MUST NOT be the only way an already-open
+    window learns such a value: the window can be open without focus, and
+    the writer can debounce the change (the tray uploads settings with a
+    trailing debounce), so a refresh fired by focus races the change it is
+    meant to show. Keep focus recovery for state that has no change event of
+    its own, such as the helper status the user toggles in System Settings.
+
+    **Rationale**: A focus-based sync shows whatever the platform had when
+    focus returned and leaves the window stale until the next focus change,
+    while a push reaches the open window immediately, focused or not — the
+    pattern the settings window already relies on for the login item and
+    URL filter state.

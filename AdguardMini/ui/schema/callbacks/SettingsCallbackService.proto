@@ -27,4 +27,6 @@ service SettingsCallbackService {
     rpc OnSettingsWindowOpened(EmptyValue) returns (EmptyValue);
     /* Fires when URL filter state changed */
     rpc OnURLFilterStateChanged(URLFilterState) returns (EmptyValue);
+    /* Fires when the main protection switch changes */
+    rpc OnProtectionStatusChanged(BoolValue) returns (EmptyValue);
 }

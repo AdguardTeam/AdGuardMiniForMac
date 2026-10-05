@@ -29,8 +29,8 @@ function SwitchComponent({ onNeedInstall }: SwitchProps) {
 
     const isFree = !isLicenseOrTrialActive;
 
-    const { settings: { macos25OrLower, non501User } } = settings;
-    const isDisabled = macos25OrLower || non501User;
+    const { settings: { macos25OrLower, non501User, protectionEnabled } } = settings;
+    const isDisabled = macos25OrLower || non501User || !protectionEnabled;
 
     const onUpdateSystemWideProtection = (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.SystemWideProtectionToggleClick);
@@ -48,6 +48,7 @@ function SwitchComponent({ onNeedInstall }: SwitchProps) {
     return (
         <SettingsItemSwitch
             disabled={isDisabled}
+            muted={!isLicenseOrTrialActive}
             icon="apps"
             setValue={onUpdateSystemWideProtection}
             title={translate('advanced.blocking.system.wide')}

@@ -72,6 +72,15 @@ test('setSettings reports the label as never shown when the platform has no reco
     assert.equal(settings.reportProblemLabelShown, false);
 });
 
+test('setProtectionEnabled updates the entity the SWP switch reads', () => {
+    const settings = new Settings();
+    settings.setSettings(new SettingsEnt({ protectionEnabled: true, language: 'en' }));
+
+    settings.setProtectionEnabled(false);
+
+    assert.equal(settings.settings.protectionEnabled, false);
+});
+
 test('updateReportProblemLabelShown marks the flag locally and persists it', async () => {
     const calls: unknown[] = [];
     (globalThis as unknown as { window: Record<string, unknown> }).window =

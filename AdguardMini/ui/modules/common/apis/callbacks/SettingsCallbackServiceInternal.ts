@@ -99,4 +99,10 @@ async OnSafariExtensionUpdate(param: SafariExtensionUpdate): Promise<EmptyValue>
         store.advancedBlocking.applyPushedURLFilterState(param);
         return new EmptyValue();
     }
+
+    /* Fires when the main protection switch changes */
+    async OnProtectionStatusChanged(param: BoolValue): Promise<EmptyValue> {
+        store.settings.setProtectionEnabled(param.value);
+        return new EmptyValue();
+    }
 }

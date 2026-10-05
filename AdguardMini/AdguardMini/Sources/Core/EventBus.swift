@@ -29,6 +29,7 @@ enum Event: String {
     case trayPageRequested        = "TrayPageRequested"
     case loginItemStateChange     = "LoginItemStateChange"
     case hardwareAccelerationChanged = "HardwareAccelerationChanged"
+    case protectionStatusChanged  = "ProtectionStatusChanged"
 
     case filtersUpdateStarted   = "FiltersUpdateStarted"
     case filtersRulesUpdated    = "FiltersRulesUpdated"

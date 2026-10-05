@@ -27,6 +27,7 @@ final class ProtectionServiceImpl: ProtectionService {
     private let statusBarItemController: StatusBarItemController
     private let appMetadata: AppMetadata
     private let urlFilterService: URLFilterService
+    private let eventBus: EventBus
 
     var isProtectionEnabled: Bool {
         self.sharedSettingsStorage.protectionEnabled
@@ -38,7 +39,8 @@ final class ProtectionServiceImpl: ProtectionService {
         sharedSettingsStorage: SharedSettingsStorage,
         statusBarItemController: StatusBarItemController,
         appMetadata: AppMetadata,
-        urlFilterService: URLFilterService
+        urlFilterService: URLFilterService,
+        eventBus: EventBus
     ) {
         self.serviceSupervisor = serviceSupervisor
         self.safariExtensionManager = safariExtensionManager
@@ -46,6 +48,7 @@ final class ProtectionServiceImpl: ProtectionService {
         self.statusBarItemController = statusBarItemController
         self.appMetadata = appMetadata
         self.urlFilterService = urlFilterService
+        self.eventBus = eventBus
     }
 
     func startIfEnabled() async {
@@ -65,6 +68,8 @@ final class ProtectionServiceImpl: ProtectionService {
         guard isEnabled != self.sharedSettingsStorage.protectionEnabled else { return }
 
         self.sharedSettingsStorage.protectionEnabled = isEnabled
+        // Posted before the slow service work so the UI never shows a stale switch.
+        self.eventBus.post(event: .protectionStatusChanged, userInfo: isEnabled)
         if isEnabled {
             await self.serviceSupervisor.startAll()
         } else {

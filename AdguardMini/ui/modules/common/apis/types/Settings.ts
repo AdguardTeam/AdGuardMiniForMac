@@ -49,6 +49,7 @@ export class Settings extends pb_1.Message {
         non501User?: boolean;
         macos25OrLower?: boolean;
         reportProblemLabelShown?: boolean;
+        protectionEnabled?: boolean;
     }) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [9], this.#one_of_decls);
@@ -109,6 +110,9 @@ export class Settings extends pb_1.Message {
             }
             if ("reportProblemLabelShown" in data && data.reportProblemLabelShown != undefined) {
                 this.reportProblemLabelShown = data.reportProblemLabelShown;
+            }
+            if ("protectionEnabled" in data && data.protectionEnabled != undefined) {
+                this.protectionEnabled = data.protectionEnabled;
             }
         }
     }
@@ -226,6 +230,12 @@ export class Settings extends pb_1.Message {
     set reportProblemLabelShown(value: boolean) {
         pb_1.Message.setField(this, 19, value);
     }
+    get protectionEnabled() {
+        return pb_1.Message.getFieldWithDefault(this, 20, false) as boolean;
+    }
+    set protectionEnabled(value: boolean) {
+        pb_1.Message.setField(this, 20, value);
+    }
     static fromObject(data: {
         launchOnStartup?: boolean;
         showInMenuBar?: boolean;
@@ -246,6 +256,7 @@ export class Settings extends pb_1.Message {
         non501User?: boolean;
         macos25OrLower?: boolean;
         reportProblemLabelShown?: boolean;
+        protectionEnabled?: boolean;
     }): Settings {
         const message = new Settings({});
         if (data.launchOnStartup != null) {
@@ -305,6 +316,9 @@ export class Settings extends pb_1.Message {
         if (data.reportProblemLabelShown != null) {
             message.reportProblemLabelShown = data.reportProblemLabelShown;
         }
+        if (data.protectionEnabled != null) {
+            message.protectionEnabled = data.protectionEnabled;
+        }
         return message;
     }
     toObject() {
@@ -328,6 +342,7 @@ export class Settings extends pb_1.Message {
             non501User?: boolean;
             macos25OrLower?: boolean;
             reportProblemLabelShown?: boolean;
+            protectionEnabled?: boolean;
         } = {};
         if (this.launchOnStartup != null) {
             data.launchOnStartup = this.launchOnStartup;
@@ -386,6 +401,9 @@ export class Settings extends pb_1.Message {
         if (this.reportProblemLabelShown != null) {
             data.reportProblemLabelShown = this.reportProblemLabelShown;
         }
+        if (this.protectionEnabled != null) {
+            data.protectionEnabled = this.protectionEnabled;
+        }
         return data;
     }
     serialize(): Uint8Array;
@@ -430,6 +448,8 @@ export class Settings extends pb_1.Message {
             writer.writeBool(18, this.macos25OrLower);
         if (this.reportProblemLabelShown != false)
             writer.writeBool(19, this.reportProblemLabelShown);
+        if (this.protectionEnabled != false)
+            writer.writeBool(20, this.protectionEnabled);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -495,6 +515,9 @@ export class Settings extends pb_1.Message {
                     break;
                 case 19:
                     message.reportProblemLabelShown = reader.readBool();
+                    break;
+                case 20:
+                    message.protectionEnabled = reader.readBool();
                     break;
                 default: reader.skipField();
             }

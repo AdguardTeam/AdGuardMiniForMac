@@ -69,6 +69,7 @@ final class WebViewCallbackCoordinator {
         subscribe(#selector(filtersMetadataUpdated(_:)), .filtersMetadataUpdated)
         subscribe(#selector(customFilterSubscriptionUrlReceived(_:)), .customFilterSubscriptionUrlReceived)
         subscribe(#selector(hardwareAccelerationChanged(_:)), .hardwareAccelerationChanged)
+        subscribe(#selector(protectionStatusChanged(_:)), .protectionStatusChanged)
         subscribe(#selector(urlFilterStateChanged(_:)), .urlFilterStatusChanged)
         subscribe(#selector(urlFilterStateChanged(_:)), .urlFilterConfigurationChanged)
     }
@@ -206,6 +207,12 @@ final class WebViewCallbackCoordinator {
     @objc private func hardwareAccelerationChanged(_ note: Notification) {
         guard let enabled: Bool = eventBus.parseNotification(note) else { return }
         self.settings.onHardwareAccelerationChange(BoolValue(enabled))
+    }
+
+    /// Forwards the main protection switch state to settings.
+    @objc private func protectionStatusChanged(_ note: Notification) {
+        guard let enabled: Bool = self.eventBus.parseNotification(note) else { return }
+        self.settings.onProtectionStatusChanged(BoolValue(enabled))
     }
 
     /// Rebuilds and pushes full URL-filter state to settings.

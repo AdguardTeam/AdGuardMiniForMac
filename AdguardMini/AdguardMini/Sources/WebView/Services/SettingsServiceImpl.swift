@@ -34,6 +34,7 @@ extension SettingsServiceImpl:
     AppLifecycleServiceDependent,
     AppMetadataDependent,
     HealthCheckAttentionProviderDependent,
+    ProtectionServiceDependent,
     MailFiltersUpdaterDependent {}
 
 final class SettingsServiceImpl: SettingsService.ServiceType {
@@ -48,6 +49,7 @@ final class SettingsServiceImpl: SettingsService.ServiceType {
     var appMetadata: AppMetadata!
     var healthCheckAttentionProvider: HealthCheckAttentionProvider!
     var mailFiltersUpdater: MailFiltersUpdater!
+    var protectionService: ProtectionService!
     /// Native open/save panel presenter.
     var filePanelPresenter: FilePanelPresenting = NSFilePanelPresenter()
 
@@ -169,6 +171,7 @@ final class SettingsServiceImpl: SettingsService.ServiceType {
 
         settings.non501User = Constants.isNon501User
         settings.macos25OrLower = self.systemInfoManager.isMacOS25OrLower
+        settings.protectionEnabled = self.protectionService.isProtectionEnabled
         settings.reportProblemLabelShown = self.userSettingsService.reportProblemLabelShown
         promise(settings)
     }
