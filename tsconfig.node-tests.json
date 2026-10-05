@@ -51,6 +51,7 @@
         "AdguardMini/ui/modules/common/apis/callbackDispatch.ts",
         "AdguardMini/ui/modules/tray/lib/webViewTrayBootstrap.ts",
         "AdguardMini/ui/modules/settings/lib/webViewSettingsBootstrap.ts",
+        "AdguardMini/ui/modules/settings/components/Paywall/promoOffer.ts",
         "AdguardMini/ui/modules/common/apis/callbacks/SettingsCallbackServiceInternal.ts",
         "AdguardMini/ui/modules/common/apis/callbacks/AccountCallbackServiceInternal.ts",
         "AdguardMini/ui/modules/common/apis/callbacks/FiltersCallbackServiceInternal.ts",

@@ -18,6 +18,7 @@ import { AlreadyPurchasedFlowModal } from '../ActivationFlow';
 import { AppStoreVersionActions } from './AppStoreVersionActions';
 import { TermsAndConditionsModal } from './Modals';
 import s from './Paywall.module.pcss';
+import { visiblePromoOffer } from './promoOffer';
 import { StandaloneVersionActions } from './StandaloneVersionActions';
 
 import type { IconType } from 'UILib';
@@ -65,6 +66,9 @@ function PaywallComponent() {
 
     const [showAlreadyPurchasedFlowModal, setShowAlreadyPurchasedFlowModal] = useState(false);
     const [showTermsAndConditionsModal, setShowTermsAndConditionsModal] = useState(false);
+
+    // Closing the offer card hides it until the paywall is opened again.
+    const [isOfferDismissed, setIsOfferDismissed] = useState(false);
 
     const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -118,11 +122,15 @@ function PaywallComponent() {
 
     const isRightSide = (isTrialExpired || isLicenseExpired) && !isMASReleaseVariant;
 
-    const offer = appStoreSubscriptions?.result?.promoInfo;
-    const showOffer = offer && (
-        appStoreSubscriptions?.result?.annual?.introOfferDisplayPrice
-        || appStoreSubscriptions?.result?.monthly?.introOfferDisplayPrice
-    );
+    const offer = visiblePromoOffer({
+        offer: appStoreSubscriptions?.result?.promoInfo,
+        hasIntroOfferPrice: Boolean(
+            appStoreSubscriptions?.result?.annual?.introOfferDisplayPrice
+            || appStoreSubscriptions?.result?.monthly?.introOfferDisplayPrice,
+        ),
+        isContentOnRight: isRightSide,
+        isDismissed: isOfferDismissed,
+    });
 
     return (
         <div className={s.Paywall}>
@@ -142,29 +150,27 @@ function PaywallComponent() {
                     isFocusable
                     onClick={() => account.closePaywall()}
                 />
-                {showOffer && !isRightSide && (
-                    <div className={s.Paywall_offer_wrapper}>
-                        <div className={s.Paywall_offer}>
+                {offer && (
+                    <div className={s.Paywall_offer}>
+                        <div className={s.Paywall_offer_text}>
                             <Text
-                                className={s.Paywall_offer_text}
-                                lineHeight="none"
+                                lineHeight="l"
                                 type="t1"
+                                semibold
                             >
                                 🛍️&nbsp;
                                 {offer.title}
                             </Text>
-                            <Text
-                                lineHeight="none"
-                                type="t2"
-                            >
-                                {offer.subtitle}
-                            </Text>
+                            <Text type="t2">{offer.subtitle}</Text>
                         </div>
-                        <div className={s.Paywall_offer_line}>
-                            <svg fill="none" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1.20703 0.5L18.707 18V0.5H1.20703Z" fill="var(--fills-notifications-orange-default)" stroke="var(--stroke-icons-attention-icon-default)" />
-                            </svg>
-                        </div>
+                        {/* The paywall's own cross is on screen too, so "Close" alone would not say which. */}
+                        <Button
+                            ariaLabel={translate('close.titled.aria', { title: offer.title })}
+                            className={s.Paywall_offer_close}
+                            icon="cross"
+                            type="icon"
+                            onClick={() => setIsOfferDismissed(true)}
+                        />
                     </div>
                 )}
                 <div className={cx(
