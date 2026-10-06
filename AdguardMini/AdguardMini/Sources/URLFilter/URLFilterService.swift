@@ -16,9 +16,9 @@ import AML
 private enum Constants {
     static let maxRetryAttempts = 3
     static let baseRetryDelaySeconds: TimeInterval = 1
-    static let invalidDisableDelaySeconds: TimeInterval = 5
+    static let failSafeDisableDelaySeconds: TimeInterval = 5
     /// How long an enable/start-time disconnect error stays suppressed when the
-    /// status never changes. Shorter than `invalidDisableDelaySeconds`, so a
+    /// status never changes. Shorter than `failSafeDisableDelaySeconds`, so a
     /// broken filter shows its reason before the auto-disable kicks in.
     static let disconnectErrorSnapshotLifetimeSeconds: TimeInterval = 3
     /// One-shot delay before retrying an interrupted level restart.
@@ -48,8 +48,9 @@ protocol URLFilterService: AnyObject {
     /// `urlFilterConfigurationChanged`.
     func removeConfiguration() async throws
     /// Persists the user's SWP intent and applies the enable/disable.
-    /// Automatic transitions (license, main switch, invalid-disable) go through
-    /// `reconcile` and never overwrite the intent.
+    /// Automatic transitions (license, main switch, fail-safe disable) never
+    /// overwrite the intent; the license and main-switch paths go through
+    /// `reconcile`.
     /// While the main switch is off, an enable only persists the intent and
     /// ensures a disabled configuration exists for a later automatic bring-up;
     /// it neither enables the filter nor throws.
@@ -94,7 +95,9 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
     private var licenseInfoTask: Task<Void, Never>?
     private var lastObservedStatus: NEURLFilterManager.Status?
     private var cachedState: URLFilterState?
-    private var invalidDisableTask: Task<Void, Never>?
+    /// When the pending fail-safe disable must fire; nil when none is pending.
+    /// Kept across status churn, so a crash loop cannot postpone it.
+    private var failSafeDisableDeadline: Date?
     /// The last PIR parameter reload failed while the on-disk configuration was
     /// already staged. Until a reload succeeds the runtime may lag the disk, so
     /// refreshes must reload even when the stored token already matches.
@@ -147,7 +150,6 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
         self.configObservationTask?.cancel()
         self.paidStatusTask?.cancel()
         self.licenseInfoTask?.cancel()
-        self.invalidDisableTask?.cancel()
         self.disconnectErrorSnapshotTask?.cancel()
         self.levelRestartTask?.cancel()
     }
@@ -308,12 +310,13 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
     }
 
     /// Begins a transition: bumps the generation so any in-flight operation is
-    /// superseded, and returns the generation this transition owns.
+    /// superseded, and clears a pending fail-safe disable.
     ///
     /// Every path that changes the desired state must start here: the
     /// generation is the guard that keeps a stale async completion from landing
     /// over a newer state.
     private func beginTransition() -> Int {
+        self.clearFailSafeDisable(reason: "superseded by a newer transition")
         self.transitionGeneration += 1
         return self.transitionGeneration
     }
@@ -467,12 +470,28 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
             return
         }
         _ = self.beginTransition()
-        let applied = try await self.setEnabled(enabled, mayCreateConfiguration: true)
-        // A superseded toggle did not land: surface it so the UI rolls back
-        // Instead of showing a state the system extension does not have.
-        guard applied else {
-            LogInfo("URLFilter user toggle superseded by a newer transition")
-            throw URLFilterServiceError.superseded
+        do {
+            let applied = try await self.setEnabled(enabled, mayCreateConfiguration: true)
+            // A superseded toggle did not land: surface it so the UI rolls
+            // Back instead of showing a state the system extension does not
+            // Have.
+            guard applied else {
+                LogInfo("URLFilter user toggle superseded by a newer transition")
+                throw URLFilterServiceError.superseded
+            }
+        } catch {
+            // A failed enable can leave an enabled-but-broken configuration.
+            // The persisted intent is kept for a later retry.
+            switch error {
+            case URLFilterServiceError.superseded, is CancellationError:
+                break
+            default:
+                if enabled {
+                    // Derive the state so the fail-safe sees the failed bring-up.
+                    _ = await self.currentState()
+                }
+            }
+            throw error
         }
     }
 
@@ -1117,12 +1136,10 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
             self.clearDisconnectErrorSnapshot()
         }
         let manager = NEURLFilterManager.shared
-        if self.cachedState != nil {
-            // Rebuild from the manager so status, enabled flag, and latest
-            // `lastDisconnectError` reflect the transition, not a stale snapshot.
-            try? await manager.loadFromPreferences()
-            self.cachedState = await self.makeState(from: manager)
-        }
+        // Rebuild from the manager so status, enabled flag, and latest
+        // `lastDisconnectError` reflect the transition, not a stale snapshot.
+        try? await manager.loadFromPreferences()
+        self.cachedState = await self.makeState(from: manager)
         // Sample after the reload so the log describes the same manager state
         // As the derivation it explains.
         let rawError = self.rawLastDisconnectError(from: await manager.lastDisconnectError)
@@ -1139,11 +1156,6 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
                 + "stale=\(isStale), enabled=\(manager.isEnabled)"
         )
 
-        self.invalidDisableTask?.cancel()
-        if status == .invalid {
-            self.scheduleInvalidDisable()
-        }
-
         // An enable that did not come through the app must not keep running
         // Without a paid license or the user's persisted intent.
         if status == .running {
@@ -1154,36 +1166,95 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
         self.eventBus.post(event: .urlFilterStatusChanged, userInfo: nil)
     }
 
-    /// Turns the filter off when a `.invalid` status persists while enabled.
-    /// Avoids a broken enabled state and repeated restart cycles instead.
-    /// Cancelled by any later status transition, so a normal bring-up
-    /// Remains untouched while it only passes through `.invalid` briefly.
-    private func scheduleInvalidDisable() {
-        self.invalidDisableTask = Task { [weak self] in
-            try? await Task.sleep(seconds: Constants.invalidDisableDelaySeconds)
-            guard let self, !Task.isCancelled else { return }
-            let state = await self.currentState()
-            guard state.enabled, state.status == .invalid else { return }
-            await self.performInvalidDisable()
+    /// Keeps the pending fail-safe disable in sync with the derived state.
+    /// A status change alone never clears it; only a running filter or a
+    /// disabled configuration does, so a crash loop cannot postpone it.
+    private func updateFailSafeDisable(state: URLFilterState, rawError: URLFilterError?) {
+        guard !URLFilterReconcileDecision.isFailSafeDisableResolved(
+            status: state.status,
+            enabled: state.enabled
+        ) else {
+            self.clearFailSafeDisable(reason: "condition resolved")
+            return
+        }
+        // A transition keeps a pending disable; a broken filter starts one.
+        guard self.failSafeDisableDeadline == nil,
+              URLFilterReconcileDecision.shouldFailSafeDisable(
+                  status: state.status,
+                  enabled: state.enabled
+              )
+        else {
+            return
+        }
+        let deadline = Date().addingTimeInterval(Constants.failSafeDisableDelaySeconds)
+        self.failSafeDisableDeadline = deadline
+        LogInfo(
+            "URLFilter fail-safe disable scheduled: "
+                + "status=\(state.status), disconnectError=\(rawError.map(\.logName) ?? "none")"
+        )
+        Task { [weak self] in
+            try? await Task.sleep(seconds: Constants.failSafeDisableDelaySeconds)
+            guard let self else { return }
+            await self.fireFailSafeDisable(deadline: deadline)
         }
     }
 
+    /// Fires the pending disable once the grace period elapsed without a
+    /// running filter; a restart attempt at that moment is not progress.
+    private func fireFailSafeDisable(deadline: Date) async {
+        guard self.failSafeDisableDeadline == deadline else { return }
+        let manager = NEURLFilterManager.shared
+        do {
+            try await manager.loadFromPreferences()
+        } catch {
+            LogWarn("URLFilter fail-safe disable aborted: preferences load failed: \(error)")
+            self.failSafeDisableDeadline = nil
+            return
+        }
+        // Deriving the state clears the deadline when the condition resolved.
+        _ = await self.makeState(from: manager)
+        guard self.failSafeDisableDeadline == deadline else { return }
+        self.failSafeDisableDeadline = nil
+        await self.performFailSafeDisable()
+    }
+
+    /// Clears a pending fail-safe disable: resolved or superseded.
+    private func clearFailSafeDisable(reason: String) {
+        guard self.failSafeDisableDeadline != nil else { return }
+        self.failSafeDisableDeadline = nil
+        LogInfo("URLFilter fail-safe disable cancelled: \(reason)")
+    }
+
     /// Disables in one actor-isolated step so no transition can interleave
-    /// Between the generation bump and the disable.
-    private func performInvalidDisable() async {
+    /// between the generation bump and the disable. The automatic transition
+    /// never overwrites the persisted user intent, so a later healthy
+    /// reconcile retries the bring-up.
+    private func performFailSafeDisable() async {
+        let manager = NEURLFilterManager.shared
+        let rawStatus = self.rawStatus(from: await manager.status)
+        let rawError = self.rawLastDisconnectError(from: await manager.lastDisconnectError)
+        let trigger = "status=\(rawStatus), disconnectError=\(rawError.map(\.logName) ?? "none")"
         do {
             // An auto-disable supersedes any in-flight enable retry, but the
             // Automatic transition does not overwrite the user's intent.
             _ = self.beginTransition()
             let applied = try await self.setEnabled(false, mayCreateConfiguration: false)
             if applied {
-                LogWarn("URLFilter disabled after staying invalid")
+                LogError("URLFilter fail-safe disabled: \(trigger)")
             } else {
-                LogInfo("URLFilter invalid-disable superseded by a newer transition")
+                LogInfo("URLFilter fail-safe disable superseded by a newer transition")
             }
         } catch {
             if error is CancellationError { return }
-            LogError("URLFilter auto-disable on invalid failed: \(error)")
+            // A landed disable must be reported even when the refresh fails:
+            // `setEnabledOnce` saves the disabled configuration first.
+            let didReRead = (try? await manager.loadFromPreferences()) != nil
+            if didReRead, !manager.isEnabled {
+                LogError("URLFilter fail-safe disable runtime refresh failed: \(error)")
+                LogError("URLFilter fail-safe disabled: \(trigger)")
+            } else {
+                LogError("URLFilter fail-safe disable failed: \(trigger), error=\(error)")
+            }
         }
     }
 
@@ -1296,13 +1367,15 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
             )
         }
         self.lastDerivedDisconnectError = effectiveError
-        return URLFilterState(
+        let state = URLFilterState(
             enabled: isEnabled,
             status: rawStatus,
             serverURL: serverURL,
             issuerURL: issuerURL,
             lastDisconnectError: effectiveError
         )
+        self.updateFailSafeDisable(state: state, rawError: rawError)
+        return state
     }
 
     /// Records the disconnect error present at enable/start time so it is not
