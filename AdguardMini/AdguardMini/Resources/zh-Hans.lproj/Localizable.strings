@@ -89,10 +89,10 @@
 "webview_load_failure_message_text" = "加载 AdGuard Mini 用户界面时出现问题。您可以重新启动应用程序，或者报告问题。";
 
 /* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
-"webui_integrity_failure_message_title" = "AdGuard Mini 已被外部修改";
+"webui_integrity_failure_message_title" = "完整性检查失败";
 
 /* WebUI integrity Alert - Informative text */
-"webui_integrity_failure_message_text" = "应用文件在安装后被修改。请重新安装 AdGuard Mini 以恢复其功能。";
+"webui_integrity_failure_message_text" = "AdGuard Mini 应用包已被第三方修改。请删除此应用，并从可信来源下载干净版本。";
 /* RPC recurring-timeout alert - Title */
 "rpc_timeout_message_title" = "AdGuard Mini 未响应";
 

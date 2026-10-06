@@ -89,10 +89,10 @@
 "webview_load_failure_message_text" = "AdGuard Mini ウィンドウの読み込み中に問題が発生しました。アプリを再起動するか、問題を報告することができます。";
 
 /* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
-"webui_integrity_failure_message_title" = "AdGuard Mini が外部から変更されました";
+"webui_integrity_failure_message_title" = "整合性チェック失敗";
 
 /* WebUI integrity Alert - Informative text */
-"webui_integrity_failure_message_text" = "インストール後にアプリケーションファイルが変更されました。機能を復元するには AdGuard Mini を再インストールしてください。";
+"webui_integrity_failure_message_text" = "AdGuard Mini アプリバンドルがサードパーティによって変更されました。このアプリを削除し、信頼できるソースからクリーンなバージョンをダウンロードしてください。";
 /* RPC recurring-timeout alert - Title */
 "rpc_timeout_message_title" = "AdGuard Miniが応答していません";
 

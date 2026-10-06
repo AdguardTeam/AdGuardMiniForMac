@@ -89,10 +89,10 @@
 "webview_load_failure_message_text" = "AdGuard Mini 창을 불러오는 동안 문제가 발생했습니다. 앱을 다시 시작하거나 문제를 보고할 수 있습니다.";
 
 /* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
-"webui_integrity_failure_message_title" = "AdGuard Mini가 외부에서 변경됨";
+"webui_integrity_failure_message_title" = "무결성 검사 실패";
 
 /* WebUI integrity Alert - Informative text */
-"webui_integrity_failure_message_text" = "설치 이후 애플리케이션 파일이 수정되었습니다. 기능을 복원하려면 AdGuard Mini를 다시 설치하세요.";
+"webui_integrity_failure_message_text" = "AdGuard Mini 앱 번들이 제3자에 의해 변조되었습니다. 이 앱을 삭제하고 신뢰할 수 있는 출처에서 정상 버전을 다운로드하세요.";
 /* RPC recurring-timeout alert - Title */
 "rpc_timeout_message_title" = "AdGuard Mini 응답 없음";
 

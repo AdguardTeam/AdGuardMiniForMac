@@ -89,10 +89,10 @@
 "webview_load_failure_message_text" = "Κάτι πήγε στραβά κατά τη φόρτωση του παραθύρου του AdGuard Mini. Μπορείτε να κάνετε επανεκκίνηση της εφαρμογής ή να αναφέρετε το πρόβλημα.";
 
 /* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
-"webui_integrity_failure_message_title" = "Το AdGuard Mini τροποποιήθηκε εξωτερικά";
+"webui_integrity_failure_message_title" = "Αποτυχία ελέγχου ακεραιότητας";
 
 /* WebUI integrity Alert - Informative text */
-"webui_integrity_failure_message_text" = "Τα αρχεία της εφαρμογής τροποποιήθηκαν μετά την εγκατάσταση. Επανεγκαταστήστε το AdGuard Mini για να επαναφέρετε τη λειτουργία του.";
+"webui_integrity_failure_message_text" = "Το πακέτο εφαρμογής AdGuard Mini έχει τροποποιηθεί από τρίτο μέρος. Διαγράψτε αυτήν την εφαρμογή και κάντε λήψη μιας καθαρής έκδοσης από μια αξιόπιστη πηγή";
 /* RPC recurring-timeout alert - Title */
 "rpc_timeout_message_title" = "Το AdGuard Mini δεν αποκρίνεται";
 

@@ -89,10 +89,10 @@
 "webview_load_failure_message_text" = "Hiba történt az AdGuard Mini ablakának betöltése közben. Újraindíthatja az alkalmazást, vagy bejelentheti a problémát.";
 
 /* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
-"webui_integrity_failure_message_title" = "Az AdGuard Mini külsőleg módosult";
+"webui_integrity_failure_message_title" = "Integritás-ellenőrzés sikertelen";
 
 /* WebUI integrity Alert - Informative text */
-"webui_integrity_failure_message_text" = "Az alkalmazás fájljai a telepítés után módosultak. Telepítse újra az AdGuard Minit a funkcionalitás helyreállításához.";
+"webui_integrity_failure_message_text" = "Az AdGuard Mini alkalmazáscsomag egy harmadik féltől lett módosítva. Törölje ezt az alkalmazást, és töltsön le egy tiszta verziót egy megbízható forrásból";
 /* RPC recurring-timeout alert - Title */
 "rpc_timeout_message_title" = "Az AdGuard Mini nem válaszol";
 

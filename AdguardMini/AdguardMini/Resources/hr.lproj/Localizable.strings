@@ -89,10 +89,10 @@
 "webview_load_failure_message_text" = "Došlo je do pogreške prilikom učitavanja prozora AdGuard Mini. Možete ponovno pokrenuti aplikaciju ili prijaviti problem.";
 
 /* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
-"webui_integrity_failure_message_title" = "AdGuard Mini je promijenjen izvan aplikacije";
+"webui_integrity_failure_message_title" = "Provjera integriteta nije uspjela";
 
 /* WebUI integrity Alert - Informative text */
-"webui_integrity_failure_message_text" = "Datoteke aplikacije su izmijenjene nakon instalacije. Ponovno instalirajte AdGuard Mini kako biste obnovili njegovu funkcionalnost.";
+"webui_integrity_failure_message_text" = "Paket aplikacije AdGuard Mini izmijenila je treća strana. Ukloni ovu aplikaciju i preuzmi čistu verziju iz pouzdanog izvora";
 /* RPC recurring-timeout alert - Title */
 "rpc_timeout_message_title" = "AdGuard Mini ne odgovara";
 

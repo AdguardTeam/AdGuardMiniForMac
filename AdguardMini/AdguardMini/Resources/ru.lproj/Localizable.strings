@@ -89,10 +89,10 @@
 "webview_load_failure_message_text" = "Что-то пошло не так при загрузке окна AdGuard Mini. Вы можете перезапустить приложение или сообщить о проблеме.";
 
 /* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
-"webui_integrity_failure_message_title" = "Внешний вид AdGuard Mini изменён";
+"webui_integrity_failure_message_title" = "Ошибка проверки целостности";
 
 /* WebUI integrity Alert - Informative text */
-"webui_integrity_failure_message_text" = "После установки файлы приложения были изменены. Переустановите AdGuard Mini, чтобы восстановить его работоспособность.";
+"webui_integrity_failure_message_text" = "Пакет приложения AdGuard Mini был изменён третьей стороной. Удалите это приложение и скачайте чистую версию из надёжного источника";
 /* RPC recurring-timeout alert - Title */
 "rpc_timeout_message_title" = "AdGuard Mini не отвечает";
 

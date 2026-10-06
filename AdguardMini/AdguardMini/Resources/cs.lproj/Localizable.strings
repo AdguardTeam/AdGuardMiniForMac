@@ -89,10 +89,10 @@
 "webview_load_failure_message_text" = "Při načítání okna aplikace AdGuard Mini došlo k chybě. Můžete aplikaci restartovat nebo nahlásit tento problém.";
 
 /* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
-"webui_integrity_failure_message_title" = "AdGuard Mini prošel vnějšími změnami";
+"webui_integrity_failure_message_title" = "Kontrola integrity selhala";
 
 /* WebUI integrity Alert - Informative text */
-"webui_integrity_failure_message_text" = "Soubory aplikace byly po instalaci změněny. Pro obnovení funkčnosti nainstalujte AdGuard Mini znovu.";
+"webui_integrity_failure_message_text" = "Balíček aplikace AdGuard Mini byl upraven třetí stranou. Smažte tuto aplikaci a stáhněte si čistou verzi z důvěryhodného zdroje";
 /* RPC recurring-timeout alert - Title */
 "rpc_timeout_message_title" = "AdGuard Mini neodpovídá";
 

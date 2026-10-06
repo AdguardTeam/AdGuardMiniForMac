@@ -89,10 +89,10 @@
 "webview_load_failure_message_text" = "Något gick fel när AdGuard Mini-fönstret lästes in. Du kan starta om appen eller rapportera problemet.";
 
 /* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
-"webui_integrity_failure_message_title" = "AdGuard Mini ändrades externt";
+"webui_integrity_failure_message_title" = "Integritetskontrollen misslyckades";
 
 /* WebUI integrity Alert - Informative text */
-"webui_integrity_failure_message_text" = "Programmets filer ändrades efter installationen. Installera om AdGuard Mini för att återställa dess funktionalitet.";
+"webui_integrity_failure_message_text" = "AdGuard Mini-app-paketet har ändrats av en tredjepart. Ta bort denna app och ladda ner en ren version från en betrodd källa";
 /* RPC recurring-timeout alert - Title */
 "rpc_timeout_message_title" = "AdGuard Mini svarar inte";
 

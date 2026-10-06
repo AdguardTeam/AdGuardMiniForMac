@@ -89,10 +89,10 @@
 "webview_load_failure_message_text" = "Terjadi kesalahan saat memuat jendela AdGuard Mini. Anda dapat memulai ulang aplikasi atau melaporkan masalah ini.";
 
 /* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
-"webui_integrity_failure_message_title" = "AdGuard Mini diubah secara eksternal";
+"webui_integrity_failure_message_title" = "Pemeriksaan integritas gagal";
 
 /* WebUI integrity Alert - Informative text */
-"webui_integrity_failure_message_text" = "Berkas aplikasi dimodifikasi setelah pemasangan. Pasang ulang AdGuard Mini untuk memulihkan kegunaannya.";
+"webui_integrity_failure_message_text" = "Bundel aplikasi AdGuard Mini telah dimodifikasi oleh pihak ketiga. Hapus aplikasi ini dan unduh versi bersih dari sumber tepercaya";
 /* RPC recurring-timeout alert - Title */
 "rpc_timeout_message_title" = "AdGuard Mini tidak merespons";
 

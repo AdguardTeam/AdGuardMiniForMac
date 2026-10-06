@@ -89,10 +89,10 @@
 "webview_load_failure_message_text" = "Se produjo un error al cargar la ventana de AdGuard Mini. Puedes reiniciar la aplicación o informar del problema.";
 
 /* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
-"webui_integrity_failure_message_title" = "AdGuard Mini fue modificado externamente";
+"webui_integrity_failure_message_title" = "La comprobación de integridad ha fallado";
 
 /* WebUI integrity Alert - Informative text */
-"webui_integrity_failure_message_text" = "Los archivos de la aplicación se modificaron después de la instalación. Reinstale AdGuard Mini para restaurar su funcionamiento.";
+"webui_integrity_failure_message_text" = "El paquete de la aplicación AdGuard Mini ha sido modificado por un tercero. Elimine esta aplicación y descargue una versión limpia de una fuente confiable";
 /* RPC recurring-timeout alert - Title */
 "rpc_timeout_message_title" = "AdGuard Mini no responde";
 

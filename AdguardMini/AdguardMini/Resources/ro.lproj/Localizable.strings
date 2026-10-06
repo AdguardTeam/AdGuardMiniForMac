@@ -89,10 +89,10 @@
 "webview_load_failure_message_text" = "Ceva nu a funcționat la încărcarea ferestrei AdGuard Mini. Puteți reporni aplicația sau raporta problema.";
 
 /* WebUI integrity Alert - Message title "AdGuard Mini was changed externally" */
-"webui_integrity_failure_message_title" = "AdGuard Mini a fost modificat extern";
+"webui_integrity_failure_message_title" = "Verificarea integrității a eșuat";
 
 /* WebUI integrity Alert - Informative text */
-"webui_integrity_failure_message_text" = "Fișierele aplicației au fost modificate după instalare. Reinstalați AdGuard Mini pentru a-i restabili funcționalitatea.";
+"webui_integrity_failure_message_text" = "Pachetul aplicației AdGuard Mini a fost modificat de o parte terță. Ștergeți această aplicație și descărcați o versiune curată dintr-o sursă de încredere";
 /* RPC recurring-timeout alert - Title */
 "rpc_timeout_message_title" = "AdGuard Mini nu răspunde";
 
