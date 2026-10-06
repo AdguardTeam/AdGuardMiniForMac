@@ -88,6 +88,7 @@ export enum SettingsEvent {
     SystemWideProtectionGetFullVersionClick = 'system_wide_protection_get_full_version_click',
     RemoveURLFilterClick = 'remove_URL_filter_click',
     InstallURLFilterClick = 'install_URL_filter_click',
+    AdguardProductsClick = 'adguard_products_click',
 }
 
 /**

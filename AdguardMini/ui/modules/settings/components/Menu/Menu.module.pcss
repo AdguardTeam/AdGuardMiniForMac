@@ -9,24 +9,28 @@
     flex-flow: column;
 
     &_logo {
-        margin: var(--m-s) var(--m-xxs);
+        margin: var(--m-xxs) var(--m-xxs) var(--m-xs);
+    }
+
+    &_getFullVersion {
+        padding: var(--m-xxs) 0;
+
+        &_button {
+            width: 100%;
+            min-height: var(--m-xl);
+        }
     }
 
     &_menuItems {
         padding-top: var(--m-s);
-        
+
         &_delimiter {
             padding: var(--m-m) 0 var(--m-xs) var(--m-xs);
         }
     }
 
-    &_getFullVersion {
-        margin-top: auto;
-        padding: var(--m-xxs);
-
-        &_button {
-            width: 100%;
-            min-height: 48px;
-        }
+    /* Keeps the products entry pinned to the bottom of the menu. */
+    &_spacer {
+        flex: 1;
     }
 }

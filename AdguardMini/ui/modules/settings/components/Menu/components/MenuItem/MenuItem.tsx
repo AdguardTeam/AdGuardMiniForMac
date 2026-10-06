@@ -13,27 +13,59 @@ import s from './MenuItem.module.pcss';
 import type { RouteName } from 'SettingsStore/modules';
 import type { IconType } from 'UILib';
 
-export type MenuItemProps = {
+type MenuItemBaseProps = {
     icon: IconType;
-    route: RouteName;
-    activeRoutes?: RouteName[];
     title: string;
     isNew?: boolean;
+    /**
+     * Trailing icon at the row's end, e.g. the external-link marker of an
+     * action that leaves the app.
+     */
+    rightIcon?: IconType;
 };
+
+/**
+ * Row that navigates: it owns a route and is highlighted while that route (or
+ * one of `activeRoutes`) is open.
+ */
+type MenuItemRouteProps = MenuItemBaseProps & {
+    route: RouteName;
+    activeRoutes?: RouteName[];
+    onClick?: never;
+};
+
+/**
+ * Row that acts instead of navigating: it has no route, so it can never be
+ * marked as the current page.
+ */
+type MenuItemActionProps = MenuItemBaseProps & {
+    route?: never;
+    activeRoutes?: never;
+    onClick(): void;
+};
+
+export type MenuItemProps = MenuItemRouteProps | MenuItemActionProps;
 
 /**
  * Menu link in settings menu
  */
-function MenuItemComponent({
-    icon,
-    route,
-    activeRoutes,
-    title,
-    isNew,
-}: MenuItemProps) {
+function MenuItemComponent(props: MenuItemProps) {
+    const { icon, title, isNew, rightIcon } = props;
     const { router } = useSettingsStore();
     const { currentPath } = router;
-    const active = currentPath === route || activeRoutes?.includes(currentPath);
+
+    const active = props.route !== undefined
+        && (currentPath === props.route || props.activeRoutes?.includes(currentPath));
+
+    const activate = () => {
+        if (props.route !== undefined) {
+            router.changePath(props.route);
+            return;
+        }
+
+        props.onClick();
+    };
+
     return (
         // A plain `<div>` is invisible to VoiceOver; the role is what turns the
         // menu entry into an announceable control, and `aria-current` is what
@@ -42,11 +74,12 @@ function MenuItemComponent({
         <div
             aria-current={active ? 'page' : undefined}
             className={cx(s.MenuItem_item, active && s.MenuItem_item__active)}
-            {...buttonProps(() => router.changePath(route))}
+            {...buttonProps(activate)}
         >
             <Icon className={s.MenuItem_icon} icon={icon} />
             <Text className={s.MenuItem_text} lineHeight="none" semibold={active} type="t2">{title}</Text>
             {isNew && <Icon className={s.MenuItem_iconNew} icon="bullet" />}
+            {rightIcon && <Icon className={s.MenuItem_rightIcon} icon={rightIcon} />}
         </div>
     );
 }

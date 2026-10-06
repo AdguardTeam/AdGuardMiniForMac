@@ -7,6 +7,7 @@ import { useState } from 'preact/hooks';
 
 import { RequestRenewRequest } from 'Apis/requests/AccountService';
 import { Subscription } from 'Apis/types';
+import { getTdsLink, TDS_PARAMS } from 'Common/utils/links';
 import { useSettingsStore, useTheme } from 'SettingsLib/hooks';
 import { RouteName, SettingsEvent } from 'SettingsStore/modules';
 import { Logo, Layout, Text, Button } from 'UILib';
@@ -19,7 +20,7 @@ import s from './Menu.module.pcss';
  * Main menu in settings app
  */
 function MenuComponent() {
-    const { account, settings, telemetry, advancedBlocking } = useSettingsStore();
+    const { account, settings, telemetry, advancedBlocking, router } = useSettingsStore();
     const { urlFilterNew } = advancedBlocking;
 
     const {
@@ -54,6 +55,11 @@ function MenuComponent() {
         telemetry.layersRelay.trackEvent(SettingsEvent.GetFullVersionClick);
     };
 
+    const handleAdguardProductsClick = () => {
+        window.OpenLinkInBrowser(getTdsLink(TDS_PARAMS.products, router.currentPath));
+        telemetry.trackEvent(SettingsEvent.AdguardProductsClick);
+    };
+
     const [isDarkTheme, setIsDarkTheme] = useState(false);
 
     useTheme((theme) => {
@@ -63,6 +69,20 @@ function MenuComponent() {
     return (
         <Layout className={s.Menu} type="settingsMenu">
             <Logo className={s.Menu_logo} isDarkTheme={isDarkTheme} />
+            {showGetFullVersionButton && (
+                <div className={s.Menu_getFullVersion}>
+                    <Button
+                        className={cx(tx.button.greenSubmit, s.Menu_getFullVersion_button)}
+                        type="submit"
+                        small
+                        onClick={handleGetFullVersionClick}
+                    >
+                        <Text type="t3" semibold>
+                            {translate('license.get.full.version')}
+                        </Text>
+                    </Button>
+                </div>
+            )}
             {/*
               * The navigation landmark is what identifies this strip as the
               * app's navigation rather than a pile of buttons: VoiceOver
@@ -124,20 +144,13 @@ function MenuComponent() {
                     title={translate('menu.about')}
                 />
             </div>
-            {showGetFullVersionButton && (
-                <div className={s.Menu_getFullVersion}>
-                    <Button
-                        className={cx(tx.button.greenSubmit, s.Menu_getFullVersion_button)}
-                        type="submit"
-                        small
-                        onClick={handleGetFullVersionClick}
-                    >
-                        <Text type="t2" semibold>
-                            {translate('license.get.full.version')}
-                        </Text>
-                    </Button>
-                </div>
-            )}
+            <div className={s.Menu_spacer} />
+            <MenuItem
+                icon="adguard"
+                rightIcon="externalLink"
+                title={translate('menu.adguard.products')}
+                onClick={handleAdguardProductsClick}
+            />
         </Layout>
     );
 }
