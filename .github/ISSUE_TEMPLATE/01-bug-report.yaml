@@ -2,6 +2,10 @@ name: 🐞 Bug report
 description: If you found something that we should know about
 labels: "Bug"
 body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to fill out this bug report!
+
   - type: checkboxes
     attributes:
       label: Please answer the following questions for yourself before submitting an issue
@@ -14,6 +18,7 @@ body:
           required: true
         - label: I checked to make sure that this issue has not already been filed
           required: true
+
   - type: input
     id: app_version
     attributes:
@@ -22,20 +27,22 @@ body:
       placeholder: For example, 3.0.0
     validations:
       required: true
+
   - type: input
     id: safari_version
     attributes:
       label: Safari Version
       description: What version of Safari do you use?
-      placeholder: For example, Safari 27.2
+      placeholder: For example, Safari 27.0.1
     validations:
       required: true
+
   - type: input
     id: os_version
     attributes:
       label: macOS Version
       description: What version of macOS do you use?
-      placeholder: For example, macOS Golden Gate 27.2
+      placeholder: For example, macOS Golden Gate 27.0.1
     validations:
       required: true
 
@@ -140,25 +147,19 @@ body:
       label: Language-specific
       multiple: true
       options:
-        - AdGuard Chinese filter
-        - AdGuard Dutch filter
-        - AdGuard French filter
-        - AdGuard German filter
-        - AdGuard Italian filter
-        - AdGuard Japanese filter
-        - AdGuard Polish filter
         - AdGuard Russian filter
+        - AdGuard German filter
+        - AdGuard Japanese filter
+        - AdGuard Dutch filter
         - AdGuard Spanish/Portuguese filter
         - AdGuard Turkish filter
+        - AdGuard French filter
         - AdGuard Ukrainian filter
+        - AdGuard Italian filter
+        - AdGuard Polish filter
+        - AdGuard Chinese filter
         - ABPindo
-        - ABPVN List
-        - Adblock List for Finland
-        - AdBlockID
         - Bulgarian list
-        - CJX's Annoyances List
-        - Dandelion Sprout's Nordic Filters
-        - Dandelion Sprout's Serbo-Croatian List
         - EasyList China
         - EasyList Czech and Slovak
         - EasyList Dutch
@@ -166,36 +167,65 @@ body:
         - EasyList Hebrew
         - EasyList Italy
         - EasyList Lithuania
-        - EasyList Polish
-        - EasyList Portuguese
-        - EasyList Spanish
-        - EasyList Thailand
-        - Estonian List
-        - Frellwit's Swedish Filter
-        - Greek AdBlock Filter
-        - Hungarian filter
-        - Icelandic ABP List
-        - IndianList
-        - KAD - Anti-Scam
         - Latvian List
-        - filterslist-KO Classic filter list
         - Liste AR
         - Liste FR
-        - Macedonian adBlock Filters
+        - ROList
+        - Icelandic ABP List
+        - AdBlockID
+        - Greek AdBlock Filter
+        - EasyList Portuguese
+        - EasyList Thailand
+        - Hungarian filter
+        - Xfiles
+        - "RU AdList: Counters"
+        - ABPVN List
         - Official Polish filters for AdBlock, uBlock Origin & AdGuard
+        - Polish GDPR-Cookies Filters
+        - Estonian List
+        - CJX's Annoyances List
+        - Polish Social Filters
+        - filterslist-KO Classic filter list
+        - xinggsf
+        - EasyList Spanish
+        - KAD - Anti-Scam
+        - Adblock List for Finland
+        - ROLIST2
         - Persian Blocker
+        - road-block
         - Polish Annoyances Filters
         - Polish Anti Adblock Filters
-        - Polish Anti-Annoying Special Supplement
-        - Polish GDPR-Cookies Filters
-        - Polish Social Filters
-        - road-block light
-        - ROList
-        - ROLIST2
-        - "RU AdList: Counters"
-        - xinggsf
-        - Xfiles
+        - Frellwit's Swedish Filter
         - YousList
+        - EasyList Polish
+        - Polish Anti-Annoying Special Supplement
+        - Dandelion Sprout's Serbo-Croatian List
+        - IndianList
+        - Macedonian adBlock Filters
+        - Dandelion Sprout's Nordic Filters
+    validations:
+      required: false
+
+  - type: dropdown
+    id: system_protection_level
+    attributes:
+      description: Which protection level do you use? If you don't use System-wide protection, select 'System-wide protection disabled'.
+      label: System-wide Protection Level
+      multiple: false
+      options:
+        - System-wide protection disabled
+        - Essential
+        - Safe
+        - Family
+    validations:
+      required: true
+
+  - type: checkboxes
+    attributes:
+      label: AdGuard Extra
+      description: Do you have AdGuard Extra enabled?
+      options:
+        - label: Yes, I do
     validations:
       required: false
 
@@ -206,11 +236,12 @@ body:
       description: Please provide a set of steps to reproduce the issue.
       value: |
         Steps to reproduce:
-        1.
-        2.
-        3.
+        1. 
+        2. 
+        3. 
     validations:
       required: true
+
   - type: textarea
     id: how_it_should_be
     attributes:
@@ -218,6 +249,7 @@ body:
       placeholder: A clear and concise description of what you expected to happen.
     validations:
       required: false
+
   - type: textarea
     id: how_it_is
     attributes:
@@ -225,6 +257,7 @@ body:
       placeholder: A clear description of what happened instead.
     validations:
       required: true
+
   - type: textarea
     id: screens
     attributes:
@@ -236,12 +269,13 @@ body:
       value: |
           <details><summary>Screenshot 1:</summary>
           <!-- Paste screenshot below. -->
-
-
-
+          
+          
+          
           </details>
     validations:
       required: false
+
   - type: textarea
     id: additional
     attributes:

@@ -2,6 +2,10 @@ name: 🌱 Feature request
 description: If you know how AdGuard Mini for Mac can be improved
 labels: "Feature request"
 body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to fill out this form!
+
   - type: textarea
     id: what-happened
     attributes:
