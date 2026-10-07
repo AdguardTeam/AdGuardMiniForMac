@@ -21,6 +21,6 @@ body:
     id: question
     attributes:
       label: Ask a question
-      placeholder: Ask your question here.
+      placeholder: If you want to know more about how the app works.
     validations:
       required: true
