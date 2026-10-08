@@ -31,7 +31,7 @@
 <br />
 
 - [Key features](#key)
-- [Pro features](#pro)
+- [Advanced features](#pro)
 - [For ad blocking beyond Safari](#beyond)
 - [Contribution](#contribution)
   - [How to report an issue](#issue)
@@ -42,7 +42,7 @@
 
 <br />
 
-AdGuard Mini (formerly AdGuard for Safari) is the same open-source Safari extension — but redesigned, faster, and with Pro capabilities. On top of core ad-blocking power, advanced features are now available as an optional in-app purchase.
+AdGuard Mini (formerly AdGuard for Safari) is the same open-source Safari extension — but redesigned, faster, and with advanced features. On top of core ad-blocking power, advanced features are now available as an optional in-app purchase.
 
 AdGuard Mini keeps all kinds of ads away from your Safari browser. It removes all visual clutter, such as banners, popups, and autoplay videos, so only the important content stays. AdGuard Mini also protects your privacy by blocking trackers to prevent unnecessary data collection.
 
@@ -60,22 +60,22 @@ With AdGuard Mini you can manage ad blocking directly from Safari – pause prot
 - Create custom filtering rules with an advanced rule editor
 
 <a id="pro"></a>
-## Pro features
+## Advanced features
 
-- Real-time filter updates for precise ad blocking
-- AdGuard Extra to handle anti-adblock scripts and complex cases
-- Advanced custom filters to add any filters you wish
+* System-wide protection to block ads in supported browsers and apps on your Mac, not just Safari
+* Real-time filter updates for precise ad blocking
+* AdGuard Extra to handle anti-adblock scripts and complex cases
+* Advanced custom filters to add any filters you wish
 
-Pro features can be unlocked by an AdGuard Ad Blocker license, which can be obtained on our website or through in-app purchase.
+Advanced features can be unlocked by an AdGuard Ad Blocker license, which can be obtained on our website or through in-app purchase.
 
 <a id="beyond"></a>
 ## For ad blocking beyond Safari — there is full-fledged AdGuard for Mac
 
 With all of the above being said, there is a solution that is even more effective than AdGuard Mini extension — [AdGuard for Mac](https://adguard.com/adguard-mac/overview.html). It’s an app that:
 
-- filters traffic system-wide — that means blocking ads in all browsers and apps on your Mac, not just Safari
-- provides better filtering quality in some cases (due to the lack of browser API restrictions)
-- is not limited regarding the number of filtering rules
+* provides better filtering quality in some cases (due to the lack of browser API restrictions)
+* is not limited regarding the number of filtering rules
 
 You can [try it out for free](https://adguard.com/download.html?os=mac&show=1).
 
