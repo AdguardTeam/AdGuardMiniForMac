@@ -10,11 +10,10 @@ import PackageDescription
 let package = Package(
     name: "ProtoSchema",
     platforms: [
-        // Required for `os.Logger` (macOS 11+) used by the WKWebView bridge
-        // dispatcher + the handcrafted `WebViewBridge` / `WebViewCallbackBridge`
-        // base classes. The consuming Xcode project targets macOS 12+
-        // (`AdguardMini/CommonConfig.xcconfig:27`).
-        .macOS(.v11)
+        // Aligned with the consuming Xcode project, which targets macOS 13+.
+        // `AdguardMini/CommonConfig.xcconfig:27` is the single source of truth.
+        // The `os.Logger` used by the WKWebView bridge needs no lower floor.
+        .macOS(.v13)
     ],
     products: [
         .library(

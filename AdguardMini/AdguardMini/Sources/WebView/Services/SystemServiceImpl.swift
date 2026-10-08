@@ -9,16 +9,9 @@
 
 import Foundation
 import ProtoSchema
-import AppKit
 import ServiceManagement
 
 import AML
-
-private enum Constants {
-    static var loginItemUrl: URL {
-        URL(string: "x-apple.systempreferences:com.apple.LoginItems-Settings.extension")!
-    }
-}
 
 extension SystemServiceImpl:
     TrayWindowControllerDependent,
@@ -58,11 +51,7 @@ final class SystemServiceImpl: SystemService.ServiceType {
     }
 
     func openLoginItemsSettings(_ message: EmptyValue, _ promise: @escaping (EmptyValue) -> Void) {
-        if #available(macOS 13.0, *) {
-            SMAppService.openSystemSettingsLoginItems()
-        } else {
-            NSWorkspace.shared.open(Constants.loginItemUrl)
-        }
+        SMAppService.openSystemSettingsLoginItems()
         promise(EmptyValue())
     }
 }

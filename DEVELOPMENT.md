@@ -43,7 +43,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 | Yarn | 1.22+ | Frontend dependency management |
 | Python | 3.9+ | Protobuf schema generation (venv created by `configure.sh`) |
 
-- **Minimum deployment target** (end-user): **macOS 12** (`AG_DEPLOYMENT_TARGET`
+- **Minimum deployment target** (end-user): **macOS 13** (`AG_DEPLOYMENT_TARGET`
   in `CommonConfig.xcconfig`)
 - **Minimum development machine**: **macOS 26+** (required for Xcode 26)
 

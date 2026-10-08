@@ -4,7 +4,6 @@
 
 import './colors.css';
 import './dark.css';
-import './focusFallback.css';
 import './light.css';
 import './main.css';
 import './reset.css';

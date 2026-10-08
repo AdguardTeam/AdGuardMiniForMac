@@ -67,8 +67,7 @@ test('resolveFocusOpenerSource reports no opener when neither candidate is usabl
 });
 
 /**
- * Fake DOM the activation tracker and the snapshot read from. Mirrors the
- * `fakeDocument` helper of `inputModality.test.ts`.
+ * Fake DOM the activation tracker and the snapshot read from.
  */
 function fakeFocusDocument() {
     class FakeHTMLElement {

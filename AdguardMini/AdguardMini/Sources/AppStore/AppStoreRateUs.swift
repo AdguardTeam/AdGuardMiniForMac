@@ -40,7 +40,6 @@ private enum Constants {
 private final class ReviewRequester {
     static let shared = ReviewRequester()
 
-    @available(macOS 13.0, *)
     @MainActor
     func requestReview() {
         guard let window = NSApplication.shared.windows.first else {
@@ -146,13 +145,8 @@ final class AppStoreRateUsImpl: AppStoreRateUs {
 
     @MainActor
     private func callRateUs() {
-        if #available(macOS 13.0, *) {
-            LogInfo("Call rate us")
-            ReviewRequester.shared.requestReview()
-        } else {
-            LogInfo("Call legacy rate us")
-            SKStoreReviewController.requestReview()
-        }
+        LogInfo("Call rate us")
+        ReviewRequester.shared.requestReview()
     }
 }
 

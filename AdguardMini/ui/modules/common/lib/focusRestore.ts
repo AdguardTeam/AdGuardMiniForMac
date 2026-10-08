@@ -276,9 +276,9 @@ export function captureFocusSnapshot(): FocusRestoreSnapshot {
 /**
  * Moves focus to the resolved restore target and does nothing else: the page
  * is never scrolled to bring the target into view (a close that follows the
- * user's own scrolling must not drag the viewport back), and input modality
- * is left untouched, so `:focus-visible` (or the old-WebKit modality
- * fallback) decides whether the restored control shows the ring.
+ * user's own scrolling must not drag the viewport back), and no input hint
+ * is forced, so `:focus-visible` decides whether the restored control shows
+ * the ring.
  *
  * @param snapshot Snapshot taken by `captureFocusSnapshot`.
  */

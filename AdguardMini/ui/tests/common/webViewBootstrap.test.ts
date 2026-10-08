@@ -13,7 +13,6 @@ import {
     __getRpcTimeoutAlertSurface,
     __resetForTests,
 } from '../../modules/common/apis/rpcPostMessage';
-import { INPUT_MODALITY_ATTRIBUTE } from '../../modules/common/lib/inputModality';
 
 const setupFakeWindow = () => {
     const w: Record<string, unknown> = {
@@ -21,19 +20,14 @@ const setupFakeWindow = () => {
         dispatchEvent: () => true,
     };
     const listeners: Record<string, Array<(evt: unknown) => void>> = {};
-    const attributes: Array<{ name: string; value: string }> = [];
     (globalThis as Record<string, unknown>).window = w;
     (globalThis as Record<string, unknown>).document = {
         addEventListener: (type: string, fn: (evt: unknown) => void) => {
             (listeners[type] ??= []).push(fn);
         },
-        documentElement: {
-            setAttribute: (name: string, value: string) => {
-                attributes.push({ name, value });
-            },
-        },
+        documentElement: { setAttribute: () => {} },
     } as unknown as Document;
-    return { w, listeners, attributes };
+    return { w, listeners };
 };
 
 test('installs all in-use globals', () => {
@@ -371,14 +365,4 @@ test('a repackaged RpcError (name marker, lost prototype) is still tagged rpc-er
     assert.equal(posted.length, 1);
     assert.equal(posted[0].name, 'jsRuntimeError');
     assert.equal((posted[0].body as { kind?: string }).kind, 'rpc-error');
-});
-
-test('installs the input-modality tracker on the root element', () => {
-    const { listeners, attributes } = setupFakeWindow();
-
-    webViewBootstrap({ env: { launch: () => {} } });
-
-    assert.deepEqual(attributes, [{ name: INPUT_MODALITY_ATTRIBUTE, value: 'pointer' }]);
-    assert.ok((listeners.keydown?.length ?? 0) >= 1, 'must observe key presses');
-    assert.ok((listeners.pointerdown?.length ?? 0) >= 1, 'must observe pointer presses');
 });

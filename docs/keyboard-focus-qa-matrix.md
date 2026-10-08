@@ -55,13 +55,13 @@ Every row is executed by a human on a built app. All result cells are
   `no-noninteractive-element-interactions`, `control-has-associated-label`)
   in the CI `ts-lint` lane.
 - `bin/yarn test:node` runs the pure-helper tests (activation predicate,
-  input modality, focus-restore target resolution) in the `ts-test` lane.
+  focus-restore target resolution) in the `ts-test` lane.
 - The focus ring is declared once as the `focus-ring` mixin in
   `common/theme/default/mixins.css`; a compiled-CSS check can confirm that
   each module's `style.<module>.css` carries the `--focus-ring-color`
   outline instead of counting per-component copies.
-- AGENTS.md item 16 documents the ring, activation keys, modality fallback
-  and the no-silent-outline-removal rule.
+- AGENTS.md item 16 documents the ring, activation keys and the
+  no-silent-outline-removal rule.
 
 ## Execution Log
 
@@ -152,9 +152,6 @@ Edge cases:
 | EDGE-5 | All modules | overlay restore on outside click | close with an outside click on a focusable target, on a non-focusable area, and with a right-click/Control-click; navigate away with an overlay open | a focusable click target keeps focus; clicking a non-focusable area returns focus to the trigger; right-click/Control-click outside also returns to the trigger; navigating away raises no error and steals no focus | Pending | Pending | |
 | EDGE-6 | All modules | dropdown Tab-out | Tab on the last open option; Shift+Tab on the first | Tab closes the list, focus continues to the next control in document order and no value changes; Shift+Tab on the first option closes to the header | Pending | Pending | |
 | EDGE-7 | All modules | opener-removed fallback | open a modal from the header context menu; remove an overlay trigger while the overlay is open; close the surface | the header-menu-opened modal falls back to the Settings page heading; the overlay falls back to the nearest visible target, never the body; after the fallback the page never has zero visible focus | Pending | Pending | |
-| EDGE-8 | All modules | modality fallback, native path (current macOS) | Tab, then click, then inspect the fallback rule in Web Inspector | Tab shows the ring, a click removes it, and the fallback rule does not match | Pending | Pending | |
-| EDGE-9 | All modules | modality fallback, forced path | temporarily invert `@supports not selector(:focus-visible)` to `@supports selector(:focus-visible)` in `common/theme/default/focusFallback.css`, run `bin/yarn build:dev` and `yarn syncUI`, then Tab, click and Tab again in all four modules; revert the edit and rebuild | Tab draws the ring, a click removes it with no stale ring, Tab again draws it, and text inputs and the `Select` stay border-only; the temporary inversion must never be committed | Pending | Pending | |
-| EDGE-10 | All modules | modality fallback, old WebKit (macOS 12.0–12.2, machine or VM, when available) | repeat `EDGE-9`'s checks without the inversion | same show/hide rules as the native mechanism — this is the authoritative check | Pending | Pending | |
 
 ## Success Criteria Coverage
 
@@ -164,7 +161,7 @@ Edge cases:
 | SC-002 | All custom controls activate with Enter/Space; 0 double/disabled activations | module activation rows + `EDGE-1` | `keyboardActivation` unit tests |
 | SC-003 | Dialogs/overlays restore focus to opener; fallback when gone; 0 body | `EDGE-3`–`EDGE-7`, `SET-12`, `TRAY-8`, `UR-3` | `resolveFocusRestoreTarget` unit tests |
 | SC-004 | Full Tab cycle per module without stalling or landing on non-operable elements | module cycle rows (`SET-18`, `TRAY-1`, `TRAY-5`, `TRAY-6`, `ONB-1`, `ONB-5`, `ONB-6`, `UR-1`) | source census of `tabIndex`/`role` per module |
-| SC-005 | 0 rings after mouse-only interaction; 100% keyboard rings incl. macOS 12 WebKit | `GEN-1`, `EDGE-8`–`EDGE-10` | modality unit tests; `focusFallback.css` compiled check |
+| SC-005 | 0 rings after mouse-only interaction; 100% keyboard rings | `GEN-1`, `GEN-2`, `EDGE-4` | compiled CSS check: the ring is scoped to `:focus-visible` |
 | SC-006 | Lint + tests + CI green | — (CI) | `bin/yarn lint --quiet`, `bin/yarn test:node`; `ts-lint`/`ts-test` lanes in `.github/workflows/pr-check.yml` |
 | SC-007 | No regressions: select keyboard handling, tray story arrows, modal trap, heading announcements | module regression rows + `EDGE-3`, `TRAY-7` | existing unit tests |
 

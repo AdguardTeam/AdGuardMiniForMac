@@ -54,7 +54,7 @@ synchronization.
 - **Storage**: UserDefaults, file-based storage (JSON/plist), Safari Content
   Blocker rules (JSON)
 - **Testing**: XCTest (Swift), node:test (TypeScript)
-- **Target Platform**: macOS 12+ (deployment), macOS 13+ (development machine),
+- **Target Platform**: macOS 13+ (deployment), macOS 26+ (development machine),
   Safari extensions
 - **Project Type**: single (Xcode project with multiple targets)
 - **Performance Goals**: N/A
@@ -577,12 +577,12 @@ Blocker JSON consumed by the extension targets.
      in backticks):
      ```swift
      // Good: restructure so each `//` line starts with a capital letter.
-     // `SMCopyAllJobDictionaries` is the only way to query login item status.
-     // It is deprecated, but there is no alternative on macOS < 13.
+     // `TokenBucketLimiter` reads a monotonic clock.
+     // A wall-clock jump cannot refill the bucket.
 
-     // Bad: second line starts with a lowercase word.
-     // `SMCopyAllJobDictionaries` is deprecated but is the only way
-     // to query login item status on macOS < 13 without side effects.
+     // Bad: a continuation line starts with a lowercase word.
+     // `TokenBucketLimiter` reads a monotonic clock, so a wall-clock
+     // jump cannot refill the bucket.
      ```
    - Analyzer rules enabled: `unused_declaration`, `unused_import`,
      `capture_variable`, `typesafe_array_init`
@@ -1212,18 +1212,14 @@ humans and AI agents that consume project documentation.
     conditional, and `useToggleControlKeyboard(disabled, action)` for the
     wrapper of a `Checkbox`/`Radio`/`Switch`. All three ignore a keypress
     that came from a control nested inside the wrapper (a link inside a
-    label), so the nested control keeps its own Enter/Space behaviour. On
-    WebKit versions without `:focus-visible` the fallback reuses the same
-    tokens through the root keyboard-modality attribute instead of
-    duplicating per-component rules.
+    label), so the nested control keeps its own Enter/Space behaviour.
 
     **Rationale**: The v3.0 rewrite dropped the legacy Sciter keyboard layer,
     leaving keyboard users unable to see where focus is. One token-based
     definition keeps the indicator consistent across the four WebView
-    modules, lets the native and fallback mechanisms render the same ring,
-    and makes any outline removal without a replacement reviewable. Sharing
-    the ring as a mixin and the activation as helpers keeps a whole class of
-    double-activation and nested-control bugs fixable in one place.
+    modules and makes any outline removal without a replacement reviewable.
+    Sharing the ring as a mixin and the activation as helpers keeps a whole
+    class of double-activation and nested-control bugs fixable in one place.
 
 17. **Stateful overlays (TS)**: Dropdown lists, selects and context menus
     MUST drive their open state through `useOverlay`

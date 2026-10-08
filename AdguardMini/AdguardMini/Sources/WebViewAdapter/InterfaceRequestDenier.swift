@@ -152,7 +152,7 @@ final class InterfaceRequestDenier: NSObject, WKUIDelegate {
 
     // MARK: - Permission requests
 
-    /// Refuses camera/microphone capture (macOS 12+), so a compromised page
+    /// Refuses camera/microphone capture, so a compromised page
     /// cannot trigger the system permission prompt (WebKit's fallback when
     /// this hook is unimplemented would).
     ///

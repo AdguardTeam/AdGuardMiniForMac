@@ -52,17 +52,13 @@ final class WKWebViewAppHostTests: XCTestCase {
         XCTAssertEqual(vibrancy.material, .popover)
     }
 
-    func testWebViewConfig_UnderPageBackgroundColorIsClear() throws {
+    func testWebViewConfig_UnderPageBackgroundColorIsClear() {
         let host = makeHost()
-        if #available(macOS 12, *) {
-            // `makeWebView()` sets the background to `.clear` unconditionally.
-            // WKWebView returns the cleared color in sRGB (0 0 0 0), whereas
-            // `.clear` is a Generic Gray color — same transparency, different
-            // Colorspace. Compare the alpha component rather than equality.
-            XCTAssertEqual(host.webView.underPageBackgroundColor.cgColor.alpha, 0)
-        } else {
-            throw XCTSkip("underPageBackgroundColor requires macOS 12+")
-        }
+        // `makeWebView()` sets the background to `.clear` unconditionally.
+        // WKWebView returns the cleared color in sRGB (0 0 0 0), whereas
+        // `.clear` is a Generic Gray color — same transparency, different
+        // Colorspace. Compare the alpha component rather than equality.
+        XCTAssertEqual(host.webView.underPageBackgroundColor.cgColor.alpha, 0)
     }
 
     // `drawsBackground` has no public setter on macOS, so `makeWebView()`

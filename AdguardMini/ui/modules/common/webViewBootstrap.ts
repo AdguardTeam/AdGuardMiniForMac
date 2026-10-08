@@ -4,7 +4,6 @@
 
 import { __installRpcTimeoutAlertSurface } from './apis/rpcPostMessage';
 import { installFocusActivationTracker } from './lib/focusRestore';
-import { installInputModalityTracker } from './lib/inputModality';
 import { installConsoleLogForwarding } from './lib/logBridge';
 import { installPreactErrorGuard } from './lib/preactErrorGuard';
 import { installRuntimeErrorReporter } from './lib/runtimeErrorReporter';
@@ -67,10 +66,6 @@ export interface WebViewBootstrapOptions {
 export function webViewBootstrap({ env }: WebViewBootstrapOptions = {}): void {
     // Forward JS diagnostics to Swift `jsLog`.
     installConsoleLogForwarding();
-
-    // Reflect the last input modality on the root element so the old-WebKit
-    // focus-ring fallback can gate its `:focus` ring on keyboard input.
-    installInputModalityTracker();
 
     // Remember the element a user activation acts on, so a surface mounted by
     // that activation can return focus to it even when WebKit leaves focus on

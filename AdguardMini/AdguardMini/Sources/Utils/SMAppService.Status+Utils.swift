@@ -9,7 +9,6 @@
 
 import ServiceManagement
 
-@available(macOS 13.0, *)
 extension SMAppService.Status: @retroactive CustomStringConvertible {
     public var description: String {
         var description: String
@@ -29,7 +28,6 @@ extension SMAppService.Status: @retroactive CustomStringConvertible {
     }
 }
 
-@available(macOS 13.0, *)
 extension SMAppService.Status {
     var registerStatus: LoginItemManagerRegisterStatus {
         var status: LoginItemManagerRegisterStatus
