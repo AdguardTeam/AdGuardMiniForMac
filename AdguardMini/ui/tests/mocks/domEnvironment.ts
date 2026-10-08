@@ -11,6 +11,11 @@
 
 import Module from 'node:module';
 
+import cx from 'classix';
+
+// Installs the `tx` global, mirroring webpack's ProvidePlugin.
+import './theme';
+
 // jsdom ships no type declarations; the constructor is all the tests use.
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { JSDOM } = require('jsdom') as {
@@ -42,6 +47,7 @@ Object.defineProperty(globalScope, 'cancelAnimationFrame', {
 });
 // Injected by webpack's ProvidePlugin in the real build.
 globalScope.translate = (key: string) => key;
+globalScope.cx = cx;
 
 // CSS modules resolve to generated class names in the real build; the tests
 // only need stable, readable strings.

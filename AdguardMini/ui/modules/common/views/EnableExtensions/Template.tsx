@@ -95,7 +95,7 @@ export function Template({
                     ariaLabelledby={asDialog ? undefined : `${titleId} ${descId}`}
                     className={s.Template_content_title}
                     id={titleId}
-                    tabIndex={asDialog ? -1 : 0}
+                    tabIndex={-1}
                     type="h4"
                 >
                     {title}

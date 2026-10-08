@@ -46,16 +46,34 @@ export function Button({
 }
 
 /**
- * Renders text content as a span.
+ * Renders text content as a span, forwarding the attributes tests assert on.
  */
 export function Text({
     children,
     className,
     type,
+    id,
+    tabIndex,
+    ariaLabelledby,
 }: {
     children?: ComponentChildren;
     className?: string;
     type?: string;
+    id?: string;
+    tabIndex?: number;
+    ariaLabelledby?: string;
+    lineHeight?: string;
+    semibold?: boolean;
 }) {
-    return <span className={className} data-text-type={type}>{children}</span>;
+    return (
+        <span
+            aria-labelledby={ariaLabelledby}
+            className={className}
+            data-text-type={type}
+            id={id}
+            tabIndex={tabIndex}
+        >
+            {children}
+        </span>
+    );
 }

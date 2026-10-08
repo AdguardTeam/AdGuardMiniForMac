@@ -78,7 +78,7 @@ export function Step({
                     ariaLabelledby={`${titleId} ${descId}`}
                     className={s.Step_content_title}
                     id={titleId}
-                    tabIndex={0}
+                    tabIndex={-1}
                     type="h4"
                 >
                     {title}

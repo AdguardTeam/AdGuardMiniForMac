@@ -19,6 +19,7 @@
             "Common/*": ["AdguardMini/ui/modules/common/*"],
             "Modules/*": ["AdguardMini/ui/modules/*"],
             "Utils/*": ["AdguardMini/ui/modules/common/utils/*"],
+            "Theme": ["AdguardMini/ui/tests/mocks/theme"],
             "UILib": ["AdguardMini/ui/tests/mocks/uiLib"],
             "react": ["AdguardMini/ui/tests/mocks/reactCompat"],
             "react-dom": ["AdguardMini/ui/tests/mocks/reactCompat"],

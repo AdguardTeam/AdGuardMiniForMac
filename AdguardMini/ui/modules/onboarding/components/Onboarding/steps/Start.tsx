@@ -76,7 +76,7 @@ function StartComponent({ trackPage }: StartProps) {
                             ariaLabelledby={`${titleId} ${descId}`}
                             className={s.Start_content_title}
                             id={titleId}
-                            tabIndex={0}
+                            tabIndex={-1}
                             type="h4"
                         >
                             {translate('onboarding.start.title')}
