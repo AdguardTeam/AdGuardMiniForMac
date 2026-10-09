@@ -31,8 +31,15 @@ protocol LicenseStateProvider: AnyObject {
     /// Returns stored app status info from secure storage.
     func getStoredInfo() async -> AppStatusInfo?
 
+    /// Returns the stored license key, or nil when none is stored.
+    func applicationKey() async -> String?
+
     /// Returns whether the stored license is currently paid (active or trial).
     func isPaid() async -> Bool
+
+    /// Returns whether the stored license is currently paid (active or trial),
+    /// resolving the stored state synchronously.
+    func isPaidSync() -> Bool
 
     /// Returns whether license reset is allowed for the provided license or for the current stored state.
     func canReset(for license: AppStatusInfo?) async -> Bool
@@ -59,8 +66,16 @@ class LicenseStateProviderBase: LicenseStateProvider {
         await self.keychain.getAppStatusInfo()
     }
 
+    func applicationKey() async -> String? {
+        await self.getStoredInfo()?.applicationKey
+    }
+
     func isPaid() async -> Bool {
         await self.getStoredInfo()?.isPaid ?? false
+    }
+
+    func isPaidSync() -> Bool {
+        self.keychain.getAppStatusInfoSync()?.isPaid ?? false
     }
 
     func canReset(for license: AppStatusInfo?) async -> Bool {

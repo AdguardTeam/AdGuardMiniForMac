@@ -18,8 +18,8 @@ import Foundation
 /// implementation lives in `Sources/Licensing/` with the license layer.
 /// Moving either file breaks one of the two memberships — do not "tidy" it.
 protocol PIRLicenseProvider: AnyObject {
-    /// The current license credential, or an empty string when none is active.
-    func licenseCredential() async -> String
+    /// The current license credential, or nil when none is active.
+    func licenseCredential() async -> String?
     /// Whether the license is currently paid (active or trial).
     func isPaid() async -> Bool
 }

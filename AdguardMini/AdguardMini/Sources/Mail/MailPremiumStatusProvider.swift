@@ -15,13 +15,13 @@ protocol MailPremiumStatusProvider {
 }
 
 final class MailPremiumStatusProviderImpl: MailPremiumStatusProvider {
-    private let keychain: KeychainManager
+    private let licenseStateProvider: LicenseStateProvider
 
-    init(keychain: KeychainManager) {
-        self.keychain = keychain
+    init(licenseStateProvider: LicenseStateProvider) {
+        self.licenseStateProvider = licenseStateProvider
     }
 
     func isPremiumActive() async -> Bool {
-        await self.keychain.getAppStatusInfo()?.isPaid ?? false
+        await self.licenseStateProvider.isPaid()
     }
 }

@@ -710,7 +710,7 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
     ) async throws {
         // Resolve the potentially slow credential query before loading preferences.
         // No await point then separates loading from saving on the shared manager.
-        let license = enabled ? await self.licenseProvider.licenseCredential() : ""
+        let license: String? = enabled ? await self.licenseProvider.licenseCredential() : nil
         let manager = NEURLFilterManager.shared
         do {
             try await manager.loadFromPreferences()
@@ -798,11 +798,11 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
     ///
     /// A transient credential gap must not overwrite a working token; the
     /// `.licenseInfoUpdated` stream restages it on the next event. A disable
-    /// that follows a lost license stages an empty-license token instead, so an
+    /// that follows a lost license stages a nil-license token instead, so an
     /// external enable cannot authenticate with the old credential.
     private func stageLevelConfiguration(
         enabled: Bool,
-        license: String,
+        license: String?,
         manager: NEURLFilterManager,
         stageInvalidToken: Bool
     ) throws {
@@ -811,7 +811,7 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
             guard let levelConfig = URLFilterLevelConfiguration.defaultLevels[level] else {
                 throw URLFilterServiceError.configurationMissing
             }
-            if !license.isEmpty || !levelConfig.pirAuthenticationToken.isEmpty {
+            if license != nil || !levelConfig.pirAuthenticationToken.isEmpty {
                 let token = URLFilterLevelConfiguration.effectiveAuthenticationToken(
                     configured: levelConfig.pirAuthenticationToken,
                     for: level,
@@ -827,7 +827,7 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
             }
         } else if stageInvalidToken {
             guard let levelConfig = URLFilterLevelConfiguration.defaultLevels[level] else { return }
-            let token = URLFilterLevelConfiguration.pirAuthenticationToken(for: level, license: "")
+            let token = URLFilterLevelConfiguration.pirAuthenticationToken(for: level, license: nil)
             try self.applyLevelConfiguration(
                 levelConfig,
                 to: manager,
@@ -871,7 +871,7 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
         }
         try await self.createConfiguration(
             using: manager,
-            license: "",
+            license: nil,
             enabled: false,
             expectedGeneration: self.transitionGeneration
         )
@@ -885,12 +885,12 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
     /// load happens here. Defaults mirror ``URLFilterConfiguration`` so a
     /// fresh install behaves like an explicit save of the default configuration.
     ///
-    /// An empty license is accepted on this path. The restaging paths refuse
-    /// an empty credential because a working token may already be staged;
+    /// A missing license is accepted on this path. The restaging paths refuse
+    /// a missing credential because a working token may already be staged;
     /// a fresh configuration has none.
     private func createConfiguration(
         using manager: NEURLFilterManager,
-        license: String,
+        license: String?,
         enabled: Bool = true,
         expectedGeneration: Int
     ) async throws {
@@ -967,7 +967,7 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
             return false
         }
         guard manager.pirServerURL != nil else { return false }
-        guard !license.isEmpty || !levelConfig.pirAuthenticationToken.isEmpty else {
+        guard license != nil || !levelConfig.pirAuthenticationToken.isEmpty else {
             // A transient StoreKit gap must not overwrite a working token.
             LogWarn("URLFilter token refresh skipped: no license credential")
             return false
@@ -1049,7 +1049,7 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
             return
         }
         guard manager.pirServerURL != nil else { return }
-        let invalidToken = URLFilterLevelConfiguration.pirAuthenticationToken(for: level, license: "")
+        let invalidToken = URLFilterLevelConfiguration.pirAuthenticationToken(for: level, license: nil)
         guard manager.pirAuthenticationToken != invalidToken else { return }
         // The invalidation rewrites the staged credential, so it owns a
         // Transition: an in-flight enable with an older generation must not

@@ -56,7 +56,6 @@ final class SafariApiProvider: NSObject {
     private let userSettingsService: UserSettingsService
     private let telemetry: Telemetry.Service
     private let eventBus: EventBus
-    private let keychain: KeychainManager
     private let healthCheckAttentionProvider: HealthCheckAttentionProvider
 
     #if MAS
@@ -75,7 +74,6 @@ final class SafariApiProvider: NSObject {
         urlFilteringChecker: UrlFilteringChecker,
         userSettingsService: UserSettingsService,
         telemetry: Telemetry.Service,
-        keychain: KeychainManager,
         eventBus: EventBus,
         healthCheckAttentionProvider: HealthCheckAttentionProvider,
         backendService: BackendService?
@@ -89,7 +87,6 @@ final class SafariApiProvider: NSObject {
         self.urlFilteringChecker = urlFilteringChecker
         self.userSettingsService = userSettingsService
         self.telemetry = telemetry
-        self.keychain = keychain
         self.eventBus = eventBus
         self.healthCheckAttentionProvider = healthCheckAttentionProvider
 
@@ -220,7 +217,7 @@ extension SafariApiProvider: MainAppApi {
     func getExtraState(withUrl url: String, reply: @escaping (Bool, Error?) -> Void) {
         Task {
             let isProtectionEnabled = self.protectionService.isProtectionEnabled
-            let isPaid = await self.keychain.getAppStatusInfo()?.isPaid ?? false
+            let isPaid = await self.licenseStateProvider.isPaid()
             let isExtraActive = self.userSettingsService.adguardExtra
             let isProtectionEnabledForUrl = await !self.checkIsUrlInAllowList(url: url)
             reply(isProtectionEnabled && isProtectionEnabledForUrl && isPaid && isExtraActive, nil)
@@ -235,8 +232,8 @@ extension SafariApiProvider: MainAppApi {
     ) {
         Task {
             let hasAttention = await self.healthCheckAttentionProvider.hasAttention()
-            let statusInfo = await self.keychain.getAppStatusInfo()
-            let isFreeUser = !(statusInfo?.isPaid ?? false)
+            let isPaid = await self.licenseStateProvider.isPaid()
+            let isFreeUser = !isPaid
             #if MAS
             let isPromoActive = (await self.backendService?.cachedPromoInfo())?.isActual ?? false
             reply(hasAttention, isFreeUser && !isPromoActive, nil)

@@ -130,6 +130,26 @@ final class URLFilterLevelConfigurationTests: XCTestCase {
         }
     }
 
+    func testAuthenticationTokenEncodesANilLicenseAsAnEmptyField() throws {
+        for level in URLFilterProtectionLevel.allCases {
+            let token = URLFilterLevelConfiguration.pirAuthenticationToken(for: level, license: nil)
+            let payloadData = try XCTUnwrap(
+                Data(base64Encoded: token),
+                "Token for level \(level) is not valid base64"
+            )
+            let payload = try XCTUnwrap(
+                try JSONSerialization.jsonObject(with: payloadData) as? [String: String],
+                "Token payload for level \(level) is not a string dictionary"
+            )
+
+            XCTAssertEqual(payload["db"], self.tokenDatabaseNames[level])
+            XCTAssertEqual(
+                payload["license"], "",
+                "A nil license must still emit the license field, encoded as empty"
+            )
+        }
+    }
+
     func testCompiledDefaultLevelsCarryAnEmptyTokenPlaceholder() {
         let levels = URLFilterLevelConfiguration.compiledDefaultLevels
 

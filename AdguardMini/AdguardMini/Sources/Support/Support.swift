@@ -84,7 +84,7 @@ final class SupportImpl {
     private let productInfo: ProductInfoStorage
     private let userSettings: UserSettingsService
     private let sharedSettings: SharedSettingsStorage
-    private let keychain: KeychainManager
+    private let licenseStateProvider: LicenseStateProvider
     private let safariExtensionStateService: SafariExtensionStateService
     private let mailExtensionStateService: MailExtensionStateService
     private let urlFilterService: URLFilterService
@@ -98,7 +98,7 @@ final class SupportImpl {
         productInfo: ProductInfoStorage,
         userSettings: UserSettingsService,
         sharedSettings: SharedSettingsStorage,
-        keychain: KeychainManager,
+        licenseStateProvider: LicenseStateProvider,
         safariExtensionStateService: SafariExtensionStateService,
         mailExtensionStateService: MailExtensionStateService,
         urlFilterService: URLFilterService,
@@ -111,7 +111,7 @@ final class SupportImpl {
         self.productInfo = productInfo
         self.userSettings = userSettings
         self.sharedSettings = sharedSettings
-        self.keychain = keychain
+        self.licenseStateProvider = licenseStateProvider
         self.safariExtensionStateService = safariExtensionStateService
         self.mailExtensionStateService = mailExtensionStateService
         self.urlFilterService = urlFilterService
@@ -159,7 +159,7 @@ final class SupportImpl {
         let advancedRules = self.userSettings.advancedRules
         let adguardExtra = self.userSettings.adguardExtra
 
-        let appStatusInfo = await self.keychain.getAppStatusInfo()
+        let appStatusInfo = await self.licenseStateProvider.getStoredInfo()
         let licenseSection = self.formatLicenseSection(appStatusInfo: appStatusInfo)
 
         let safariExtensionsSection = await self.getSafariExtensionsSection()
@@ -362,7 +362,7 @@ final class SupportImpl {
 
 extension SupportImpl: ReportSiteProtocol {
     func reportSiteUrl(reportUrl: String?, from screen: String) async -> URL? {
-        let isPaid = await self.keychain.getAppStatusInfo()?.isPaid ?? false
+        let isPaid = await self.licenseStateProvider.isPaid()
 
         var enabledFilterIDs: [Int] = []
         var enabledCustomFilters: [ReportsWebAPI.CustomFilter] = []

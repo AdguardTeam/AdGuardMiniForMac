@@ -198,18 +198,21 @@ extension URLFilterLevelConfiguration {
 
     /// Opaque PIR bearer token for the given protection level and license.
     ///
-    /// Base64 of `{"db":"<database>","license":"<license>"}`.
+    /// Base64 of `{"db":"<database>","license":"<license>"}`. A nil license
+    /// is encoded as an empty string (an invalid/missing credential); the
+    /// field is always present to satisfy the backend contract.
     static func pirAuthenticationToken(
         for level: URLFilterProtectionLevel,
-        license: String
+        license: String?
     ) -> String {
-        let payload = PIRAuthenticationTokenPayload(db: Self.name(of: level), license: license)
+        let payload = PIRAuthenticationTokenPayload(db: Self.name(of: level), license: license ?? "")
         let data = try? JSONEncoder().encode(payload)
         return data?.base64EncodedString() ?? ""
     }
 
     /// Effective PIR token for the level: the configured (dev-config) token
-    /// when non-empty, otherwise the generated db+license token.
+    /// when non-empty, otherwise the generated db+license token. A nil license
+    /// produces a token whose `license` field is empty (invalid credential).
     ///
     /// Note on dev-config semantics: an explicit `"pir_authentication_token":
     /// ""` no longer clears the token to an empty value. An empty override is
@@ -217,7 +220,7 @@ extension URLFilterLevelConfiguration {
     static func effectiveAuthenticationToken(
         configured: String,
         for level: URLFilterProtectionLevel,
-        license: String
+        license: String?
     ) -> String {
         guard configured.isEmpty else { return configured }
         return Self.pirAuthenticationToken(for: level, license: license)

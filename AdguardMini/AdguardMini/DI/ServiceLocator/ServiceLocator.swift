@@ -151,7 +151,7 @@ final class ServiceLocator {
         productInfo: self.productInfoStorage,
         userSettings: self.userSettingsService,
         sharedSettings: SharedDIContainer.shared.sharedSettingsStorage,
-        keychain: self.coreDIContainer.keychain,
+        licenseStateProvider: self.licenseStateProvider,
         safariExtensionStateService: self.safariExtensionStateService,
         mailExtensionStateService: self.mailExtensionStateService,
         urlFilterService: self.urlFilterService,
@@ -178,7 +178,7 @@ final class ServiceLocator {
     )
 
     private lazy var mailPremiumStatusProvider: MailPremiumStatusProvider = MailPremiumStatusProviderImpl(
-        keychain: self.coreDIContainer.keychain
+        licenseStateProvider: self.licenseStateProvider
     )
 
     private lazy var mailExtensionReloader: MailExtensionReloader = MailExtensionReloaderImpl()
@@ -187,7 +187,7 @@ final class ServiceLocator {
     private lazy var filtersUpdateModeProvider: FiltersUpdateModeProvider = {
         FiltersUpdateModeProviderImpl(
             storage: self.userSettingsManager,
-            keychain: self.coreDIContainer.keychain
+            licenseStateProvider: self.licenseStateProvider
         )
     }()
 
@@ -437,7 +437,6 @@ final class ServiceLocator {
             urlFilteringChecker: self.urlFilteringChecker,
             userSettingsService: self.userSettingsService,
             telemetry: self.telemetryService,
-            keychain: self.coreDIContainer.keychain,
             eventBus: self.eventBus,
             healthCheckAttentionProvider: self.healthCheckAttentionProvider,
             backendService: {

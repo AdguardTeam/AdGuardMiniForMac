@@ -31,7 +31,7 @@ final class PIRLicenseProviderImpl: PIRLicenseProvider {
     }
     #endif
 
-    func licenseCredential() async -> String {
+    func licenseCredential() async -> String? {
         #if MAS
         // The active transaction is filtered to verified, current entitlements.
         // A lapsed subscription yields no JWS, so the stored key takes over.
@@ -39,7 +39,7 @@ final class PIRLicenseProviderImpl: PIRLicenseProvider {
             return jws
         }
         #endif
-        return await self.licenseStateProvider.getStoredInfo()?.applicationKey ?? ""
+        return await self.licenseStateProvider.applicationKey()
     }
 
     func isPaid() async -> Bool {

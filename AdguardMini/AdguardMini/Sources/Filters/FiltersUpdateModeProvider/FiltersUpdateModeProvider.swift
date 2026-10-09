@@ -23,12 +23,12 @@ final class FiltersUpdateModeProviderImpl: FiltersUpdateModeProvider {
     // MARK: Private properties
 
     private let storage: UserSettingsManager
-    private let keychain: KeychainManager
+    private let licenseStateProvider: LicenseStateProvider
 
     // MARK: Public properties
 
     var currentMode: FiltersUpdateMode {
-        let isLicenseActive = keychain.getAppStatusInfoSync()?.isPaid ?? false
+        let isLicenseActive = self.licenseStateProvider.isPaidSync()
         return FiltersUpdateMode.compute(
             realTime: self.storage.realTimeFiltersUpdate,
             auto: self.storage.autoFiltersUpdate,
@@ -36,8 +36,8 @@ final class FiltersUpdateModeProviderImpl: FiltersUpdateModeProvider {
         )
     }
 
-    init(storage: UserSettingsManager, keychain: KeychainManager) {
+    init(storage: UserSettingsManager, licenseStateProvider: LicenseStateProvider) {
         self.storage = storage
-        self.keychain = keychain
+        self.licenseStateProvider = licenseStateProvider
     }
 }

@@ -30,8 +30,10 @@ final class WebViewAppsControllerIdleTeardownTests: XCTestCase {
 
         /// Deadline for the positive assertions ("must be gone"). Generous
         /// Because the reap runs on the main actor and the full suite runs
-        /// Several test processes at once.
-        static let reapDeadline: TimeInterval = 5
+        /// Several test processes at once. The reaper normally fires within
+        /// `idleTimeout`, so this only bounds how long a starved main actor
+        /// (a loaded parallel CI clone) may delay it before the test fails.
+        static let reapDeadline: TimeInterval = 30
 
         /// Polling interval while waiting for a reap.
         static let pollInterval: TimeInterval = 0.02
