@@ -8,6 +8,7 @@ enum URLFilterStatus {
     URLFilterStatus_error = 1;
     URLFilterStatus_loading = 2;
     URLFilterStatus_running = 3;
+    URLFilterStatus_dns_error = 4;
 }
 
 /* Protection level applied to the URL filter. */

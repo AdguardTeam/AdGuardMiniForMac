@@ -295,6 +295,138 @@ final class URLFilterReconcileDecisionTests: XCTestCase {
         }
     }
 
+    // MARK: failSafeDisableAction
+
+    /// The regression: a stale `.invalid` read must not override an observed `.running`.
+    func testFailSafeDisableAction_ObservedRunningResolvesAStaleRead() {
+        XCTAssertEqual(
+            URLFilterReconcileDecision.failSafeDisableAction(
+                observedStatus: .running,
+                enabled: true,
+                hasPendingDisable: true,
+                hasElapsedGrace: true
+            ),
+            .clear
+        )
+    }
+
+    func testFailSafeDisableAction_ObservedRunningDoesNotSchedule() {
+        XCTAssertEqual(
+            URLFilterReconcileDecision.failSafeDisableAction(
+                observedStatus: .running,
+                enabled: true,
+                hasPendingDisable: false,
+                hasElapsedGrace: false
+            ),
+            .clear
+        )
+    }
+
+    /// Before the first change-stream event the derived read is not trusted: it
+    /// can report `.invalid` for a running filter, so nothing is armed.
+    func testFailSafeDisableAction_UnobservedStatusNeitherSchedulesNorFires() {
+        for hasPendingDisable in [false, true] {
+            XCTAssertEqual(
+                URLFilterReconcileDecision.failSafeDisableAction(
+                    observedStatus: nil,
+                    enabled: true,
+                    hasPendingDisable: hasPendingDisable,
+                    hasElapsedGrace: true
+                ),
+                .keep,
+                "An unobserved status must not start or fire the disable"
+            )
+        }
+    }
+
+    /// A broken filter starts the grace even when a stale read reports it running.
+    func testFailSafeDisableAction_ObservedInvalidStartsTheGracePeriod() {
+        XCTAssertEqual(
+            URLFilterReconcileDecision.failSafeDisableAction(
+                observedStatus: .invalid,
+                enabled: true,
+                hasPendingDisable: false,
+                hasElapsedGrace: false
+            ),
+            .schedule(.invalid)
+        )
+    }
+
+    /// Within the grace, only running or disabled resolves or restarts the disable.
+    func testFailSafeDisableAction_KeepsAPendingDisableThroughACrashLoop() {
+        let statuses: [URLFilterRawStatus] = [
+            .invalid, .stopped, .starting, .stopping, .unknown
+        ]
+
+        for status in statuses {
+            XCTAssertEqual(
+                URLFilterReconcileDecision.failSafeDisableAction(
+                    observedStatus: status,
+                    enabled: true,
+                    hasPendingDisable: true,
+                    hasElapsedGrace: false
+                ),
+                .keep,
+                "\(status) must not resolve or restart the pending fail-safe disable"
+            )
+        }
+    }
+
+    /// After the grace, a terminal failure fires the disable instead of postponing it.
+    func testFailSafeDisableAction_FiresATerminalStatusAfterTheGrace() {
+        for status in [URLFilterRawStatus.invalid, .stopped, .unknown] {
+            XCTAssertEqual(
+                URLFilterReconcileDecision.failSafeDisableAction(
+                    observedStatus: status,
+                    enabled: true,
+                    hasPendingDisable: true,
+                    hasElapsedGrace: true
+                ),
+                .fire,
+                "\(status) must fire once the grace elapsed"
+            )
+        }
+    }
+
+    /// A transition defers the fire: the next terminal failure fires it.
+    func testFailSafeDisableAction_DefersTheFireDuringTransitions() {
+        for status in [URLFilterRawStatus.starting, .stopping] {
+            XCTAssertEqual(
+                URLFilterReconcileDecision.failSafeDisableAction(
+                    observedStatus: status,
+                    enabled: true,
+                    hasPendingDisable: true,
+                    hasElapsedGrace: true
+                ),
+                .keep,
+                "\(status) must defer the fire"
+            )
+        }
+    }
+
+    func testFailSafeDisableAction_ClearsADisabledConfiguration() {
+        XCTAssertEqual(
+            URLFilterReconcileDecision.failSafeDisableAction(
+                observedStatus: .invalid,
+                enabled: false,
+                hasPendingDisable: true,
+                hasElapsedGrace: true
+            ),
+            .clear
+        )
+    }
+
+    // MARK: isFailSafeFailureStatus
+
+    func testIsFailSafeFailureStatus_ClassifiesTerminalFailuresOnly() {
+        for status in [URLFilterRawStatus.invalid, .stopped, .unknown] {
+            XCTAssertTrue(URLFilterReconcileDecision.isFailSafeFailureStatus(status))
+        }
+        for status in [URLFilterRawStatus.starting, .stopping, .running] {
+            XCTAssertFalse(URLFilterReconcileDecision.isFailSafeFailureStatus(status))
+        }
+    }
+
     // MARK: resolveEnablePreconditions
 
     func testResolveEnablePreconditions_ResolvesConsistentSnapshots() {

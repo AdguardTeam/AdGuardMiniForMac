@@ -23,24 +23,27 @@ actor URLFilterStateAssembler {
     private let protectionLevelProvider: @Sendable () -> URLFilterProtectionLevel
     private let isNewProvider: @Sendable () -> Bool
     private let bloomMetadataProvider: @Sendable () -> URLFilterBloomMetadata?
+    private let iCloudDomainBlockageChecker: ICloudDomainBlockageChecking
 
     /// Creates the assembler.
     /// - Parameters:
     ///   - urlFilterService: Platform URL filter service (status + configuration).
     ///   - protectionLevelProvider: Reads the persisted protection level.
     ///   - isNewProvider: Reads the "settings card is new" flag.
-    ///   - isPageNewProvider: Reads the "settings page is new" flag.
     ///   - bloomMetadataProvider: Reads the persisted bloom metadata, if any.
+    ///   - iCloudDomainBlockageChecker: Classifies a failed filter as the iCloud error.
     init(
         urlFilterService: URLFilterService,
         protectionLevelProvider: @escaping @Sendable () -> URLFilterProtectionLevel,
         isNewProvider: @escaping @Sendable () -> Bool,
-        bloomMetadataProvider: @escaping @Sendable () -> URLFilterBloomMetadata?
+        bloomMetadataProvider: @escaping @Sendable () -> URLFilterBloomMetadata?,
+        iCloudDomainBlockageChecker: ICloudDomainBlockageChecking
     ) {
         self.urlFilterService = urlFilterService
         self.protectionLevelProvider = protectionLevelProvider
         self.isNewProvider = isNewProvider
         self.bloomMetadataProvider = bloomMetadataProvider
+        self.iCloudDomainBlockageChecker = iCloudDomainBlockageChecker
     }
 
     /// Builds the current aggregate state.
@@ -54,14 +57,21 @@ actor URLFilterStateAssembler {
 
         // A filter reports `.invalid` while disabled or mid-bring-up.
         // Only surface an error when enabled with a recorded failure.
-        let status: URLFilterUIStatus = switch state.status {
+        var status: URLFilterUIStatus = switch state.status {
         case .invalid, .unknown:   (state.enabled && state.lastDisconnectError != nil) ? .error : .loading
         case .stopped:             (state.enabled && state.lastDisconnectError != nil) ? .error : .loading
         case .starting, .stopping: .loading
         case .running:             .running
         }
 
-        let isEnabled = state.enabled && status != .error
+        // Only a server-setup failure can be caused by blocked iCloud hosts.
+        if status == .error,
+           state.lastDisconnectError == .serverSetupIncomplete,
+           await self.iCloudDomainBlockageChecker.isAnyDomainBlocked() {
+            status = .dnsError
+        }
+
+        let isEnabled = state.enabled && !status.isError
 
         return URLFilterUIState(
             enabled: isEnabled,

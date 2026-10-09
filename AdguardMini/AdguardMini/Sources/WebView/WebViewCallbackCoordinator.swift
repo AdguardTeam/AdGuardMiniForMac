@@ -24,9 +24,7 @@ final class WebViewCallbackCoordinator {
     private let userRulesEditor: UserRulesCallbackService
     private let settingsEditor: SettingsCallbackService
     private let licenseStateProvider: LicenseStateProvider
-    private let urlFilterStateAssembler: URLFilterStateAssembler
-    private let urlFilterLock = NSLock()
-    private var urlFilterAssemblyTask: Task<Void, Never>?
+    private let urlFilterStatePushScheduler: URLFilterStatePushScheduler
 
     /// Creates the coordinator and subscribes to required events.
     /// - Parameters:
@@ -38,15 +36,28 @@ final class WebViewCallbackCoordinator {
          urlFilterStateAssembler: URLFilterStateAssembler) {
         self.eventBus = eventBus
         self.licenseStateProvider = licenseStateProvider
-        self.urlFilterStateAssembler = urlFilterStateAssembler
         self.tray = WKWebViewAppResolver.trayCallbackService
-        self.settings = WKWebViewAppResolver.settingsCallbackService
+        let settings = WKWebViewAppResolver.settingsCallbackService
+        self.settings = settings
         self.onboarding = WKWebViewAppResolver.onboardingCallbackService
         self.account = WKWebViewAppResolver.accountCallbackService
         self.userRules = WKWebViewAppResolver.userRulesCallbackService
         self.filters = WKWebViewAppResolver.filtersCallbackService
         self.userRulesEditor = WKWebViewAppResolver.userRulesEditorCallbackService
         self.settingsEditor = WKWebViewAppResolver.settingsEditorCallbackService
+        self.urlFilterStatePushScheduler = URLFilterStatePushScheduler(
+            debounceSeconds: Constants.urlFilterStatePushDebounceSeconds,
+            assemble: { [urlFilterStateAssembler] in
+                await urlFilterStateAssembler.makeState()
+            },
+            deliver: { [settings] state in
+                LogDebug(
+                    "URLFilter state push: enabled=\(state.enabled), status=\(state.status), "
+                        + "protectionLevel=\(state.protectionLevel)"
+                )
+                settings.onURLFilterStateChanged(state.toProto())
+            }
+        )
         subscribe()
     }
 
@@ -217,23 +228,13 @@ final class WebViewCallbackCoordinator {
 
     /// Rebuilds and pushes full URL-filter state to settings.
     @objc private func urlFilterStateChanged(_ note: Notification) {
-        self.urlFilterLock.lock()
-        self.urlFilterAssemblyTask?.cancel()
-        self.urlFilterAssemblyTask = Task { [weak self] in
-            // Debounce window: lets back-to-back status/config events coalesce.
-            try? await Task.sleep(seconds: 0.5)
-            guard let self, !Task.isCancelled else { return }
-            let state = await self.urlFilterStateAssembler.makeState()
-            guard !Task.isCancelled else { return }
-            // The callback payload is otherwise invisible in the app log;
-            // Record it so a transient error/disabled state reaching the UI
-            // Leaves a trace.
-            LogDebug(
-                "URLFilter state push: enabled=\(state.enabled), status=\(state.status), "
-                    + "protectionLevel=\(state.protectionLevel)"
-            )
-            self.settings.onURLFilterStateChanged(state.toProto())
-        }
-        self.urlFilterLock.unlock()
+        self.urlFilterStatePushScheduler.schedule()
     }
+}
+
+// MARK: - Constants
+
+private enum Constants {
+    /// Debounce window: lets back-to-back status/config events coalesce.
+    static let urlFilterStatePushDebounceSeconds: TimeInterval = 0.5
 }

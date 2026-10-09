@@ -93,6 +93,7 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
     private var configObservationTask: Task<Void, Never>?
     private var paidStatusTask: Task<Void, Never>?
     private var licenseInfoTask: Task<Void, Never>?
+    /// The last status the change stream reported; fail-safe decisions trust it.
     private var lastObservedStatus: NEURLFilterManager.Status?
     private var cachedState: URLFilterState?
     /// When the pending fail-safe disable must fire; nil when none is pending.
@@ -1166,31 +1167,38 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
         self.eventBus.post(event: .urlFilterStatusChanged, userInfo: nil)
     }
 
-    /// Keeps the pending fail-safe disable in sync with the derived state.
-    /// A status change alone never clears it; only a running filter or a
-    /// disabled configuration does, so a crash loop cannot postpone it.
+    /// Keeps the pending fail-safe disable in sync with the latest observations.
     private func updateFailSafeDisable(state: URLFilterState, rawError: URLFilterError?) {
-        guard !URLFilterReconcileDecision.isFailSafeDisableResolved(
-            status: state.status,
-            enabled: state.enabled
-        ) else {
+        let observedStatus = self.lastObservedStatus.map { self.rawStatus(from: $0) }
+        let deadline = self.failSafeDisableDeadline
+        let action = URLFilterReconcileDecision.failSafeDisableAction(
+            observedStatus: observedStatus,
+            enabled: state.enabled,
+            hasPendingDisable: deadline != nil,
+            hasElapsedGrace: deadline.map { $0 <= Date() } ?? false
+        )
+        switch action {
+        case .clear:
             self.clearFailSafeDisable(reason: "condition resolved")
-            return
+        case .keep:
+            break
+        case let .schedule(status):
+            self.armFailSafeDisable(status: status, rawError: rawError)
+        case .fire:
+            self.failSafeDisableDeadline = nil
+            Task { [weak self] in
+                await self?.performFailSafeDisable()
+            }
         }
-        // A transition keeps a pending disable; a broken filter starts one.
-        guard self.failSafeDisableDeadline == nil,
-              URLFilterReconcileDecision.shouldFailSafeDisable(
-                  status: state.status,
-                  enabled: state.enabled
-              )
-        else {
-            return
-        }
+    }
+
+    /// Arms the grace period after which a filter that still cannot run is disabled.
+    private func armFailSafeDisable(status: URLFilterRawStatus, rawError: URLFilterError?) {
         let deadline = Date().addingTimeInterval(Constants.failSafeDisableDelaySeconds)
         self.failSafeDisableDeadline = deadline
         LogInfo(
             "URLFilter fail-safe disable scheduled: "
-                + "status=\(state.status), disconnectError=\(rawError.map(\.logName) ?? "none")"
+                + "status=\(status), disconnectError=\(rawError.map(\.logName) ?? "none")"
         )
         Task { [weak self] in
             try? await Task.sleep(seconds: Constants.failSafeDisableDelaySeconds)
@@ -1199,8 +1207,7 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
         }
     }
 
-    /// Fires the pending disable once the grace period elapsed without a
-    /// running filter; a restart attempt at that moment is not progress.
+    /// Re-derives the state when the grace period elapses so the decision fires, clears, or defers.
     private func fireFailSafeDisable(deadline: Date) async {
         guard self.failSafeDisableDeadline == deadline else { return }
         let manager = NEURLFilterManager.shared
@@ -1211,11 +1218,11 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
             self.failSafeDisableDeadline = nil
             return
         }
-        // Deriving the state clears the deadline when the condition resolved.
         _ = await self.makeState(from: manager)
-        guard self.failSafeDisableDeadline == deadline else { return }
-        self.failSafeDisableDeadline = nil
-        await self.performFailSafeDisable()
+        if self.failSafeDisableDeadline == deadline {
+            let observedStatus = self.lastObservedStatus.map { self.rawStatus(from: $0) }
+            LogInfo("URLFilter fail-safe disable deferred: status=\(observedStatus ?? .unknown)")
+        }
     }
 
     /// Clears a pending fail-safe disable: resolved or superseded.
@@ -1230,6 +1237,15 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
     /// never overwrites the persisted user intent, so a later healthy
     /// reconcile retries the bring-up.
     private func performFailSafeDisable() async {
+        // Never disable a running or transitioning filter, nor one whose status was not observed.
+        guard let observedStatus = self.lastObservedStatus.map({ self.rawStatus(from: $0) }) else {
+            LogInfo("URLFilter fail-safe disable deferred: no observed status")
+            return
+        }
+        guard URLFilterReconcileDecision.isFailSafeFailureStatus(observedStatus) else {
+            LogInfo("URLFilter fail-safe disable deferred, filter is \(observedStatus)")
+            return
+        }
         let manager = NEURLFilterManager.shared
         let rawStatus = self.rawStatus(from: await manager.status)
         let rawError = self.rawLastDisconnectError(from: await manager.lastDisconnectError)

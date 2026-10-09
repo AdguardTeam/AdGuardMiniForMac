@@ -382,6 +382,9 @@ final class ServiceLocator {
     private lazy var urlFilterBloomMetadataStorage: URLFilterBloomMetadataStorage =
         URLFilterBloomMetadataStorageImpl()
 
+    private lazy var iCloudDomainBlockageChecker: ICloudDomainBlockageChecking =
+        ICloudDomainBlockageChecker(resolver: SystemDomainResolver())
+
     private lazy var urlFilterStateAssembler: URLFilterStateAssembler = {
         URLFilterStateAssembler(
             urlFilterService: self.urlFilterService,
@@ -393,7 +396,8 @@ final class ServiceLocator {
             },
             bloomMetadataProvider: { [bloomMetadataStorage = self.urlFilterBloomMetadataStorage] in
                 bloomMetadataStorage.load()
-            }
+            },
+            iCloudDomainBlockageChecker: self.iCloudDomainBlockageChecker
         )
     }()
 

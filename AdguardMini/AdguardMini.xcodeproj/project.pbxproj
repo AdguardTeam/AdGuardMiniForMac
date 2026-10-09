@@ -546,6 +546,7 @@
 		168279C63008F8D9001486BD /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		169664D62E9FEB2B00E0B87E /* SafariExtension Builder */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "SafariExtension Builder"; sourceTree = BUILT_PRODUCTS_DIR; };
 		169664EE2E9FF09C00E0B87E /* adguard-extra.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "adguard-extra.js"; path = "Prepared resources/adguard-extra.js"; sourceTree = BUILT_PRODUCTS_DIR; };
+		16CC8AEE307522DB001B902A /* AppConfig.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppConfig.xcconfig; sourceTree = "<group>"; };
 		EB08495C2AB33E4900222913 /* DIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIContainer.swift; sourceTree = "<group>"; };
 		EB097EEB2C00B9DF00E8A086 /* ConfigNative.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ConfigNative.xcconfig; sourceTree = "<group>"; };
 		EB097EEC2C00BA0C00E8A086 /* ConfigMAS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ConfigMAS.xcconfig; sourceTree = "<group>"; };
@@ -694,6 +695,8 @@
 				Settings/UserSettingsManager.swift,
 				UI/EditMenuBuilder.swift,
 				UI/UIElements/Alerts.swift,
+				URLFilter/DomainResolver.swift,
+				URLFilter/ICloudDomainBlockageChecker.swift,
 				URLFilter/PIRLicenseProvider.swift,
 				"URLFilter/SharedSettingsStorage+URLFilter.swift",
 				URLFilter/URLFilterConfiguration.swift,
@@ -716,6 +719,7 @@
 				"Utils/NSExceptions+Utils.swift",
 				WebView/Services/FilePanelPresenter.swift,
 				WebView/Services/UserRulesValidator.swift,
+				WebView/URLFilterStatePushScheduler.swift,
 				WebViewAdapter/ChildWindow.swift,
 				WebViewAdapter/ExternalLinkGate.swift,
 				WebViewAdapter/InterfaceRequestDenier.swift,
@@ -1312,6 +1316,7 @@
 		EC3462EB2A29DD9200F59ABC = {
 			isa = PBXGroup;
 			children = (
+				16CC8AEE307522DB001B902A /* AppConfig.xcconfig */,
 				EC66B31F2A71482D00139963 /* CommonConfig.xcconfig */,
 				EB097EEB2C00B9DF00E8A086 /* ConfigNative.xcconfig */,
 				EB097EEC2C00BA0C00E8A086 /* ConfigMAS.xcconfig */,

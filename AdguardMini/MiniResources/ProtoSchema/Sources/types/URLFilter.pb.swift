@@ -31,6 +31,7 @@ public enum URLFilterStatus: SwiftProtobuf.Enum, Swift.CaseIterable {
   case error // = 1
   case loading // = 2
   case running // = 3
+  case dnsError // = 4
   case UNRECOGNIZED(Int)
 
   public init() {
@@ -43,6 +44,7 @@ public enum URLFilterStatus: SwiftProtobuf.Enum, Swift.CaseIterable {
     case 1: self = .error
     case 2: self = .loading
     case 3: self = .running
+    case 4: self = .dnsError
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -53,6 +55,7 @@ public enum URLFilterStatus: SwiftProtobuf.Enum, Swift.CaseIterable {
     case .error: return 1
     case .loading: return 2
     case .running: return 3
+    case .dnsError: return 4
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -63,6 +66,7 @@ public enum URLFilterStatus: SwiftProtobuf.Enum, Swift.CaseIterable {
     .error,
     .loading,
     .running,
+    .dnsError,
   ]
 
 }
@@ -183,7 +187,7 @@ public struct URLFilterProtectionLevelUpdate: Sendable {
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension URLFilterStatus: SwiftProtobuf._ProtoNameProviding {
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0URLFilterStatus_unknown\0\u{1}URLFilterStatus_error\0\u{1}URLFilterStatus_loading\0\u{1}URLFilterStatus_running\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0URLFilterStatus_unknown\0\u{1}URLFilterStatus_error\0\u{1}URLFilterStatus_loading\0\u{1}URLFilterStatus_running\0\u{1}URLFilterStatus_dns_error\0")
 }
 
 extension URLFilterProtectionLevel: SwiftProtobuf._ProtoNameProviding {

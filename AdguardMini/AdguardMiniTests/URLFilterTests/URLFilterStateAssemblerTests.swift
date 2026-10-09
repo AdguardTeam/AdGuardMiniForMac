@@ -8,6 +8,7 @@
 //
 
 import XCTest
+import AML
 
 /// Builds a ``URLFilterState`` with readable defaults so tests only
 /// override the fields they care about.
@@ -50,17 +51,45 @@ private enum FakeError: Error {
     case stateUnavailable
 }
 
+/// Answers the assembler with a preconfigured blockage verdict and records how
+/// often it was consulted.
+private final class FakeICloudDomainBlockageChecker: ICloudDomainBlockageChecking, @unchecked Sendable {
+    private let lock = UnfairLock()
+    private var storedIsBlocked = false
+    private var storedCallCount = 0
+
+    /// Whether the checker reports a blocked iCloud domain.
+    var isBlocked: Bool {
+        get { locked(self.lock) { self.storedIsBlocked } }
+        set { locked(self.lock) { self.storedIsBlocked = newValue } }
+    }
+
+    /// Number of times `isAnyDomainBlocked()` was called.
+    var callCount: Int {
+        locked(self.lock) { self.storedCallCount }
+    }
+
+    func isAnyDomainBlocked() async -> Bool {
+        locked(self.lock) {
+            self.storedCallCount += 1
+            return self.storedIsBlocked
+        }
+    }
+}
+
 private func makeAssembler(
     service: FakeURLFilterService,
     protectionLevel: URLFilterProtectionLevel = .essential,
     isNew: Bool = false,
-    bloomMetadata: URLFilterBloomMetadata? = nil
+    bloomMetadata: URLFilterBloomMetadata? = nil,
+    checker: FakeICloudDomainBlockageChecker = FakeICloudDomainBlockageChecker()
 ) -> URLFilterStateAssembler {
     URLFilterStateAssembler(
         urlFilterService: service,
         protectionLevelProvider: { protectionLevel },
         isNewProvider: { isNew },
-        bloomMetadataProvider: { bloomMetadata }
+        bloomMetadataProvider: { bloomMetadata },
+        iCloudDomainBlockageChecker: checker
     )
 }
 
@@ -111,6 +140,64 @@ final class URLFilterStateAssemblerTests: XCTestCase {
 
         XCTAssertEqual(state.status, .error)
         XCTAssertFalse(state.enabled)
+    }
+
+    func testErrorStatusWithBlockedICloudDomainsMapsToDNSError() async {
+        let service = FakeURLFilterService()
+        service.state = makeState(status: .stopped, lastDisconnectError: .serverSetupIncomplete)
+        let checker = FakeICloudDomainBlockageChecker()
+        checker.isBlocked = true
+        let assembler = makeAssembler(service: service, checker: checker)
+
+        let state = await assembler.makeState()
+
+        XCTAssertEqual(state.status, .dnsError)
+        XCTAssertFalse(state.enabled)
+        XCTAssertEqual(checker.callCount, 1)
+    }
+
+    func testErrorStatusWithUnblockedICloudDomainsStaysError() async {
+        let service = FakeURLFilterService()
+        service.state = makeState(status: .stopped, lastDisconnectError: .serverSetupIncomplete)
+        let checker = FakeICloudDomainBlockageChecker()
+        checker.isBlocked = false
+        let assembler = makeAssembler(service: service, checker: checker)
+
+        let state = await assembler.makeState()
+
+        XCTAssertEqual(state.status, .error)
+        XCTAssertFalse(state.enabled)
+        XCTAssertEqual(checker.callCount, 1)
+    }
+
+    func testOtherErrorKindsDoNotConsultICloudChecker() async {
+        let service = FakeURLFilterService()
+        service.state = makeState(status: .stopped, lastDisconnectError: .configurationDisabled)
+        let checker = FakeICloudDomainBlockageChecker()
+        checker.isBlocked = true
+        let assembler = makeAssembler(service: service, checker: checker)
+
+        let state = await assembler.makeState()
+
+        XCTAssertEqual(state.status, .error)
+        XCTAssertFalse(state.enabled)
+        XCTAssertEqual(checker.callCount, 0)
+    }
+
+    func testNonErrorStatusesDoNotConsultICloudChecker() async {
+        let service = FakeURLFilterService()
+        let checker = FakeICloudDomainBlockageChecker()
+        let assembler = makeAssembler(service: service, checker: checker)
+
+        service.state = makeState(status: .running)
+        var state = await assembler.makeState()
+        XCTAssertEqual(state.status, .running)
+
+        service.state = makeState(status: .starting)
+        state = await assembler.makeState()
+        XCTAssertEqual(state.status, .loading)
+
+        XCTAssertEqual(checker.callCount, 0)
     }
 
     func testDisabledStoppedWithStaleErrorStaysLoading() async {
@@ -182,12 +269,14 @@ final class URLFilterStateAssemblerTests: XCTestCase {
     func testStateFetchFailureMapsToError() async {
         let service = FakeURLFilterService()
         service.getStateError = FakeError.stateUnavailable
-        let assembler = makeAssembler(service: service)
+        let checker = FakeICloudDomainBlockageChecker()
+        let assembler = makeAssembler(service: service, checker: checker)
 
         let state = await assembler.makeState()
 
         XCTAssertEqual(state.status, .error)
         XCTAssertFalse(state.enabled)
+        XCTAssertEqual(checker.callCount, 0)
     }
 
     // MARK: Installation state

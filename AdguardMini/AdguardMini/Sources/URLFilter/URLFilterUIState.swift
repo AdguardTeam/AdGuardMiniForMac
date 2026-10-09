@@ -43,6 +43,20 @@ extension URLFilterUIState {
 /// UI-facing status of URLFiltering extension
 enum URLFilterUIStatus: Equatable {
     case error
+    /// A System-wide Protection failure caused by blocked iCloud hosts.
+    ///
+    /// The UI shows no generic snack for this status.
+    case dnsError
     case loading
     case running
+}
+
+extension URLFilterUIStatus {
+    /// Whether the status represents a failed filter.
+    var isError: Bool {
+        switch self {
+        case .error, .dnsError: true
+        case .loading, .running: false
+        }
+    }
 }

@@ -162,4 +162,47 @@ enum URLFilterReconcileDecision {
     ) -> Bool {
         !enabled || status == .running
     }
+
+    /// Whether the status is a terminal failure rather than a running filter or a transition.
+    static func isFailSafeFailureStatus(_ status: URLFilterRawStatus) -> Bool {
+        shouldFailSafeDisable(status: status, enabled: true)
+    }
+
+    /// The action the fail-safe disable needs from the latest observations.
+    enum FailSafeDisableAction: Equatable {
+        /// A running filter or a disabled configuration resolved the disable.
+        case clear
+        /// Keep the pending disable as it is.
+        case keep
+        /// Start the grace period for an observed enabled filter that cannot run.
+        case schedule(URLFilterRawStatus)
+        /// The grace elapsed while the filter still cannot run: disable now.
+        case fire
+    }
+
+    /// Resolves the fail-safe disable action from the latest observations.
+    ///
+    /// Only a status reported by the change stream is trusted: before its first
+    /// event a fresh manager read can report `.invalid` for a running filter,
+    /// so the pending disable neither starts nor fires unobserved. Transitions
+    /// defer the fire, so a slow bring-up survives while a crash loop fires at
+    /// its next failure.
+    static func failSafeDisableAction(
+        observedStatus: URLFilterRawStatus?,
+        enabled: Bool,
+        hasPendingDisable: Bool,
+        hasElapsedGrace: Bool
+    ) -> FailSafeDisableAction {
+        guard let observedStatus else { return .keep }
+        guard !isFailSafeDisableResolved(status: observedStatus, enabled: enabled) else {
+            return .clear
+        }
+        guard shouldFailSafeDisable(status: observedStatus, enabled: enabled) else {
+            return .keep
+        }
+        guard hasPendingDisable else {
+            return .schedule(observedStatus)
+        }
+        return hasElapsedGrace ? .fire : .keep
+    }
 }

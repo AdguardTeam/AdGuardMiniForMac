@@ -8,7 +8,8 @@ export enum URLFilterStatus {
     unknown = 0,
     error = 1,
     loading = 2,
-    running = 3
+    running = 3,
+    dns_error = 4
 }
 export enum URLFilterProtectionLevel {
     essential = 0,

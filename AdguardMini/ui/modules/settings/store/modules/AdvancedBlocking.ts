@@ -65,6 +65,8 @@ enum URLFilterErrorKind {
     enable = 'enable',
     /** A maintenance call (cache reset, filter removal) failed. */
     maintenance = 'maintenance',
+    /** A System-wide Protection failure caused by blocked iCloud hosts. */
+    dns = 'dns',
 }
 
 /**
@@ -177,9 +179,7 @@ export class AdvancedBlocking {
         }
         this.reportedURLFilterErrorKind = kind;
         this.urlFilterErrorNotificationId = this.notification.notify({
-            message: kind === URLFilterErrorKind.enable
-                ? translate('advanced.blocking.system.wide.error')
-                : getNotificationSomethingWentWrongText(),
+            message: this.errorNotificationMessage(kind),
             notificationContext: NotificationContext.info,
             type: NotificationsQueueType.warning,
             iconType: NotificationsQueueIconType.error,
@@ -188,6 +188,22 @@ export class AdvancedBlocking {
                 this.urlFilterErrorNotificationId = null;
             },
         });
+    }
+
+    /**
+     * Message of the notification shown for a System-wide Protection failure.
+     *
+     * @param kind Kind of the failure.
+     */
+    private errorNotificationMessage(kind: URLFilterErrorKind): string {
+        if (kind === URLFilterErrorKind.enable) {
+            return translate('advanced.blocking.system.wide.error');
+        }
+        if (kind === URLFilterErrorKind.dns) {
+            // TODO: AG-60022 Replace the temporary DNS snack with the warning card.
+            return 'Couldn\'t enable System-wide protection: iCloud domains are blocked by your DNS filter';
+        }
+        return getNotificationSomethingWentWrongText();
     }
 
     /**
@@ -277,6 +293,8 @@ export class AdvancedBlocking {
         this.setURLFilterState(data);
         if (data.status === URLFilterStatus.error) {
             this.notifyURLFilterError(URLFilterErrorKind.enable);
+        } else if (data.status === URLFilterStatus.dns_error) {
+            this.notifyURLFilterError(URLFilterErrorKind.dns);
         } else if (data.status === URLFilterStatus.running) {
             // The filter works again: a later failure is a new error.
             this.resetURLFilterError();
