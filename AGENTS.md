@@ -880,11 +880,11 @@ Blocker JSON consumed by the extension targets.
    **Rationale**: Ensures UI logic correctness and uses the same runtime as
    the production `node` toolchain captured by `configure.sh`.
 
-4. **Lint-staged test triggers**: When adding new TypeScript tests, the
-   `.lintstagedrc.js` file MUST be updated to include glob patterns for the
-   tested source files and the test files themselves, mapping them to
-   `yarn test:node`. This ensures tests run automatically on pre-commit when
-   relevant files are changed.
+4. **Lint-staged test triggers**: `.lintstagedrc.js` maps every
+   `AdguardMini/ui/**/*.{ts,tsx}` change to `yarn lint --quiet` and
+   `yarn test:node`, so new TypeScript tests and tested sources are covered
+   automatically. Add an entry only for a new input type the tests depend on
+   (for example `.twosky.json`).
 
    **Rationale**: Prevents regressions from slipping through code review by
    catching failures at commit time.

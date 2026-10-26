@@ -79,15 +79,29 @@
         position: absolute;
         top: var(--m-s);
         right: var(--m-s);
-        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         height: var(--m-m);
         width: var(--m-m);
+        padding: 0;
+        border: none;
+        background: none;
+        cursor: pointer;
         z-index: var(--zi-above-extra);
+
+        /* Small floating control: the ring sits clear of the glyph. */
+        --focus-ring-offset: var(--focus-ring-offset-floating);
+
+        @mixin focus-ring;
+
+        &:disabled {
+            cursor: default;
+        }
     }
 
     &_cross {
         color: var(--stroke-icons-gray-icons-default);
-        cursor: pointer;
     }
 
     &_errorMessage {

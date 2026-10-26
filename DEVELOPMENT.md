@@ -270,19 +270,19 @@ yarn locales:check
 Third-party dependencies can be updated via:
 
 ```bash
-bundle exec ruby Support/Scripts/update_third_party_deps.rb
+bin/ruby Support/Scripts/update_third_party_deps.rb
 ```
 
 To check for updates without applying:
 
 ```bash
-bundle exec ruby Support/Scripts/update_third_party_deps.rb --dry-run
+bin/ruby Support/Scripts/update_third_party_deps.rb --dry-run
 ```
 
 To update specific packages:
 
 ```bash
-bundle exec ruby Support/Scripts/update_third_party_deps.rb \
+bin/ruby Support/Scripts/update_third_party_deps.rb \
   --packages=assistant,safariconverterlib
 ```
 

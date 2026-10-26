@@ -9,9 +9,9 @@
 # Third-party dependency update script.
 #
 # Usage:
-#   bundle exec ruby Support/Scripts/update_third_party_deps.rb
-#   bundle exec ruby Support/Scripts/update_third_party_deps.rb --dry-run
-#   bundle exec ruby Support/Scripts/update_third_party_deps.rb \
+#   bin/ruby Support/Scripts/update_third_party_deps.rb
+#   bin/ruby Support/Scripts/update_third_party_deps.rb --dry-run
+#   bin/ruby Support/Scripts/update_third_party_deps.rb \
 #     --packages=assistant,safariconverterlib
 
 require 'json'
@@ -88,7 +88,7 @@ def parse_args
 end
 
 def print_help
-  puts "Usage: bundle exec ruby #{$PROGRAM_NAME} [options]"
+  puts "Usage: bin/ruby #{$PROGRAM_NAME} [options]"
   puts
   puts 'Options:'
   puts '  --dry-run           Check for updates without applying'

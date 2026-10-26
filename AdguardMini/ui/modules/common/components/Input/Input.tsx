@@ -115,14 +115,15 @@ export function Input({
                     }}
                 />
                 {allowClear && value && (
-                    // Pointer-only clear affordance: keyboard users clear the
-                    // field with native editing, and the cross is
-                    // intentionally not a tab stop.
-                    /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
-                        jsx-a11y/no-static-element-interactions */
-                    <div className={cx(s.Input_clear)} onClick={handleClear}>
+                    <button
+                        aria-label={translate('clear')}
+                        className={cx(s.Input_clear)}
+                        disabled={disabled}
+                        type="button"
+                        onClick={handleClear}
+                    >
                         <Icon className={s.Input_cross} icon="cross" />
-                    </div>
+                    </button>
                 )}
             </div>
             {errorMessage && (
