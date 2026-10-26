@@ -25,6 +25,8 @@ protocol SystemInfoManager {
     var mac: String? { get }
     var hid: String { get }
     var isMacOS25OrLower: Bool { get }
+    /// True only on macOS 27.2.x, where system-wide filtering may not work.
+    var isMacOS272: Bool { get }
 }
 
 // MARK: - SystemInfoManagerImpl
@@ -55,4 +57,9 @@ final class SystemInfoManagerImpl: SystemInfoManager {
         }
         return true
     }()
+
+    var isMacOS272: Bool {
+        let version = ProcessInfo.processInfo.operatingSystemVersion
+        return version.majorVersion == 27 && version.minorVersion == 2
+    }
 }

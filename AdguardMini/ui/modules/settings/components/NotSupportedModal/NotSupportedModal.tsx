@@ -9,16 +9,24 @@ import { ExternalLink, Modal } from 'UILib';
 import s from './NotSupportedModal.module.pcss';
 
 /**
+ * Why System-wide Protection is unavailable.
+ */
+export type NotSupportedModalReason = 'account' | 'macosVersion';
+
+/**
  * Props for NotSupportedModal component
  */
 type NotSupportedModalProps = {
+    reason: NotSupportedModalReason;
     setShowNotSupportedModal(value: boolean): void;
 };
 
 /**
  * Not supported modal for System-wide Protection settings page
  */
-export function NotSupportedModal({ setShowNotSupportedModal }: NotSupportedModalProps) {
+export function NotSupportedModal({ reason, setShowNotSupportedModal }: NotSupportedModalProps) {
+    const isMacOSVersionReason = reason === 'macosVersion';
+
     const descParams = {
         link: (text: string) => (
             <ExternalLink
@@ -32,13 +40,20 @@ export function NotSupportedModal({ setShowNotSupportedModal }: NotSupportedModa
 
     const onClose = () => setShowNotSupportedModal(false);
 
+    const title = isMacOSVersionReason
+        ? translate('advanced.blocking.system.wide.macos.27.2.modal.title')
+        : translate('advanced.blocking.system.wide.not.supported.modal.title');
+    const description = isMacOSVersionReason
+        ? translate('advanced.blocking.system.wide.macos.27.2.modal.desc')
+        : translate('advanced.blocking.system.wide.not.supported.modal.desc', descParams);
+
     return (
         <Modal
-            description={translate('advanced.blocking.system.wide.not.supported.modal.desc', descParams)}
+            description={description}
             submitAction={onClose}
             submitClassName={cx(theme.button.greenSubmit, s.NotSupportedModal_submit)}
             submitText={translate('close')}
-            title={translate('advanced.blocking.system.wide.not.supported.modal.title')}
+            title={title}
             submit
             onClose={onClose}
         />

@@ -95,8 +95,13 @@ async OnSafariExtensionUpdate(param: SafariExtensionUpdate): Promise<EmptyValue>
 
     /* Fires when URL filter state changed */
     async OnURLFilterStateChanged(param: URLFilterState): Promise<EmptyValue> {
+        // The resolved experimental flag depends on the install state.
+        const wasInstalled = store.advancedBlocking.urlFilterState.isInstalled;
         // The store reports a failure itself, deduplicated per error state.
         store.advancedBlocking.applyPushedURLFilterState(param);
+        if (wasInstalled !== param.isInstalled) {
+            store.settings.getSettings();
+        }
         return new EmptyValue();
     }
 

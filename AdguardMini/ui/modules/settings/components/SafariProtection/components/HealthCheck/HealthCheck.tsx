@@ -38,13 +38,21 @@ type HealthCheckProps = {
 function HealthCheckComponent({ setShowConsent }: HealthCheckProps) {
     const [showAllIssues, setShowAllIssues] = useState(false);
 
-    const { settings, safariProtection, advancedBlocking } = useSettingsStore();
+    const { settings, safariProtection, advancedBlocking, account } = useSettingsStore();
 
     const {
         dismissedHealthCheckCards,
+        healthCheckDismissedLoaded,
         loginItemEnabled,
-        settings: { lastUpdateMoreSevenDays },
+        settings: {
+            experimentalSystemWideProtectionEnabled,
+            lastUpdateMoreSevenDays,
+        },
     } = settings;
+
+    const { isLicenseOrTrialActive } = account;
+
+    const filtersLoaded = safariProtection.filters.isLoaded;
 
     const {
         blockAds,
@@ -62,9 +70,20 @@ function HealthCheckComponent({ setShowConsent }: HealthCheckProps) {
         hasRulesLimitExceeded,
     } = useSafariExtensionsStatus();
 
+    const isReady = settings.isSettingsLoaded
+        && filtersLoaded
+        && settings.safariExtensionsStore.isLoaded
+        && advancedBlocking.isURLFilterStateLoaded
+        && healthCheckDismissedLoaded;
+
+    if (!isReady) {
+        return null;
+    }
+
     const hasBackgroundDisabled = !loginItemEnabled;
 
-    const hasSystemWideProtectionUnavailable = advancedBlocking.isSystemWideProtectionUnavailable;
+    const hasSystemWideProtectionUnavailable = isLicenseOrTrialActive && experimentalSystemWideProtectionEnabled
+        && advancedBlocking.isSystemWideProtectionUnavailable;
 
     const hasAdBlockingDisabled = !blockAds;
 

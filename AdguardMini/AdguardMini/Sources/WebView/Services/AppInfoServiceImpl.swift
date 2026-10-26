@@ -17,11 +17,11 @@ private enum Constants {
     static let channel: Channel = {
         #if STANDALONE
             switch BuildConfig.AG_CHANNEL {
-            case "nightly":
+            case BuildChannel.nightly.rawValue:
                 return .standaloneNightly
-            case "beta":
+            case BuildChannel.beta.rawValue:
                 return .standaloneBeta
-            case "release":
+            case BuildChannel.release.rawValue:
                 return .standaloneRelease
             default:
                 return .unknown

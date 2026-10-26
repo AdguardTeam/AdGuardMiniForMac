@@ -15,6 +15,8 @@ import type { RefObject } from 'preact';
 
 type TestHooks = { after(callback: () => void): void };
 
+const DNS_KEY = 'advanced.blocking.system.wide.part.troubleshooting.dns';
+
 /**
  * Messages used by the cases: the rendered copy is irrelevant to the
  * component's contract, only the `<link>` tags it wires actions into matter.
@@ -23,12 +25,30 @@ const messages: Record<string, string> = {
     'advanced.blocking.system.wide.part.troubleshooting': 'Troubleshooting',
     'advanced.blocking.system.wide.part.troubleshooting.desc': 'Try the steps',
     'advanced.blocking.system.wide.part.troubleshooting.connection': 'Check your Internet connection',
-    'advanced.blocking.system.wide.part.troubleshooting.dns': 'Allow gateway.icloud.com and mask.icloud.com',
     'advanced.blocking.system.wide.part.troubleshooting.restart': 'Restart your Mac',
     'advanced.blocking.system.wide.part.troubleshooting.reset.cache': '<link>Reset the filter cache</link>. This may help',
     'advanced.blocking.system.wide.part.troubleshooting.reinstall': 'Reinstall the URL filter. <link>Remove it</link>, then enable it again',
     'advanced.blocking.system.wide.part.troubleshooting.support': 'If protection is still unavailable, <link>contact support</link>',
 };
+
+/**
+ * Builds the DNS step the way the translator renders it: a lead-in, the
+ * `<br>`-separated hosts, and the trailing sentence.
+ */
+function dnsMessage() {
+    return [
+        <b>Check your DNS filtering settings.</b>,
+        ' DNS filters can block Apple services needed for System-wide protection. If you use DNS filtering on your Mac, router, or network, make sure it allows these domains:',
+        <br />,
+        'gateway.icloud.com',
+        <br />,
+        'mask.icloud.com',
+        <br />,
+        'mask-h2.icloud.com',
+        <br />,
+        'Allow them in the DNS service or app that blocks them',
+    ];
+}
 
 /**
  * Installs a `translate` stub that resolves the messages above and applies
@@ -39,6 +59,10 @@ function installTranslate() {
         key: string,
         params: { link?(text: string): unknown } = {},
     ) => {
+        if (key === DNS_KEY) {
+            return dnsMessage();
+        }
+
         const message = messages[key] ?? key;
         const parts: unknown[] = [];
         const linkPattern = /<link>(.*?)<\/link>/g;
@@ -100,6 +124,25 @@ test('renders the troubleshooting steps', (testContext) => {
 
     assert.equal(container.querySelectorAll('li').length, 6, 'all six steps are rendered');
     assert.match(container.textContent ?? '', /gateway\.icloud\.com/, 'the DNS step lists the iCloud hosts');
+});
+
+test('wraps the DNS host list in its own selection root', (testContext) => {
+    installTranslate();
+    const container = mountTroubleshooting(testContext, () => {});
+
+    const dnsStep = container.querySelectorAll('li')[1];
+    assert.ok(dnsStep, 'the DNS step is rendered');
+
+    const hosts = dnsStep.querySelector('.Troubleshooting_domains');
+    assert.ok(hosts, 'the host list is wrapped inside the DNS step');
+    assert.match(
+        hosts.textContent ?? '',
+        /gateway\.icloud\.commask\.icloud\.commask-h2\.icloud\.com/,
+        'the wrapper carries all three hosts',
+    );
+    assert.equal(hosts.querySelectorAll('br').length, 2, 'the line breaks stay inside the wrapper');
+    assert.doesNotMatch(hosts.textContent ?? '', /Check your DNS/, 'the lead-in stays outside the wrapper');
+    assert.doesNotMatch(hosts.textContent ?? '', /Allow them/, 'the trailing sentence stays outside the wrapper');
 });
 
 test('the step links run their actions', (testContext) => {

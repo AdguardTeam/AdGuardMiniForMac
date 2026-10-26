@@ -2,7 +2,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { makeObservable, observable, action } from 'mobx';
+import {
+    makeObservable,
+    observable,
+    action,
+    computed,
+} from 'mobx';
 
 import {
     GetEnabledFiltersIdsRequest,
@@ -37,6 +42,16 @@ export class FiltersData {
     public enabledFilters = new Set<number>();
 
     /**
+     * Whether the enabled filter IDs have been received from the platform.
+     */
+    public enabledFiltersLoaded = false;
+
+    /**
+     * Whether the filters index has been received from the platform.
+     */
+    public filtersIndexLoaded = false;
+
+    /**
      * Map of filter ID → Filter metadata, populated by `setFilters`.
      */
     public filtersMap = observable.map<number, Filter>(
@@ -61,15 +76,26 @@ export class FiltersData {
     public filters = new FiltersEnt();
 
     /**
+     * Whether the data the Safari Protection health check derives its filter
+     * warnings from has been loaded.
+     */
+    public get isLoaded(): boolean {
+        return this.enabledFiltersLoaded && this.filtersIndexLoaded;
+    }
+
+    /**
      * Ctor
      */
     public constructor() {
         makeObservable(this, {
             enabledFilters: observable,
+            enabledFiltersLoaded: observable,
+            filtersIndexLoaded: observable,
             filtersMap: observable,
             filtersIndex: observable,
             recommendedFiltersByGroups: observable,
             filters: observable,
+            isLoaded: computed,
             getFilters: action,
             getEnabledFilters: action,
             getFiltersIndex: action,
@@ -118,6 +144,7 @@ export class FiltersData {
      */
     public setEnabledFilters(ids: number[]) {
         this.enabledFilters = new Set(ids);
+        this.enabledFiltersLoaded = true;
     }
 
     /**
@@ -145,5 +172,6 @@ export class FiltersData {
             recommendedFiltersByGroup[groupId] = filters.ids;
         });
         this.recommendedFiltersByGroups = recommendedFiltersByGroup;
+        this.filtersIndexLoaded = true;
     }
 }

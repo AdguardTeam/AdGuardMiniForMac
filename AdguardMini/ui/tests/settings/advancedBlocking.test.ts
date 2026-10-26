@@ -27,6 +27,7 @@ import {
 import {
     AdvancedBlocking,
     URL_FILTER_INFO_FALLBACK_TIMEOUT_MS,
+    URL_FILTER_STATE_SETTLE_MS,
 } from 'Modules/settings/store/modules/AdvancedBlocking';
 
 beforeEach(() => {
@@ -51,6 +52,7 @@ type AdvancedBlockingApiOptions = {
     enabledUpdateFails?: boolean;
     cacheResetFails?: boolean;
     removalFails?: boolean;
+    statePullRejects?: boolean;
     pulledState?: URLFilterState;
 };
 
@@ -79,6 +81,9 @@ function installAdvancedBlockingApi(options: AdvancedBlockingApiOptions = {}) {
                 case 'AdvancedBlockingService.RetryURLFilter':
                     return Promise.resolve(new EmptyValue());
                 case 'AdvancedBlockingService.GetURLFilterState':
+                    if (options.statePullRejects) {
+                        return Promise.reject(new Error('RPC "GetURLFilterState" was rejected by the native side'));
+                    }
                     return Promise.resolve(options.pulledState ?? new URLFilterState());
                 default:
                     throw new Error(`Unexpected request: ${fqn}`);
@@ -159,6 +164,20 @@ function makeDeclinedState(): URLFilterState {
 }
 
 /**
+ * Builds the state the platform reports for an installed configuration.
+ */
+function makeInstalledState(): URLFilterState {
+    return new URLFilterState({
+        enabled: true,
+        protectionLevel: URLFilterProtectionLevel.essential,
+        status: URLFilterStatus.running,
+        isInstalled: true,
+        userIntentEnabled: true,
+        info: new URLFilterInfo({}),
+    });
+}
+
+/**
  * Drops the shown notification the way a foreign one does: through
  * `closeOthers`, which clears the queue without calling `onClose`.
  *
@@ -180,6 +199,15 @@ function dropWithForeignNotification(queue: NotificationsQueue) {
  */
 function notificationIds(queue: NotificationsQueue): string[] {
     return queue.mapQueue((_, uid) => uid);
+}
+
+/**
+ * Advances virtual time past the URL-filter state settle window.
+ *
+ * @param t Test context with mock timers.
+ */
+function settleURLFilterState(t: { mock: { timers: { tick(ms: number): void } } }) {
+    t.mock.timers.tick(URL_FILTER_STATE_SETTLE_MS + 1);
 }
 
 /**
@@ -419,6 +447,7 @@ test('shows the unavailable snack with the troubleshooting action for an explici
     const advancedBlocking = new AdvancedBlocking(queue, () => { opened += 1; });
 
     await advancedBlocking.updateSystemWideProtection(true);
+    settleURLFilterState(t);
 
     assert.equal(queue.queueLength, 1);
     const [shownId] = notificationIds(queue);
@@ -448,13 +477,16 @@ test('does not repeat the snack for the same failure while it is shown', async (
     const advancedBlocking = new AdvancedBlocking(queue, () => {});
 
     await advancedBlocking.updateSystemWideProtection(true);
+    settleURLFilterState(t);
     const [shownId] = notificationIds(queue);
 
     // The platform keeps pushing the same failure and the user presses the
     // switch again: the snack is not shown again.
     advancedBlocking.applyPushedURLFilterState(makeErrorState());
     advancedBlocking.applyPushedURLFilterState(makeErrorState());
+    settleURLFilterState(t);
     await advancedBlocking.updateSystemWideProtection(true);
+    settleURLFilterState(t);
 
     assert.deepEqual(notificationIds(queue), [shownId]);
 });
@@ -474,11 +506,13 @@ test('does not repeat an automatic failure after the snack closed within the vis
     t.mock.timers.tick(DEFAULT_NOTIFY_LIFETIME + 1);
     assert.equal(queue.queueLength, 0);
     advancedBlocking.applyPushedURLFilterState(makeErrorState());
+    settleURLFilterState(t);
     assert.equal(queue.queueLength, 0, 'the automatic report stays collapsed for the visit');
 
     // A new page visit re-arms the automatic report.
     advancedBlocking.beginSystemWideProtectionPageVisit();
     advancedBlocking.applyPushedURLFilterState(makeErrorState());
+    settleURLFilterState(t);
 
     const [secondId] = notificationIds(queue);
     assert.notEqual(secondId, firstId);
@@ -501,6 +535,7 @@ test('reports an automatic failure again after the page visit ends', async (t) =
     // Leaving the page ends the visit: the failure is reported again.
     advancedBlocking.endSystemWideProtectionPageVisit();
     advancedBlocking.applyPushedURLFilterState(makeErrorState());
+    settleURLFilterState(t);
 
     const [secondId] = notificationIds(queue);
     assert.notEqual(secondId, firstId);
@@ -514,10 +549,12 @@ test('reports a failed retry once the user closed the snack', async (t) => {
     const advancedBlocking = new AdvancedBlocking(queue, () => {});
 
     await advancedBlocking.updateSystemWideProtection(true);
+    settleURLFilterState(t);
     const [failedId] = notificationIds(queue);
     queue.closeNotify(failedId);
 
     await advancedBlocking.updateSystemWideProtection(true);
+    settleURLFilterState(t);
 
     const [retryId] = notificationIds(queue);
     assert.notEqual(retryId, failedId);
@@ -531,11 +568,13 @@ test('reports a failed retry once another notification dropped the snack', async
     const advancedBlocking = new AdvancedBlocking(queue, () => {});
 
     await advancedBlocking.updateSystemWideProtection(true);
+    settleURLFilterState(t);
 
     dropWithForeignNotification(queue);
     const [foreignId] = notificationIds(queue);
 
     await advancedBlocking.updateSystemWideProtection(true);
+    settleURLFilterState(t);
 
     // The foreign notification stays: the retry is reported next to it.
     const [stillForeignId, retryId] = notificationIds(queue);
@@ -544,7 +583,7 @@ test('reports a failed retry once another notification dropped the snack', async
     assert.equal(queue.queueLength, 2);
 });
 
-test('reports a pushed failure on any settings page', async (t) => {
+test('reports a pushed failure on the Advanced blocking page', async (t) => {
     t.mock.timers.enable();
     installAdvancedBlockingApi();
     const queue = new NotificationsQueue();
@@ -552,7 +591,7 @@ test('reports a pushed failure on any settings page', async (t) => {
 
     // The switch also lives on the Advanced blocking page, so the failure is
     // reported without a visit to the System-wide Protection page.
-    advancedBlocking.applyPushedURLFilterState(makeDNSFailureState());
+    advancedBlocking.applyPushedURLFilterState(makeErrorState());
     assert.equal(advancedBlocking.isSystemWideProtectionUnavailable, true);
     assert.equal(queue.queueLength, 1);
 });
@@ -564,11 +603,14 @@ test('reports a failure again once the filter recovered', async (t) => {
     const advancedBlocking = new AdvancedBlocking(queue, () => {});
 
     await advancedBlocking.updateSystemWideProtection(true);
+    settleURLFilterState(t);
     const [failedId] = notificationIds(queue);
 
     // The filter runs again: the previous error is over.
     advancedBlocking.applyPushedURLFilterState(makeRunningState());
+    settleURLFilterState(t);
     advancedBlocking.applyPushedURLFilterState(makeErrorState());
+    settleURLFilterState(t);
 
     const [retryId] = notificationIds(queue);
     assert.notEqual(retryId, failedId);
@@ -586,6 +628,7 @@ test('reports a failure of a new explicit attempt after the user turned the filt
     const advancedBlocking = new AdvancedBlocking(queue, () => {});
 
     await advancedBlocking.updateSystemWideProtection(true);
+    settleURLFilterState(t);
     const [failedId] = notificationIds(queue);
 
     // Turning the protection off lands: the previous failure is over.
@@ -595,6 +638,7 @@ test('reports a failure of a new explicit attempt after the user turned the filt
     // A new OFF → ON attempt fails: the failure is reported again.
     apiOptions.enabledUpdateFails = true;
     await advancedBlocking.updateSystemWideProtection(true);
+    settleURLFilterState(t);
 
     const [retryId] = notificationIds(queue);
     assert.notEqual(retryId, failedId);
@@ -617,6 +661,7 @@ test('reports the failure of an explicit attempt after an automatic report', asy
     // An explicit attempt fails: the failure is reported even though the
     // visit already reported one.
     await advancedBlocking.updateSystemWideProtection(true);
+    settleURLFilterState(t);
 
     const [retryId] = notificationIds(queue);
     assert.notEqual(retryId, automaticId);
@@ -634,6 +679,7 @@ test('does not report a declined system install prompt', async (t) => {
     const advancedBlocking = new AdvancedBlocking(queue, () => {});
 
     await advancedBlocking.updateSystemWideProtection(true);
+    settleURLFilterState(t);
 
     // The declined prompt rolls the toggle back to OFF without a snack.
     assert.equal(queue.queueLength, 0);
@@ -644,7 +690,20 @@ test('does not report a declined system install prompt', async (t) => {
     // A later attempt whose intent survives is reported again.
     apiOptions.pulledState = makeErrorState();
     await advancedBlocking.updateSystemWideProtection(true);
+    settleURLFilterState(t);
 
+    assert.equal(queue.queueLength, 1);
+});
+
+test('reports an explicit enable failure when the state pull rejects', async (t) => {
+    t.mock.timers.enable();
+    installAdvancedBlockingApi({ enabledUpdateFails: true, statePullRejects: true });
+    const queue = new NotificationsQueue();
+    const advancedBlocking = new AdvancedBlocking(queue, () => {});
+
+    await advancedBlocking.updateSystemWideProtection(true);
+
+    // The pull cannot confirm a decline: the explicit attempt reports its failure.
     assert.equal(queue.queueLength, 1);
 });
 
@@ -663,6 +722,7 @@ test('reports a failed disable while the user\'s intent is off', async (t) => {
     const advancedBlocking = new AdvancedBlocking(queue, () => {});
 
     await advancedBlocking.updateSystemWideProtection(false);
+    settleURLFilterState(t);
 
     // The filter may still run against the user's wish: the failure is real.
     assert.equal(queue.queueLength, 1);
@@ -695,6 +755,7 @@ test('marks the switch inactive while the selected filter is not running', async
 
     // Selected but not running: the switch shows its inactive "on" state.
     advancedBlocking.applyPushedURLFilterState(makeErrorState());
+    settleURLFilterState(t);
     assert.equal(advancedBlocking.isSystemWideProtectionInactive, true);
 
     // Not selected: the switch is off.
@@ -702,6 +763,7 @@ test('marks the switch inactive while the selected filter is not running', async
         userIntentEnabled: false,
         info: new URLFilterInfo({}),
     }));
+    settleURLFilterState(t);
     assert.equal(advancedBlocking.isSystemWideProtectionInactive, false);
 });
 
@@ -722,13 +784,127 @@ test('marks the switch enabling while the selected filter is brought up', async 
 
     // Confirmed running: the switch turns green.
     advancedBlocking.applyPushedURLFilterState(makeRunningState());
+    settleURLFilterState(t);
     assert.equal(advancedBlocking.isSystemWideProtectionEnabling, false);
     assert.equal(advancedBlocking.isSystemWideProtectionInactive, false);
 
     // The attempt failed: the switch goes back to ON INACTIVE.
     advancedBlocking.applyPushedURLFilterState(makeErrorState());
+    settleURLFilterState(t);
     assert.equal(advancedBlocking.isSystemWideProtectionEnabling, false);
     assert.equal(advancedBlocking.isSystemWideProtectionInactive, true);
+});
+
+test('waits for the platform before marking the URL filter state loaded', async (t) => {
+    t.mock.timers.enable();
+    installAdvancedBlockingApi({ pulledState: makeRunningState() });
+    const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
+
+    assert.equal(advancedBlocking.isURLFilterStateLoaded, false);
+
+    await advancedBlocking.getURLFilterState();
+
+    assert.equal(advancedBlocking.isURLFilterStateLoaded, true);
+});
+
+test('keeps the shown state while the platform reports starting/failed cycles', (t) => {
+    t.mock.timers.enable();
+    installAdvancedBlockingApi();
+    const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
+    advancedBlocking.setURLFilterState(makeRunningState());
+
+    advancedBlocking.applyPushedURLFilterState(makeErrorState());
+    advancedBlocking.applyPushedURLFilterState(makeRunningState());
+    advancedBlocking.applyPushedURLFilterState(makeErrorState());
+
+    // None of the transient states is shown.
+    assert.equal(advancedBlocking.urlFilterState.status, URLFilterStatus.running);
+
+    settleURLFilterState(t);
+
+    assert.equal(advancedBlocking.urlFilterState.status, URLFilterStatus.error);
+});
+
+test('shows the first platform state without waiting for the settle window', async (t) => {
+    t.mock.timers.enable();
+    installAdvancedBlockingApi({ pulledState: makeErrorState() });
+    const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
+
+    await advancedBlocking.getURLFilterState();
+
+    assert.equal(advancedBlocking.isURLFilterStateLoaded, true);
+    assert.equal(advancedBlocking.urlFilterState.status, URLFilterStatus.error);
+});
+
+test('keeps the switch enabling through a failed bring-up and settles after the window', async (t) => {
+    t.mock.timers.enable();
+    installAdvancedBlockingApi({ enabledUpdateFails: true, pulledState: makeErrorState() });
+    const queue = new NotificationsQueue();
+    const advancedBlocking = new AdvancedBlocking(queue, () => {});
+
+    const attempt = advancedBlocking.updateSystemWideProtection(true);
+
+    // The optimistic state is shown before the platform answers.
+    assert.equal(advancedBlocking.isSystemWideProtectionEnabling, true);
+
+    await attempt;
+
+    // The pull is pending: the switch stays enabling and no snack is shown.
+    assert.equal(advancedBlocking.isSystemWideProtectionEnabling, true);
+    assert.equal(queue.queueLength, 0);
+
+    // The platform keeps cycling: the displayed state does not move.
+    advancedBlocking.applyPushedURLFilterState(makeRunningState());
+    advancedBlocking.applyPushedURLFilterState(makeErrorState());
+    assert.equal(advancedBlocking.isSystemWideProtectionEnabling, true);
+
+    settleURLFilterState(t);
+
+    assert.equal(advancedBlocking.isSystemWideProtectionInactive, true);
+    assert.equal(queue.queueLength, 1);
+});
+
+test('turns the switch green only after the running state stays stable', (t) => {
+    t.mock.timers.enable();
+    installAdvancedBlockingApi();
+    const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
+    advancedBlocking.setURLFilterState(new URLFilterState({
+        enabled: true,
+        status: URLFilterStatus.loading,
+        userIntentEnabled: true,
+    }));
+
+    advancedBlocking.applyPushedURLFilterState(makeRunningState());
+    assert.equal(advancedBlocking.isSystemWideProtectionEnabling, true);
+
+    settleURLFilterState(t);
+
+    assert.equal(advancedBlocking.isSystemWideProtectionEnabling, false);
+    assert.equal(advancedBlocking.isSystemWideProtectionInactive, false);
+});
+
+test('a new user toggle drops the pending platform state', async (t) => {
+    t.mock.timers.enable();
+    installAdvancedBlockingApi();
+    const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
+    advancedBlocking.setURLFilterState(makeRunningState());
+
+    advancedBlocking.applyPushedURLFilterState(makeErrorState());
+    await advancedBlocking.updateSystemWideProtection(false);
+    settleURLFilterState(t);
+
+    assert.equal(advancedBlocking.urlFilterState.userIntentEnabled, false);
+    assert.equal(advancedBlocking.isSystemWideProtectionInactive, false);
+});
+
+test('marks the URL filter state loaded on a pushed state', (t) => {
+    t.mock.timers.enable();
+    installAdvancedBlockingApi();
+    const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
+
+    advancedBlocking.applyPushedURLFilterState(makeRunningState());
+
+    assert.equal(advancedBlocking.isURLFilterStateLoaded, true);
 });
 
 test('a different failure replaces the shown notification', async (t) => {
@@ -742,6 +918,7 @@ test('a different failure replaces the shown notification', async (t) => {
     const advancedBlocking = new AdvancedBlocking(queue, () => {});
 
     await advancedBlocking.updateSystemWideProtection(true);
+    settleURLFilterState(t);
     const [enableFailureId] = notificationIds(queue);
 
     await advancedBlocking.resetURLFilterCache();
@@ -795,6 +972,45 @@ test('reports a repeated filter removal failure once the snack closed', async (t
     assert.equal(queue.queueLength, 1);
 });
 
+test('removeURLFilterIfInstalled removes an installed configuration', async (t) => {
+    t.mock.timers.enable();
+    const calls = installAdvancedBlockingApi({ pulledState: makeInstalledState() });
+    const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
+
+    const removed = await advancedBlocking.removeURLFilterIfInstalled();
+
+    assert.equal(removed, true);
+    assert.equal(
+        calls.filter((request) => (request as { FQN: string }).FQN === 'AdvancedBlockingService.RemoveURLFilter').length,
+        1,
+    );
+});
+
+test('removeURLFilterIfInstalled skips removal when no configuration is installed', async () => {
+    const calls = installAdvancedBlockingApi();
+    const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
+
+    const removed = await advancedBlocking.removeURLFilterIfInstalled();
+
+    assert.equal(removed, true);
+    assert.equal(
+        calls.some((request) => (request as { FQN: string }).FQN === 'AdvancedBlockingService.RemoveURLFilter'),
+        false,
+    );
+});
+
+test('removeURLFilterIfInstalled reports a failed removal', async (t) => {
+    t.mock.timers.enable();
+    installAdvancedBlockingApi({ pulledState: makeInstalledState(), removalFails: true });
+    const queue = new NotificationsQueue();
+    const advancedBlocking = new AdvancedBlocking(queue, () => {});
+
+    const removed = await advancedBlocking.removeURLFilterIfInstalled();
+
+    assert.equal(removed, false);
+    assert.equal(queue.queueLength, 1);
+});
+
 /*
  * iCloud failure: the Safari Protection page shows its dedicated card for
  * this state, and the failure is also reported as a snack.
@@ -812,9 +1028,9 @@ test('reports a pushed DNS failure and marks System-wide Protection unavailable'
     assert.equal(queue.queueLength, 1);
 });
 
-test('reports the pull\'s DNS failure and marks System-wide Protection unavailable', async (t) => {
+test('reports the pull\'s generic error and marks System-wide Protection unavailable', async (t) => {
     t.mock.timers.enable();
-    installAdvancedBlockingApi({ pulledState: makeDNSFailureState() });
+    installAdvancedBlockingApi({ pulledState: makeErrorState() });
     const queue = new NotificationsQueue();
     const advancedBlocking = new AdvancedBlocking(queue, () => {});
 
@@ -824,18 +1040,161 @@ test('reports the pull\'s DNS failure and marks System-wide Protection unavailab
     assert.equal(queue.queueLength, 1);
 });
 
-test('does not mark System-wide Protection unavailable for the other URL filter states', async (t) => {
+test('does not report an automatic failure outside the pages that carry the switch', async (t) => {
+    t.mock.timers.enable();
+    installAdvancedBlockingApi({ pulledState: makeDNSFailureState() });
+    const queue = new NotificationsQueue();
+    const advancedBlocking = new AdvancedBlocking(queue, () => {}, () => false);
+
+    await advancedBlocking.getURLFilterState();
+
+    assert.equal(advancedBlocking.isSystemWideProtectionUnavailable, true);
+    assert.equal(queue.queueLength, 0);
+});
+
+test('does not report an explicit failure outside the pages that carry the switch', async (t) => {
+    t.mock.timers.enable();
+    installAdvancedBlockingApi({ enabledUpdateFails: true, pulledState: makeErrorState() });
+    const queue = new NotificationsQueue();
+    const advancedBlocking = new AdvancedBlocking(queue, () => {}, () => false);
+
+    await advancedBlocking.updateSystemWideProtection(true);
+    settleURLFilterState(t);
+
+    assert.equal(queue.queueLength, 0);
+});
+
+test('closes the unavailable snack when the user leaves the switch pages', async (t) => {
+    t.mock.timers.enable();
+    installAdvancedBlockingApi({ enabledUpdateFails: true, pulledState: makeErrorState() });
+    const queue = new NotificationsQueue();
+    const advancedBlocking = new AdvancedBlocking(queue, () => {});
+
+    await advancedBlocking.updateSystemWideProtection(true);
+    settleURLFilterState(t);
+    assert.equal(queue.queueLength, 1);
+
+    advancedBlocking.closeSystemWideProtectionUnavailableSnack();
+
+    assert.equal(queue.queueLength, 0);
+});
+
+test('keeps a maintenance failure snack when the user leaves the switch pages', async (t) => {
+    t.mock.timers.enable();
+    installAdvancedBlockingApi({ cacheResetFails: true, pulledState: makeRunningState() });
+    const queue = new NotificationsQueue();
+    const advancedBlocking = new AdvancedBlocking(queue, () => {});
+
+    await advancedBlocking.resetURLFilterCache();
+    assert.equal(queue.queueLength, 1);
+
+    advancedBlocking.closeSystemWideProtectionUnavailableSnack();
+
+    assert.equal(queue.queueLength, 1);
+});
+
+test('does not mark System-wide Protection unavailable for non-error states', async (t) => {
     t.mock.timers.enable();
     installAdvancedBlockingApi();
     const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
 
     assert.equal(advancedBlocking.isSystemWideProtectionUnavailable, false);
 
-    advancedBlocking.applyPushedURLFilterState(makeErrorState());
-    assert.equal(advancedBlocking.isSystemWideProtectionUnavailable, false);
-
     advancedBlocking.applyPushedURLFilterState(makeRunningState());
     assert.equal(advancedBlocking.isSystemWideProtectionUnavailable, false);
+
+    advancedBlocking.applyPushedURLFilterState(new URLFilterState({
+        status: URLFilterStatus.loading,
+        userIntentEnabled: true,
+        info: new URLFilterInfo({}),
+    }));
+    settleURLFilterState(t);
+    assert.equal(advancedBlocking.isSystemWideProtectionUnavailable, false);
+});
+
+test('does not mark System-wide Protection unavailable without user intent', async (t) => {
+    t.mock.timers.enable();
+    installAdvancedBlockingApi();
+    const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
+
+    advancedBlocking.applyPushedURLFilterState(new URLFilterState({
+        status: URLFilterStatus.error,
+        userIntentEnabled: false,
+        info: new URLFilterInfo({}),
+    }));
+    settleURLFilterState(t);
+
+    assert.equal(advancedBlocking.isSystemWideProtectionUnavailable, false);
+});
+
+test('does not mark System-wide Protection unavailable without a license', async (t) => {
+    t.mock.timers.enable();
+    installAdvancedBlockingApi();
+    const advancedBlocking = new AdvancedBlocking(
+        new NotificationsQueue(),
+        () => {},
+        () => true,
+        () => false,
+    );
+
+    advancedBlocking.applyPushedURLFilterState(makeErrorState());
+    settleURLFilterState(t);
+
+    assert.equal(advancedBlocking.urlFilterState.userIntentEnabled, true);
+    assert.equal(advancedBlocking.isSystemWideProtectionUnavailable, false);
+});
+
+test('does not report an automatic failure without a license', async (t) => {
+    t.mock.timers.enable();
+    installAdvancedBlockingApi({ pulledState: makeDNSFailureState() });
+    const queue = new NotificationsQueue();
+    const advancedBlocking = new AdvancedBlocking(
+        queue,
+        () => {},
+        () => true,
+        () => false,
+    );
+
+    await advancedBlocking.getURLFilterState();
+    settleURLFilterState(t);
+
+    assert.equal(queue.queueLength, 0);
+});
+
+test('does not retry System-wide Protection without a license', async () => {
+    const calls = installAdvancedBlockingApi();
+    const advancedBlocking = new AdvancedBlocking(
+        new NotificationsQueue(),
+        () => {},
+        () => true,
+        () => false,
+    );
+    advancedBlocking.setURLFilterState(makeErrorState());
+
+    await advancedBlocking.retrySystemWideProtection();
+
+    assert.equal(
+        calls.some((req) => (req as { FQN: string }).FQN === 'AdvancedBlockingService.RetryURLFilter'),
+        false,
+    );
+});
+
+test('retries System-wide Protection with a license', async () => {
+    const calls = installAdvancedBlockingApi();
+    const advancedBlocking = new AdvancedBlocking(
+        new NotificationsQueue(),
+        () => {},
+        () => true,
+        () => true,
+    );
+    advancedBlocking.setURLFilterState(makeErrorState());
+
+    await advancedBlocking.retrySystemWideProtection();
+
+    assert.equal(
+        calls.some((req) => (req as { FQN: string }).FQN === 'AdvancedBlockingService.RetryURLFilter'),
+        true,
+    );
 });
 
 test('a pushed DNS failure does not replace the snack of a failed enable', async (t) => {
@@ -845,9 +1204,11 @@ test('a pushed DNS failure does not replace the snack of a failed enable', async
     const advancedBlocking = new AdvancedBlocking(queue, () => {});
 
     await advancedBlocking.updateSystemWideProtection(true);
+    settleURLFilterState(t);
     const [failedId] = notificationIds(queue);
 
     advancedBlocking.applyPushedURLFilterState(makeDNSFailureState());
+    settleURLFilterState(t);
 
     assert.deepEqual(notificationIds(queue), [failedId]);
     assert.equal(advancedBlocking.isSystemWideProtectionUnavailable, true);
@@ -862,5 +1223,6 @@ test('clears the DNS failure once the filter runs again', async (t) => {
     assert.equal(advancedBlocking.isSystemWideProtectionUnavailable, true);
 
     advancedBlocking.applyPushedURLFilterState(makeRunningState());
+    settleURLFilterState(t);
     assert.equal(advancedBlocking.isSystemWideProtectionUnavailable, false);
 });

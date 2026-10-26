@@ -12,6 +12,8 @@ import { SettingsItemLink, SettingsItemSwitch } from '../../SettingsItem';
 
 import s from './SystemWideProtectionSwitch.module.pcss';
 
+import type { NotSupportedModalReason } from '../../NotSupportedModal';
+
 /**
  * Props for the system-wide protection settings switch.
  */
@@ -32,9 +34,10 @@ type Props = {
     orangeIcon?: boolean;
     isNew?: boolean;
     disabled?: boolean;
-    setShowNotSupportedModal(value: boolean): void;
+    setShowNotSupportedModal(reason: NotSupportedModalReason): void;
     non501User: boolean;
     macos25OrLower: boolean;
+    isMacos272: boolean;
 };
 
 /**
@@ -53,11 +56,13 @@ export function SystemWideProtectionSwitch(props: Props) {
         setShowNotSupportedModal,
         non501User,
         macos25OrLower,
+        isMacos272,
     } = props;
 
-    // "Why?" sits inside "Not supported on this Mac account. <btn>", so alone
-    // it announces a bare "Why?" with no idea what the question is about.
+    // "Why?" sits inside a warning sentence, so alone it announces a bare
+    // "Why?" with no idea what the question is about.
     const notSupportedId = useId();
+    const macosNotSupportedId = useId();
 
     const renderWhyBtn = (text: string) => (
         <Button
@@ -66,7 +71,23 @@ export function SystemWideProtectionSwitch(props: Props) {
             type="text"
             onClick={(e) => {
                 e?.stopPropagation();
-                setShowNotSupportedModal(true);
+                setShowNotSupportedModal('account');
+            }}
+        >
+            <Text className={theme.color.orange} type="t2">
+                {text}
+            </Text>
+        </Button>
+    );
+
+    const renderMacOSWhyBtn = (text: string) => (
+        <Button
+            ariaDescribedby={macosNotSupportedId}
+            className={s.SystemWideProtectionSwitch_button}
+            type="text"
+            onClick={(e) => {
+                e?.stopPropagation();
+                setShowNotSupportedModal('macosVersion');
             }}
         >
             <Text className={theme.color.orange} type="t2">
@@ -76,24 +97,32 @@ export function SystemWideProtectionSwitch(props: Props) {
     );
 
     const whyBtnParams = { btn: renderWhyBtn };
+    const macosWhyBtnParams = { btn: renderMacOSWhyBtn };
+
+    const warnings = (
+        <div>
+            {macos25OrLower && (
+                <Text className={theme.color.orange} type="t2">
+                    {translate('advanced.blocking.system.wide.wrong.os')}
+                </Text>
+            )}
+            {non501User && (
+                <Text className={theme.color.orange} id={notSupportedId} type="t2">
+                    {translate('advanced.blocking.system.wide.not.supported', whyBtnParams)}
+                </Text>
+            )}
+            {isMacos272 && (
+                <Text className={theme.color.orange} id={macosNotSupportedId} type="t2">
+                    {translate('advanced.blocking.system.wide.macos.27.2.warning', macosWhyBtnParams)}
+                </Text>
+            )}
+        </div>
+    );
 
     return muted
         ? (
             <SettingsItemLink
-                additionalText={(
-                    <div>
-                        {macos25OrLower && (
-                            <Text className={theme.color.orange} type="t2">
-                                {translate('advanced.blocking.system.wide.wrong.os')}
-                            </Text>
-                        )}
-                        {non501User && (
-                            <Text className={theme.color.orange} id={notSupportedId} type="t2">
-                                {translate('advanced.blocking.system.wide.not.supported', whyBtnParams)}
-                            </Text>
-                        )}
-                    </div>
-                )}
+                additionalText={warnings}
                 description={translate('advanced.blocking.system.wide.desc')}
                 icon="apps"
                 iconColor={orangeIcon ? 'orange' : undefined}
@@ -103,20 +132,7 @@ export function SystemWideProtectionSwitch(props: Props) {
             />
         ) : (
             <SettingsItemSwitch
-                additionalText={(
-                    <div>
-                        {macos25OrLower && (
-                            <Text className={theme.color.orange} type="t2">
-                                {translate('advanced.blocking.system.wide.wrong.os')}
-                            </Text>
-                        )}
-                        {non501User && (
-                            <Text className={theme.color.orange} id={notSupportedId} type="t2">
-                                {translate('advanced.blocking.system.wide.not.supported', whyBtnParams)}
-                            </Text>
-                        )}
-                    </div>
-                )}
+                additionalText={warnings}
                 description={translate('advanced.blocking.system.wide.desc')}
                 disabled={disabled}
                 enabling={enabling}

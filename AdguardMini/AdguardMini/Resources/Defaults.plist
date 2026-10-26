@@ -76,5 +76,7 @@
 	<false/>
 	<key>reportProblemLabelShown</key>
 	<false/>
+	<key>experimentalSystemWideProtectionEnabled</key>
+	<string>__KEY_ONLY</string>
 </dict>
 </plist>

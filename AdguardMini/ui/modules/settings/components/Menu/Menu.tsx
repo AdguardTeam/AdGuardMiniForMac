@@ -97,11 +97,11 @@ function MenuComponent() {
                     title={translate('menu.safari.protection')}
                 />
                 <MenuItem
-                    icon="advanced"
                     activeRoutes={[
-                        RouteName.system_wide_protection
+                        RouteName.system_wide_protection,
                     ]}
-                    isNew={urlFilterNew}
+                    icon="advanced"
+                    isNew={urlFilterNew && settings.settings.experimentalSystemWideProtectionEnabled}
                     route={RouteName.advanced_blocking}
                     title={translate('menu.advanced.blocking.title')}
                 />

@@ -33,7 +33,7 @@ import s from './Router.module.pcss';
  * Component for handling Routes. Depending on RouterStore display current page
  */
 function RouterComponent() {
-    const { router } = useSettingsStore();
+    const { router, settings } = useSettingsStore();
 
     let component = null;
     switch (router.currentPath) {
@@ -80,7 +80,9 @@ function RouterComponent() {
             component = <Theme />;
             break;
         case RouteName.system_wide_protection:
-            component = <SystemWideProtection />;
+            component = settings.settings.experimentalSystemWideProtectionEnabled
+                ? <SystemWideProtection />
+                : <AdvancedBlocking />;
             break;
         case RouteName.migration:
             break;

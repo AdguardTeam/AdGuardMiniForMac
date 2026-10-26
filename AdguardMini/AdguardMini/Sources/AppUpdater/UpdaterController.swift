@@ -25,36 +25,16 @@ protocol UpdaterController {
 private enum Constants {
     static let updaterFeedKey = "SUFeedURL"
     static let updaterFeedCheckDataTimeout = TimeInterval(2.0)
+}
 
-    enum UpdateChannel: String {
-        case nightly
-        case beta
-        case release
-
-        init(rawValue: String) {
-            switch rawValue {
-            case Self.nightly.rawValue:
-                self = .nightly
-            case Self.beta.rawValue:
-                self = .beta
-            case Self.release.rawValue:
-                self = .release
-            default:
-                self = .release
-            }
+private extension BuildChannel {
+    /// Sparkle channels allowed for this update channel; release is the default.
+    var allowedChannels: Set<String> {
+        switch self {
+        case .nightly: [BuildChannel.nightly.rawValue, BuildChannel.beta.rawValue]
+        case .beta:    [BuildChannel.beta.rawValue]
+        case .release: []
         }
-
-        var allowedChannels: Set<String> {
-            switch self {
-            case .nightly: [Self.nightlyChannelName, Self.betaChannelName]
-            case .beta:    [Self.betaChannelName]
-            case .release: []
-            }
-        }
-
-        // Release channel is default and already exists. More info: https://sparkle-project.org/documentation/publishing/#channels
-        private static let betaChannelName    = "beta"
-        private static let nightlyChannelName = "nightly"
     }
 }
 
@@ -312,7 +292,7 @@ extension UpdaterControllerImpl: SPUUpdaterDelegate {
     }
 
     func allowedChannels(for updater: SPUUpdater) -> Set<String> {
-        let channel = Constants.UpdateChannel(rawValue: self.userSettings.currentUpdateChannel)
+        let channel = BuildChannel(rawValue: self.userSettings.currentUpdateChannel) ?? .release
         let allowedChannels = channel.allowedChannels
         LogDebug("Allowed update channels: \(allowedChannels)")
         return allowedChannels

@@ -33,8 +33,10 @@ private func makeState(
 private final class FakeURLFilterService: URLFilterService, @unchecked Sendable {
     var state = makeState()
     var getStateError: Error?
+    var isFilterInstalled = false
 
     func start() async {}
+    func refreshInstalledState() async {}
     func loadConfiguration() async throws -> URLFilterConfiguration? { nil }
     func removeConfiguration() async throws {}
     func setEnabledByUser(_: Bool) async throws {}
@@ -83,7 +85,6 @@ private final class FakeICloudDomainBlockageChecker: ICloudDomainBlockageCheckin
 private func makeAssembler(
     service: FakeURLFilterService,
     protectionLevel: URLFilterProtectionLevel = .essential,
-    isNew: Bool = false,
     bloomMetadata: URLFilterBloomMetadata? = nil,
     checker: FakeICloudDomainBlockageChecker = FakeICloudDomainBlockageChecker(),
     userIntent: Bool = true
@@ -91,7 +92,6 @@ private func makeAssembler(
     URLFilterStateAssembler(
         urlFilterService: service,
         protectionLevelProvider: { protectionLevel },
-        isNewProvider: { isNew },
         bloomMetadataProvider: { bloomMetadata },
         userIntentProvider: { userIntent },
         iCloudDomainBlockageChecker: checker
@@ -376,6 +376,16 @@ final class URLFilterStateAssemblerTests: XCTestCase {
         XCTAssertFalse(state.isInstalled)
     }
 
+    func testInstalledWhenOnlyServerURLIsSet() async {
+        let service = FakeURLFilterService()
+        service.state = makeState(issuerURL: nil)
+        let assembler = makeAssembler(service: service)
+
+        let state = await assembler.makeState()
+
+        XCTAssertTrue(state.isInstalled)
+    }
+
     // MARK: Bloom metadata
 
     func testBloomMetadataPopulatesInfo() async {
@@ -403,5 +413,38 @@ final class URLFilterStateAssemblerTests: XCTestCase {
 
         XCTAssertNil(state.info.rulesCount)
         XCTAssertNil(state.info.lastUpdate)
+    }
+
+    // MARK: Installed state resolver
+
+    func testInstalledStateResolverReportsTheVisibleState() {
+        XCTAssertFalse(
+            URLFilterInstalledStateResolver.isInstalled(
+                cachedState: nil,
+                settledState: nil,
+                isPublishingSuspended: false
+            )
+        )
+        XCTAssertTrue(
+            URLFilterInstalledStateResolver.isInstalled(
+                cachedState: makeState(),
+                settledState: nil,
+                isPublishingSuspended: false
+            )
+        )
+        XCTAssertFalse(
+            URLFilterInstalledStateResolver.isInstalled(
+                cachedState: makeState(),
+                settledState: makeState(serverURL: nil),
+                isPublishingSuspended: true
+            )
+        )
+        XCTAssertTrue(
+            URLFilterInstalledStateResolver.isInstalled(
+                cachedState: makeState(serverURL: nil),
+                settledState: makeState(),
+                isPublishingSuspended: true
+            )
+        )
     }
 }

@@ -262,7 +262,10 @@ test('OnURLFilterStateChanged applies the pushed state and leaves the failure no
     __resetSettingsTestStore();
     const applied: URLFilterState[] = [];
     const { notify, calls: notifyCalls } = makeNotifySpy();
-    store.advancedBlocking = { applyPushedURLFilterState: (state: URLFilterState) => { applied.push(state); } };
+    store.advancedBlocking = {
+        urlFilterState: new URLFilterState(),
+        applyPushedURLFilterState: (state: URLFilterState) => { applied.push(state); },
+    };
     store.notification = { notify };
 
     const service = new SettingsCallbackServiceInternal();
@@ -288,4 +291,19 @@ test('OnURLFilterStateChanged applies the pushed state and leaves the failure no
 
     assert.equal(applied.length, 2);
     assert.equal(notifyCalls.length, 0);
+});
+
+test('OnURLFilterStateChanged refetches settings when the install state changes', async () => {
+    __resetSettingsTestStore();
+    let getSettingsCalls = 0;
+    store.advancedBlocking = {
+        urlFilterState: new URLFilterState({ isInstalled: false }),
+        applyPushedURLFilterState: () => {},
+    };
+    store.settings = { getSettings: () => { getSettingsCalls++; } };
+
+    const service = new SettingsCallbackServiceInternal();
+    await service.OnURLFilterStateChanged(new URLFilterState({ isInstalled: true }));
+
+    assert.equal(getSettingsCalls, 1);
 });

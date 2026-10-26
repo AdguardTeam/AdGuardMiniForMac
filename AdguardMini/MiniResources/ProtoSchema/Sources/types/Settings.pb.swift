@@ -294,6 +294,16 @@ public struct Settings: @unchecked Sendable {
     set {_uniqueStorage()._protectionEnabled = newValue}
   }
 
+  public var experimentalSystemWideProtectionEnabled: Bool {
+    get {return _storage._experimentalSystemWideProtectionEnabled}
+    set {_uniqueStorage()._experimentalSystemWideProtectionEnabled = newValue}
+  }
+
+  public var isMacos272: Bool {
+    get {return _storage._isMacos272}
+    set {_uniqueStorage()._isMacos272 = newValue}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -368,6 +378,8 @@ public struct GlobalSettings: Sendable {
 
   public var macos25OrLower: Bool = false
 
+  public var experimentalSystemWideProtectionEnabled: Bool = false
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -417,7 +429,7 @@ extension Theme: SwiftProtobuf._ProtoNameProviding {
 
 extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "Settings"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{3}real_time_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0\u{3}show_safari_toolbar_badge\0\u{3}last_update_more_seven_days\0\u{3}mail_protection_enabled\0\u{3}login_item_enabled\0\u{3}non_501_user\0\u{3}macos_25_or_lower\0\u{3}report_problem_label_shown\0\u{3}protection_enabled\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}launch_on_startup\0\u{3}show_in_menu_bar\0\u{3}hardware_acceleration\0\u{3}auto_filters_update\0\u{3}real_time_filters_update\0\u{1}quitReaction\0\u{3}debug_logging\0\u{3}release_variant\0\u{3}consent_filters_ids\0\u{1}language\0\u{3}allow_telemetry\0\u{1}theme\0\u{3}show_safari_toolbar_badge\0\u{3}last_update_more_seven_days\0\u{3}mail_protection_enabled\0\u{3}login_item_enabled\0\u{3}non_501_user\0\u{3}macos_25_or_lower\0\u{3}report_problem_label_shown\0\u{3}protection_enabled\0\u{3}experimental_system_wide_protection_enabled\0\u{3}is_macos_27_2\0")
 
   fileprivate class _StorageClass {
     var _launchOnStartup: Bool = false
@@ -440,6 +452,8 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     var _macos25OrLower: Bool = false
     var _reportProblemLabelShown: Bool = false
     var _protectionEnabled: Bool = false
+    var _experimentalSystemWideProtectionEnabled: Bool = false
+    var _isMacos272: Bool = false
 
       // This property is used as the initial default value for new instances of the type.
       // The type itself is protecting the reference to its storage via CoW semantics.
@@ -470,6 +484,8 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       _macos25OrLower = source._macos25OrLower
       _reportProblemLabelShown = source._reportProblemLabelShown
       _protectionEnabled = source._protectionEnabled
+      _experimentalSystemWideProtectionEnabled = source._experimentalSystemWideProtectionEnabled
+      _isMacos272 = source._isMacos272
     }
   }
 
@@ -508,6 +524,8 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         case 18: try { try decoder.decodeSingularBoolField(value: &_storage._macos25OrLower) }()
         case 19: try { try decoder.decodeSingularBoolField(value: &_storage._reportProblemLabelShown) }()
         case 20: try { try decoder.decodeSingularBoolField(value: &_storage._protectionEnabled) }()
+        case 21: try { try decoder.decodeSingularBoolField(value: &_storage._experimentalSystemWideProtectionEnabled) }()
+        case 22: try { try decoder.decodeSingularBoolField(value: &_storage._isMacos272) }()
         default: break
         }
       }
@@ -576,6 +594,12 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       if _storage._protectionEnabled != false {
         try visitor.visitSingularBoolField(value: _storage._protectionEnabled, fieldNumber: 20)
       }
+      if _storage._experimentalSystemWideProtectionEnabled != false {
+        try visitor.visitSingularBoolField(value: _storage._experimentalSystemWideProtectionEnabled, fieldNumber: 21)
+      }
+      if _storage._isMacos272 != false {
+        try visitor.visitSingularBoolField(value: _storage._isMacos272, fieldNumber: 22)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -605,6 +629,8 @@ extension Settings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
         if _storage._macos25OrLower != rhs_storage._macos25OrLower {return false}
         if _storage._reportProblemLabelShown != rhs_storage._reportProblemLabelShown {return false}
         if _storage._protectionEnabled != rhs_storage._protectionEnabled {return false}
+        if _storage._experimentalSystemWideProtectionEnabled != rhs_storage._experimentalSystemWideProtectionEnabled {return false}
+        if _storage._isMacos272 != rhs_storage._isMacos272 {return false}
         return true
       }
       if !storagesAreEqual {return false}
@@ -711,7 +737,7 @@ extension ImportStatus: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
 
 extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "GlobalSettings"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}enabled\0\u{2}\u{2}newVersionAvailable\0\u{1}releaseVariant\0\u{1}language\0\u{3}debug_logging\0\u{4}\u{2}allow_telemetry\0\u{1}theme\0\u{3}last_filters_update_timestamp_ms\0\u{3}hidden_stories\0\u{3}login_item_enabled\0\u{3}last_update_more_seven_days\0\u{3}macos_25_or_lower\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}enabled\0\u{2}\u{2}newVersionAvailable\0\u{1}releaseVariant\0\u{1}language\0\u{3}debug_logging\0\u{4}\u{2}allow_telemetry\0\u{1}theme\0\u{3}last_filters_update_timestamp_ms\0\u{3}hidden_stories\0\u{3}login_item_enabled\0\u{3}last_update_more_seven_days\0\u{3}macos_25_or_lower\0\u{3}experimental_system_wide_protection_enabled\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -731,6 +757,7 @@ extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       case 12: try { try decoder.decodeSingularBoolField(value: &self.loginItemEnabled) }()
       case 13: try { try decoder.decodeSingularBoolField(value: &self.lastUpdateMoreSevenDays) }()
       case 14: try { try decoder.decodeSingularBoolField(value: &self.macos25OrLower) }()
+      case 15: try { try decoder.decodeSingularBoolField(value: &self.experimentalSystemWideProtectionEnabled) }()
       default: break
       }
     }
@@ -773,6 +800,9 @@ extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if self.macos25OrLower != false {
       try visitor.visitSingularBoolField(value: self.macos25OrLower, fieldNumber: 14)
     }
+    if self.experimentalSystemWideProtectionEnabled != false {
+      try visitor.visitSingularBoolField(value: self.experimentalSystemWideProtectionEnabled, fieldNumber: 15)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -789,6 +819,7 @@ extension GlobalSettings: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if lhs.loginItemEnabled != rhs.loginItemEnabled {return false}
     if lhs.lastUpdateMoreSevenDays != rhs.lastUpdateMoreSevenDays {return false}
     if lhs.macos25OrLower != rhs.macos25OrLower {return false}
+    if lhs.experimentalSystemWideProtectionEnabled != rhs.experimentalSystemWideProtectionEnabled {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

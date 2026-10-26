@@ -82,6 +82,24 @@
         }
     }
 
+    &_experimentalLink {
+        display: inline-block;
+        width: max-content;
+        padding-top: var(--m-xxxs);
+        color: var(--text-links-link-default);
+        text-decoration: none;
+        cursor: pointer;
+
+        /* Inline text action: the floating offset keeps the ring clear of the text. */
+        --focus-ring-offset: var(--focus-ring-offset-floating);
+
+        @mixin focus-ring;
+    }
+
+    &_experimentalWarning {
+        padding-top: var(--m-xxxs);
+    }
+
     &_underline {
         text-decoration: underline;
 

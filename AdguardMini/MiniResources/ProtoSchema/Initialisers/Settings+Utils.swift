@@ -26,6 +26,12 @@ extension Settings {
         showSafariToolbarBadge: Bool = false,
         lastUpdateMoreSevenDays: Bool = false,
         loginItemEnabled: Bool = false,
+        non501User: Bool = false,
+        macos25OrLower: Bool = false,
+        reportProblemLabelShown: Bool = false,
+        protectionEnabled: Bool = false,
+        experimentalSystemWideProtectionEnabled: Bool = false,
+        isMacos272: Bool = false,
     ) {
         self.init()
         self.launchOnStartup = launchOnStartup
@@ -42,5 +48,11 @@ extension Settings {
         self.showSafariToolbarBadge = showSafariToolbarBadge
         self.lastUpdateMoreSevenDays = lastUpdateMoreSevenDays
         self.loginItemEnabled = loginItemEnabled
+        self.non501User = non501User
+        self.macos25OrLower = macos25OrLower
+        self.reportProblemLabelShown = reportProblemLabelShown
+        self.protectionEnabled = protectionEnabled
+        self.experimentalSystemWideProtectionEnabled = experimentalSystemWideProtectionEnabled
+        self.isMacos272 = isMacos272
     }
 }

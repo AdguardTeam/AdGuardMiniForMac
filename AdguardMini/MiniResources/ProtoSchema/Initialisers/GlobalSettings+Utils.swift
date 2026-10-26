@@ -22,7 +22,9 @@ extension GlobalSettings {
         lastFiltersUpdateTimestampMs: Int64 = 0,
         hiddenStories: [String] = [],
         loginItemEnabled: Bool = false,
-        lastUpdateMoreSevenDays: Bool = false
+        lastUpdateMoreSevenDays: Bool = false,
+        macos25OrLower: Bool = false,
+        experimentalSystemWideProtectionEnabled: Bool = false
     ) {
         self.init()
         self.enabled = enabled
@@ -36,5 +38,7 @@ extension GlobalSettings {
         self.hiddenStories = hiddenStories
         self.loginItemEnabled = loginItemEnabled
         self.lastUpdateMoreSevenDays = lastUpdateMoreSevenDays
+        self.macos25OrLower = macos25OrLower
+        self.experimentalSystemWideProtectionEnabled = experimentalSystemWideProtectionEnabled
     }
 }

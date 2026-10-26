@@ -14,6 +14,7 @@ export * from './SelectFileRequest';
 export * from './SendFeedbackMessageRequest';
 export * from './UpdateAutoFiltersUpdateRequest';
 export * from './UpdateDebugLoggingRequest';
+export * from './UpdateExperimentalSystemWideProtectionEnabledRequest';
 export * from './UpdateHardwareAccelerationRequest';
 export * from './UpdateHealthCheckDismissedCardsRequest';
 export * from './UpdateLaunchOnStartupRequest';

@@ -28,7 +28,13 @@ extension SettingsDTO {
         language: String,
         allowTelemetry: Bool,
         lastUpdateMoreSevenDays: Bool,
-        loginItemEnabled: Bool
+        loginItemEnabled: Bool,
+        non501User: Bool,
+        macos25OrLower: Bool,
+        reportProblemLabelShown: Bool,
+        protectionEnabled: Bool,
+        experimentalSystemWideProtectionEnabled: Bool,
+        isMacos272: Bool
     ) -> Settings {
         Settings(
             launchOnStartup:         self.launchOnStartup,
@@ -44,7 +50,13 @@ extension SettingsDTO {
             allowTelemetry:          allowTelemetry,
             showSafariToolbarBadge:  self.showSafariToolbarBadge,
             lastUpdateMoreSevenDays: lastUpdateMoreSevenDays,
-            loginItemEnabled:        loginItemEnabled
+            loginItemEnabled:        loginItemEnabled,
+            non501User:              non501User,
+            macos25OrLower:          macos25OrLower,
+            reportProblemLabelShown: reportProblemLabelShown,
+            protectionEnabled:       protectionEnabled,
+            experimentalSystemWideProtectionEnabled: experimentalSystemWideProtectionEnabled,
+            isMacos272:              isMacos272
         )
     }
 }

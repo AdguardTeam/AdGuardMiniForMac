@@ -47,6 +47,16 @@ import type { NotificationsQueue } from 'Common/stores/NotificationsQueue';
 export const URL_FILTER_INFO_FALLBACK_TIMEOUT_MS = 10_000;
 
 /**
+ * How long a platform URL-filter state must stay unchanged before the UI
+ * shows it.
+ *
+ * The system URL filter reports starting/failed cycles while a bring-up is
+ * failing; showing every one of them makes the switch and the health check
+ * flicker. A state that survives this window is treated as settled.
+ */
+export const URL_FILTER_STATE_SETTLE_MS = 3000;
+
+/**
  * Checks whether a pushed stats snapshot carries any filtering rules data.
  *
  * The platform omits both fields when the prefilter metadata is absent, for
@@ -109,6 +119,19 @@ export class AdvancedBlocking {
     private readonly openSystemWideProtection: () => void;
 
     /**
+     * Whether a page that carries the System-wide Protection switch is
+     * active: failure snacks stay hidden on the other pages.
+     */
+    private readonly isSystemWideProtectionPageActive: () => boolean;
+
+    /**
+     * Whether the user has a paid license or an active trial. A free user
+     * cannot act on a System-wide Protection failure, so the failure UI is
+     * hidden.
+     */
+    private readonly isLicenseOrTrialActive: () => boolean;
+
+    /**
      * Whether the stats of a pushed state are being held: the next push — or
      * the timeout — shows them.
      */
@@ -123,6 +146,32 @@ export class AdvancedBlocking {
      * Timer that shows the held stats when no further push arrives.
      */
     private statsHoldTimer: ReturnType<typeof setTimeout> | null = null;
+
+    /**
+     * Latest platform URL filter state waiting to be shown.
+     */
+    private pendingURLFilterState: URLFilterState | null = null;
+
+    /**
+     * Timer that shows the pending state once it has stayed stable.
+     */
+    private urlFilterStateSettleTimer: ReturnType<typeof setTimeout> | null = null;
+
+    /**
+     * Whether the pending state may report an automatic failure when shown.
+     */
+    private pendingAutomaticFailureReport = false;
+
+    /**
+     * Whether the pending state belongs to an explicit user attempt.
+     */
+    private pendingExplicitAttempt = false;
+
+    /**
+     * Whether the pending explicit attempt was an enable: a declined install
+     * prompt is only possible for an enable.
+     */
+    private pendingExplicitEnable = false;
 
     /**
      * Advanced rules state
@@ -145,6 +194,14 @@ export class AdvancedBlocking {
     public urlFilterState = new URLFilterState();
 
     /**
+     * Whether a URL filter state has been received from the platform.
+     *
+     * The default state is not an answer: warnings and the promo must wait for
+     * the platform before deciding what to show.
+     */
+    public isURLFilterStateLoaded = false;
+
+    /**
      * URL filter info for system-wide protection settings.
      * null for loading
      */
@@ -162,12 +219,16 @@ export class AdvancedBlocking {
     public scrollToTroubleshootingRequested = false;
 
     /**
-     * Whether System-wide Protection is unavailable because a DNS filter
-     * blocks the iCloud hosts it needs: the Safari Protection page shows its
-     * dedicated card for this failure instead of a snack.
+     * Whether System-wide Protection is unavailable: the user has a paid
+     * license or trial, selected the filter, but the platform reports a failed
+     * state. The Safari Protection health check renders its orange card from
+     * this state.
      */
     public get isSystemWideProtectionUnavailable(): boolean {
-        return this.urlFilterState.status === URLFilterStatus.dns_error;
+        return this.isLicenseOrTrialActive()
+            && this.urlFilterState.userIntentEnabled
+            && (this.urlFilterState.status === URLFilterStatus.error
+                || this.urlFilterState.status === URLFilterStatus.dns_error);
     }
 
     /**
@@ -194,10 +255,21 @@ export class AdvancedBlocking {
      *
      * @param notification Notifications queue used to surface error toasts.
      * @param openSystemWideProtection Opens the System-wide Protection page.
+     * @param isSystemWideProtectionPageActive Whether a page that carries the
+     * switch is active.
+     * @param isLicenseOrTrialActive Whether the user has a paid license or an
+     * active trial.
      */
-    public constructor(notification: NotificationsQueue, openSystemWideProtection: () => void) {
+    public constructor(
+        notification: NotificationsQueue,
+        openSystemWideProtection: () => void,
+        isSystemWideProtectionPageActive: () => boolean = () => true,
+        isLicenseOrTrialActive: () => boolean = () => true,
+    ) {
         this.notification = notification;
         this.openSystemWideProtection = openSystemWideProtection;
+        this.isSystemWideProtectionPageActive = isSystemWideProtectionPageActive;
+        this.isLicenseOrTrialActive = isLicenseOrTrialActive;
         makeAutoObservable(this, {
             getAdvancedRules: flow,
             getAdguardExtra: flow,
@@ -223,12 +295,15 @@ export class AdvancedBlocking {
      * Reports an automatic bring-up failure that reached the UI as a state
      * change: a push or a pull of a failed state.
      *
-     * The snack is shown wherever the user is, but automatic reports are
+     * The snack is scoped to the pages that carry the switch: a failure that
+     * arrives while the user is elsewhere is not shown. Automatic reports are
      * collapsed per page visit: the platform retries the bring-up while the
-     * System-wide Protection page is open and reports one failure several
-     * times, and the design counts automatic attempts per visit.
+     * page is open and reports one failure several times.
      */
     private reportAutomaticURLFilterFailure() {
+        if (!this.isSystemWideProtectionPageActive()) {
+            return;
+        }
         if (this.unavailableSnackShownThisVisit) {
             return;
         }
@@ -238,13 +313,22 @@ export class AdvancedBlocking {
     /**
      * Shows the snack for a System-wide Protection bring-up failure.
      *
-     * The failure is reported wherever the user is — the switch also lives on
-     * the Advanced blocking page, so the failure can arrive while the settings
-     * window is on any page. Reports of one kind share a single snack while it
-     * is on screen; an automatic report is also remembered for the page visit,
-     * so it is not shown again after the snack closed.
+     * The snack is shown only on the pages that carry the switch (System-wide
+     * Protection and Advanced blocking); a failure that arrives while the user
+     * is elsewhere is not reported. Reports of one kind share a single snack
+     * while it is on screen; an automatic report is also remembered for the
+     * page visit, so it is not shown again after the snack closed. The caller
+     * decides whether to report: an explicit attempt reports its own failure,
+     * while an automatic one is also collapsed per visit. A free user has no
+     * actionable failure, so no snack is shown without a paid license or trial.
      */
     private showSystemWideProtectionUnavailableSnack() {
+        if (!this.isLicenseOrTrialActive()) {
+            return;
+        }
+        if (!this.isSystemWideProtectionPageActive()) {
+            return;
+        }
         if (this.isURLFilterErrorSnackShown(URLFilterErrorKind.enable)) {
             return;
         }
@@ -368,6 +452,144 @@ export class AdvancedBlocking {
     }
 
     /**
+     * Whether two states differ in the fields the switch and warnings show.
+     *
+     * Stats-only pushes must not restart the settle window: the platform can
+     * repeat them while the visible state itself is unchanged.
+     *
+     * @param left First state.
+     * @param right Second state.
+     */
+    private isSameDisplayedURLFilterState(left: URLFilterState, right: URLFilterState): boolean {
+        return left.status === right.status
+            && left.enabled === right.enabled
+            && left.userIntentEnabled === right.userIntentEnabled
+            && left.isInstalled === right.isInstalled
+            && left.protectionLevel === right.protectionLevel;
+    }
+
+    /**
+     * Drops the pending platform state and its settle timer, if any.
+     */
+    private cancelPendingURLFilterState() {
+        this.pendingURLFilterState = null;
+        this.pendingAutomaticFailureReport = false;
+        this.pendingExplicitAttempt = false;
+        this.pendingExplicitEnable = false;
+        if (this.urlFilterStateSettleTimer !== null) {
+            clearTimeout(this.urlFilterStateSettleTimer);
+            this.urlFilterStateSettleTimer = null;
+        }
+    }
+
+    /**
+     * Shows the pending platform state and reports its failure, if any.
+     */
+    private commitPendingURLFilterState() {
+        if (this.urlFilterStateSettleTimer !== null) {
+            clearTimeout(this.urlFilterStateSettleTimer);
+            this.urlFilterStateSettleTimer = null;
+        }
+        const data = this.pendingURLFilterState;
+        if (data === null) {
+            return;
+        }
+        this.pendingURLFilterState = null;
+        const reportAutomaticFailure = this.pendingAutomaticFailureReport;
+        const isExplicitAttempt = this.pendingExplicitAttempt;
+        const isExplicitEnable = this.pendingExplicitEnable;
+        this.pendingAutomaticFailureReport = false;
+        this.pendingExplicitAttempt = false;
+        this.pendingExplicitEnable = false;
+
+        this.setURLFilterState(data);
+
+        if (isExplicitAttempt) {
+            // A declined system prompt clears the intent: no failure to report.
+            const isDeclined = isExplicitEnable && !data.userIntentEnabled;
+            if (!isDeclined) {
+                // The user pressed the switch: the failure is reported wherever it was pressed.
+                this.showSystemWideProtectionUnavailableSnack();
+            }
+        } else if (
+            (data.status === URLFilterStatus.error || data.status === URLFilterStatus.dns_error)
+            && reportAutomaticFailure
+        ) {
+            this.reportAutomaticURLFilterFailure();
+        } else if (data.status === URLFilterStatus.running) {
+            // The filter works again: a later failure is a new error.
+            this.resetURLFilterError();
+        }
+    }
+
+    /**
+     * Applies a platform state after it has stayed unchanged for the settle
+     * window, so transient starting/failed cycles do not reach the UI.
+     *
+     * @param data Platform state.
+     * @param reportFailure Whether a failure in the state may show the snack.
+     * @param immediate Whether to show the state without waiting for the
+     * settle window, for callers that need the effective state right away.
+     */
+    private applyPlatformURLFilterState(
+        data: URLFilterState,
+        reportFailure: boolean,
+        immediate = false,
+    ) {
+        if (immediate) {
+            this.cancelPendingURLFilterState();
+        }
+        const isFirstState = !this.isURLFilterStateLoaded;
+        const changed = this.pendingURLFilterState === null
+            || !this.isSameDisplayedURLFilterState(this.pendingURLFilterState, data);
+
+        this.pendingURLFilterState = data;
+        this.pendingAutomaticFailureReport = reportFailure;
+
+        if (isFirstState || immediate) {
+            this.commitPendingURLFilterState();
+            return;
+        }
+
+        if (!changed) {
+            // The state did not change: keep the running settle window.
+            return;
+        }
+
+        if (this.urlFilterStateSettleTimer !== null) {
+            clearTimeout(this.urlFilterStateSettleTimer);
+        }
+        this.urlFilterStateSettleTimer = setTimeout(() => {
+            this.urlFilterStateSettleTimer = null;
+            this.commitPendingURLFilterState();
+        }, URL_FILTER_STATE_SETTLE_MS);
+    }
+
+    /**
+     * Shows a user-initiated state immediately and drops any pending platform
+     * state from an older attempt.
+     *
+     * @param data State to show.
+     */
+    private applyOptimisticURLFilterState(data: URLFilterState) {
+        this.cancelPendingURLFilterState();
+        this.setURLFilterState(data);
+    }
+
+    /**
+     * Closes the "unavailable" snack when the user leaves the pages that carry
+     * the System-wide Protection switch.
+     */
+    public closeSystemWideProtectionUnavailableSnack() {
+        if (this.reportedURLFilterErrorKind !== URLFilterErrorKind.enable) {
+            return;
+        }
+        this.closeURLFilterErrorNotification();
+        this.reportedURLFilterErrorKind = null;
+        this.unavailableSnackShownThisVisit = false;
+    }
+
+    /**
      * Starts a System-wide Protection page visit: automatic failure reports
      * are collapsed to one per visit. Losing and returning focus does not
      * start a new visit.
@@ -406,6 +628,7 @@ export class AdvancedBlocking {
      */
     public setURLFilterState(data: URLFilterState) {
         this.urlFilterState = data;
+        this.isURLFilterStateLoaded = true;
     }
 
     /**
@@ -430,13 +653,7 @@ export class AdvancedBlocking {
      * @param data URL filter state from the platform.
      */
     public applyPushedURLFilterState(data: URLFilterState) {
-        this.setURLFilterState(data);
-        if (data.status === URLFilterStatus.error || data.status === URLFilterStatus.dns_error) {
-            this.reportAutomaticURLFilterFailure();
-        } else if (data.status === URLFilterStatus.running) {
-            // The filter works again: a later failure is a new error.
-            this.resetURLFilterError();
-        }
+        this.applyPlatformURLFilterState(data, true);
 
         if (!this.isStatsHeld) {
             // First pushed state: hold its stats until the next push.
@@ -518,19 +735,13 @@ export class AdvancedBlocking {
      *
      * @param reportFailure Whether an error state shows the unavailable snack;
      * a maintenance call reports its own failure instead.
+     * @param immediate Whether to show the state without waiting for the
+     * settle window, for callers that need the effective state right away.
      */
-    public async getURLFilterState(reportFailure = true) {
+    public async getURLFilterState(reportFailure = true, immediate = false) {
         const resp = await window.API.Execute(new GetURLFilterStateRequest());
-        this.setURLFilterState(resp);
+        this.applyPlatformURLFilterState(resp, reportFailure, immediate);
         this.showStats(resp.info);
-        if (resp.status === URLFilterStatus.error || resp.status === URLFilterStatus.dns_error) {
-            if (reportFailure) {
-                this.reportAutomaticURLFilterFailure();
-            }
-        } else if (resp.status === URLFilterStatus.running) {
-            // The filter works again: a later failure is a new error.
-            this.resetURLFilterError();
-        }
     }
 
     /**
@@ -545,23 +756,34 @@ export class AdvancedBlocking {
      * Update SystemWideProtection switch setting
      */
     public async updateSystemWideProtection(value: boolean) {
-        const newValue = this.urlFilterState.clone();
+        const prevValue = this.urlFilterState.clone();
+        const newValue = prevValue.clone();
         newValue.userIntentEnabled = value;
-        this.setURLFilterState(newValue);
-        const resp = await window.API.Execute(new SetURLFilterEnabledRequest({ value }));
-        if (resp.hasError) {
-            // The platform persists the intent before attempting the start,
-            // so the pull — not the response — tells the effective state.
-            await this.getURLFilterState(false);
-            // A declined system install prompt clears the intent: no failure to report.
-            const isDeclined = value && !this.urlFilterState.userIntentEnabled;
-            if (!isDeclined) {
-                // The user pressed the switch: the failure is reported wherever it was pressed.
-                this.showSystemWideProtectionUnavailableSnack();
+        if (value) {
+            // Show the bring-up immediately: the system reports starting/failed cycles.
+            newValue.status = URLFilterStatus.loading;
+        }
+        this.applyOptimisticURLFilterState(newValue);
+        this.pendingExplicitAttempt = true;
+        this.pendingExplicitEnable = value;
+        try {
+            const resp = await window.API.Execute(new SetURLFilterEnabledRequest({ value }));
+            if (resp.hasError) {
+                // The platform persists the intent before attempting the start,
+                // so the pull — not the response — tells the effective state.
+                await this.getURLFilterState(false);
+            } else {
+                // The toggle landed: the error state of the previous attempt is over.
+                this.pendingExplicitAttempt = false;
+                this.pendingExplicitEnable = false;
+                this.resetURLFilterError();
             }
-        } else {
-            // The toggle landed: the error state of the previous attempt is over.
-            this.resetURLFilterError();
+        } catch (err) {
+            // A transport failure hides the effective state: restore it and report.
+            // eslint-disable-next-line no-console
+            console.error('[system-wide protection] toggle failed:', err);
+            this.applyOptimisticURLFilterState(prevValue);
+            this.showSystemWideProtectionUnavailableSnack();
         }
     }
 
@@ -571,10 +793,11 @@ export class AdvancedBlocking {
      * focus while it is open.
      *
      * The platform re-checks the user's intent, the main switch, and the
-     * license, and never creates a configuration on its own.
+     * license, and never creates a configuration on its own. A free user has
+     * no System-wide Protection to retry, so no request is sent.
      */
     public async retrySystemWideProtection() {
-        if (!this.urlFilterState.userIntentEnabled) {
+        if (!this.isLicenseOrTrialActive() || !this.urlFilterState.userIntentEnabled) {
             return;
         }
         await window.API.Execute(new RetryURLFilterRequest());
@@ -593,11 +816,11 @@ export class AdvancedBlocking {
         // The loader covers the window until the pushed stats are resolved.
         this.setURLFilterInfo(null);
         newValue.protectionLevel = protectionLevel;
-        this.setURLFilterState(newValue);
+        this.applyOptimisticURLFilterState(newValue);
         const resp = await window.API.Execute(new RequestUpdateURLFilterProtectionLevelRequest({ protectionLevel }));
         if (resp.hasError) {
             this.notifyURLFilterError(URLFilterErrorKind.enable);
-            this.setURLFilterState(prevValue);
+            this.applyOptimisticURLFilterState(prevValue);
             this.showStats(prevValue.info);
             await this.getURLFilterState();
         } else {
@@ -632,6 +855,24 @@ export class AdvancedBlocking {
         } else {
             return true;
         }
+    }
+
+    /**
+     * Removes the URL filter configuration if one is installed.
+     *
+     * Hiding the experimental feature while its filter keeps running would
+     * leave the user with filtering they can no longer control. The state is
+     * refreshed first: the startup pull may not have landed yet, and a stale
+     * "not installed" would skip the removal.
+     *
+     * @returns Whether no configuration remains.
+     */
+    public async removeURLFilterIfInstalled(): Promise<boolean> {
+        await this.getURLFilterState(false, true);
+        if (!this.urlFilterState.isInstalled) {
+            return true;
+        }
+        return (await this.removeURLFilter()) === true;
     }
 
     /**

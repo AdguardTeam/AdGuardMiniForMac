@@ -18,4 +18,9 @@ struct URLFilterState {
     let serverURL: URL?
     let issuerURL: URL?
     let lastDisconnectError: URLFilterError?
+
+    /// Whether a System-wide Protection configuration is installed.
+    var isInstalled: Bool {
+        self.serverURL != nil
+    }
 }

@@ -22,12 +22,19 @@ export function PromoComponent() {
     const descId = useId();
 
     const { advancedBlocking, router, settings } = useSettingsStore();
-    const { urlFilterState } = advancedBlocking;
+    const { urlFilterState, isURLFilterStateLoaded } = advancedBlocking;
     const { userIntentEnabled } = urlFilterState;
 
     const isPromoDismissed = settings.dismissedPromoCards.has(SYSTEM_WIDE_ID);
+    const { experimentalSystemWideProtectionEnabled } = settings.settings;
 
-    if (userIntentEnabled || isPromoDismissed) {
+    if (
+        !experimentalSystemWideProtectionEnabled
+        || !isURLFilterStateLoaded
+        || !settings.promoDismissedLoaded
+        || userIntentEnabled
+        || isPromoDismissed
+    ) {
         return null;
     }
 

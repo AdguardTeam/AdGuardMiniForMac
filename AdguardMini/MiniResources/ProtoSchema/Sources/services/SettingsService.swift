@@ -119,6 +119,10 @@ public protocol SettingsServiceProtocol
 	func updatePromoDismissedCards (
 						_ message: StringValueArray,
 						_ promise: sending @escaping (EmptyValue) -> Void) -> Void
+	/// Update experimental System-wide Protection flag
+	func updateExperimentalSystemWideProtectionEnabled (
+						_ message: BoolValue,
+						_ promise: sending @escaping (EmptyValue) -> Void) -> Void
 }
 
 // MARK: Protobuf Bridge definition
@@ -521,6 +525,21 @@ open class SettingsService: WebViewBridge
 				}
 			} catch {
 				BridgeLog.error("SettingsService.UpdatePromoDismissedCards: failed to deserialize request: \(error)")
+				promise(Data())
+			}
+		case "UpdateExperimentalSystemWideProtectionEnabled":
+			do {
+				let input = try BoolValue(serializedBytes: bytes)
+				cast.updateExperimentalSystemWideProtectionEnabled(input) { result in
+					do {
+						promise(try result.serializedData())
+					} catch {
+						BridgeLog.error("SettingsService.UpdateExperimentalSystemWideProtectionEnabled: failed to serialize reply: \(error)")
+						promise(Data())
+					}
+				}
+			} catch {
+				BridgeLog.error("SettingsService.UpdateExperimentalSystemWideProtectionEnabled: failed to deserialize request: \(error)")
 				promise(Data())
 			}
 		default:

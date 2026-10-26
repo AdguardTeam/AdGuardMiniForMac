@@ -44,11 +44,12 @@ final class TraySettingsServiceImpl: TraySettingsService.ServiceType, @unchecked
         // And `setProtectionStatus` mutate shared state; keep access on the
         // Main actor like the sibling WebView services.
         Task { @MainActor in
+            await self.userSettingsService.refreshExperimentalSystemWideProtectionState()
             let timeSinceLastFiltersUpdate = max(
                 0,
                 Date.now.timeIntervalSince(self.userSettingsService.lastFiltersUpdateTime)
             )
-            var traySettings = GlobalSettings(
+            let traySettings = GlobalSettings(
                 enabled: self.protectionService.isProtectionEnabled,
                 newVersionAvailable: self.appUpdater.isNewVersionAvailable,
                 releaseVariant: ProductInfo.releaseVariant.toProto(),
@@ -59,11 +60,13 @@ final class TraySettingsServiceImpl: TraySettingsService.ServiceType, @unchecked
                 lastFiltersUpdateTimestampMs: Int64(
                     max(0, self.userSettingsService.lastFiltersUpdateTime.timeIntervalSince1970 * 1000)
                 ),
+                hiddenStories: self.userSettingsService.hiddenStories,
                 loginItemEnabled: !self.healthCheckAttentionProvider.hasLoginItemDisabled(),
-                lastUpdateMoreSevenDays: timeSinceLastFiltersUpdate > Constants.noUpdatesThreshold
+                lastUpdateMoreSevenDays: timeSinceLastFiltersUpdate > Constants.noUpdatesThreshold,
+                macos25OrLower: self.systemInfoManager.isMacOS25OrLower,
+                experimentalSystemWideProtectionEnabled:
+                    self.userSettingsService.experimentalSystemWideProtectionEnabled
             )
-            traySettings.hiddenStories = self.userSettingsService.hiddenStories
-            traySettings.macos25OrLower = self.systemInfoManager.isMacOS25OrLower
             promise(traySettings)
         }
     }

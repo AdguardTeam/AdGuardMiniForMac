@@ -50,6 +50,8 @@ export class Settings extends pb_1.Message {
         macos25OrLower?: boolean;
         reportProblemLabelShown?: boolean;
         protectionEnabled?: boolean;
+        experimentalSystemWideProtectionEnabled?: boolean;
+        isMacos272?: boolean;
     }) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [9], this.#one_of_decls);
@@ -113,6 +115,12 @@ export class Settings extends pb_1.Message {
             }
             if ("protectionEnabled" in data && data.protectionEnabled != undefined) {
                 this.protectionEnabled = data.protectionEnabled;
+            }
+            if ("experimentalSystemWideProtectionEnabled" in data && data.experimentalSystemWideProtectionEnabled != undefined) {
+                this.experimentalSystemWideProtectionEnabled = data.experimentalSystemWideProtectionEnabled;
+            }
+            if ("isMacos272" in data && data.isMacos272 != undefined) {
+                this.isMacos272 = data.isMacos272;
             }
         }
     }
@@ -236,6 +244,18 @@ export class Settings extends pb_1.Message {
     set protectionEnabled(value: boolean) {
         pb_1.Message.setField(this, 20, value);
     }
+    get experimentalSystemWideProtectionEnabled() {
+        return pb_1.Message.getFieldWithDefault(this, 21, false) as boolean;
+    }
+    set experimentalSystemWideProtectionEnabled(value: boolean) {
+        pb_1.Message.setField(this, 21, value);
+    }
+    get isMacos272() {
+        return pb_1.Message.getFieldWithDefault(this, 22, false) as boolean;
+    }
+    set isMacos272(value: boolean) {
+        pb_1.Message.setField(this, 22, value);
+    }
     static fromObject(data: {
         launchOnStartup?: boolean;
         showInMenuBar?: boolean;
@@ -257,6 +277,8 @@ export class Settings extends pb_1.Message {
         macos25OrLower?: boolean;
         reportProblemLabelShown?: boolean;
         protectionEnabled?: boolean;
+        experimentalSystemWideProtectionEnabled?: boolean;
+        isMacos272?: boolean;
     }): Settings {
         const message = new Settings({});
         if (data.launchOnStartup != null) {
@@ -319,6 +341,12 @@ export class Settings extends pb_1.Message {
         if (data.protectionEnabled != null) {
             message.protectionEnabled = data.protectionEnabled;
         }
+        if (data.experimentalSystemWideProtectionEnabled != null) {
+            message.experimentalSystemWideProtectionEnabled = data.experimentalSystemWideProtectionEnabled;
+        }
+        if (data.isMacos272 != null) {
+            message.isMacos272 = data.isMacos272;
+        }
         return message;
     }
     toObject() {
@@ -343,6 +371,8 @@ export class Settings extends pb_1.Message {
             macos25OrLower?: boolean;
             reportProblemLabelShown?: boolean;
             protectionEnabled?: boolean;
+            experimentalSystemWideProtectionEnabled?: boolean;
+            isMacos272?: boolean;
         } = {};
         if (this.launchOnStartup != null) {
             data.launchOnStartup = this.launchOnStartup;
@@ -404,6 +434,12 @@ export class Settings extends pb_1.Message {
         if (this.protectionEnabled != null) {
             data.protectionEnabled = this.protectionEnabled;
         }
+        if (this.experimentalSystemWideProtectionEnabled != null) {
+            data.experimentalSystemWideProtectionEnabled = this.experimentalSystemWideProtectionEnabled;
+        }
+        if (this.isMacos272 != null) {
+            data.isMacos272 = this.isMacos272;
+        }
         return data;
     }
     serialize(): Uint8Array;
@@ -450,6 +486,10 @@ export class Settings extends pb_1.Message {
             writer.writeBool(19, this.reportProblemLabelShown);
         if (this.protectionEnabled != false)
             writer.writeBool(20, this.protectionEnabled);
+        if (this.experimentalSystemWideProtectionEnabled != false)
+            writer.writeBool(21, this.experimentalSystemWideProtectionEnabled);
+        if (this.isMacos272 != false)
+            writer.writeBool(22, this.isMacos272);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -518,6 +558,12 @@ export class Settings extends pb_1.Message {
                     break;
                 case 20:
                     message.protectionEnabled = reader.readBool();
+                    break;
+                case 21:
+                    message.experimentalSystemWideProtectionEnabled = reader.readBool();
+                    break;
+                case 22:
+                    message.isMacos272 = reader.readBool();
                     break;
                 default: reader.skipField();
             }
@@ -770,6 +816,7 @@ export class GlobalSettings extends pb_1.Message {
         loginItemEnabled?: boolean;
         lastUpdateMoreSevenDays?: boolean;
         macos25OrLower?: boolean;
+        experimentalSystemWideProtectionEnabled?: boolean;
     }) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [11], this.#one_of_decls);
@@ -809,6 +856,9 @@ export class GlobalSettings extends pb_1.Message {
             }
             if ("macos25OrLower" in data && data.macos25OrLower != undefined) {
                 this.macos25OrLower = data.macos25OrLower;
+            }
+            if ("experimentalSystemWideProtectionEnabled" in data && data.experimentalSystemWideProtectionEnabled != undefined) {
+                this.experimentalSystemWideProtectionEnabled = data.experimentalSystemWideProtectionEnabled;
             }
         }
     }
@@ -884,6 +934,12 @@ export class GlobalSettings extends pb_1.Message {
     set macos25OrLower(value: boolean) {
         pb_1.Message.setField(this, 14, value);
     }
+    get experimentalSystemWideProtectionEnabled() {
+        return pb_1.Message.getFieldWithDefault(this, 15, false) as boolean;
+    }
+    set experimentalSystemWideProtectionEnabled(value: boolean) {
+        pb_1.Message.setField(this, 15, value);
+    }
     static fromObject(data: {
         enabled?: boolean;
         newVersionAvailable?: boolean;
@@ -897,6 +953,7 @@ export class GlobalSettings extends pb_1.Message {
         loginItemEnabled?: boolean;
         lastUpdateMoreSevenDays?: boolean;
         macos25OrLower?: boolean;
+        experimentalSystemWideProtectionEnabled?: boolean;
     }): GlobalSettings {
         const message = new GlobalSettings({});
         if (data.enabled != null) {
@@ -935,6 +992,9 @@ export class GlobalSettings extends pb_1.Message {
         if (data.macos25OrLower != null) {
             message.macos25OrLower = data.macos25OrLower;
         }
+        if (data.experimentalSystemWideProtectionEnabled != null) {
+            message.experimentalSystemWideProtectionEnabled = data.experimentalSystemWideProtectionEnabled;
+        }
         return message;
     }
     toObject() {
@@ -951,6 +1011,7 @@ export class GlobalSettings extends pb_1.Message {
             loginItemEnabled?: boolean;
             lastUpdateMoreSevenDays?: boolean;
             macos25OrLower?: boolean;
+            experimentalSystemWideProtectionEnabled?: boolean;
         } = {};
         if (this.enabled != null) {
             data.enabled = this.enabled;
@@ -988,6 +1049,9 @@ export class GlobalSettings extends pb_1.Message {
         if (this.macos25OrLower != null) {
             data.macos25OrLower = this.macos25OrLower;
         }
+        if (this.experimentalSystemWideProtectionEnabled != null) {
+            data.experimentalSystemWideProtectionEnabled = this.experimentalSystemWideProtectionEnabled;
+        }
         return data;
     }
     serialize(): Uint8Array;
@@ -1018,6 +1082,8 @@ export class GlobalSettings extends pb_1.Message {
             writer.writeBool(13, this.lastUpdateMoreSevenDays);
         if (this.macos25OrLower != false)
             writer.writeBool(14, this.macos25OrLower);
+        if (this.experimentalSystemWideProtectionEnabled != false)
+            writer.writeBool(15, this.experimentalSystemWideProtectionEnabled);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -1062,6 +1128,9 @@ export class GlobalSettings extends pb_1.Message {
                     break;
                 case 14:
                     message.macos25OrLower = reader.readBool();
+                    break;
+                case 15:
+                    message.experimentalSystemWideProtectionEnabled = reader.readBool();
                     break;
                 default: reader.skipField();
             }

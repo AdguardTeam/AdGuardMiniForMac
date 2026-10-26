@@ -42,6 +42,16 @@ test('setSettings keeps login item enabled when the response reports it enabled'
     assert.equal(settings.loginItemEnabled, true);
 });
 
+test('setSettings marks the settings as loaded', () => {
+    const settings = new Settings();
+
+    assert.equal(settings.isSettingsLoaded, false);
+
+    settings.setSettings(new SettingsEnt({ language: 'en' }));
+
+    assert.equal(settings.isSettingsLoaded, true);
+});
+
 test('setSettings overrides a previously disabled login item state', () => {
     const settings = new Settings();
     settings.setLoginItem(false);
@@ -65,6 +75,27 @@ test('report problem label stays unanswered until the platform responds', () => 
     assert.equal(settings.reportProblemLabelShown, undefined);
 });
 
+test('dismissed card lists stay unanswered until the platform responds', () => {
+    const settings = new Settings();
+
+    assert.equal(settings.healthCheckDismissedLoaded, false);
+    assert.equal(settings.promoDismissedLoaded, false);
+});
+
+test('setHealthCheckCardDismissed marks the dismissed list loaded', () => {
+    const settings = new Settings();
+    settings.setHealthCheckCardDismissed([]);
+
+    assert.equal(settings.healthCheckDismissedLoaded, true);
+});
+
+test('setPromoDismissed marks the dismissed list loaded', () => {
+    const settings = new Settings();
+    settings.setPromoDismissed([]);
+
+    assert.equal(settings.promoDismissedLoaded, true);
+});
+
 test('setSettings reports the label as never shown when the platform has no record', () => {
     const settings = new Settings();
     settings.setSettings(new SettingsEnt({ language: 'en' }));
@@ -79,6 +110,69 @@ test('setProtectionEnabled updates the entity the SWP switch reads', () => {
     settings.setProtectionEnabled(false);
 
     assert.equal(settings.settings.protectionEnabled, false);
+});
+
+test('updateExperimentalSystemWideProtectionEnabled updates the entity and persists it', async () => {
+    const calls: unknown[] = [];
+    (globalThis as unknown as { window: Record<string, unknown> }).window =
+        globalThis as unknown as Record<string, unknown>;
+    (globalThis as unknown as { API: { Execute(req: unknown): Promise<unknown> } }).API = {
+        Execute: async (req: unknown) => {
+            calls.push(req);
+            return undefined;
+        },
+    };
+
+    try {
+        const settings = new Settings();
+        settings.setSettings(new SettingsEnt({
+            experimentalSystemWideProtectionEnabled: false,
+            language: 'en',
+        }));
+
+        await settings.updateExperimentalSystemWideProtectionEnabled(true);
+
+        assert.equal(settings.settings.experimentalSystemWideProtectionEnabled, true);
+        assert.equal(calls.length, 1);
+        const req = calls[0] as {
+            FQN: string;
+            getRequestMessage(): { toObject(): Record<string, unknown> };
+        };
+        assert.equal(req.FQN, 'SettingsService.UpdateExperimentalSystemWideProtectionEnabled');
+        assert.equal(req.getRequestMessage().toObject().value, true);
+    } finally {
+        delete (globalThis as unknown as { API?: unknown }).API;
+        delete (globalThis as unknown as { window?: unknown }).window;
+    }
+});
+
+test('updateExperimentalSystemWideProtectionEnabled rolls back when persistence fails', async () => {
+    (globalThis as unknown as { window: Record<string, unknown> }).window =
+        globalThis as unknown as Record<string, unknown>;
+    (globalThis as unknown as { API: { Execute(req: unknown): Promise<unknown> } }).API = {
+        Execute: async () => {
+            throw new Error('persist failed');
+        },
+    };
+    // The store logs the rolled-back update; the case asserts the state only.
+    const originalConsoleError = console.error;
+    console.error = () => {};
+
+    try {
+        const settings = new Settings();
+        settings.setSettings(new SettingsEnt({
+            experimentalSystemWideProtectionEnabled: false,
+            language: 'en',
+        }));
+
+        await settings.updateExperimentalSystemWideProtectionEnabled(true);
+
+        assert.equal(settings.settings.experimentalSystemWideProtectionEnabled, false);
+    } finally {
+        console.error = originalConsoleError;
+        delete (globalThis as unknown as { API?: unknown }).API;
+        delete (globalThis as unknown as { window?: unknown }).window;
+    }
 });
 
 test('updateReportProblemLabelShown marks the flag locally and persists it', async () => {

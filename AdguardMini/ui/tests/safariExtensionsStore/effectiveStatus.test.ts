@@ -75,6 +75,16 @@ test('effectiveExtensionsList returns real statuses when no extension is loading
     assert.equal(general?.status, SafariExtensionStatus.disabled);
 });
 
+test('markLoaded marks the extension list as received', () => {
+    const store = new SafariExtensionsStore();
+
+    assert.equal(store.isLoaded, false);
+
+    store.markLoaded();
+
+    assert.equal(store.isLoaded, true);
+});
+
 test('effectiveExtensionsList preserves previous status when extension transitions to loading', () => {
     const store = new SafariExtensionsStore();
 

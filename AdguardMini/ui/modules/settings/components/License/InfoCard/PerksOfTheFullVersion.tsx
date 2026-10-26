@@ -105,9 +105,12 @@ function PerksOfTheFullVersionComponent({
 }: PerksOfTheFullVersionProps) {
     const {
         account,
-        settings: { isMASReleaseVariant },
+        settings,
         telemetry,
     } = useSettingsStore();
+
+    const { isMASReleaseVariant } = settings;
+    const { experimentalSystemWideProtectionEnabled } = settings.settings;
 
     const comparisonItems: ComparisonItem[] = [
         {
@@ -120,11 +123,11 @@ function PerksOfTheFullVersionComponent({
             firstCase: ComparisonCase.no,
             secondCase: ComparisonCase.yes,
         },
-        {
+        ...(experimentalSystemWideProtectionEnabled ? [{
             title: translate('license.perks.system.wide'),
             firstCase: ComparisonCase.no,
             secondCase: ComparisonCase.yes,
-        },
+        }] : []),
         {
             title: translate('license.perks.automatic.filter.updates'),
             firstCase: ComparisonCase.no,

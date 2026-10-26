@@ -11,10 +11,10 @@
 "app_menu_hide_title" = "Skjul AdGuard Mini";
 
 /* App Menu - "Hide Others" title. */
-"app_menu_hide_others_title" = "Skjul Andre";
+"app_menu_hide_others_title" = "Skjul andre";
 
 /* App Menu - "Show All" title. */
-"app_menu_show_all_title" = "Vis Alle";
+"app_menu_show_all_title" = "Vis alle";
 
 /* App Menu - "Close" title. */
 "app_menu_close_title" = "Luk";

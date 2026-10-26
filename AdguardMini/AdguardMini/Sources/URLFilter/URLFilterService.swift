@@ -31,6 +31,14 @@ private enum Constants {
 
 // MARK: - URLFilterService
 
+/// Provides whether a System-wide Protection configuration exists.
+protocol URLFilterInstalledStateProvider: AnyObject {
+    /// Whether a configuration exists (a server URL is set), from the last state the UI was shown.
+    var isFilterInstalled: Bool { get }
+    /// Re-reads the installed state from the current configuration.
+    func refreshInstalledState() async
+}
+
 /// Manages the `NEURLFilterManager` configuration and lifecycle and publishes
 /// status/configuration changes on ``EventBus``.
 ///
@@ -40,7 +48,7 @@ private enum Constants {
 /// and ``getStatus()`` returns ``URLFilterStatus/disabled``.
 /// Both implementations are actors, so the existential is `Sendable` and can
 /// be held by other actors.
-protocol URLFilterService: AnyObject, Sendable {
+protocol URLFilterService: AnyObject, Sendable, URLFilterInstalledStateProvider {
     /// Begins observing status and configuration changes.
     func start() async
     /// Loads the current configuration from `NEURLFilterManager`.
@@ -105,7 +113,12 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
     private var licenseInfoTask: Task<Void, Never>?
     /// The last status the change stream reported; fail-safe decisions trust it.
     private var lastObservedStatus: NEURLFilterManager.Status?
-    private var cachedState: URLFilterState?
+    private let installedSnapshot = InstalledSnapshot()
+    private var cachedState: URLFilterState? {
+        didSet {
+            self.publishInstalledState()
+        }
+    }
     /// When the pending fail-safe disable must fire; nil when none is pending.
     /// Kept across status churn, so a crash loop cannot postpone it.
     private var failSafeDisableDeadline: Date?
@@ -368,6 +381,7 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
             self.settledState = self.cachedState
         }
         self.statePublishingSuspensions += 1
+        self.publishInstalledState()
     }
 
     /// Ends one publication suppression and publishes the settled state when
@@ -377,7 +391,19 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
         guard self.statePublishingSuspensions == 0 else { return }
         // The cache now holds the settled state; drop the pre-transition one.
         self.settledState = nil
+        self.publishInstalledState()
         self.eventBus.post(event: .urlFilterConfigurationChanged, userInfo: nil)
+    }
+
+    /// Publishes the install state of the state the UI is currently shown.
+    private func publishInstalledState() {
+        self.installedSnapshot.set(
+            URLFilterInstalledStateResolver.isInstalled(
+                cachedState: self.cachedState,
+                settledState: self.settledState,
+                isPublishingSuspended: self.statePublishingSuspensions > 0
+            )
+        )
     }
 
     /// Applies an automatic transition without ever creating a configuration.
@@ -413,6 +439,9 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
                 LogInfo("URLFilter auto-enable skipped: preconditions did not hold")
                 return
             }
+            // Hide the retry's bring-up states: the UI sees one settled result.
+            self.suspendStatePublishing()
+            defer { self.resumeStatePublishing() }
             // Own this transition only after the preconditions hold: bump and
             // Capture so a concurrent action during the awaits above cannot be
             // Inherited by this enable.
@@ -441,6 +470,9 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
                 LogInfo("URLFilter auto-disable skipped: preconditions hold or changed")
                 return
             }
+            // Hide the disable's stopping states: the UI sees one settled result.
+            self.suspendStatePublishing()
+            defer { self.resumeStatePublishing() }
             let generation = self.beginTransition()
             do {
                 let applied = try await self.setEnabled(
@@ -861,6 +893,10 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
         }
         LogInfo("URLFilter enable declined; clearing the persisted intent")
         self.persistURLFilterIntent(false)
+        // An automatic retry has no publication of its own: the open page must learn the intent is off.
+        if self.statePublishingSuspensions == 0 {
+            self.eventBus.post(event: .urlFilterConfigurationChanged, userInfo: nil)
+        }
     }
 
     /// A successful bring-up from disabled applies the current level and
@@ -1143,6 +1179,16 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
         }
     }
 
+    nonisolated var isFilterInstalled: Bool {
+        self.installedSnapshot.isInstalled
+    }
+
+    func refreshInstalledState() async {
+        // Only a failed startup load leaves the cache empty; a transition owns the visible state.
+        guard self.cachedState == nil, self.statePublishingSuspensions == 0 else { return }
+        self.cachedState = await self.currentState()
+    }
+
     func getState() async -> URLFilterState {
         // While a transition owns the end state, only serve the state the UI
         // Already saw: the debounced assembly must not publish the
@@ -1319,6 +1365,9 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
         let rawStatus = self.rawStatus(from: await manager.status)
         let rawError = self.rawLastDisconnectError(from: await manager.lastDisconnectError)
         let trigger = "status=\(rawStatus), disconnectError=\(rawError.map(\.logName) ?? "none")"
+        // Hide the auto-disable's stopping states: the UI sees one settled result.
+        self.suspendStatePublishing()
+        defer { self.resumeStatePublishing() }
         do {
             // An auto-disable supersedes any in-flight enable retry, but the
             // Automatic transition does not overwrite the user's intent.
@@ -1587,12 +1636,15 @@ final actor URLFilterServiceLiveImpl: URLFilterService {
 
 // MARK: - URLFilterServiceNoOp
 
-/// No-op ``URLFilterService`` used on macOS < 26 where `NEURLFilterManager` is unavailable.
+/// No-op ``URLFilterService`` used on macOS < 26.
 ///
-/// Every throwing method throws ``URLFilterServiceError/unsupportedPlatform``;
-/// ``getStatus()`` returns ``URLFilterStatus/disabled``.
+/// Every throwing method throws ``URLFilterServiceError/unsupportedPlatform``.
 final actor URLFilterServiceNoOp: URLFilterService {
+    nonisolated var isFilterInstalled: Bool { false }
+
     func start() async {}
+
+    func refreshInstalledState() async {}
 
     func loadConfiguration() async throws -> URLFilterConfiguration? {
         throw URLFilterServiceError.unsupportedPlatform
@@ -1625,4 +1677,36 @@ final actor URLFilterServiceNoOp: URLFilterService {
     func resetCache() async throws {
         throw URLFilterServiceError.unsupportedPlatform
     }
+}
+
+// MARK: - URLFilterInstalledStateResolver
+
+/// Resolves the install state of the state the UI is currently shown.
+enum URLFilterInstalledStateResolver {
+    /// Resolves whether a configuration exists in the UI-visible state.
+    /// - Parameters:
+    ///   - cachedState: The latest derived state.
+    ///   - settledState: The state the UI last saw while a transition runs.
+    ///   - isPublishingSuspended: Whether a transition suppresses intermediate states.
+    /// - Returns: Whether a configuration exists in the state the UI is shown.
+    static func isInstalled(
+        cachedState: URLFilterState?,
+        settledState: URLFilterState?,
+        isPublishingSuspended: Bool
+    ) -> Bool {
+        let visibleState = isPublishingSuspended ? settledState : cachedState
+        return visibleState?.isInstalled ?? false
+    }
+}
+
+// MARK: - InstalledSnapshot
+
+/// Thread-safe snapshot of whether a configuration exists, readable off the actor.
+private final class InstalledSnapshot: @unchecked Sendable {
+    private let lock = UnfairLock()
+    private var value = false
+
+    var isInstalled: Bool { locked(self.lock) { self.value } }
+
+    func set(_ newValue: Bool) { locked(self.lock) { self.value = newValue } }
 }

@@ -14,11 +14,13 @@ import { SettingsTitle } from '../../../SettingsTitle';
 
 import s from './Title.module.pcss';
 
+import type { NotSupportedModalReason } from '../../../NotSupportedModal';
+
 /**
  * Props for System-wide Protection title component
  */
 type TitleProps = {
-    setShowNotSupportedModal(value: boolean): void;
+    setShowNotSupportedModal(reason: NotSupportedModalReason): void;
     setShowResetCacheModal(value: boolean): void;
     setShowRemoveFilterModal(value: boolean): void;
 };
@@ -28,8 +30,9 @@ type TitleProps = {
  */
 function TitleComponent({ setShowNotSupportedModal, setShowResetCacheModal, setShowRemoveFilterModal }: TitleProps) {
     const { advancedBlocking, settings } = useSettingsStore();
-    const { urlFilterNew: isSystemWideProtectionPageNew, urlFilterState: { isInstalled }, } = advancedBlocking;
+    const { urlFilterNew: isSystemWideProtectionPageNew, urlFilterState: { isInstalled } } = advancedBlocking;
     const {
+        isMacos272,
         macos25OrLower,
         non501User,
     } = settings.settings;
@@ -44,6 +47,7 @@ function TitleComponent({ setShowNotSupportedModal, setShowResetCacheModal, setS
     // Same as on the Advanced protection row: "Why?" alone says nothing about
     // what is not supported.
     const notSupportedId = useId();
+    const macosNotSupportedId = useId();
 
     const renderWhyBtn = (text: string) => (
         <Button
@@ -51,7 +55,22 @@ function TitleComponent({ setShowNotSupportedModal, setShowResetCacheModal, setS
             className={s.Title_button}
             type="text"
             onClick={() => {
-                setShowNotSupportedModal(true);
+                setShowNotSupportedModal('account');
+            }}
+        >
+            <Text className={theme.color.orange} type="t2">
+                {text}
+            </Text>
+        </Button>
+    );
+
+    const renderMacOSWhyBtn = (text: string) => (
+        <Button
+            ariaDescribedby={macosNotSupportedId}
+            className={s.Title_button}
+            type="text"
+            onClick={() => {
+                setShowNotSupportedModal('macosVersion');
             }}
         >
             <Text className={theme.color.orange} type="t2">
@@ -61,6 +80,7 @@ function TitleComponent({ setShowNotSupportedModal, setShowResetCacheModal, setS
     );
 
     const whyBtnParams = { btn: renderWhyBtn };
+    const macosWhyBtnParams = { btn: renderMacOSWhyBtn };
 
     return (
         <SettingsTitle
@@ -92,6 +112,13 @@ function TitleComponent({ setShowNotSupportedModal, setShowResetCacheModal, setS
                 <div className={s.Title_notSupportedTitle}>
                     <Text className={theme.color.orange} id={notSupportedId} type="t2">
                         {translate('advanced.blocking.system.wide.not.supported', whyBtnParams)}
+                    </Text>
+                </div>
+            )}
+            {isMacos272 && (
+                <div className={s.Title_notSupportedTitle}>
+                    <Text className={theme.color.orange} id={macosNotSupportedId} type="t2">
+                        {translate('advanced.blocking.system.wide.macos.27.2.warning', macosWhyBtnParams)}
                     </Text>
                 </div>
             )}

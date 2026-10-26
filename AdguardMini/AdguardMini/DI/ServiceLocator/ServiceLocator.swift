@@ -391,7 +391,6 @@ final class ServiceLocator {
         return URLFilterStateAssembler(
             urlFilterService: self.urlFilterService,
             protectionLevelProvider: { userSettingsService.urlFilterProtectionLevel },
-            isNewProvider: { userSettingsService.urlFilterIsNew },
             bloomMetadataProvider: { [bloomMetadataStorage = self.urlFilterBloomMetadataStorage] in
                 bloomMetadataStorage.load()
             },
@@ -500,7 +499,8 @@ final class ServiceLocator {
             sharedSettingsStorage: SharedDIContainer.shared.sharedSettingsStorage,
             sharedKeychainStorage: self.sharedKeychainStorage,
             eventBus: self.eventBus,
-            mailFiltersUpdater: self.mailFiltersUpdater
+            mailFiltersUpdater: self.mailFiltersUpdater,
+            urlFilterInstalledState: self.urlFilterService
         )
     }()
 

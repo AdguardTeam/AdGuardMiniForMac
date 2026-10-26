@@ -11,7 +11,7 @@ import { dirname } from 'Common/utils/path';
 import { selectFile } from 'Common/utils/selectFile';
 import { useSettingsStore } from 'SettingsLib/hooks';
 import { getNotificationSettingsImportFailedText, getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
-import { SettingsEvent } from 'SettingsStore/modules';
+import { RouteName, SettingsEvent } from 'SettingsStore/modules';
 import theme from 'Theme';
 import { getFormattedDateTime } from 'Utils/date';
 
@@ -35,7 +35,9 @@ const LEGACY_SETTINGS_FILTER = `(*.${LEGACY_SETTINGS_EXT})|*.${LEGACY_SETTINGS_E
  */
 function SettingsControlComponent() {
     const {
+        advancedBlocking,
         settings,
+        router,
         filters: { filters: { filters: storeFilters } },
         telemetry,
         notification,
@@ -51,6 +53,7 @@ function SettingsControlComponent() {
             quitReaction,
             theme: themeSetting,
             showSafariToolbarBadge,
+            experimentalSystemWideProtectionEnabled,
         },
         userActionLastDirectory,
         incomeHardwareAcceleration,
@@ -63,6 +66,7 @@ function SettingsControlComponent() {
     const [hardwareModalLoader, setHardwareModalLoader] = useState(false);
     const [showTelemetryModal, setShowTelemetryModal] = useState(false);
     const [showConsentModal, setShowConsentModal] = useState<number[]>();
+    const [isRemovingSystemWideProtection, setIsRemovingSystemWideProtection] = useState(false);
 
     useEffect(() => {
         if (shouldGiveConsent.length) {
@@ -157,6 +161,27 @@ function SettingsControlComponent() {
         });
     };
 
+    const onToggleExperimentalSystemWideProtection = async (value: boolean) => {
+        telemetry.trackEvent(SettingsEvent.SystemWideProtectionExperimentalToggleClick);
+        if (!value) {
+            setIsRemovingSystemWideProtection(true);
+            try {
+                const removed = await advancedBlocking.removeURLFilterIfInstalled();
+                if (!removed) {
+                    return;
+                }
+            } finally {
+                setIsRemovingSystemWideProtection(false);
+            }
+        }
+        await settings.updateExperimentalSystemWideProtectionEnabled(value);
+    };
+
+    const onOpenSystemWideProtection = () => {
+        telemetry.trackEvent(SettingsEvent.SystemWideProtectionExperimentalGoToClick);
+        router.changePath(RouteName.system_wide_protection);
+    };
+
     const hardwareAccModalProps: ModalProps = typeof incomeHardwareAcceleration === 'boolean' ? {
         title: translate('restart.app'),
         description: translate('restart.app.desc.import'),
@@ -198,12 +223,16 @@ function SettingsControlComponent() {
             <MiscSection
                 allowTelemetry={allowTelemetry}
                 debugLogging={debugLogging}
+                experimentalSystemWideProtectionEnabled={experimentalSystemWideProtectionEnabled}
+                isRemovingSystemWideProtection={isRemovingSystemWideProtection}
                 showSafariToolbarBadge={showSafariToolbarBadge}
                 updateShowSafariToolbarBadge={async (value) => settings.updateShowSafariToolbarBadge(value)}
                 onExportLogs={onExportLogs}
+                onOpenSystemWideProtection={onOpenSystemWideProtection}
                 onOpenTelemetryModal={() => setShowTelemetryModal(true)}
                 onToggleAllowTelemetry={async (value) => settings.updateAllowTelemetry(value)}
                 onToggleDebugLogging={async (value) => settings.updateDebugLogging(value)}
+                onToggleExperimentalSystemWideProtection={onToggleExperimentalSystemWideProtection}
             />
             <div className={theme.layout.bottomPadding} />
             <SettingsModals

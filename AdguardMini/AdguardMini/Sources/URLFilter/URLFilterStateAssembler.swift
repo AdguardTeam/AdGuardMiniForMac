@@ -21,7 +21,6 @@ import AML
 actor URLFilterStateAssembler {
     private let urlFilterService: URLFilterService
     private let protectionLevelProvider: @Sendable () -> URLFilterProtectionLevel
-    private let isNewProvider: @Sendable () -> Bool
     private let bloomMetadataProvider: @Sendable () -> URLFilterBloomMetadata?
     private let iCloudDomainBlockageChecker: ICloudDomainBlockageChecking
     private let userIntentProvider: @Sendable () -> Bool
@@ -30,21 +29,18 @@ actor URLFilterStateAssembler {
     /// - Parameters:
     ///   - urlFilterService: Platform URL filter service (status + configuration).
     ///   - protectionLevelProvider: Reads the persisted protection level.
-    ///   - isNewProvider: Reads the "settings card is new" flag.
     ///   - bloomMetadataProvider: Reads the persisted bloom metadata, if any.
     ///   - userIntentProvider: Reads the user's persisted choice to keep the filter on.
     ///   - iCloudDomainBlockageChecker: Classifies a failed filter as the iCloud error.
     init(
         urlFilterService: URLFilterService,
         protectionLevelProvider: @escaping @Sendable () -> URLFilterProtectionLevel,
-        isNewProvider: @escaping @Sendable () -> Bool,
         bloomMetadataProvider: @escaping @Sendable () -> URLFilterBloomMetadata?,
         userIntentProvider: @escaping @Sendable () -> Bool,
         iCloudDomainBlockageChecker: ICloudDomainBlockageChecking
     ) {
         self.urlFilterService = urlFilterService
         self.protectionLevelProvider = protectionLevelProvider
-        self.isNewProvider = isNewProvider
         self.bloomMetadataProvider = bloomMetadataProvider
         self.iCloudDomainBlockageChecker = iCloudDomainBlockageChecker
         self.userIntentProvider = userIntentProvider
@@ -83,7 +79,7 @@ actor URLFilterStateAssembler {
             enabled: isEnabled,
             status: status,
             protectionLevel: self.protectionLevelProvider(),
-            isInstalled: state.serverURL != nil && state.issuerURL != nil,
+            isInstalled: state.isInstalled,
             userIntentEnabled: userIntentEnabled,
             info: URLFilterInfo(
                 rulesCount: bloomMetadata?.rulesCount,

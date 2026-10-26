@@ -81,6 +81,8 @@ export enum SettingsEvent {
     FixItClick = 'fix_it_click',
     SendReportABug = 'send_report_a_bug',
     SystemWideProtectionEntryClick = 'system_wide_protection_entry_click',
+    SystemWideProtectionExperimentalToggleClick = 'system_wide_protection_experimental_toggle_click',
+    SystemWideProtectionExperimentalGoToClick = 'system_wide_protection_experimental_go_to_click',
     SystemWideProtectionToggleClick = 'system_wide_protection_toggle_click',
     SystemWideProtectionEssentialClick = 'system_wide_protection_essential_click',
     SystemWideProtectionSafeClick = 'system_wide_protection_safe_click',

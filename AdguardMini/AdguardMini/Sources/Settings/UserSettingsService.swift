@@ -30,6 +30,8 @@ protocol UserSettingsService: AnyObject, Sendable {
     var dismissedPromoCards:       [String] { get set }
     var hiddenStories:             [String] { get set }
     var reportProblemLabelShown:   Bool { get set }
+    /// Resolved experimental System-wide Protection flag.
+    var experimentalSystemWideProtectionEnabled: Bool { get set }
 
     // MARK: Properties with side effects
 
@@ -53,6 +55,8 @@ protocol UserSettingsService: AnyObject, Sendable {
     @discardableResult
     func updateSettings(newSettings: SettingsDTO) -> SettingsDTO
     func resetSettings()
+    /// Re-reads the URL filter install state before the experimental flag is read.
+    func refreshExperimentalSystemWideProtectionState() async
 }
 
 // MARK: - UserSettingsServiceImpl
@@ -67,6 +71,8 @@ final class UserSettingsServiceImpl: @unchecked Sendable {
     private let sharedKeychainStorage: SharedKeychainStorage
     private let eventBus: EventBus
     private let mailFiltersUpdater: MailFiltersUpdater
+    private let urlFilterInstalledState: URLFilterInstalledStateProvider
+    private let experimentalFlag: SWPExperimentalFlagStore
 
     @UserDefault(key: .lastFiltersUpdateTime, defaultValue: Date.distantPast)
     var lastFiltersUpdateTime: Date
@@ -87,7 +93,8 @@ final class UserSettingsServiceImpl: @unchecked Sendable {
         sharedSettingsStorage: SharedSettingsStorage,
         sharedKeychainStorage: SharedKeychainStorage,
         eventBus: EventBus,
-        mailFiltersUpdater: MailFiltersUpdater
+        mailFiltersUpdater: MailFiltersUpdater,
+        urlFilterInstalledState: URLFilterInstalledStateProvider
     ) {
         self.keychain = keychain
         self.userSettingsManager = userSettingsManager
@@ -96,6 +103,12 @@ final class UserSettingsServiceImpl: @unchecked Sendable {
         self.sharedKeychainStorage = sharedKeychainStorage
         self.eventBus = eventBus
         self.mailFiltersUpdater = mailFiltersUpdater
+        self.urlFilterInstalledState = urlFilterInstalledState
+        self.experimentalFlag = SWPExperimentalFlagStore(
+            installedState: urlFilterInstalledState
+        ) { [sharedKeychainStorage] in
+            sharedKeychainStorage.urlFilterEnabled
+        }
 
         self.setup()
 
@@ -180,6 +193,11 @@ extension UserSettingsServiceImpl: UserSettingsService {
     var reportProblemLabelShown: Bool {
         get { self.userSettingsManager.reportProblemLabelShown }
         set { self.userSettingsManager.reportProblemLabelShown = newValue }
+    }
+
+    var experimentalSystemWideProtectionEnabled: Bool {
+        get { self.experimentalFlag.isEnabled }
+        set { self.experimentalFlag.setStoredValue(newValue) }
     }
 
     // MARK: Properties with side effects and special setters
@@ -335,9 +353,14 @@ extension UserSettingsServiceImpl: UserSettingsService {
         return newSettings
     }
 
+    func refreshExperimentalSystemWideProtectionState() async {
+        await self.urlFilterInstalledState.refreshInstalledState()
+    }
+
     func resetSettings() {
         let oldSettings = self.settings
         self.userSettingsManager.resetSettings()
+        self.experimentalFlag.reset()
         let newSettings = self.settings
         self.keychain.delete(key: .userActionLastDirectory)
         self.appSettingUpdateHandler.handleUpdates(oldSettings, newSettings)

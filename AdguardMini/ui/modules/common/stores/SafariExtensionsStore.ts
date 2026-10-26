@@ -25,6 +25,11 @@ export class SafariExtensionsStore {
     public safariExtensions = new SafariExtensions();
 
     /**
+     * Whether the extension list has been received from the platform.
+     */
+    public isLoaded = false;
+
+    /**
      * Get list of all Safari extensions by dynamically iterating over protobuf getters.
      * Uses property descriptors to avoid manual enumeration.
      * Computed getter for MobX caching.
@@ -109,6 +114,13 @@ export class SafariExtensionsStore {
      */
     constructor() {
         makeAutoObservable(this);
+    }
+
+    /**
+     * Marks the extension list as received from the platform.
+     */
+    public markLoaded(): void {
+        this.isLoaded = true;
     }
 
     /**

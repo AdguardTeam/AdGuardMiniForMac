@@ -60,4 +60,6 @@ service SettingsService {
     rpc GetPromoDismissedCards(EmptyValue) returns (StringValueArray);
     /* Update dismissed Safari Protection promo cards */
     rpc UpdatePromoDismissedCards(StringValueArray) returns (EmptyValue);
+    /* Update experimental System-wide Protection flag */
+    rpc UpdateExperimentalSystemWideProtectionEnabled(BoolValue) returns (EmptyValue);
 }

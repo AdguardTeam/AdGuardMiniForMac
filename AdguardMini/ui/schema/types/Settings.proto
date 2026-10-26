@@ -24,6 +24,8 @@ message Settings {
     bool macos_25_or_lower = 18;
     bool report_problem_label_shown = 19;
     bool protection_enabled = 20;
+    bool experimental_system_wide_protection_enabled = 21;
+    bool is_macos_27_2 = 22;
 }
 
 message UserConsent {
@@ -65,6 +67,7 @@ message GlobalSettings {
     bool login_item_enabled = 12;
     bool last_update_more_seven_days = 13;
     bool macos_25_or_lower = 14;
+    bool experimental_system_wide_protection_enabled = 15;
 }
 
 message UpdateQuitReactionMessage {

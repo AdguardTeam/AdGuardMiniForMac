@@ -10,14 +10,6 @@
         background: var(--fills-backgrounds-page-background-additional-default);
         border-radius: var(--border-radius);
 
-        /* The step text opts in for copying; the card box stays non-selectable. */
-        h5,
-        p,
-        p * {
-            user-select: text;
-            -webkit-user-select: text;
-        }
-
         &_title {
             margin-bottom: var(--m-xs);
         }
@@ -43,5 +35,20 @@
 
     &_list {
         padding-inline-start: var(--m-m);
+    }
+
+    /* Only the host list is copyable; the rest of the troubleshooting text stays non-selectable. */
+    &_domains,
+    &_domains * {
+        user-select: text;
+        -webkit-user-select: text;
+    }
+
+    /* Zero-width selection root leaves WebKit no line-break gap to fill; hosts stay nowrap. */
+    &_domains {
+        display: block;
+        width: 0;
+        position: relative;
+        white-space: nowrap;
     }
 }

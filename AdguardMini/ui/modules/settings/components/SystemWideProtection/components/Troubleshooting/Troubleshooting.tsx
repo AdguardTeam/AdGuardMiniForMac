@@ -2,13 +2,15 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { isValidElement } from 'preact';
+
 import { buttonProps } from 'Common/lib/keyboardActivation';
 import theme from 'Theme';
 import { Text } from 'UILib';
 
 import s from './Troubleshooting.module.pcss';
 
-import type { RefObject } from 'preact';
+import type { ComponentChildren, RefObject } from 'preact';
 
 /**
  * Props for the Troubleshooting component.
@@ -27,6 +29,44 @@ type TroubleshootingProps = {
     setShowRemoveFilterModal(value: boolean): void;
     onContactSupport(): void;
 };
+
+/**
+ * Wraps the `<br>`-separated iCloud host list in its own block. WebKit fills
+ * the selection gap of every hard-broken line up to the selection root, so
+ * without a root of its own the highlight spans the whole page.
+ * @param children - Translated DNS step nodes
+ * @returns The nodes with the host list wrapped, or unchanged when there is
+ * no host list to wrap
+ */
+function wrapDnsHosts(children: ComponentChildren): ComponentChildren {
+    if (!Array.isArray(children)) {
+        return children;
+    }
+
+    const nodes = children as ComponentChildren[];
+    const breaks: number[] = [];
+
+    nodes.forEach((child, index) => {
+        if (isValidElement(child) && child.type === 'br') {
+            breaks.push(index);
+        }
+    });
+
+    if (breaks.length < 2) {
+        return children;
+    }
+
+    const firstBreak = breaks[0];
+    const lastBreak = breaks[breaks.length - 1];
+
+    return [
+        ...nodes.slice(0, firstBreak),
+        <span key="dns-hosts" className={s.Troubleshooting_domains}>
+            {nodes.slice(firstBreak + 1, lastBreak)}
+        </span>,
+        ...nodes.slice(lastBreak + 1),
+    ];
+}
 
 /**
  * Troubleshooting block of the System-wide Protection settings page.
@@ -73,7 +113,9 @@ export function Troubleshooting({
                     <Text type="t1" wide>{translate('advanced.blocking.system.wide.part.troubleshooting.connection')}</Text>
                 </li>
                 <li>
-                    <Text type="t1" wide>{translate('advanced.blocking.system.wide.part.troubleshooting.dns')}</Text>
+                    <Text type="t1" wide>
+                        {wrapDnsHosts(translate('advanced.blocking.system.wide.part.troubleshooting.dns'))}
+                    </Text>
                 </li>
                 <li>
                     <Text type="t1" wide>{translate('advanced.blocking.system.wide.part.troubleshooting.restart')}</Text>

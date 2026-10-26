@@ -10,12 +10,6 @@
 /* App Menu - "Hide AdGuard Mini" title. */
 "app_menu_hide_title" = "הסתר את AdGuard Mini";
 
-/* App Menu - "Hide Others" title. */
-"app_menu_hide_others_title" = "הסתר אחרים";
-
-/* App Menu - "Show All" title. */
-"app_menu_show_all_title" = "הראה הכל";
-
 /* App Menu - "Close" title. */
 "app_menu_close_title" = "סגור";
 

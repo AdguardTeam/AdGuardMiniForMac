@@ -40,6 +40,9 @@ function PaywallComponent() {
         telemetry.layersRelay.trackPageView();
     }, [telemetry]);
 
+    const { isMASReleaseVariant } = settings;
+    const { experimentalSystemWideProtectionEnabled } = settings.settings;
+
     /**
      * License advantages list
      */
@@ -48,10 +51,10 @@ function PaywallComponent() {
             label: translate('settings.paywall.advantage.1'),
             icon: 'quality',
         },
-        {
+        ...(experimentalSystemWideProtectionEnabled ? [{
             label: translate('settings.paywall.advantage.2'),
-            icon: 'apps',
-        },
+            icon: 'apps' as IconType,
+        }] : []),
         {
             label: translate('settings.paywall.advantage.3'),
             icon: 'update',
@@ -62,8 +65,7 @@ function PaywallComponent() {
         },
     ];
 
-    const { isMASReleaseVariant, isStandaloneReleaseVariant } = settings;
-
+    const { isStandaloneReleaseVariant } = settings;
     const [showAlreadyPurchasedFlowModal, setShowAlreadyPurchasedFlowModal] = useState(false);
     const [showTermsAndConditionsModal, setShowTermsAndConditionsModal] = useState(false);
 

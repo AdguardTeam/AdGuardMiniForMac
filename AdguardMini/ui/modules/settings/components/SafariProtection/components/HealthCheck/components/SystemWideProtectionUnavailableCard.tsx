@@ -11,8 +11,7 @@ import { RouteName } from 'SettingsStore/modules';
 import { HealthCheckCard } from './HealthCheckCard';
 
 /**
- * Displays a health check card when System-wide Protection cannot run because
- * a DNS filter blocks the iCloud hosts it needs.
+ * Displays a health check card when System-wide Protection cannot run.
  * Provides an action button that opens the System-wide Protection settings,
  * where the troubleshooting steps are available.
  */
