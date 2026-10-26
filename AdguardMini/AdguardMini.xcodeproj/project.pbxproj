@@ -2393,6 +2393,7 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/CommonConfig.xcconfig",
+				"$(AGP_SCRIPTS_PATH)/generateBuildConstants.sh",
 			);
 			name = "Generate Sensitive Config Constants";
 			outputFileListPaths = (
@@ -2402,7 +2403,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "${AGP_SCRIPTS_PATH}/generateSensitiveBuildConstants.sh ${ACTION}\n";
+			shellScript = "${AGP_SCRIPTS_PATH}/generateBuildConstants.sh \"${AGP_SENSITIVE_CONFIG_CONSTANTS_PREFIX}\" \"${AGP_SENSITIVE_CONFIG_CONSTANTS_CONTAINER_NAME}\" \"${AGP_SENSITIVE_CONFIG_CONSTANTS_FILE}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		EB93A69D2C240B8B003D84A5 /* ShellScript */ = {
@@ -2435,6 +2436,7 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/CommonConfig.xcconfig",
+				"$(AGP_SCRIPTS_PATH)/generateBuildConstants.sh",
 			);
 			name = "Generate Config Constants";
 			outputFileListPaths = (
@@ -2444,7 +2446,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "${AGP_SCRIPTS_PATH}/generateConfigConstants.sh ${ACTION}\n";
+			shellScript = "${AGP_SCRIPTS_PATH}/generateBuildConstants.sh \"${AGP_PUBLIC_CONFIG_CONSTANTS_PREFIX}\" \"${AGP_CONFIG_CONSTANTS_CONTAINER_NAME}\" \"${AGP_CONFIG_CONSTANTS_FILE}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		EBABE9DA2D4775AC00A4A1B3 /* Embbed Helper */ = {

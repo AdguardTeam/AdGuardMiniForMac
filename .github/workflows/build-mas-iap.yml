@@ -51,9 +51,9 @@ jobs:
       version: ${{ inputs.version }}
       version-title: ${{ inputs.version-title }}
       build-number: ${{ inputs.build-number }}
-      # AG_HELPER_REQ stays a literal string on purpose: a $(SETTING) reference
-      # makes xcodebuild export the setting twice (raw text and resolved value),
-      # and generateConfigConstants.sh then emits two Swift constants for one name.
+      # One build setting per line. AG_HELPER_REQ keeps the reference to
+      # AG_TEAM, so the team identifier stays defined in AppConfig.xcconfig
+      # only; xcodebuild expands the reference before the build phase runs.
       xcodebuild-args: |
         AG_APP_DISPLAYED_NAME=AdGuard Mini IAP
-        AG_HELPER_REQ=anchor apple generic and certificate leaf[subject.OU] = TC3Q7MAJXF
+        AG_HELPER_REQ=anchor apple generic and certificate leaf[subject.OU] = $(AG_TEAM)

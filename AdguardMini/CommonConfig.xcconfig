@@ -16,6 +16,7 @@ SLASH = /
 
 // Private prefix is AGP_
 AGP_PUBLIC_CONFIG_CONSTANTS_PREFIX = AG_
+AGP_SENSITIVE_CONFIG_CONSTANTS_PREFIX = SENS_
 
 //============= Development Settings ============
 

@@ -1070,9 +1070,14 @@ humans and AI agents that consume project documentation.
    `CommonConfig.xcconfig`. The xcconfig contains placeholder values
    (`AG_VERSION = 99.9.9`, `AG_BUILD = 999999`) that are overridden at build
    time by passing `AG_VERSION=x.y.z` and `AG_BUILD=N` as xcodebuild arguments.
-   The `generateConfigConstants.sh` script reads these from environment
-   variables, so `BuildConfig.swift` automatically reflects the overridden
-   values.
+   The `generateBuildConstants.sh` script reads these from environment
+   variables and emits one constant per setting with the phase's prefix:
+   `BuildConfig.swift` reflects the `AG_*` overrides (`AG_VERSION`,
+   `AG_BUILD`), `SensitiveBuildConfig.swift` reflects the `SENS_*` ones.
+   A setting is a `NAME=value` entry whose name is the phase prefix followed
+   by letters, digits, or underscores. Entries with any other name are not
+   settings and are ignored. The script writes the value as it arrives, so
+   `xcodebuild` expands references like `$(AG_TEAM)` before the phase runs.
 
    To build with a specific version from the command line:
    ```

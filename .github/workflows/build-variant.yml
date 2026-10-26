@@ -64,7 +64,7 @@ on:
         type: boolean
         default: false
       xcodebuild-args:
-        description: "Additional xcodebuild build settings appended to XCODEBUILD_ARGS. Write one build setting per line; each line is passed verbatim as one argument, with no shell quoting or expansion. Values MUST be fully expanded: an unexpanded $(SETTING) reference makes generateConfigConstants.sh emit duplicate Swift constants."
+        description: "Additional xcodebuild build settings appended to XCODEBUILD_ARGS. Write one build setting per line; each line is passed verbatim as one argument, with no shell quoting or expansion. References like $(AG_TEAM) are expanded by xcodebuild."
         type: string
         default: ""
 
