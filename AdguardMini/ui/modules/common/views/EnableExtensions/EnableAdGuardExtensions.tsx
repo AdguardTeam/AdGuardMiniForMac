@@ -10,7 +10,6 @@ import { isDarkColorTheme } from 'Utils/colorThemes';
 import dark from './images/extensions-dark.png';
 import light from './images/extensions-light.png';
 import { Template } from './Template';
-import s from './Template.module.pcss';
 
 import type { TemplateProps } from './Template';
 import type { UseColorTheme } from 'Utils/colorThemes';
@@ -45,9 +44,9 @@ export function EnableAdGuardExtensions({
             center={center}
             containerClassName={containerClassName}
             description={(
-                <div>
+                <>
                     {translate('onboarding.extensions.desc', {
-                        b: (text: string) => <div className={s.Template_content_desc_text}>{text}</div>,
+                        b: (text: string) => <b>{text}</b>,
                         policy: (text: string) => (
                             <ExternalLink
                                 href={privacyPolicyUrl}
@@ -57,7 +56,7 @@ export function EnableAdGuardExtensions({
                             </ExternalLink>
                         ),
                     })}
-                </div>
+                </>
             )}
             image={isDarkTheme ? dark : light}
             title={translate('onboarding.extensions.title')}

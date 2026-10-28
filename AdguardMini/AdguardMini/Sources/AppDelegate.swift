@@ -164,11 +164,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @unchecked Sendable {
                                 settingsCallbackService.onWindowDidBecomeMain(EmptyValue())
 
                                 #if MAS
-                                // Port of the Sciter `SettingsApp.showWindow`
-                                // Rate-us trigger (AG-57130): the prompt is
-                                // Shown only after a debounce and only if the
-                                // Settings window is still visible and the app
-                                // Is active.
+                                // Rate-us trigger: debounced; skipped when Settings is hidden or the app is inactive.
                                 self.appStoreRateUs.onWindowOpened { [weak self] in
                                     guard let self,
                                           let settingsWindow = self.webViewAppsController
@@ -296,11 +292,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @unchecked Sendable {
                 WKWebViewAppResolver.userRulesCallbackService.onUserRulesWindowClosed(EmptyValue())
             }
         )
-        // Publish the controller to `ServiceLocator` so DI clients
-        // (such as `InternalServiceImpl`, `OnboardingServiceImpl`) receive
-        // It via `WebViewAppsControllerDependent` injection. Mirror of the
-        // `sciterAppController` lazy-var pattern — transitional; removed
-        // In the Sciter→WKWebView migration cutover.
+        // Publish the controller so DI clients receive it via `WebViewAppsControllerDependent` injection.
         ServiceLocator.shared.webViewAppsController = self.webViewAppsController
     }
 

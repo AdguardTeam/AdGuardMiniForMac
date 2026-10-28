@@ -40,7 +40,7 @@ actual component. Use the `Explorer` subagent (read-only) or `grep_search`.
   sources so generated stylesheets stay in sync.
 - **Protobuf-backed data:** if a value is summarised from the platform layer,
   check the schema in `AdguardMini/ui/schema/` and the generated Swift
-  in `AdguardMini/MiniResources/SciterSchema/Sources/`.
+  in `AdguardMini/MiniResources/ProtoSchema/Sources/`.
 - **Globally injected imports** (do NOT report as missing): webpack
   `ProvidePlugin` entries in `scripts/webpack/webpack.config.base.js`.
 - **Custom TS types:** check `AdguardMini/ui/@types` before trusting

@@ -37,7 +37,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 | Tool | Version | Notes |
 |------|---------|-------|
 | Xcode | 26+ | Required for `.icon` asset format |
-| Node.js | 22+ | JavaScript runtime (used by Yarn, Webpack, Sciter UI build) |
+| Node.js | 22+ | JavaScript runtime (used by Yarn, Webpack, Web UI build) |
 | Ruby | 3.2.2+ | Build scripts, RuboCop, ruby-lsp |
 | Bundler | 2.6+ | Ruby dependency management |
 | Yarn | 1.22+ | Frontend dependency management |
@@ -199,7 +199,8 @@ yarn test:node
 
 For day-to-day development, build from Xcode: open
 `AdguardMini/AdguardMini.xcodeproj` and build the `AdguardMini` scheme. The
-Sciter UI is built automatically as a target dependency.
+Web UI is built automatically by the target's "Build Web UI" build phase
+(`AdguardMini/Scripts/buildWebUIPhase.sh`).
 
 ```bash
 # Production build of the WKWebView UI bundle (emits AdguardMini/MiniResources/WebUI/)

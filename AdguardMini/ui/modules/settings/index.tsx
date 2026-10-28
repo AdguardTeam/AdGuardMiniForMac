@@ -32,8 +32,7 @@ setupSettingsWebViewBridge(
     accountCallbackService,
     filtersCallbackService,
 );
-// Override the bootstrap's console-fallback `window.log` with the real logger
-// (preserves the current Sciter settings' logging behaviour).
+// Override the bootstrap's console-fallback `window.log` with the real logger.
 window.log = instantiateLogger(FULL_LOGS);
 
 const node = document.getElementById('app');

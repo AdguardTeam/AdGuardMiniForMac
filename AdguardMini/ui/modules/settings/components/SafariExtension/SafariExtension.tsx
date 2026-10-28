@@ -100,18 +100,12 @@ export function SafariExtensionComponent() {
         return (
             <>
                 <Text className={cx(s.SafariExtension_rules, extension.status === SafariExtensionStatus.limit_exceeded && s.SafariExtension_rules__red)} type="t2">
-                    {/* FIXME: Bug in sciter 6.0.2.16-rev-1
-                    If <b> tag isn't wrapped, its color, weight, font-family are unset */}
-                    <div>
-                        {translate('settings.rules.count', { rules: Math.max(extension.rulesEnabled, 0), total: contentBlockersRulesLimit })}
-                    </div>
+                    {translate('settings.rules.count', { rules: Math.max(extension.rulesEnabled, 0), total: contentBlockersRulesLimit })}
                 </Text>
                 <Text className={cx(s.SafariExtension_rules)} type="t2">
                     {filtersIds.length > 0
                         ? (
-                            // FIXME: Bug in sciter 6.0.2.16-rev-1
-                            // If <b> tag isn't wrapped, its color, font-weight, font-family are unset
-                            <div>
+                            <>
                                 {translate('settings.filter.enabled.names')}
                                 {' '}
                                 <b>
@@ -119,7 +113,7 @@ export function SafariExtensionComponent() {
                                     {' '}
                                     {filtersIds.length > 4 ? translate('and.more', { value: filtersIds.length - 4 }) : ''}
                                 </b>
-                            </div>
+                            </>
                         )
                         : translate('settings.no.filters.enabled')}
                 </Text>

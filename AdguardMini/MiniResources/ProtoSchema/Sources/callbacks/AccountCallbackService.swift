@@ -8,7 +8,7 @@ import SwiftProtobuf
 
 // WKWebView-only callback bridge.
 
-// MARK: `toSciter` / WKWebView service implementation
+// MARK: WKWebView service implementation
 
 /// Service handles account updates
 public class AccountCallbackService: WebViewCallbackBridge

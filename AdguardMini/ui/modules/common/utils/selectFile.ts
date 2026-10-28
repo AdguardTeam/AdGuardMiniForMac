@@ -4,7 +4,7 @@
 
 import { SelectFileRequest } from 'Apis/requests/SettingsService';
 
-/** Parse Sciter-style filter into comma-separated extensions. */
+/** Parse a dialog filter string into a comma-separated list of extensions. */
 function parseExtensions(filter: string | undefined): string {
     if (!filter) {
         return '';

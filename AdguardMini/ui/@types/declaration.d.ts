@@ -129,9 +129,6 @@ interface Window {
      * @param f - handler function
      */
     setUnhandledExceptionHandler(f: (err: unknown) => void): void;
-    /**
-     * @link https://bit.int.agrd.dev/projects/SCITER/repos/sciter-source/browse/sdk.js/docs/md/Clipboard.md
-     */
     SystemClipboard: SystemClipboard;
     /**
      * Logger surface (see {@link WindowLogSurface})

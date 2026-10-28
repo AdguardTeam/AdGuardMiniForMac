@@ -78,12 +78,8 @@ extension ServiceLocator {
 }
 
 // MARK: - WKWebView bridge service accessors
-//
-// Computed properties referenced by AppDelegate's host factory. Each
-// Lazily creates a service instance via the Sciter SDK's
-// `<Name>ServiceImpl` factory. After Task 13 regenerates the codegen
-// To drop the `sciterCall` fallback, these will point to directly-
-// Extended service implementations.
+
+// Host-factory accessors exposing the lazily created `<Name>ServiceImpl` instances.
 
 extension ServiceLocator {
     var themeService: ThemeService.ServiceType { self._themeService }

@@ -117,8 +117,6 @@ export class Filters extends FiltersData {
             return error;
         }
         this.fetchFilters();
-
-        // TODO: Debounce is not working properly due to sciter.
     }
 
     // ------------------------------------------------------------------

@@ -38,7 +38,6 @@ export default [
     globalIgnores([
         'build',
         'scripts',
-        'src/sciterBootstrap.ts',
         // Only the generated API surface is ignored; the hand-written bridge
         // files at `modules/common/apis/` root (rpcPostMessage, apiWindow,
         // callbackDispatch, bridgeBytes) stay linted.

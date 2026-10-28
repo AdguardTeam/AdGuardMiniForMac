@@ -83,8 +83,7 @@ function createRule(
     };
 }
 
-// Compact suffixes extracted from CLDR (via Intl.NumberFormat).
-// Spaces are regular ASCII 0x20 for rendering consistency in Sciter.
+// CLDR compact suffixes; TODO: AG-61201 restore the non-breaking space (now ASCII 0x20).
 
 export const NUMBER_LOCALE_RULES: Record<string, NumberLocaleRule> = {
     ar: createRule('ar', 'western', {

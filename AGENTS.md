@@ -142,7 +142,6 @@ adguard-mini/
 │   ├── MiniResources/                  # Generated Protobuf Swift schema + built WKWebView UI bundle
 │   │   ├── ProtoSchema/                   # Generated Protobuf Swift schema (local SPM package)
 │   │   └── WebUI/                         # Built WKWebView UI bundle injected into the app
-│   ├── SciterResources/                   # Legacy Sciter resources (SciterSchema/), slated for removal
 │   ├── AdguardMini Builder/              # Build-time code generation
 │   ├── AdguardMini Prebuilder/           # Pre-build scripts (deps, defaults)
 │   ├── SafariExtension Builder/          # Safari extension build-time scripts
@@ -157,7 +156,7 @@ adguard-mini/
 ├── .github/skills/                       # Copilot skills (figma-webview-diff, …)
 ├── docs/                                 # Technical docs (build/deploy, keyboard QA)
 ├── support-scripts/                      # Internal developer scripts (localization, workflows)
-├── sciter-adguard-mini-private-template/ # Private repo template (Sciter era)
+├── sciter-adguard-mini-private-template/ # Private build config template
 ├── configure.sh                          # Project setup script
 ├── package.json                          # Node.js dependencies (UI)
 ├── tsconfig.json                         # TypeScript configuration
@@ -772,7 +771,7 @@ Blocker JSON consumed by the extension targets.
   describe the purpose and behavior of the documented type itself. They
   MUST NOT reveal the internal implementation of other modules — how a
   consumer works, why a consumer exists, or build/test wiring (test target
-  membership, Sciter dependencies, "extracted so it can be unit-tested").
+  membership, "extracted so it can be unit-tested").
   References to other types are allowed only where they are part of the
   documented type's own contract: its data flow (who writes/reads it),
   platform or threading constraints it must respect, or a brief pointer to
@@ -785,7 +784,7 @@ Blocker JSON consumed by the extension targets.
 
 8. **Fatal errors**: `fatalError` is reserved for failures of a fundamental
    mechanism the process depends on: a missing App Group container or shared
-   storage, a failed Sciter or filter engine initialization. Such a failure
+   storage, a failed filter engine initialization. Such a failure
    puts the process in a severely broken state (broken provisioning, missing
    resources) that cannot be recovered at runtime, and degrading would only
    mask it — the same mechanism serves other data, including critical data.

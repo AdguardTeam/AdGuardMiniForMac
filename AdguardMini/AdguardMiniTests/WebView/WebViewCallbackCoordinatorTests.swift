@@ -11,7 +11,7 @@ import XCTest
 
 /// Tests for the `onSafariExtensionUpdate` activity filter used by
 /// `WebViewCallbackCoordinator.safariExtensionUpdate`
-/// (`SafariExtensionActivity.shouldIgnore`, Sciter-master parity).
+/// (`SafariExtensionActivity.shouldIgnore`).
 /// Process-boundary activities (`.conversion(.end)` / `.reload(.start)`) are
 /// dropped so the UI does not interrupt its animations; the meaningful ones
 /// are forwarded.

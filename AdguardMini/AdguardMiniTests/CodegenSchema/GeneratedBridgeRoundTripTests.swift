@@ -123,9 +123,8 @@ final class GeneratedBridgeRoundTripTests: XCTestCase {
         )
     }
 
-    /// The Sciter→WKWebView migration cutover removed the Sciter-host
-    /// fallback: with a nil bridge the callback is dropped (logged) and a
-    /// default `EmptyValue` response is returned, never a dispatch.
+    /// With a nil bridge the callback is dropped (logged) and a default
+    /// `EmptyValue` response is returned, never a dispatch.
     func testRegenerated_SettingsCallbackService_BridgeNil_ReturnsDefaultResponseWithoutDispatch() {
         let callback = SettingsCallbackService()
         XCTAssertNil(callback.bridge, "Pre-condition: bridge must be nil")

@@ -127,7 +127,7 @@ final class WKWebViewAppHost: NSObject {
     /// Failure presenter — routes load failures, JS-runtime errors,
     /// and recurring-RPC-timeout notifications to logging + native
     /// alert + (optional) app restart. `.noOp` default keeps existing
-    /// tests and Sciter paths untouched.
+    /// tests untouched.
     private let failurePresenter: any WKWebViewFailurePresenting
 
     /// Verifies the WebUI bundle against the app's code-signature seal

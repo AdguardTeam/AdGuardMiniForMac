@@ -57,11 +57,11 @@ protocol ReloadExtensionDelegate: AnyObject {
 
 /// The object responsible for receiving conversion (see ``ConversionStateDelegate``)
 /// and reload extensions (see ``ReloadExtensionDelegate``) events,
-/// and sending the data to the Sciter application.
+/// and sending the data to the WebView UI.
 /// `Sendable` because the implementation holds only immutable collaborators.
 protocol SafariExtensionStateService: ConversionStateDelegate, ReloadExtensionDelegate, Sendable {
     /// Get all extensions state.
-    /// - Returns: The object of sending in a Sciter.
+    /// - Returns: The current state of all extensions.
     func getAllExtensionsStatus() async -> CurrentExtensionsStates
 }
 

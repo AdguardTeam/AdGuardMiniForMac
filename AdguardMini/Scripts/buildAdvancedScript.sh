@@ -16,9 +16,7 @@ YARN="${PROJECT_ROOT}/bin/yarn"
 
 cd "${SRCROOT}/PopupExtension/ContentScript"
 
-# Isolate Yarn cache inside derived_data to prevent race conditions when
-# Xcode runs multiple targets in parallel (e.g. Build Sciter UI and
-# Build advanced script both call yarn install concurrently).
+# Isolate the Yarn cache inside derived_data so parallel builds never race on a shared cache.
 export YARN_CACHE_FOLDER="${DERIVED_FILE_DIR}/.yarn-cache"
 
 "$YARN" install
