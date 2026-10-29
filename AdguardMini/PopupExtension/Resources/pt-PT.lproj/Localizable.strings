@@ -84,7 +84,7 @@ Info view - Subtitle "To get AdGuard Mini up and running properly, you’ll need
 "info_button_title_opening" = "A abrir...";
 
 /* Domain view - Upsell CTA title "Unlock full protection" */
-"item_upsell_title" = "Desbloqueie a proteção completa";
+"item_upsell_title" = "Melhore a sua proteção";
 
 /* Domain view - Upsell CTA description when trial is available */
 "item_upsell_description_trial" = "Experimente por %d dias gratuitamente";
