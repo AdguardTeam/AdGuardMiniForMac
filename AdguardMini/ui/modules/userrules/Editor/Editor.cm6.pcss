@@ -24,8 +24,8 @@
     box-sizing: border-box;
     display: flex !important;
     flex-direction: column;
-    color: var(--text-user-rules-black-default);
-    background: var(--fills-backgrounds-page-background-default);
+    color: var(--neutral-black-default);
+    background: var(--background-main-default);
     height: 100%;
 }
 
@@ -52,7 +52,7 @@
     min-height: 100%;
     padding: 4px 0;
     outline: none;
-    caret-color: var(--text-user-rules-black-default);
+    caret-color: var(--neutral-black-default);
 }
 
 .cm-content[contenteditable=true] {
@@ -83,7 +83,7 @@
     height: 100%;
     box-sizing: border-box;
     z-index: 200;
-    background: var(--fills-backgrounds-page-background-additional-default);
+    background: var(--background-additional-default);
     border-right: 0;
 }
 
@@ -113,7 +113,7 @@
     min-width: 20px;
     text-align: right;
     white-space: nowrap;
-    color: var(--text-placeholder-placeholder-default);
+    color: var(--neutral-light-default);
     font-size: 14px;
     line-height: 18px;
 }
@@ -148,18 +148,18 @@
     left: 0;
     right: 0;
     z-index: 300;
-    background: var(--fills-backgrounds-page-background-additional-default);
-    color: var(--text-main-text-main-default);
+    background: var(--background-additional-default);
+    color: var(--neutral-black-default);
 }
 
 .cm-panels-top {
     top: 0;
-    border-bottom: 1px solid var(--stroke-dividers-item-divider-default);
+    border-bottom: 1px solid var(--neutral-blend-default);
 }
 
 .cm-panels-bottom {
     bottom: 0;
-    border-top: 1px solid var(--stroke-dividers-item-divider-default);
+    border-top: 1px solid var(--neutral-blend-default);
 }
 
 .cm-panel.cm-search {
@@ -197,7 +197,7 @@
 .cm-panel.cm-search input[type='checkbox'] {
     flex: none;
     margin: 0;
-    accent-color: var(--fills-buttons-main-button-default);
+    accent-color: var(--accent-main-default);
 }
 
 .cm-panel.cm-search [name='close'] {
@@ -214,7 +214,7 @@
     border: none;
     border-radius: var(--border-radius);
     background-color: transparent;
-    color: var(--stroke-icons-gray-icons-default);
+    color: var(--neutral-dark-default);
     font: inherit;
     font-size: var(--ft-l);
     cursor: pointer;
@@ -222,7 +222,7 @@
     @mixin focus-ring;
 
     &:hover {
-        background-color: var(--fills-backgrounds-page-background-hovered);
+        background-color: var(--background-main-hover);
     }
 }
 
@@ -268,9 +268,9 @@
     padding: var(--m-xxxs) var(--m-xs);
     border: none;
     border-radius: var(--border-radius);
-    background-color: var(--fills-buttons-main-button-default);
+    background-color: var(--accent-main-default);
     background-image: none;
-    color: var(--text-buttons-primary-default);
+    color: var(--special-static-white-default);
     font-family: inherit;
     font-size: var(--ft-s);
     line-height: var(--lh-m);
@@ -279,11 +279,11 @@
     @mixin focus-ring;
 
     &:hover {
-        background-color: var(--fills-buttons-main-button-hovered);
+        background-color: var(--accent-main-hover);
     }
 
     &:active {
-        background-color: var(--fills-buttons-main-button-pressed);
+        background-color: var(--accent-main-pressed);
     }
 }
 
@@ -292,19 +292,19 @@
     min-width: 180px;
     vertical-align: middle;
     padding: var(--m-xxxs) var(--m-xxs);
-    border: 1px solid var(--stroke-inputs-inactive-input-stroke-default);
+    border: 1px solid var(--neutral-blend-default);
     border-radius: var(--border-radius);
-    background-color: var(--fills-backgrounds-page-background-default);
-    color: var(--text-main-text-main-default);
+    background-color: var(--background-main-default);
+    color: var(--neutral-black-default);
     font: inherit;
 
     &::placeholder {
-        color: var(--text-placeholder-placeholder-default);
+        color: var(--neutral-light-default);
     }
 
     /* Text fields keep their focus border instead of the shared ring. */
     &:focus {
-        border-color: var(--stroke-inputs-active-input-stroke-default);
+        border-color: var(--neutral-light-default);
         outline: none;
     }
 }
@@ -323,25 +323,25 @@
    colors live in this static stylesheet instead of style-mod's
    CSP-blocked injected `<style>`). */
 .adg-cm-keyword {
-    color: var(--text-user-rules-purple-default);
+    color: var(--additional-violet-default);
 }
 
 .adg-cm-string {
-    color: var(--text-user-rules-red-default);
+    color: var(--error-main-default);
 }
 
 .adg-cm-regexp {
-    color: var(--text-user-rules-red-default);
+    color: var(--error-main-default);
 }
 
 .adg-cm-operator {
-    color: var(--text-user-rules-blue-default);
+    color: var(--additional-blue-default);
 }
 
 .adg-cm-definition {
-    color: var(--text-user-rules-blue-default);
+    color: var(--additional-blue-default);
 }
 
 .adg-cm-comment {
-    color: var(--text-user-rules-gray-default);
+    color: var(--neutral-dark-default);
 }

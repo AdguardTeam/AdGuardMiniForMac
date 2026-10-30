@@ -39,7 +39,6 @@ type HealthCheckCardProps = {
 export function HealthCheckCard({ title, description, cta, onClose, color }: HealthCheckCardProps) {
     const titleId = useId();
     const descId = useId();
-
     return (
         <div className={cx(s.HealthCheckCard, s[`HealthCheckCard__${color}`])}>
             {/* Severity is carried by the text; the icon only repeats it visually. */}
@@ -59,7 +58,7 @@ export function HealthCheckCard({ title, description, cta, onClose, color }: Hea
                     id={titleId}
                     tabIndex={0}
                 >
-                    <Text type="t1">{title}</Text>
+                    <Text type="t1" semibold>{title}</Text>
                 </div>
                 <div className={s.HealthCheckCard_content_desc} id={descId}>
                     {description}
@@ -67,7 +66,7 @@ export function HealthCheckCard({ title, description, cta, onClose, color }: Hea
                 <div className={s.HealthCheckCard_content_cta}>
                     {cta.map(({ label, onClick }, index) => (
                         <Button key={index} className={cx(s.HealthCheckCard_content_cta_button, color === 'orange' && theme.button.orangeText)} type="text" onClick={onClick}>
-                            <Text type="t2">{label}</Text>
+                            <Text type="t2" semibold>{label}</Text>
                         </Button>
                     ))}
                 </div>

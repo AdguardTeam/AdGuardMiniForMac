@@ -19,7 +19,7 @@ actual component. Use the `Explorer` subagent (read-only) or `grep_search`.
 | Status header (pause toggle, status text, icon) | `tray/` header component + status store |
 | Filter/stats cards (blocked count, per-tab stats) | `tray/components/` health/status cards, `common/` stats store |
 | Footer actions (open settings, quit) | `tray/` footer component |
-| Colors / theme tokens | `modules/common/` theme + design tokens; regenerate with `yarn theme:generate` if tokens changed |
+| Colors / theme tokens | `modules/common/` theme; tokens are vendored from `frontend-bundle` — re-copy `blocker/light/dark.css`, do not regenerate |
 | Global spacing / typography | shared layout wrapper, theme tokens |
 | Localized text wrong/missing | `modules/common/intl/locales/` JSON (+ Swift `.strings` for native chrome) |
 
@@ -36,8 +36,10 @@ actual component. Use the `Explorer` subagent (read-only) or `grep_search`.
 
 ## Cross-cutting
 
-- **Design tokens / theme:** run `yarn theme:generate` after editing design token
-  sources so generated stylesheets stay in sync.
+- **Design tokens / theme:** the color stylesheets in
+  `AdguardMini/ui/modules/common/theme/default/` are vendored from
+  `frontend-bundle`; re-copy them after upstream token changes instead of
+  running `yarn theme:generate` (a guard that refuses to overwrite them).
 - **Protobuf-backed data:** if a value is summarised from the platform layer,
   check the schema in `AdguardMini/ui/schema/` and the generated Swift
   in `AdguardMini/MiniResources/ProtoSchema/Sources/`.

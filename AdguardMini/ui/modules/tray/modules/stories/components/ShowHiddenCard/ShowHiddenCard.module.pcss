@@ -13,21 +13,21 @@
     vertical-align: middle;
     text-align: center;
     border-radius: var(--border-radius);
-    border: 1px var(--stroke-icons-product-icon-default);
+    border: 1px var(--accent-main-default);
     border-style: dashed;
     padding: var(--m-s);
     margin-bottom: var(--m-xxs);
     margin-right: var(--m-s);
     box-shadow: var(--bs-small);
     cursor: pointer;
-    background: var(--fills-backgrounds-cards-background-default);
+    background: var(--background-elevated-default);
 
     &:hover {
-        background: var(--fills-backgrounds-cards-background-hovered);
+        background: var(--background-elevated-hover);
     }
 
     &:active {
-        background: var(--fills-backgrounds-cards-background-pressed);
+        background: var(--background-elevated-pressed);
     }
 
     @mixin focus-ring;
@@ -47,9 +47,9 @@
 
 .ShowHiddenCard_icon {
     margin: 0 auto;
-    color: var(--stroke-icons-product-icon-default);
+    color: var(--accent-main-default);
 }
 
 .ShowHiddenCard_text {
-    color: var(--text-buttons-tertiary-default);
+    color: var(--accent-main-default);
 }

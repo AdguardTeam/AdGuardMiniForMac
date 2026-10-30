@@ -35,6 +35,7 @@ export function SettingsHeader(props: Props) {
             }, {
                 text: translate('settings.clear.statistics'),
                 action: onClearStatistics,
+                className: theme.button.redText,
             }, {
                 text: translate('reset.defaults'),
                 action: onToggleResetModal,

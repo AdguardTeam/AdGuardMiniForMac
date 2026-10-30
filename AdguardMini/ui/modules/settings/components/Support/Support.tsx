@@ -31,18 +31,18 @@ function SupportComponent() {
         description: translate('support.contact.support.desc'),
         internalLink: RouteName.contact_support,
     }, {
-        icon: 'faq',
-        title: translate('support.faq'),
-        description: translate('support.faq.desc'),
-        externalLink: getTdsLink(TDS_PARAMS.faq_safari, RouteName.support),
-        linkIcon: 'rightIcon',
-    }, {
         icon: 'ads',
         title: translate('support.report'),
         description: `${translate('support.report.desc')}`,
         onClick: clickHandler,
         linkIcon: 'rightIcon',
         opensInBrowser: true,
+    }, {
+        icon: 'faq',
+        title: translate('support.faq'),
+        description: translate('support.faq.desc'),
+        externalLink: getTdsLink(TDS_PARAMS.faq_safari, RouteName.support),
+        linkIcon: 'rightIcon',
     }, /* AG-49352 {
         icon: 'message',
         title: translate('support.discuss'),

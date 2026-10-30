@@ -4,7 +4,6 @@
 
 import { useCallback } from 'preact/hooks';
 
-import theme from 'Theme';
 import { Button, Text } from 'UILib';
 
 import { resolveStoryImageSize } from '../../utils/storyImageSize';
@@ -63,17 +62,14 @@ export function FrameContent({ frame, frameIdNavigation, onClose, titleId }: Fra
             {buttons?.map((button, index) => (
                 <Button
                     key={`${index}-${button.title}`}
-                    className={cx(
-                        button.type === 'secondary' ? s.FrameContent_buttonText : s.FrameContent_button,
-                        button.type === 'secondary' ? tx.button.textButton : theme.button.storyButton,
-                    )}
-                    type={button.type === 'secondary' ? 'text' : 'submit'}
+                    className={button.type === 'secondary' ? s.FrameContent_buttonSecondary : s.FrameContent_button}
+                    type={button.type === 'secondary' ? 'outlined' : 'submit'}
                     onClick={() => handleButtonClick(button)}
                 >
                     <Text
                         lineHeight="none"
-                        semibold={button.type !== 'secondary'}
                         type="t1"
+                        semibold
                     >
                         {button.title}
                     </Text>

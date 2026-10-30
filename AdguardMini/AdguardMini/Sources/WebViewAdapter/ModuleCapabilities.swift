@@ -62,8 +62,9 @@ enum ModuleCapabilities {
             return [
                 "ThemeService", "TraySettingsService", "AccountService",
                 "SafariExtensionsService", "AdvancedBlockingService",
-                "AppUpdateService", "TelemetryService", "InternalService",
-                "SystemService", "ConsentService", "FiltersService"
+                "AppUpdateService", "AppInfoService", "TelemetryService",
+                "InternalService", "SystemService", "ConsentService",
+                "FiltersService"
             ]
         case .settings:
             return [

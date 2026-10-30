@@ -132,6 +132,49 @@ export function useLottieElement(_elLottieRef: UseLottieElementParams['elLottieR
 }
 
 /**
+ * No-op stand-in for the real `useClickOutside`: overlay tests drive the
+ * open/close paths through the trigger and the menu rows, not outside presses.
+ */
+export function useClickOutside(
+    _ref: unknown,
+    _handler: () => void,
+    _exclusion?: unknown,
+): void {}
+
+/**
+ * No-op stand-in for the real `useEscape`; Escape handling is covered by the
+ * pure `overlayFocus` helpers rather than through a mounted overlay.
+ */
+export function useEscape(
+    _func: () => void,
+    _deps?: unknown[],
+    _useCapture?: boolean | EventListenerOptions,
+): void {}
+
+/**
+ * No-op stand-in for the real `useScrollListener`.
+ */
+export function useScrollListener<T extends HTMLElement = HTMLElement>(
+    _target: { current: T | null },
+    _callback: (event: Event) => void,
+): void {}
+
+/**
+ * No-op stand-in for the real `useEnter`.
+ */
+export function useEnter(
+    _func: () => void,
+    _deps?: unknown[],
+    _useCapture?: boolean | EventListenerOptions,
+): void {}
+
+/**
+ * No-op stand-in for the real `focusOnBody`; the jsdom document has no
+ * meaningful body focus state.
+ */
+export function focusOnBody(): void {}
+
+/**
  * Clamp a value between min and max (mirrors `@adg/webview-utils-kit`'s
  * `clamp`, used by the stories navigation reducer).
  *

@@ -67,6 +67,7 @@ export const AdBlockingSection = observer(() => {
                     <Text className={s.Settings_enabled} type="t2">
                         {translate('filters.enabled', {
                             enabled: enabledFilters,
+                            total: filters.filters.filters.length + filters.filters.customFilters.length,
                         })}
                     </Text>
                 )}
@@ -77,7 +78,7 @@ export const AdBlockingSection = observer(() => {
             <SettingsItemLink
                 additionalText={(
                     <>
-                        <Text className={s.Settings_enabled} type="t2">{translate('filters.enabled', { enabled: enabledSafariExtensionsCount })}</Text>
+                        <Text className={s.Settings_enabled} type="t2">{translate('filters.enabled', { enabled: enabledSafariExtensionsCount, total: safariExtensionsCount })}</Text>
                         {!allExtensionsEnabled && (
                             <Text className={s.Settings_enabled_warning} type="t2">
                                 {getDisabledExtensionsStatus()}

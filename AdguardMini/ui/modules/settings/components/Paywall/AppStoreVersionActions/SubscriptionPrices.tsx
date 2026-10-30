@@ -41,7 +41,7 @@ export function SubscriptionPrices({
                 type="outlined"
                 onClick={() => setCurrentSelectedPlan(AppStoreSubscription.annual)}
             >
-                <Text className={s.SubscriptionPrices_btn_text} lineHeight="none" type="t1">
+                <Text className={s.SubscriptionPrices_btn_text} lineHeight="none" type="t2">
                     {(isPromoAvailable && annual?.introOfferDisplayPrice)
                         ? translate('settings.paywall.plan.with.discount', {
                             standard: (text: string) => <span className={s.SubscriptionPrices_offer}>{text}</span>,
@@ -66,7 +66,7 @@ export function SubscriptionPrices({
                     telemetry.layersRelay.trackEvent(SettingsEvent.MonthlyClick);
                 }}
             >
-                <Text className={s.SubscriptionPrices_btn_text} lineHeight="none" type="t1">
+                <Text className={s.SubscriptionPrices_btn_text} lineHeight="none" type="t2">
                     {isPromoAvailable && monthly?.introOfferDisplayPrice
                         ? translate('settings.paywall.plan.with.discount.month', {
                             standard: (text: string) => <span className={s.SubscriptionPrices_offer}>{text}</span>,

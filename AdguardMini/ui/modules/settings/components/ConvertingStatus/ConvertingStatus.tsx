@@ -19,14 +19,14 @@ function ConvertingStatusComponent() {
 
     const { settings: { safariExtensionsLoading }, advancedBlocking: { urlFilterState: { status } } } = store;
 
-    if (!safariExtensionsLoading || status !== URLFilterStatus.loading) {
+    if (!safariExtensionsLoading && status !== URLFilterStatus.loading) {
         return <div className={s.ConvertingStatus_tooltipContainer} />;
     }
 
     return (
         <TooltipArea
             className={cx(s.ConvertingStatus_tooltipContainer, s.ConvertingStatus_background)}
-            showTooltip={status !== URLFilterStatus.loading}
+            showTooltip={safariExtensionsLoading}
             tooltip={translate('tray.home.title.converting')}
         >
             <div className={s.ConvertingStatus_runner} />

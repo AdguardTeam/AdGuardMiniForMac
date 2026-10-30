@@ -340,20 +340,26 @@ function HomeComponent() {
                         className={s.Home_header_logo}
                         isDarkTheme={effectiveTheme !== null && isDarkColorTheme(getColorTheme(effectiveTheme))}
                     />
-                    <Button
-                        ariaLabel={translate('tray.updates')}
-                        className={cx(theme.button.greenIcon, s.Home_header_update)}
-                        icon="update"
-                        type="icon"
-                        onClick={navigateToUpdates}
-                    />
-                    <Button
-                        ariaLabel={translate('menu.settings')}
-                        className={theme.button.greenIcon}
-                        icon="settings"
-                        type="icon"
-                        onClick={openSettingsWindow}
-                    />
+                    <div className={cx(s.Home_header_tooltipWrap, s.Home_header_update)}>
+                        <Button
+                            ariaLabel={translate('tray.updates')}
+                            className={theme.button.greenIcon}
+                            icon="update"
+                            type="icon"
+                            onClick={navigateToUpdates}
+                        />
+                        <span className={s.Home_header_tooltip}>{translate('tray.update.app.and.filters')}</span>
+                    </div>
+                    <div className={s.Home_header_tooltipWrap}>
+                        <Button
+                            ariaLabel={translate('menu.settings')}
+                            className={theme.button.greenIcon}
+                            icon="settings"
+                            type="icon"
+                            onClick={openSettingsWindow}
+                        />
+                        <span className={s.Home_header_tooltip}>{translate('menu.settings')}</span>
+                    </div>
                 </div>
                 {isLoading ? (
                     <>

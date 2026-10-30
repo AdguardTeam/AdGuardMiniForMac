@@ -5,7 +5,7 @@ import { NotificationContext, NotificationsQueueType, NotificationsQueueIconType
 import { getNotificationSettingsImportFailedText } from 'SettingsLib/utils/translate';
 
 import { ISettingsCallbackServiceInternal } from './SettingsCallbackService';;
-import { SafariExtensionUpdate, EmptyValue, BoolValue, ImportStatus, ImportMode, StringValue, EffectiveThemeValue, URLFilterState } from '../types'
+import { SafariExtensionUpdate, EmptyValue, BoolValue, ImportStatus, ImportMode, StringValue, EffectiveThemeValue, URLFilterState, ApplicationVersionStatus } from '../types'
 
 const debouncedGroupedFilters = debounce(() => {
     store.filters.getFiltersGroupedByExtension();
@@ -58,8 +58,9 @@ async OnSafariExtensionUpdate(param: SafariExtensionUpdate): Promise<EmptyValue>
         return new EmptyValue();
     }
 
-    async OnApplicationVersionStatusResolved(param: BoolValue): Promise<EmptyValue> {
-        store.appInfo.setNewVersionAvailable(param.value);
+    async OnApplicationVersionStatusResolved(param: ApplicationVersionStatus): Promise<EmptyValue> {
+        store.appInfo.setNewVersionAvailable(param.available);
+        store.appInfo.setAvailableVersion(param.version);
         return new EmptyValue();
     }
 

@@ -10,6 +10,7 @@ import {
     StringValue,
     EffectiveThemeValue,
     EffectiveTheme,
+    ApplicationVersionStatus,
 } from '../../modules/common/apis/types';
 import { TrayCallbackServiceImpl } from '../../modules/tray/store/modules/TrayCallbackServiceImpl';
 import { TrayRoute } from '../../modules/tray/store/modules/TrayRouter';
@@ -215,7 +216,7 @@ test('OnApplicationVersionStatusResolved forwards to setNewVersionAvailable', ()
     const received: boolean[] = [];
     settings.setNewVersionAvailable = (v) => { received.push(v); };
 
-    void service.OnApplicationVersionStatusResolved(new BoolValue({ value: true }));
+    void service.OnApplicationVersionStatusResolved(new ApplicationVersionStatus({ available: true, version: '3.1.0' }));
 
     assert.deepEqual(received, [true]);
 });

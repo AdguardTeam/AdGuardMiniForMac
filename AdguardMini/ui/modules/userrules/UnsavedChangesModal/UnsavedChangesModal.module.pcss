@@ -19,7 +19,7 @@
         border-radius: 8px;
         box-shadow: 32px 32px 128px 0px rgba(0, 0, 0, 0.10);
         width: max-content;
-        background-color: var(--fills-backgrounds-page-background-default);
+        background-color: var(--background-main-default);
         position: fixed;
         z-index: 1000;
         top: 50%;
@@ -50,7 +50,7 @@
             font-size: 32px;
             font-weight: 700;
             line-height: 38px;
-            color: var(--text-main-text-main-default);
+            color: var(--neutral-black-default);
             margin-bottom: 24px;
         }
 
@@ -59,7 +59,7 @@
             padding: 0;
             font-size: 16px;
             line-height: 24px;
-            color: var(--text-main-text-main-default);
+            color: var(--neutral-black-default);
             margin-bottom: 24px;
         }
 
@@ -84,29 +84,29 @@
                 @mixin focus-ring;
 
                 &:hover {
-                    background-color: var(--fills-buttons-main-button-hovered);
+                    background-color: var(--accent-main-hover);
                 }
 
                 &:active {
-                    background-color: var(--fills-buttons-main-button-pressed);
+                    background-color: var(--accent-main-pressed);
                 }
 
                 &__primaryBtn {
-                    background-color: var(--fills-buttons-main-button-default);
-                    color: var(--text-buttons-primary-default);
+                    background-color: var(--accent-main-default);
+                    color: var(--special-static-white-default);
                 }
 
                 &__secondaryBtn {
-                    background-color: var(--fills-backgrounds-page-background-default);
-                    color: var(--text-main-text-main-default);
-                    border: 1px solid var(--text-buttons-secondary-default);
+                    background-color: var(--background-main-default);
+                    color: var(--neutral-black-default);
+                    border: 1px solid var(--neutral-black-default);
                     
                     &:hover {
-                        background-color: var(--fills-backgrounds-page-background-hovered);
+                        background-color: var(--background-main-hover);
                     }
 
                     &:active {
-                        background-color: var(--fills-backgrounds-page-background-pressed);
+                        background-color: var(--background-main-pressed);
                     }
                 }
             }

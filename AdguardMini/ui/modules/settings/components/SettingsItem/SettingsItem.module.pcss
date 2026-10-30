@@ -28,13 +28,13 @@
     &__hover {
         &:hover {
             border-radius: 8px;
-            background: var(--fills-backgrounds-page-background-hovered);
+            background: var(--background-main-hover);
         }
     }
 
     &_defaultHovered {
         border-radius: 8px;
-        background: var(--fills-backgrounds-page-background-hovered);
+        background: var(--background-main-hover);
     }
 
     &_title {
@@ -51,27 +51,20 @@
             height: auto;
         }
 
-        &_routeBorder {
-            height: auto;
-            width: 1px;
-            margin: 16px 1px;
-            background: var(--stroke-dividers-item-divider-default);
-        }
-
         &_newLabel {
             height: 20px;
             border-radius: 6px;
             padding: 3px 8px;
             margin-right: auto;
             margin-top: -1px;
-            background: var(--fills-buttons-main-button-default);
-            color: var(--text-buttons-primary-default);
+            background: var(--accent-main-default);
+            color: var(--special-static-white-default);
             text-align: center;
         }
 
         &_line {
             display: flex;
-            min-height: 28px;
+            min-height: 25px;
             align-items: center;
 
             /*
@@ -87,19 +80,19 @@
                 margin-right: var(--m-xs); 
 
                 &__green {
-                    color: var(--text-links-link-default);
+                    color: var(--accent-main-default);
                 }
 
                 &__orange {
-                    color: var(--text-links-attention-link-default);
+                    color: var(--attention-main-default);
                 }
 
                 &__red {
-                    color: var(--text-links-error-link-default);
+                    color: var(--error-main-default);
                 }
 
                 &__gray {
-                    color: var(--text-buttons-secondary-default);
+                    color: var(--neutral-black-default);
                 }
 
                 &__rotate {
@@ -118,7 +111,7 @@
         
         &_desc {
             &_text {
-                color: var(--text-description-description-default);
+                color: var(--neutral-dark-default);
             }
 
             &__icon {
@@ -140,7 +133,11 @@
 .SettingsItemLink {
     &_arrow {
         transform: rotate(180deg);
-        color: var(--text-description-description-default);
+        color: var(--neutral-dark-default);
         margin-left: auto;
+
+        &__external {
+            color: var(--accent-main-default);
+        }
     }
 }

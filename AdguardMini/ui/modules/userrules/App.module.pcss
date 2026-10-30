@@ -28,7 +28,7 @@
             font-weight: 700;
             font-size: 24px;
             line-height: var(--title-line-height);
-            color: var(--text-main-text-main-default);
+            color: var(--neutral-black-default);
             margin-right: auto;
         }
 
@@ -66,12 +66,12 @@
                 top: 28px;
                 right: 16px;
                 z-index: 10;
-                min-width: 272px;
+                min-width: 227px;
                 padding: 16px;
-                color: var(--text-main-text-main-default);
-                background-color: var(--fills-backgrounds-page-background-default);
-                border-radius: 5px;
-                box-shadow: 4px 4px 12px 0px rgba(0, 0, 0, 0.26);
+                color: var(--neutral-black-default);
+                background-color: var(--background-main-default);
+                border-radius: var(--border-radius);
+                box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.10);
 
                 &_title {
                     font-size: 16px;
@@ -102,7 +102,7 @@
         justify-content: center;
         align-items: center;
         margin-bottom: 16px;
-        border: 1px solid var(--stroke-dividers-item-divider-default);
+        border: 1px solid var(--neutral-blend-default);
         height: calc(100% 
             - var(--app-padding-top) 
             - var(--title-line-height) 
@@ -116,7 +116,7 @@
         flex: 1 1 auto;
         min-height: 0;
         margin-bottom: var(--editor-margin-bottom);
-        border: 1px solid var(--stroke-dividers-item-divider-default);
+        border: 1px solid var(--neutral-blend-default);
     }
 
     &_row {
@@ -145,20 +145,20 @@
              */
             @mixin focus-ring;
 
-            color: var(--text-buttons-primary-default);
-            background-color: var(--fills-buttons-main-button-default);
+            color: var(--special-static-white-default);
+            background-color: var(--accent-main-default);
             
             &:hover {
-                background-color: var(--fills-buttons-main-button-hovered);
+                background-color: var(--accent-main-hover);
             }
 
             &:active {
-                background-color: var(--fills-buttons-main-button-pressed); 
+                background-color: var(--accent-main-pressed); 
             }
 
             &:disabled {
                 cursor: default;
-                background-color: var(--fills-buttons-main-button-disabled);
+                background-color: var(--accent-main-disabled);
             }
 
             &_text {
@@ -172,14 +172,44 @@
             }
 
             &__loading {
-                color: var(--text-buttons-primary-disabled);
-                background-color: var(--fills-buttons-main-button-loader-disabled) !important;
+                color: var(--special-static-white-disabled);
+                background-color: var(--accent-main-disabled) !important;
+            }
+        }
+
+        &_hint {
+            flex: 1 1 auto;
+            color: var(--attention-main-default);
+
+            &__saved {
+                color: var(--neutral-light-default);
+            }
+
+            &_action {
+                padding: 0;
+                border: none;
+                background: none;
+                font: inherit;
+                color: inherit;
+                cursor: pointer;
+
+                /*
+                 * Keyboard focus indicator: an inline text action, so the
+                 * floating offset keeps the ring clear of the text.
+                 */
+                --focus-ring-offset: var(--focus-ring-offset-floating);
+
+                @mixin focus-ring;
+
+                &:hover {
+                    text-decoration: underline;
+                }
             }
         }
     }
 
     &__link {
-        color: var(--text-links-link-default);
+        color: var(--accent-main-default);
         cursor: pointer;
     }
 
@@ -191,7 +221,7 @@
         cursor: pointer;
 
         &_icon {
-            color: var(--stroke-icons-gray-icons-default);
+            color: var(--neutral-dark-default);
         }
 
         &:hover {
@@ -206,7 +236,7 @@
             display: none;
             width: max-content;
             border-radius: var(--border-radius);
-            background-color: var(--fills-menus-dropdown-menu-background-default);
+            background-color: var(--background-elevated-default);
             right: 0px;
             top: 30px;
             box-shadow: var(--bs-big);

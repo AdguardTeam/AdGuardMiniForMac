@@ -90,6 +90,21 @@ public struct AppInfo: Sendable {
   public init() {}
 }
 
+/// Result of the application version check, pushed to the UI when it resolves
+public struct ApplicationVersionStatus: Sendable {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var available: Bool = false
+
+  public var version: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 /// Name and version of third party dependency
 public struct ThirdPartyDependency: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
@@ -151,6 +166,41 @@ extension AppInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
     if lhs.channel != rhs.channel {return false}
     if lhs.dependencies != rhs.dependencies {return false}
     if lhs.updateAvailable != rhs.updateAvailable {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension ApplicationVersionStatus: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "ApplicationVersionStatus"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}available\0\u{1}version\0")
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularBoolField(value: &self.available) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.version) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.available != false {
+      try visitor.visitSingularBoolField(value: self.available, fieldNumber: 1)
+    }
+    if !self.version.isEmpty {
+      try visitor.visitSingularStringField(value: self.version, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: ApplicationVersionStatus, rhs: ApplicationVersionStatus) -> Bool {
+    if lhs.available != rhs.available {return false}
+    if lhs.version != rhs.version {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

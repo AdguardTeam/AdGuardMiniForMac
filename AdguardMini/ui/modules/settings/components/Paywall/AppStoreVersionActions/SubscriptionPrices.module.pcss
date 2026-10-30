@@ -9,14 +9,14 @@
         text-align: left;
         display: flex;
         padding: 10px var(--m-xs);
-        border-color: var(--stroke-inputs-inactive-input-stroke-default);
-        color: var(--text-description-description-default);
+        border-color: var(--neutral-blend-default);
+        color: var(--neutral-dark-default);
         min-height: 44px;
         margin-bottom: var(--m-xs);
 
         &_icon {
             margin: 0 auto;
-            color: var(--stroke-icons-product-icon-default);
+            color: var(--accent-main-default);
             opacity: 0;
         }
 
@@ -26,19 +26,27 @@
             margin: auto 0;
         }
 
+        /* Only the selected plan is semibold; pinned so the button rule cannot override it. */
+        & > .SubscriptionPrices_btn_text {
+            font-weight: var(--fw-normal);
+        }
+
         &__active {
-            background-color: var(--fills-notifications-primary-default);
-            border-color: var(--stroke-dividers-item-divider-green-default);
-            color: var(--text-main-text-main-default);
+            background-color: var(--success-blend-default);
+            border-color: var(--accent-main-default);
+            color: var(--neutral-black-default);
 
             & > .SubscriptionPrices_btn_icon {
                 opacity: 1;
             }
-            
+
+            & > .SubscriptionPrices_btn_text {
+                font-weight: var(--fw-semibold);
+            }
         }
 
         &:hover {
-            background-color: var(--fills-notifications-primary-default);
+            background-color: var(--success-blend-default);
         }
     }
 

@@ -48,7 +48,9 @@ function FilterGroupComponent({
     const isCustomGroup = groupId === customGroupId;
 
     let enabled: number;
+    let total: number;
     if (!isCustomGroup) {
+        total = filtersByGroups[groupId]?.length ?? 0;
         enabled = filtersByGroups[groupId]?.reduce((prev, id) => {
             if (enabledFilters.has(id)) {
                 return prev + 1;
@@ -56,6 +58,7 @@ function FilterGroupComponent({
             return prev;
         }, 0);
     } else {
+        total = (customFilters || []).length;
         enabled = (customFilters || []).reduce((prev, f) => {
             if (f.enabled) {
                 return prev + 1;
@@ -67,7 +70,7 @@ function FilterGroupComponent({
     return (
         <SettingsItemLink
             className={s.FilterGroup}
-            description={translate('filters.enabled', { enabled })}
+            description={translate('filters.enabled', { enabled, total })}
             icon={groupIconMap[groupId]}
             title={isCustomGroup ? translate('filters.custom.filters') : group?.groupName}
             onClick={onClick}

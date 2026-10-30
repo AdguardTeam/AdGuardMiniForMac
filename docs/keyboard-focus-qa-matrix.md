@@ -38,6 +38,7 @@ Every row is executed by a human on a built app. All result cells are
 | --- | --- | --- |
 | Standard button | `Button` (text/icon variants), modal submit/cancel, `NavigationHeader` back | 2px `#7884CB` ring, default offset; Enter/Space activate once |
 | Link | `ExternalLink`, clickable `Text` | floating-offset ring; Enter activates |
+| Inline text action | User Rules apply-updates hint action; AdvancedBlocking real-time updates link | floating-offset ring; Enter/Space activates once |
 | Checkbox | `Checkbox` (settings + onboarding usages) | contained ring around the whole row; Space/Enter toggles once |
 | Switch | `Switch` (settings usages) | contained ring; Space/Enter toggles once |
 | Radio | `Radio` (Theme, Quit Reaction, System-wide Protection with the experimental flag on) | contained ring; Space/Enter selects once |
@@ -70,7 +71,7 @@ One row per human execution; the initial state is unexecuted.
 | Date | Build / variant | Executed by | Rows run | Summary | Notes |
 | --- | --- | --- | --- | --- | --- |
 | | | | | | |
-| — | — | — | — | — | Not executed — all rows `Pending` (GUI pass parked) |
+| — | — | — | — | — | Not executed — all rows `Pending` (GUI pass parked); `UR-5` (Assistant apply-updates action) is included in the pending set |
 
 Current status: **not executed** — all runtime rows are `Pending`.
 
@@ -127,10 +128,11 @@ Current status: **not executed** — all runtime rows are `Pending`.
 
 | ID | Where | Control / state | Action | Expected | Light | Dark | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| UR-1 | User rules editor window | whole window | Tab through | editor surface, Save button, editor subtitle link and the flag icon (now the shared `Icon`, a real tab stop) each ring; no dead stops; heading focus unchanged | Pending | Pending | |
+| UR-1 | User rules editor window | whole window | Tab through | editor surface, Save button, editor subtitle link and the flag icon (now the shared `Icon`, a real tab stop) each ring; the apply-updates action joins the cycle only while the Assistant-updates hint is shown (`UR-5`); no dead stops; heading focus unchanged | Pending | Pending | |
 | UR-2 | User rules flag icon | shared `Icon` action | Tab to it, Enter/Space, click | opens the flag menu once; ring visible; click unchanged | Pending | Pending | |
 | UR-3 | User rules unsaved-changes modal | edits made, Cmd+W | Tab through the dialog; close via the cross | close icon, Save and close and Discard changes each ring; the trap wraps; closing via the cross returns focus to the editor element that was focused at open, not the body | Pending | Pending | |
 | UR-4 | User rules Save button | Save | Tab to Save, Enter/Space | saves once and the button shows the ring | Pending | Pending | |
+| UR-5 | User rules Assistant-updates hint | pending Assistant updates pushed while the editor had unsaved edits | Tab to "Apply the updates", Enter/Space, click; then apply and re-check the hint | the inline action rings (floating offset) and applies the pending set once, replacing the local edits; the hint then shows the applying state and disappears once the editor is rebuilt; the action is not a tab stop when the hint is hidden | Pending | Pending | Requires an Assistant rule push while the editor is dirty. |
 
 ## Focus Lifecycle And Edge Cases
 

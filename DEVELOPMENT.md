@@ -306,12 +306,31 @@ All scripts are located in `Support/Scripts/`.
 
 ### Theme Generation
 
-```bash
-yarn theme:generate
-```
+UI color tokens are vendored from
+`AdGuardSoftwareLimited/frontend-bundle`
+(`src/Resources/views/shared/styles/themes/variables`), which generates
+them from the Figma design tokens exported to
+`AdGuardSoftwareLimited/designteam-materials`. The files live in
+`AdguardMini/ui/modules/common/theme/default/`:
 
-Generates CSS stylesheets from the default theme definition at
-`AdguardMini/ui/modules/common/theme/default`.
+| File | Source |
+| --- | --- |
+| `blocker.css` | `variables/products/blocker.css` |
+| `light.css` | `variables/themes/light.css` |
+| `dark.css` | `variables/themes/dark.css` |
+
+Re-copy them from `frontend-bundle` when the upstream tokens are
+regenerated; do not edit them by hand. One recorded deviation: `dark.css`
+uses `html[theme="dark"]` (Mini's root attribute) instead of the upstream
+`[data-theme="dark"]`; re-apply it after re-copying.
+
+The re-copied files carry no SPDX header of their own, so nothing needs to
+be re-applied for licensing: `REUSE.toml` annotates the three vendored
+stylesheets.
+
+`yarn theme:generate` is a guard that prints these instructions and exits
+non-zero: the old `sciter-infra-utils` generator writes the deprecated
+v1.0.4 palette and would overwrite the vendored files.
 
 ## Troubleshooting
 

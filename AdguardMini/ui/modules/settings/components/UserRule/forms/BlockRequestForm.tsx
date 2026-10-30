@@ -129,7 +129,7 @@ export function BlockRequestForm({ rule, setRule, errors, setErrors }: BlockRequ
                 {showDomainsField && (
                     <Textarea
                         key="textarea"
-                        className={cx(s.UserRule_input, s.UserRule_textarea)}
+                        className={s.UserRule_input}
                         error={!!errors.websites}
                         errorMessage={errors.websites}
                         id="domainModifierDomains"

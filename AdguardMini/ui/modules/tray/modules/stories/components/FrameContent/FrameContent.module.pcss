@@ -75,7 +75,6 @@
     background-image: url('./images/telemetry4.svg');
 }
 
-
 .healthCheck1 {
     background-image: url('./images/healthCheck1.svg');
 }
@@ -97,12 +96,12 @@
     &_image {
         background-size: contain;
         background-position: center;
-        max-height: 250px;
+        max-height: 300px;
         background-repeat: no-repeat;
         flex: 1;
 
         &__small {
-            max-height: 206px;
+            max-height: 236px;
         }
 
         &__big {
@@ -111,19 +110,18 @@
     }
 
     &_imageText {
-        max-height: 225px;
+        max-height: 300px;
         flex: 1;
         display: flex;
-        margin-top: var(--m-xs);
         align-items: center;
         justify-content: center;
         text-align: center;
-        color: var(--text-footer-footer-text-default);
+        color: var(--special-static-white-default);
     }
 
     &_title {
         margin: var(--m-s) var(--m-s) var(--m-xs);
-        color: var(--text-footer-footer-text-default);
+        color: var(--special-static-white-default);
         text-align: center;
         position: relative;
         z-index: 3;
@@ -131,7 +129,7 @@
 
     &_description {
         margin: 0 var(--m-s) var(--m-s);
-        color: var(--text-footer-footer-text-default);
+        color: var(--special-static-white-default);
         text-align: center;
         position: relative;
         z-index: 3;
@@ -147,19 +145,21 @@
         justify-content: center;
         margin: var(--m-xxs) auto;
         color: #3D3D3D;
+        background-color: var(--special-static-white-default);
         z-index: 5;
         position: relative;
     }
 
-    &_buttonText {
-        color: #FFFFFF;
-        width: auto;
+    &_buttonSecondary {
+        box-sizing: border-box;
+        width: 360px;
+        max-width: 360px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
         z-index: 5;
         position: relative;
-        margin: var(--m-xs) 0 var(--m-xxs);
-
-        &:hover {
-            color: #FFFFFF;
-        }
     }
 }

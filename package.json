@@ -30,7 +30,7 @@
     "locales:checkInhouse": "sciter-infra-utils locales-check ./AdguardMini/ui --inhouse-only --no-check-unused-keys --no-check-files-existence",
     "locales:pull": "sciter-infra-utils locales-pull",
     "locales:pushMaster": "sciter-infra-utils locales-push",
-    "theme:generate": "sciter-infra-utils generate-stylesheets ./AdguardMini/ui/modules/common/theme/default ADG",
+    "theme:generate": "node ./AdguardMini/ui/scripts/theme/vendored-tokens.mjs",
     "watchProject": "nodemon --exec './AdguardMini/Scripts/syncWebUI.sh --no-build'",
     "syncUI": "./AdguardMini/Scripts/syncWebUI.sh",
     "test:node": "tsc -p tsconfig.node-tests.json && TS_NODE_PROJECT=tsconfig.node-tests.json TS_NODE_BASEURL=build/tests node -r tsconfig-paths/register --test \"build/tests/AdguardMini/ui/tests/**/*.test.js\""

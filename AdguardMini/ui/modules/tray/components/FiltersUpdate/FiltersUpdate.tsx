@@ -49,7 +49,7 @@ function FiltersUpdateComponent() {
                 />
             </div>
             <div>
-                <Text className={s.FiltersUpdate_title} id={titleId} tabIndex={-1} type="h4">{translate('tray.updates')}</Text>
+                <Text className={s.FiltersUpdate_title} id={titleId} tabIndex={-1} type="h4">{translate('tray.updated.filters')}</Text>
             </div>
             {/*
               * A list, stepped through one row at a time: the name sits in one
@@ -70,7 +70,9 @@ function FiltersUpdateComponent() {
                             role="listitem"
                         >
                             <Text className={s.FiltersUpdate_filter_name} type="t2">{filter.name}</Text>
-                            <Text className={filter.success ? undefined : s.FiltersUpdate_filter__orange} type="t2">{filter.version}</Text>
+                            <Text className={filter.success ? undefined : s.FiltersUpdate_filter__orange} type="t2">
+                                {filter.success ? translate('filters.version', { version: filter.version }) : filter.version}
+                            </Text>
                         </div>
                     );
                 })}

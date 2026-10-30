@@ -201,7 +201,6 @@ function SettingsItemComponent({
                     </div>
                 )}
             </div>
-            {routeName && (<div className={routeName && s.SettingsItem_container_routeBorder} />)}
             {/* The children slot forwards pointer clicks to the row action;
                 the inner control (e.g. the switch) is the tab stop that carries
                 the keyboard path. */}
@@ -357,7 +356,7 @@ function SettingsItemLinkComponent<T extends Record<string, any>>({
         // Without `containerAsButton` the row is a bare clickable `<div>` —
         // unreachable from the keyboard and invisible to VoiceOver.
         <SettingsItem {...rest} ariaLabel={ariaLabel} containerAsButton onContainerClick={handleClick}>
-            <Icon className={s.SettingsItemLink_arrow} icon={linkIcon ?? 'arrow_left'} />
+            <Icon className={cx(s.SettingsItemLink_arrow, linkIcon && s.SettingsItemLink_arrow__external)} icon={linkIcon ?? 'arrow_left'} />
         </SettingsItem>
     );
 }

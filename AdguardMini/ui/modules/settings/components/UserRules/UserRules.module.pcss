@@ -29,7 +29,7 @@
     }
 
     &_search {
-        margin: var(--m-m) var(--m-s);
+        margin: 0 var(--m-s) var(--m-l);
 
         &__scroll {
             margin-top: 0;
@@ -38,9 +38,9 @@
 
     &_addRule {
         display: flex;
-        color: var(--fills-buttons-main-button-default);
+        color: var(--accent-main-default);
         cursor: pointer;
-        padding: var(--m-xxs) var(--m-s);
+        padding: var(--m-s);
 
         /*
          * Keyboard focus indicator: a padded list-row action (same row shape
@@ -52,7 +52,7 @@
         @mixin focus-ring;
 
         &:hover {
-            color: var(--fills-buttons-main-button-hovered);
+            color: var(--accent-main-hover);
             cursor: pointer;
         }
         
@@ -101,7 +101,7 @@
         }
 
         &_text {
-            color: var(--text-description-description-default);
+            color: var(--neutral-dark-default);
             text-align: center;
             margin-bottom: auto;
         }
@@ -120,7 +120,7 @@
 
         &__bg {
             width: calc(100vw - 240px);
-            background: var(--fills-backgrounds-page-background-default);
+            background: var(--background-main-default);
         }
 
         &_shadowBottom {

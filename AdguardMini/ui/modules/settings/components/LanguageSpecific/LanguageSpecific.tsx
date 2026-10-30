@@ -22,6 +22,7 @@ import s from './LanguageSpecific.module.pcss';
  * @internal
  */
 type IntermediateLangGroup = {
+    id: number;
     lang: string;
     title: string;
     ids: number[];
@@ -42,19 +43,21 @@ function LanguageSpecificComponent() {
         if (!filter) {
             log.error(`Failed to find recommended filter id: ${id}`);
         } else {
-            filter.languages.forEach((lang) => {
-                const existing = acc.find((langGroup) => langGroup.lang === lang);
-                if (existing) {
-                    existing.ids.push(filter.id);
-                    existing.is_enabled = existing.is_enabled && filters.enabledFilters.has(filter.id);
-                } else {
-                    acc.push({
-                        lang,
-                        title: (langsMap as Record<string, string>)[lang] ?? lang,
-                        ids: [filter.id],
-                        is_enabled: filters.enabledFilters.has(filter.id),
-                    });
-                }
+            // One row per filter: a filter covering several languages is
+            // labelled with all of them ("Spanish + Portuguese") instead of
+            // appearing once per language. Filters without locale data in the
+            // index fall back to their title, so the row is never blank.
+            // `lang` keeps the raw language codes so search still matches them.
+            acc.push({
+                id: filter.id,
+                lang: filter.languages.join(' '),
+                title: filter.languages.length > 0
+                    ? filter.languages
+                        .map((lang) => (langsMap as Record<string, string>)[lang] ?? lang)
+                        .join(' + ')
+                    : filter.title,
+                ids: [filter.id],
+                is_enabled: filters.enabledFilters.has(filter.id),
             });
         }
         return acc;
@@ -71,7 +74,7 @@ function LanguageSpecificComponent() {
     }));
 
     langs = sortedLangsRef.current
-        .map(({ lang: sortedLang }) => langs.find(({ lang }) => lang === sortedLang)!);
+        .map(({ id }) => langs.find((group) => group.id === id)!);
 
     const {
         foundItems,
@@ -96,7 +99,7 @@ function LanguageSpecificComponent() {
     };
 
     return (
-        <Layout navigation={{ router, route: RouteName.safari_protection, title: translate('menu.safari.protection') }} type="settingsPage">
+        <Layout className={s.LanguageSpecific} navigation={{ router, route: RouteName.safari_protection, title: translate('menu.safari.protection') }} type="settingsPage">
             <SettingsTitle
                 description={translate('language.specific.desc')}
                 elements={[{
@@ -128,9 +131,9 @@ function LanguageSpecificComponent() {
                     </div>
                 </div>
             )}
-            {foundItems.map(({ lang, ids, title, is_enabled }) => (
+            {foundItems.map(({ id, ids, title, is_enabled }) => (
                 <SettingsItemSwitch
-                    key={lang}
+                    key={id}
                     muted={!filters.languageSpecific}
                     setValue={async (e) => filters.switchFiltersState(ids, e)}
                     title={title}

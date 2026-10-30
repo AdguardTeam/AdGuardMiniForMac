@@ -15,7 +15,7 @@ import { GetUserRulesRequest, UpdateUserRulesRequest } from 'Apis/requests/UserR
 import { UserRules, PageView, CustomTelemetryEvent } from 'Apis/types';
 import { buttonProps } from 'Common/lib/keyboardActivation';
 import { UserRulesPages, UserRulesEvents } from 'Common/utils/consts';
-import { Icon } from 'UILib';
+import { Icon, Text } from 'UILib';
 
 import s from './App.module.pcss';
 import { Editor } from './Editor';
@@ -69,6 +69,9 @@ function AppComponent() {
                 return false;
             }
             editorStore.setIsDirty(false);
+            // The saved working set supersedes any pending Assistant push.
+            editorStore.setPendingRules(null);
+            editorStore.setJustSaved(true);
 
             window.API.Execute(new RecordEventRequest({
                 customEvent: new CustomTelemetryEvent({
@@ -106,6 +109,24 @@ function AppComponent() {
     const cancelClose = () => {
         setShowUnsavedChangesModal(false);
     };
+
+    /** Discard the local edits and load the Assistant's rules into the editor. */
+    const applyAssistantUpdates = () => {
+        editorStore.applyPendingRules();
+    };
+
+    // "Apply the updates" sits inside the has-updates hint, so it renders as an
+    // inline text action rather than a standalone button.
+    const renderApplyUpdates = (text: string) => (
+        <button
+            className={s.App_row_hint_action}
+            type="button"
+            onClick={applyAssistantUpdates}
+        >
+            {text}
+        </button>
+    );
+    const applyUpdatesParams = { btn: renderApplyUpdates };
 
     /** Load rules/language via RPC and send page-view telemetry. */
     useEffect(() => {
@@ -145,6 +166,17 @@ function AppComponent() {
     }, []);
 
     const saveDisabled = !editorStore.isDirty || editorStore.loading || isSaving;
+
+    // Footer hint next to Save. Assistant updates win over the saved notice,
+    // and the applying state wins over both.
+    let hintKind: 'applying' | 'pending' | 'saved' | null = null;
+    if (editorStore.isApplyingUpdates) {
+        hintKind = 'applying';
+    } else if (editorStore.pendingRules) {
+        hintKind = 'pending';
+    } else if (editorStore.justSaved) {
+        hintKind = 'saved';
+    }
 
     return (
         <div key={editorStore.language} className={s.App}>
@@ -214,6 +246,13 @@ function AppComponent() {
                     <div className={s.App_row_btn_text}>{editorStore.isDirty ? translate('save') : translate('saved')}</div>
                     {isSaving && <Loader className={s.App_row_btn_loader} color="white" />}
                 </button>
+                {hintKind && (
+                    <Text className={cx(s.App_row_hint, hintKind === 'saved' && s.App_row_hint__saved)} type="t1">
+                        {hintKind === 'applying' && translate('user.rules.editor.update_info.applying_updates')}
+                        {hintKind === 'pending' && translate('user.rules.editor.update_info.has_updates', applyUpdatesParams)}
+                        {hintKind === 'saved' && translate('user.rules.editor.update_info.saved')}
+                    </Text>
+                )}
             </div>
         </div>
     );

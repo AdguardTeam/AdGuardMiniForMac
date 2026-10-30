@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "PrimitivesWrappers.proto";
+import "AppInfo.proto";
 import "Settings.proto";
 import "EffectiveTheme.proto";
 import "URLFilter.proto";
@@ -15,8 +16,8 @@ service SettingsCallbackService {
     rpc OnImportStateChange(ImportStatus) returns (EmptyValue);
     /* Fires when another hardware acceleration was imported or migrated */
     rpc OnHardwareAccelerationChange(BoolValue) returns (EmptyValue);
-    /* Fires when resolve if new version is available */
-    rpc OnApplicationVersionStatusResolved(BoolValue) returns (EmptyValue);
+    /* Fires when swift resolved the version check, carrying the available version */
+    rpc OnApplicationVersionStatusResolved(ApplicationVersionStatus) returns (EmptyValue);
     /* Window did become main callback */
     rpc OnWindowDidBecomeMain(EmptyValue) returns (EmptyValue);
     /* Fires when app requests to show settings page */

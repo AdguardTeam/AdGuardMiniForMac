@@ -45,6 +45,9 @@ describe('webViewUserrulesBootstrap', () => {
         editorStore.loadRules([], true);
         editorStore.setIsDirty(false);
         editorStore.setLoading(false);
+        editorStore.setPendingRules(null);
+        editorStore.setJustSaved(false);
+        editorStore.finishApplyingUpdates();
     });
 
     afterEach(() => {
@@ -108,6 +111,65 @@ describe('webViewUserrulesBootstrap', () => {
         );
         assert.equal(editorStore.rules.length, 1);
         assert.equal(editorStore.rules[0].rule, '||user-typing.com^');
+        // The push is kept as pending so the editor can offer to apply it.
+        assert.equal(editorStore.pendingRules?.length, 1);
+        assert.equal(editorStore.pendingRules?.[0].rule, '||external.com^');
+    });
+
+    it('onUserFilterChange keeps no pending updates when the dirty push matches the working set', async () => {
+        const { w } = setupFakeWindow();
+        setupUserrulesWebViewBridge();
+        const rules = [new UserRule({ rule: '||user-typing.com^', enabled: true })];
+        editorStore.setRules(rules);
+        editorStore.setIsDirty(true);
+        const state = new UserRulesCallbackState({ rules });
+        await getDispatch(w)(
+            'UserRulesCallbackService.onUserFilterChange',
+            Buffer.from(state.serializeBinary()).toString('base64'),
+        );
+        assert.equal(editorStore.pendingRules, null);
+    });
+
+    it('onUserFilterChange clears a stale pending set when a later dirty push matches the working set', async () => {
+        const { w } = setupFakeWindow();
+        setupUserrulesWebViewBridge();
+        const working = [new UserRule({ rule: '||user-typing.com^', enabled: true })];
+        editorStore.setRules(working);
+        editorStore.setIsDirty(true);
+        const pending = new UserRulesCallbackState({
+            rules: [new UserRule({ rule: '||assistant.com^', enabled: true }), ...working],
+        });
+        await getDispatch(w)(
+            'UserRulesCallbackService.onUserFilterChange',
+            Buffer.from(pending.serializeBinary()).toString('base64'),
+        );
+        assert.equal(editorStore.pendingRules?.length, 2);
+        // The platform came back to the working set (e.g. site protection was
+        // toggled back): applying the earlier pending set would resurrect rules
+        // the platform no longer has.
+        const reverted = new UserRulesCallbackState({ rules: working });
+        await getDispatch(w)(
+            'UserRulesCallbackService.onUserFilterChange',
+            Buffer.from(reverted.serializeBinary()).toString('base64'),
+        );
+        assert.equal(editorStore.pendingRules, null);
+    });
+
+    it('applies pending Assistant updates and re-seeds the editor', () => {
+        const rules = [new UserRule({ rule: '||assistant.com^', enabled: true })];
+        editorStore.setRules([new UserRule({ rule: '||user-typing.com^', enabled: true })]);
+        editorStore.setIsDirty(true);
+        editorStore.setPendingRules(rules);
+
+        editorStore.applyPendingRules();
+
+        assert.equal(editorStore.isApplyingUpdates, true);
+        assert.equal(editorStore.pendingRules, null);
+        assert.equal(editorStore.rules.length, 1);
+        assert.equal(editorStore.rules[0].rule, '||assistant.com^');
+        // The Editor's load effect ends the applying state after re-seeding.
+        editorStore.finishApplyingUpdates();
+        assert.equal(editorStore.isApplyingUpdates, false);
     });
 
     it('onUserFilterChange skips reload when the push matches the working set', async () => {

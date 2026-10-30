@@ -30,6 +30,11 @@ export class AppInfo {
     public newVersionAvailable: boolean | undefined = false;
 
     /**
+     * Version of the update the platform found, empty when none is available
+     */
+    public availableVersion = '';
+
+    /**
      * Ctor
      */
     public constructor() {
@@ -78,6 +83,13 @@ export class AppInfo {
      */
     public setNewVersionAvailable(newVersionAvailable: boolean) {
         this.newVersionAvailable = newVersionAvailable;
+    }
+
+    /**
+     * Set the version of the update the platform found
+     */
+    public setAvailableVersion(version: string) {
+        this.availableVersion = version;
     }
 
     /**

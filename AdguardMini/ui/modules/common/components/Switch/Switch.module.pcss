@@ -24,34 +24,34 @@
         &:hover,
         &:active {
             .disabled {
-                border-color: var(--text-links-error-link-default);
-                background-color: var(--text-links-error-link-default);
+                border-color: var(--error-main-default);
+                background-color: var(--error-main-default);
             }
 
             .enabled {
-                border-color: var(--fills-buttons-main-button-default);
-                background-color: var(--fills-buttons-main-button-default);
+                border-color: var(--accent-main-default);
+                background-color: var(--accent-main-default);
             }
         }
     }
 
-    /* A switch waiting for the feature to run keeps the light product green. */
+    /* A switch waiting for the feature to run keeps the muted product green. */
     &.enablingSwitch {
         .labelEnabled {
-            background-color: var(--fills-switch-all-on-disabled);
-            border-color: var(--fills-switch-all-on-disabled);
+            background-color: var(--accent-main-disabled);
+            border-color: var(--accent-main-disabled);
         }
     }
 
     &:hover {
         .disabled {
-            border-color: var(--text-links-error-link-hovered);
-            background-color: var(--text-links-error-link-hovered);
+            border-color: var(--error-main-hover);
+            background-color: var(--error-main-hover);
         }
 
         .enabled {
-            border-color: var(--fills-buttons-main-button-hovered);
-            background-color: var(--fills-buttons-main-button-hovered);
+            border-color: var(--accent-main-hover);
+            background-color: var(--accent-main-hover);
         }
     }
 
@@ -61,13 +61,13 @@
         }
 
         .disabled {
-            border-color: var(--text-links-error-link-pressed);
-            background-color: var(--text-links-error-link-pressed);
+            border-color: var(--error-main-pressed);
+            background-color: var(--error-main-pressed);
         }
 
         .enabled {
-            border-color: var(--fills-buttons-main-button-pressed);
-            background-color: var(--fills-buttons-main-button-pressed);
+            border-color: var(--accent-main-pressed);
+            background-color: var(--accent-main-pressed);
         }
     }
 }
@@ -79,15 +79,29 @@
         & + .label {
             &.enabled {
                 &::before {
-                    left: 40px;
+                    left: 34px;
                 }
             }
         }
     }
 
     &:disabled {
-        & + .label::before {
-            opacity: 0.5;
+        & + .label {
+            &::before {
+                opacity: 0.5;
+            }
+
+            &.labelEnabled {
+                background-color: var(--accent-main-disabled);
+            }
+
+            &.labelEnabled.muted {
+                background-color: var(--neutral-dark-disabled);
+            }
+
+            &.labelDisabled {
+                background-color: var(--neutral-light-disabled);
+            }
         }
     }
 }
@@ -107,17 +121,16 @@
         top: 1px;
         width: 26px;
         height: 26px;
-        background-color: var(--fills-switch-all-knob-default);
+        background-color: var(--special-static-white-default);
         border-radius: 50%;
     }
 }
 
-
 .labelDisabled {
-    background-color: var(--fills-switch-all-off-default);
+    background-color: var(--neutral-light-default);
 
     &:hover {
-        background-color: var(--fills-switch-all-off-hovered);
+        background-color: var(--neutral-light-hover);
     }
 
     &::before {
@@ -126,10 +139,10 @@
 }
 
 .labelEnabled {
-    background-color: var(--fills-buttons-main-button-default);
+    background-color: var(--accent-main-default);
 
     &:hover {
-        background-color: var(--fills-buttons-main-button-hovered);
+        background-color: var(--accent-main-hover);
     }
 
     &::before {
@@ -160,48 +173,48 @@
             50px knob.
         */
         background-repeat: no-repeat;
-        background-color: var(--fills-switch-all-knob-default);
+        background-color: var(--special-static-white-default);
         box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);
         width: 50px;
         height: 50px;
-        top: -12px;
-        left: -3px;
+        top: -10px;
+        left: -2px;
         /* z-index: var(--zi-above); */
     }
 }
 
 .enabled {
-    background-color: var(--fills-buttons-main-button-default);
-    border-color: var(--fills-buttons-main-button-default);
+    background-color: var(--accent-main-default);
+    border-color: var(--accent-main-default);
 
     &::before {
         background-image: url('./enabled.svg');
-        background-size: 19px;
+        background-size: 16px;
     }
 }
 
 .disabled {
-    background-color: var(--text-links-error-link-default);
-    border-color: var(--text-links-error-link-default);
+    background-color: var(--error-main-default);
+    border-color: var(--error-main-default);
 
     &:hover {
         & + .label {
 
             &::before {
-                background-color: var(--fills-switch-all-knob-default);
+                background-color: var(--special-static-white-default);
             }
         }
     }
 
     &::before {
         background-image: url('./disabled.svg');
-        background-size: 19px;
+        background-size: 13px;
     }
 }
 
 .muted {
     &.labelEnabled {
-        background-color: var(--fills-switch-all-off-hovered-inactive);
-        border-color: var(--fills-switch-all-off-hovered-inactive);
+        background-color: var(--neutral-dark-default);
+        border-color: var(--neutral-dark-default);
     }
 }

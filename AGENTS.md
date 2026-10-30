@@ -188,7 +188,9 @@ adguard-mini/
   existing built `.app` on every change (run together with `yarn start`)
 - `yarn lint` - Run ESLint on TypeScript sources
 - `yarn lint:fix` - Auto-fix ESLint issues
-- `yarn theme:generate` - Generate theme stylesheets from design tokens
+- `yarn theme:generate` - Guarded: UI color tokens are vendored from
+  `frontend-bundle` (`themes/variables`); the command prints re-copy
+  instructions instead of regenerating
 
 ### Platform (Swift/Xcode)
 
@@ -1397,7 +1399,24 @@ humans and AI agents that consume project documentation.
     its design system, and neither gap is visible from the library's own
     documentation.
 
-23. **DI containers and `Sendable` (Swift)**: A DI container
+23. **Vendored UI color tokens (TS/CSS)**: The color stylesheets
+    `AdguardMini/ui/modules/common/theme/default/{blocker,light,dark}.css`
+    are vendored, generated from the Figma design tokens exported to
+    `designteam-materials` via `frontend-bundle`
+    (`themes/variables/{products,themes}`). Do NOT hand-edit them and do
+    NOT regenerate them with `sciter-infra-utils`: `yarn theme:generate`
+    is a guard that prints re-copy instructions and exits non-zero.
+    Re-copy the three files from `frontend-bundle` instead. One recorded
+    deviation: `dark.css` uses `html[theme="dark"]` to match Mini's root
+    attribute. The re-copied files carry no SPDX header of their own, so
+    their licensing stays declared by the vendored color-token annotation
+    in `REUSE.toml`.
+
+    **Rationale**: The old generator emits the deprecated v1.0.4 palette
+    and would silently overwrite the vendored files; a single source of
+    truth keeps the WebView UI on the current design system.
+    
+24. **DI containers and `Sendable` (Swift)**: A DI container
     (`ServiceLocator`, `SharedDIContainer`, `WebExtensionDIContainer`,
     `DIContainer`) MUST NOT declare `@unchecked Sendable`. Keep the container
     non-Sendable and mark only the global access —
@@ -1414,7 +1433,7 @@ humans and AI agents that consume project documentation.
     actors are shared by design, so their protocols carry the `Sendable`
     contract, and the escape hatch stays next to the state it excuses.
 
-24. **URL filter install prompt and enable state (Swift)**: One user enable
+25. **URL filter install prompt and enable state (Swift)**: One user enable
     attempt MUST raise the macOS URL filter install/allow prompt at most
     once, because an enable's configuration write is terminal for that
     attempt when it fails. A declined install/allow prompt — the system

@@ -19,9 +19,19 @@ export {
 } from 'Common/stores/NotificationsQueue';
 
 /**
- * Minimal route enum covering the members the callback internals reference
- * (`FiltersCallbackServiceInternal.OnCustomFiltersSubscribe`).
+ * Minimal route enum covering the members the compiled components reference
+ * (`FiltersCallbackServiceInternal.OnCustomFiltersSubscribe`, the context
+ * menu's report-problem action).
  */
 export enum RouteName {
     filters = 'filters',
+    contact_support = 'contact_support',
+}
+
+/**
+ * Minimal telemetry event enum covering the events the compiled components
+ * reference (the context menu's flag click).
+ */
+export enum SettingsEvent {
+    FlagClick = 'FlagClick',
 }

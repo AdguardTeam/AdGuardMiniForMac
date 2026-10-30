@@ -93,9 +93,9 @@ public class SettingsCallbackService: WebViewCallbackBridge
 		}
 		return EmptyValue()
 	}
-	/// Fires when resolve if new version is available
+	/// Fires when swift resolved the version check, carrying the available version
 	/// Dispatch callback through the attached bridge.
-	@discardableResult public func onApplicationVersionStatusResolved (_ message: BoolValue) -> EmptyValue {
+	@discardableResult public func onApplicationVersionStatusResolved (_ message: ApplicationVersionStatus) -> EmptyValue {
 		if let bridge {
 			do {
 				bridge.dispatchCallback(

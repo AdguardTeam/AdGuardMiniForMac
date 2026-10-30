@@ -60,12 +60,8 @@ export function AboutComponent() {
 
     const LINKS = [
         {
-            label: translate('about.eula'),
-            href: getTdsLink(TDS_PARAMS.eula, RouteName.about),
-        },
-        {
-            label: translate('about.privacy'),
-            href: getTdsLink(TDS_PARAMS.privacy, RouteName.about),
+            label: translate('about.site'),
+            href: getTdsLink(TDS_PARAMS.home, RouteName.about),
         },
         {
             label: translate('about.versions'),
@@ -76,12 +72,16 @@ export function AboutComponent() {
             href: getTdsLink(TDS_PARAMS.acknowledgments, RouteName.about),
         },
         {
-            label: translate('about.site'),
-            href: getTdsLink(TDS_PARAMS.home, RouteName.about),
+            label: translate('about.eula'),
+            href: getTdsLink(TDS_PARAMS.eula, RouteName.about),
+        },
+        {
+            label: translate('about.privacy'),
+            href: getTdsLink(TDS_PARAMS.privacy, RouteName.about),
         },
     ];
 
-    const { newVersionAvailable, appInfo: {
+    const { newVersionAvailable, availableVersion, appInfo: {
         version,
         channel,
         dependencies,
@@ -130,7 +130,9 @@ export function AboutComponent() {
                     <SettingsItem
                         className={s.About_update}
                         icon="update"
+                        iconColor="gray"
                         title={translate('about.update.available', {
+                            version: availableVersion,
                             a: (text: string) => (
                                 <div
                                     className={s.About_update_requestUpdate}

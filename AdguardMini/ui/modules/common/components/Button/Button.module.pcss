@@ -41,13 +41,24 @@
         height: 16px;
     }
 
+    /*
+     * Design-system button labels are semibold; the `Text` typography class
+     * sets a normal weight, so it is overridden once for the button types
+     * instead of at every call site. Text-like and filled buttons keep the
+     * regular weight.
+     */
+    &__submit > *,
+    &__outlined > * {
+        font-weight: var(--fw-semibold);
+    }
+
     &__submit {
         width: 100%;
         min-height: 56px;
         padding: var(--m-s);
         border-radius: var(--border-radius);
         text-align: center;
-        color: var(--text-buttons-primary-default);
+        color: var(--special-static-white-default);
         max-width: 278px;
     }
 
@@ -57,14 +68,14 @@
         min-height: 56px;
         padding: var(--m-s);
         border-radius: var(--border-radius);
-        border: 1px solid var(--stroke-buttons-secondary-default);
+        border: 1px solid var(--neutral-dark-default);
         text-align: center;
-        background-color: var(--fills-buttons-secondary-button-default);
-        color: var(--text-main-text-main-default);
+        background-color: var(--background-main-default);
+        color: var(--neutral-black-default);
         max-width: 278px;
 
         &:hover {
-            background-color: var(--fills-backgrounds-page-background-hovered);
+            background-color: var(--background-main-hover);
         }
     }
 
@@ -79,9 +90,9 @@
 
     &__text {
         background: transparent;
-        color: var(--fills-buttons-main-button-default);
+        color: var(--accent-main-default);
         &:hover {
-            color: var(--fills-buttons-main-button-hovered);
+            color: var(--accent-main-hover);
         }
     }
     &__small {

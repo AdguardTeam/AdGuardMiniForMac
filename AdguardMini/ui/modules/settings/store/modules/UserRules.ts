@@ -108,6 +108,18 @@ export class UserRules {
     }
 
     /**
+     * Replaces the displayed rules without writing them to the platform, e.g.
+     * to undo an optimistic update after a rejected request.
+     *
+     * @param rules rules to display
+     */
+    public restoreRules(rules: UserRule[]) {
+        const restored = this.updateHelper();
+        restored.rules = rules;
+        this.setUserRules(restored);
+    }
+
+    /**
      * Export user rules to selected destination
      * @param path path to save file
      */

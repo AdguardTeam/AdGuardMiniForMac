@@ -19,6 +19,8 @@ function StandaloneVersionActionsComponent() {
     const { account } = useSettingsStore();
 
     const { trialAvailableDays } = account;
+    // 0 is the "no trial" value; the field is null until the platform answers.
+    const trialDays = trialAvailableDays ?? 0;
 
     return (
         <div className={s.Paywall_actions_container}>
@@ -31,14 +33,14 @@ function StandaloneVersionActionsComponent() {
                     {translate('settings.paywall.get.full.version')}
                 </Text>
             </Button>
-            {trialAvailableDays > 0 && (
+            {trialDays > 0 && (
                 <Button
                     className={s.Paywall_actions_button}
                     type="outlined"
                     onClick={async () => account.requestWebSubscription(Subscription.trial)}
                 >
                     <Text lineHeight="none" type="t1">
-                        {translate.plural('settings.paywall.try.for.free', trialAvailableDays, provideTrialDaysParam(trialAvailableDays))}
+                        {translate.plural('settings.paywall.try.for.free', trialDays, provideTrialDaysParam(trialDays))}
                     </Text>
                 </Button>
             )}

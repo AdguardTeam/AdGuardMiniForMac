@@ -7,8 +7,12 @@
     &_payedTitle {
         margin-top: var(--m-xs);
 
+        /*
+         * Page-title notices are 16px in the design (the same slot as the
+         * rule-limit banner); the hook's own type is the 14px row size.
+         */
         &_text {
-            font-size: 14px;
+            font-size: var(--ft-l);
         }
     }
 
@@ -23,7 +27,7 @@
     &_button {
         display: inline;
         text-decoration: underline;
-        text-decoration-color: var(--stroke-icons-attention-icon-default);
+        text-decoration-color: var(--attention-main-default);
 
         &:hover {
             text-decoration: none;

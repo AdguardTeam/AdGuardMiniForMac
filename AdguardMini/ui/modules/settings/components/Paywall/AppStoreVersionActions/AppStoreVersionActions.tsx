@@ -24,6 +24,8 @@ function AppStoreVersionActionsComponent() {
     const { account, notification, telemetry } = useSettingsStore();
 
     const { appStoreSubscriptions, subscriptionPricesAvailable, trialAvailableDays } = account;
+    // 0 is the "no trial" value; the field is null until the platform answers.
+    const trialDays = trialAvailableDays ?? 0;
 
     const [currentSelectedPlan, setCurrentSelectedPlan] = useState<AppStoreSubscription>(AppStoreSubscription.annual);
     const [errorAppears, setErrorAppears] = useState(false);
@@ -69,8 +71,8 @@ function AppStoreVersionActionsComponent() {
     };
 
     let buttonTitle = translate('settings.paywall.subscribe');
-    if (trialAvailableDays > 0 && !appStoreSubscriptions?.result?.promoInfo) {
-        buttonTitle = translate.plural('settings.paywall.try.for.free', trialAvailableDays, provideTrialDaysParam(trialAvailableDays));
+    if (trialDays > 0 && !appStoreSubscriptions?.result?.promoInfo) {
+        buttonTitle = translate.plural('settings.paywall.try.for.free', trialDays, provideTrialDaysParam(trialDays));
         sendTelemetryOnClick = () => {
             telemetry.layersRelay.trackEvent(SettingsEvent.Try14SellingScreenClick);
         };
@@ -114,7 +116,7 @@ function AppStoreVersionActionsComponent() {
                         {buttonTitle}
                     </Text>
                     {!appStoreSubscriptions?.result?.promoInfo
-                        && trialAvailableDays > 0
+                        && trialDays > 0
                         && appStoreSubscriptions?.result
                         && (
                             <Text lineHeight="none" type="t3">

@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { useSettingsStore } from 'SettingsLib/hooks';
-import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
 import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType } from 'SettingsStore/modules';
 
 import { Rule } from '..';
@@ -33,8 +32,10 @@ export function RulesList({
     const handleDelete = async (index: number) => {
         const [err, prevRules] = await userRules.updateRules(rules.filter((_, i) => i !== index));
         if (err?.hasError) {
+            // Restore the optimistic removal so the list keeps matching the platform.
+            userRules.restoreRules(prevRules);
             notification.notify({
-                message: getNotificationSomethingWentWrongText(),
+                message: translate('notification.user.rules.delete.failed'),
                 notificationContext: NotificationContext.info,
                 type: NotificationsQueueType.warning,
                 iconType: NotificationsQueueIconType.error,

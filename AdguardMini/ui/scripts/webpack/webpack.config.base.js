@@ -167,6 +167,16 @@ module.exports = () => ({
                 }]
             },
             {
+                test:/\.(woff2?|ttf|otf|eot)$/,
+                exclude: /(node_modules)/,
+                use:[{
+                    loader:'file-loader',
+                    options:{
+                        outputPath:'./fonts',
+                    }
+                }]
+            },
+            {
                 // The `userrules` module imports `@adguard/rules-editor`
                 // (which uses `vscode-oniguruma`) and ships the Oniguruma
                 // WebAssembly file (`release/onig.wasm`) for its syntax

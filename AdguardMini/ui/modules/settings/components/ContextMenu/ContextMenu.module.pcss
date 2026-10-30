@@ -8,20 +8,19 @@
     width: 24px;
     height: 24px;
 
-
     &_context {
         z-index: var(--zi-above-extra);
         position: absolute;
-        width: 240px;
+        width: 221px;
         border-radius: var(--border-radius);
-        background-color: var(--fills-backgrounds-page-background-default);
+        background-color: var(--background-main-default);
         right: 0px;
         top: 30px;
         box-shadow: var(--bs-big);
         overflow: hidden;
 
         &__tooltip {
-            background-color: var(--fills-menus-dropdown-menu-background-default);
+            background-color: var(--background-elevated-default);
             width: max-content;
 
             .ContextMenu_action:hover {
@@ -31,8 +30,8 @@
     }
 
     &_action {
-        border-bottom: 1px solid var(--stroke-dividers-item-divider-default);
-        padding: var(--m-s) var(--m-m);
+        border-bottom: 1px solid var(--neutral-blend-default);
+        padding: var(--m-s);
         box-sizing: content-box;
         cursor: pointer;
         min-height: 26px;
@@ -48,7 +47,7 @@
         @mixin focus-ring;
 
         &:hover {
-            background: var(--fills-menus-dropdown-menu-background-hovered);
+            background: var(--background-elevated-hover);
         }
 
         &:last-of-type {

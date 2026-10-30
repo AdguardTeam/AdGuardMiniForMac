@@ -128,6 +128,25 @@ SPDX-FileComment = "Vendored third-party TypeScript type declarations"
 
 [[annotations]]
 path = [
+    "AdguardMini/ui/assets/fonts/**",
+]
+SPDX-FileCopyrightText = "2017 The Roboto Flex Project Authors (https://github.com/googlefonts/roboto-flex)"
+SPDX-License-Identifier = "OFL-1.1"
+SPDX-FileComment = "Roboto Flex variable font, shipped with the WebView UI"
+
+[[annotations]]
+path = [
+    "AdguardMini/ui/modules/common/theme/default/blocker.css",
+    "AdguardMini/ui/modules/common/theme/default/light.css",
+    "AdguardMini/ui/modules/common/theme/default/dark.css",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "AdGuard Software Limited"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+SPDX-FileComment = "Design-system color tokens vendored from frontend-bundle (themes/variables); the generated files carry no SPDX header of their own"
+
+[[annotations]]
+path = [
     "AdguardMini/ui/tests/codegen/fixtures/**",
 ]
 SPDX-FileCopyrightText = "AdGuard Software Limited"

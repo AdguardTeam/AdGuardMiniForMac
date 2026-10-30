@@ -142,6 +142,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @unchecked Sendable {
                             bridge.register(service: locator.systemService, serviceName: "SystemService")
                             bridge.register(service: locator.consentService, serviceName: "ConsentService")
                             bridge.register(service: locator.filtersService, serviceName: "FiltersService")
+                            // The updates page reads the app version through
+                            // `GetAbout`, so the tray needs this service too.
+                            bridge.register(service: locator.appInfoService, serviceName: "AppInfoService")
                             trayCallbackService.attach(webViewBridge: bridge)
                         },
                         extraMessageHandlersSetup: nil

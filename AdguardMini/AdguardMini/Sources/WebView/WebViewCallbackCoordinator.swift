@@ -104,11 +104,11 @@ final class WebViewCallbackCoordinator: @unchecked Sendable {
 
     /// Forwards app-version availability to tray and settings.
     @objc private func appVersionStatusResolved(_ note: Notification) {
-        guard let available: Bool = self.eventBus.parseNotification(note) else {
+        guard let version: String = self.eventBus.parseNotification(note) else {
             return
         }
 
-        let value = BoolValue(available)
+        let value = ApplicationVersionStatus(available: !version.isEmpty, version: version)
         self.tray.onApplicationVersionStatusResolved(value)
         self.settings.onApplicationVersionStatusResolved(value)
     }

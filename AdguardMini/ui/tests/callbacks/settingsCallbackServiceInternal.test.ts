@@ -28,6 +28,7 @@ import {
     URLFilterProtectionLevel,
     URLFilterState,
     URLFilterStatus,
+    ApplicationVersionStatus,
 } from '../../modules/common/apis/types';
 
 /**
@@ -178,15 +179,20 @@ test('OnProtectionStatusChanged forwards the value to setProtectionEnabled', asy
     assert.deepEqual(received, [false]);
 });
 
-test('OnApplicationVersionStatusResolved forwards to setNewVersionAvailable', async () => {
+test('OnApplicationVersionStatusResolved forwards the status and version to the store', async () => {
     __resetSettingsTestStore();
-    const received: boolean[] = [];
-    store.appInfo = { setNewVersionAvailable: (v: boolean) => { received.push(v); } };
+    let available: boolean | undefined;
+    let version: string | undefined;
+    store.appInfo = {
+        setNewVersionAvailable: (v: boolean) => { available = v; },
+        setAvailableVersion: (v: string) => { version = v; },
+    };
 
     const service = new SettingsCallbackServiceInternal();
-    await service.OnApplicationVersionStatusResolved(new BoolValue({ value: true }));
+    await service.OnApplicationVersionStatusResolved(new ApplicationVersionStatus({ available: true, version: '3.1.0' }));
 
-    assert.deepEqual(received, [true]);
+    assert.equal(available, true);
+    assert.equal(version, '3.1.0');
 });
 
 test('OnWindowDidBecomeMain runs the light refresh sequence', async () => {

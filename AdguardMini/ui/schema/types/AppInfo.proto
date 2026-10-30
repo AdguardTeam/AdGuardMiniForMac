@@ -10,6 +10,12 @@ message AppInfo {
     bool update_available = 4;
 }
 
+// Result of the application version check, pushed to the UI when it resolves
+message ApplicationVersionStatus {
+    bool available = 1;
+    string version = 2;
+}
+
 // Version channel
 enum Channel {
     Channel_unknown = 0;

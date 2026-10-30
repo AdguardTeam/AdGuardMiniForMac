@@ -147,6 +147,96 @@ export class AppInfo extends pb_1.Message {
         return AppInfo.deserialize(bytes);
     }
 }
+export class ApplicationVersionStatus extends pb_1.Message {
+    #one_of_decls: number[][] = [];
+    constructor(data?: any[] | {
+        available?: boolean;
+        version?: string;
+    }) {
+        super();
+        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+        if (!Array.isArray(data) && typeof data == "object") {
+            if ("available" in data && data.available != undefined) {
+                this.available = data.available;
+            }
+            if ("version" in data && data.version != undefined) {
+                this.version = data.version;
+            }
+        }
+    }
+    get available() {
+        return pb_1.Message.getFieldWithDefault(this, 1, false) as boolean;
+    }
+    set available(value: boolean) {
+        pb_1.Message.setField(this, 1, value);
+    }
+    get version() {
+        return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
+    }
+    set version(value: string) {
+        pb_1.Message.setField(this, 2, value);
+    }
+    static fromObject(data: {
+        available?: boolean;
+        version?: string;
+    }): ApplicationVersionStatus {
+        const message = new ApplicationVersionStatus({});
+        if (data.available != null) {
+            message.available = data.available;
+        }
+        if (data.version != null) {
+            message.version = data.version;
+        }
+        return message;
+    }
+    toObject() {
+        const data: {
+            available?: boolean;
+            version?: string;
+        } = {};
+        if (this.available != null) {
+            data.available = this.available;
+        }
+        if (this.version != null) {
+            data.version = this.version;
+        }
+        return data;
+    }
+    serialize(): Uint8Array;
+    serialize(w: pb_1.BinaryWriter): void;
+    serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+        const writer = w || new pb_1.BinaryWriter();
+        if (this.available != false)
+            writer.writeBool(1, this.available);
+        if (this.version.length)
+            writer.writeString(2, this.version);
+        if (!w)
+            return writer.getResultBuffer();
+    }
+    static deserialize(bytes: Uint8Array | pb_1.BinaryReader): ApplicationVersionStatus {
+        const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new ApplicationVersionStatus();
+        while (reader.nextField()) {
+            if (reader.isEndGroup())
+                break;
+            switch (reader.getFieldNumber()) {
+                case 1:
+                    message.available = reader.readBool();
+                    break;
+                case 2:
+                    message.version = reader.readString();
+                    break;
+                default: reader.skipField();
+            }
+        }
+        return message;
+    }
+    serializeBinary(): Uint8Array {
+        return this.serialize();
+    }
+    static deserializeBinary(bytes: Uint8Array): ApplicationVersionStatus {
+        return ApplicationVersionStatus.deserialize(bytes);
+    }
+}
 export class ThirdPartyDependency extends pb_1.Message {
     #one_of_decls: number[][] = [];
     constructor(data?: any[] | {

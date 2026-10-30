@@ -6,6 +6,7 @@
 .StepHeader {
     &_container {
         height: 40px;
+        padding-left: var(--m-s);
         display: flex;
         align-items: center;
     }
@@ -18,15 +19,15 @@
             width: 32px;
             height: 4px;
             border-radius: var(--border-radius);
-            background-color: var(--fills-backgrounds-page-background-additional-hovered);
+            background-color: var(--background-additional-hover);
         
             &__active {
-                background-color: var(--fills-buttons-main-button-default);
+                background-color: var(--accent-main-default);
             }
         }
     }
 
     &_skip {
-        color: var(--text-breadcrumbs-default);
+        color: var(--neutral-dark-default);
     }
 }

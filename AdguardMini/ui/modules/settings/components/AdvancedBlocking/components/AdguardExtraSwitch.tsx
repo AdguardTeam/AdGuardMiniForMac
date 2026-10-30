@@ -24,7 +24,7 @@ export function AdguardExtraSwitch(props: Props) {
 
     return (
         <SettingsItemSwitch
-            description={translate('advanced.blocking.extra.desc')}
+            description={translate('advanced.blocking.extra.desc', { b: (text: string) => <b>{text}</b> })}
             icon="extra"
             iconColor={orangeIcon ? 'orange' : undefined}
             muted={muted}

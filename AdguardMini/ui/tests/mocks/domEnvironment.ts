@@ -56,6 +56,12 @@ Object.defineProperty(globalScope, 'Window', {
     value: dom.window.Window,
     configurable: true,
 });
+// The focus-restore helpers classify elements with `instanceof HTMLElement`,
+// which resolves against the Node global, not the jsdom window.
+Object.defineProperty(globalScope, 'HTMLElement', {
+    value: dom.window.HTMLElement,
+    configurable: true,
+});
 Object.defineProperty(globalScope, 'cancelAnimationFrame', {
     value: dom.window.cancelAnimationFrame.bind(dom.window),
     configurable: true,

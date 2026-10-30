@@ -129,7 +129,7 @@ function FilterGroupPageComponent({
                         <div className={s.FilterGroupPage_emptyResult}>
                             <Icon className={s.FilterGroupPage_emptyResult_icon} icon="noRules" />
                             <div className={s.FilterGroupPage_emptyResult_text}>
-                                <Text type="t2">{translate('filters.custom.no.filters')}</Text>
+                                <Text type="t1">{translate('filters.custom.no.filters')}</Text>
                             </div>
                         </div>
                     )}

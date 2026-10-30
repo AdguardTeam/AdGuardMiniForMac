@@ -9,9 +9,9 @@
     align-items: center;
     gap: var(--m-s);
     padding: var(--m-s);
-    border: 1px solid var(--stroke-inputs-inactive-input-stroke-default);
+    border: 1px solid var(--neutral-blend-default);
     border-radius: var(--border-radius);
-    background-color: var(--fills-inputs-input-background-default);
+    background-color: var(--background-additional-default);
     cursor: pointer;
 
     /* The border acts as the focus indicator, matching the Input component. */
@@ -20,12 +20,12 @@
     &:hover,
     &:focus,
     &__active {
-        border-color: var(--stroke-inputs-active-input-stroke-default);
+        border-color: var(--neutral-light-default);
     }
 
     &_label {
         display: block;
-        color: var(--text-lables-labels-default);
+        color: var(--neutral-dark-default);
         margin-bottom: var(--m-xxs);
     }
 
@@ -35,7 +35,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        color: var(--text-main-text-main-default);
+        color: var(--neutral-black-default);
     }
 
     &_arrow {
@@ -43,7 +43,7 @@
         width: 24px;
         height: 24px;
         transform: rotate(-90deg);
-        color: var(--stroke-icons-gray-icons-default);
+        color: var(--neutral-dark-default);
     }
 
     &_options {
@@ -54,7 +54,7 @@
         margin: 0;
         padding: 0;
         list-style: none;
-        background: var(--fills-menus-dropdown-menu-background-default);
+        background: var(--background-elevated-default);
         border-radius: var(--border-radius);
         box-shadow: var(--bs-big);
         z-index: var(--zi-tooltip);
@@ -74,15 +74,15 @@
         cursor: pointer;
 
         &:not(:first-child) {
-            border-top: 1px solid var(--stroke-dividers-item-divider-default);
+            border-top: 1px solid var(--neutral-blend-default);
         }
 
         &__highlighted {
-            background: var(--fills-menus-dropdown-menu-background-hovered);
+            background: var(--background-elevated-hover);
         }
 
         &__selected {
-            background: var(--fills-menus-dropdown-menu-background-hovered);
+            background: var(--background-elevated-hover);
 
             & .Select_optionLabel {
                 font-weight: var(--fw-semibold);
@@ -96,13 +96,13 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        color: var(--text-main-text-main-default);
+        color: var(--neutral-black-default);
     }
 
     &_check {
         flex-shrink: 0;
         width: 24px;
         height: 24px;
-        color: var(--stroke-icons-product-icon-default);
+        color: var(--accent-main-default);
     }
 }

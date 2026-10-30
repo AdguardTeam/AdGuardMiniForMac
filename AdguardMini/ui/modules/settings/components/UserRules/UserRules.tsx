@@ -138,9 +138,6 @@ function UserRulesComponent() {
                         text: translate('user.rules.open.rules.editor'),
                         action: () => openUserRulesWindow(),
                     }, {
-                        text: translate('user.rules.export.rules'),
-                        action: onExportRules,
-                    }, {
                         text: translate('user.rules.import.rules'),
                         action: () => {
                             if (rulesToRender.length === 0 || dontAskAgainImportModal) {
@@ -149,6 +146,9 @@ function UserRulesComponent() {
                                 setShowImportModal(true);
                             }
                         },
+                    }, {
+                        text: translate('user.rules.export.rules'),
+                        action: onExportRules,
                     }, {
                         text: translate('delete.all'),
                         action: () => setShowDeleteModal(!showDeleteModal),
@@ -221,7 +221,7 @@ function UserRulesComponent() {
                         <div className={s.UserRules_emptyResult}>
                             <Icon className={s.UserRules_emptyResult_icon} icon={searchQuery ? 'noRulesFound' : 'noRules'} />
                             <div className={s.UserRules_emptyResult_text}>
-                                <Text type="t2">{searchQuery ? translate('nothing.found') : translate('user.rules.no.rules')}</Text>
+                                <Text type="t1">{searchQuery ? translate('nothing.found') : translate('user.rules.no.rules')}</Text>
                             </div>
                         </div>
                     )}

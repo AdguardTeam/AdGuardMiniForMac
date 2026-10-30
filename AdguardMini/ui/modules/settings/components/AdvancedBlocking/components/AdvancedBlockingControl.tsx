@@ -61,7 +61,10 @@ export function AdvancedBlockingControlComponent() {
 
     const isSystemWideProtectionDisabled = macos25OrLower || non501User || !protectionEnabled;
 
-    const payedFuncsTitle = usePayedFuncsTitle(SettingsEvent.TryForFreeAbTest);
+    const payedFuncsTitle = usePayedFuncsTitle(
+        SettingsEvent.TryForFreeAbTest,
+        s.AdvancedBlockingControl_payedTitle_text,
+    );
     const onAdguardExtraChange = (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.ExtraAbTest);
         if (isFree) {

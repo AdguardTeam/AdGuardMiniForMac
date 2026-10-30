@@ -22,8 +22,10 @@
     }
 
     &_background {
+        background: var(--background-additional-default);
+
         &:hover {
-            background: var(--fills-backgrounds-page-background-additional-hovered);
+            background: var(--background-additional-hover);
         }
         
     }
@@ -32,7 +34,7 @@
         width: 200px;
         height: 4px;
         position: relative;
-        background: var(--fills-buttons-main-button-default);
+        background: var(--accent-main-default);
         animation: 4s infinite linear runner
     }
 }

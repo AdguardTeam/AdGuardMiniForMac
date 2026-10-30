@@ -13,16 +13,14 @@ import { useCallback, useEffect, useId, useRef, useState } from 'preact/hooks';
 import { UserRule as UserRuleType } from 'Apis/types';
 import { useFocusOnMount } from 'Common/hooks/useFocusOnMount';
 import { useSettingsStore } from 'SettingsLib/hooks';
-import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
 import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType, RouteName, SettingsEvent } from 'SettingsStore/modules';
 import theme from 'Theme';
 import { Layout, Text, RuleHighlighter, Textarea, Checkbox, Button, Select, Modal } from 'UILib';
 
-import { ContextMenu } from '../ContextMenu';
-
 import { BlockRequestForm, UnblockRequestForm, CommentForm, CustomRuleForm, DisableFilteringForm } from './forms';
 import { convertRule, getLabelByRuleType, getTypeOptions, validateDomain } from './forms/helpers';
 import s from './UserRule.module.pcss';
+import { UserRuleTitleActions } from './UserRuleTitleActions';
 
 import type { RuleType } from '@adg/rules-builder';
 import type { IOption } from 'UILib';
@@ -89,9 +87,47 @@ function UserRuleComponent() {
         setRuleRaw(data);
     };
 
+    /**
+     * Removes the edited rule from the list, mirroring the list's delete flow
+     * (there is no per-rule delete API — the list is rewritten without it).
+     */
+    const handleDelete = async () => {
+        const index = typeof params?.index === 'number' ? params.index : -1;
+        if (index < 0 || index >= rules.length) {
+            return;
+        }
+        const [err, prevRules] = await userRules.updateRules(rules.filter((_, i) => i !== index));
+        if (err?.hasError) {
+            // Restore the optimistic removal so the page's index still points at this rule.
+            userRules.restoreRules(prevRules);
+            notification.notify({
+                message: translate('notification.user.rules.delete.failed'),
+                notificationContext: NotificationContext.info,
+                type: NotificationsQueueType.warning,
+                iconType: NotificationsQueueIconType.error,
+                closeable: true,
+            });
+            return;
+        }
+        notification.notify({
+            message: translate('notification.user.rules.delete', {
+                rule: prevRules[index].rule,
+                b: (text: string) => (<b>{text}</b>),
+            }),
+            notificationContext: NotificationContext.info,
+            type: NotificationsQueueType.success,
+            iconType: NotificationsQueueIconType.done,
+            undoAction: () => {
+                userRules.updateRules(prevRules);
+            },
+            closeable: true,
+        }, true);
+        router.changePath(RouteName.user_rules);
+    };
+
     const notifyError = () => {
         notification.notify({
-            message: getNotificationSomethingWentWrongText(),
+            message: translate('notification.user.rules.save.failed'),
             notificationContext: NotificationContext.info,
             type: NotificationsQueueType.warning,
             iconType: NotificationsQueueIconType.error,
@@ -291,7 +327,7 @@ function UserRuleComponent() {
                 <Text className={s.UserRule_title_text} id={titleId} tabIndex={-1} type="h4">
                     {hasRawRule ? translate('user.rules.edit') : translate('user.rules.create')}
                 </Text>
-                <ContextMenu reportBug />
+                <UserRuleTitleActions canDelete={hasRawRule} onDelete={handleDelete} />
             </div>
             <div className={cx(theme.layout.content, s.UserRule_form, s.UserRule_input)}>
                 <Select<RuleType>
@@ -366,6 +402,7 @@ function UserRuleComponent() {
                             <Textarea
                                 className={s.UserRule_input}
                                 id="domainModifierDomains"
+                                placeholder={translate('user.rule.comment')}
                                 textAreaClassName={s.UserRule_textarea}
                                 value={addComment.comment.getText()}
                                 onChange={(e) => {
@@ -376,6 +413,14 @@ function UserRuleComponent() {
                         )}
                     </div>
                 </>
+            )}
+
+            {/* The Assistant can create element-hiding rules; the design
+                shows the hint on the custom-rule create form only. */}
+            {type.value === 'custom' && !hasRawRule && (
+                <div className={cx(theme.layout.content, s.UserRule_assistantHint)}>
+                    <Text type="t2">{translate('user.rules.assistant.hint')}</Text>
+                </div>
             )}
 
             {(type.value !== 'comment') && (type.value !== 'custom') && (

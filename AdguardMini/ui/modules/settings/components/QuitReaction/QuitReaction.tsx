@@ -15,9 +15,9 @@ import { SettingsTitle } from '../SettingsTitle';
 import type { IOption } from 'Common/components';
 
 const QUIT_REACTIONS = [
-    QuitReactionEnum.ask,
-    QuitReactionEnum.quit,
     QuitReactionEnum.keepRunning,
+    QuitReactionEnum.quit,
+    QuitReactionEnum.ask,
 ];
 
 /**

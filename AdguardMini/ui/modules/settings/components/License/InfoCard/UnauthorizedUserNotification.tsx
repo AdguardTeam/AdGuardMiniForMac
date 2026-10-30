@@ -18,12 +18,14 @@ enum NotificationType {
     isAppStoreSubscription = 'isAppStoreSubscription',
     isActivatedByKey = 'isActivatedByKey',
     isStandaloneFreewareWithTrialAvailable = 'isStandaloneFreewareWithTrialAvailable',
+    isStandaloneFreewareWithoutTrial = 'isStandaloneFreewareWithoutTrial',
 }
 
 const getNotificationType = (
     isAppStoreSubscription: boolean,
     isActivatedByKey: boolean,
     isStandaloneFreewareWithTrialAvailable: boolean,
+    isStandaloneFreewareWithoutTrial: boolean,
 ) => {
     if (isAppStoreSubscription) {
         return NotificationType.isAppStoreSubscription;
@@ -36,6 +38,10 @@ const getNotificationType = (
     if (isStandaloneFreewareWithTrialAvailable) {
         return NotificationType.isStandaloneFreewareWithTrialAvailable;
     }
+
+    if (isStandaloneFreewareWithoutTrial) {
+        return NotificationType.isStandaloneFreewareWithoutTrial;
+    }
 };
 
 const getNotificationTitle = (notificationType: NotificationType) => {
@@ -46,6 +52,8 @@ const getNotificationTitle = (notificationType: NotificationType) => {
             return translate('license.secure.your.license.notification.title');
         case NotificationType.isStandaloneFreewareWithTrialAvailable:
             return translate('license.get.a.trial.notification.title');
+        case NotificationType.isStandaloneFreewareWithoutTrial:
+            return translate('license.use.adguard.notification.title');
     }
 };
 
@@ -57,6 +65,8 @@ const getNotificationDescription = (notificationType: NotificationType, trialAva
             return translate('license.secure.your.license.notification.desc');
         case NotificationType.isStandaloneFreewareWithTrialAvailable:
             return translate.plural('license.get.a.trial.notification.desc', trialAvailableDays, provideTrialDaysParam(trialAvailableDays));
+        case NotificationType.isStandaloneFreewareWithoutTrial:
+            return translate('license.use.adguard.notification.desc');
     }
 };
 
@@ -69,6 +79,7 @@ const renderNotificationButton = (
             case NotificationType.isActivatedByKey:
                 return 'submit';
             case NotificationType.isStandaloneFreewareWithTrialAvailable:
+            case NotificationType.isStandaloneFreewareWithoutTrial:
                 return 'outlined';
         }
     };
@@ -80,6 +91,8 @@ const renderNotificationButton = (
                 return translate('license.notification.action.bind.license');
             case NotificationType.isStandaloneFreewareWithTrialAvailable:
                 return translate.plural('license.notification.action.try.for.free', availableDays, provideTrialDaysParam(availableDays));
+            case NotificationType.isStandaloneFreewareWithoutTrial:
+                return translate('license.notification.action.login.or.signup');
         }
     };
 
@@ -92,6 +105,7 @@ const renderNotificationButton = (
                     s.UnauthorizedUserNotification_button__submit,
                 );
             case NotificationType.isStandaloneFreewareWithTrialAvailable:
+            case NotificationType.isStandaloneFreewareWithoutTrial:
                 return s.UnauthorizedUserNotification_button__outlined;
         }
     };
@@ -123,10 +137,16 @@ function UnauthorizedUserNotificationComponent() {
 
     const { isStandaloneReleaseVariant } = settings;
 
+    // `trialAvailableDays` is null until the platform answers; only a resolved 0 means "no trial".
+    const trialDays = trialAvailableDays ?? 0;
+    const hasTrialAvailable = isStandaloneReleaseVariant && trialDays > 0;
+    const hasNoTrialAvailable = isStandaloneReleaseVariant && trialAvailableDays === 0;
+
     const notificationType = getNotificationType(
         isAppStoreSubscription,
         isLicenseExist,
-        isStandaloneReleaseVariant && Boolean(trialAvailableDays),
+        hasTrialAvailable,
+        hasNoTrialAvailable,
     );
 
     if (!notificationType) {
@@ -143,6 +163,10 @@ function UnauthorizedUserNotificationComponent() {
             case NotificationType.isStandaloneFreewareWithTrialAvailable:
                 account.requestWebSubscription(Subscription.trial);
                 break;
+            case NotificationType.isStandaloneFreewareWithoutTrial:
+                account.requestBindLicense();
+                telemetry.trackEvent(SettingsEvent.BindLicenseClick);
+                break;
         }
     };
 
@@ -151,13 +175,13 @@ function UnauthorizedUserNotificationComponent() {
             buttonSlot={renderNotificationButton(
                 notificationType,
                 notificationButtonActionHandler,
-                trialAvailableDays,
+                trialDays,
             )}
             className={s.UnauthorizedUserNotification}
             titleSlot={(
                 <Text
                     lineHeight="none"
-                    type="h6"
+                    type="h5"
                 >
                     {getNotificationTitle(notificationType)}
                 </Text>
@@ -169,7 +193,7 @@ function UnauthorizedUserNotificationComponent() {
                 lineHeight="none"
                 type="t1"
             >
-                {getNotificationDescription(notificationType, trialAvailableDays)}
+                {getNotificationDescription(notificationType, trialDays)}
             </Text>
         </InfoCard>
     );

@@ -27,19 +27,21 @@ export function Icon({ icon, className }: { icon: IconType; className?: string }
 export function Button({
     onClick,
     icon,
+    ariaLabel,
     className,
     children,
 }: {
     onClick?(): void;
     icon?: IconType;
     iconClassName?: string;
+    ariaLabel?: string;
     className?: string;
     type?: string;
     size?: string;
     children?: ComponentChildren;
 }) {
     return (
-        <button className={className} data-icon={icon} type="button" onClick={onClick}>
+        <button aria-label={ariaLabel} className={className} data-icon={icon} type="button" onClick={onClick}>
             {children}
         </button>
     );

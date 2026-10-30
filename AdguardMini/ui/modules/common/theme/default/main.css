@@ -5,21 +5,21 @@
  */
  
 body {
-    font-family: system-ui, -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-family: "Roboto Flex", system-ui, -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
     /* `--lh-elem` is undefined in variables.css; use the medium line-height
        token (130%) so the intended size actually applies. */
     line-height: var(--lh-m);
-    color: var(--text-main-text-main-default);
-    background-color: var(--fills-backgrounds-page-background-default);
+    color: var(--neutral-black-default);
+    background-color: var(--background-main-default);
 }
 
 textarea::selection,
 input::selection {
-    background: var(--stroke-dividers-item-divider-default);
-    color: var(--text-main-text-main-default);
+    background: var(--neutral-blend-default);
+    color: var(--neutral-black-default);
 }
 
 textarea,
 input {
-    caret-color: var(--text-main-text-main-default);
+    caret-color: var(--neutral-black-default);
 }

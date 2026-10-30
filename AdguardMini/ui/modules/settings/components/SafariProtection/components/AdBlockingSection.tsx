@@ -18,8 +18,12 @@ import { AdvancedRulesSwitch } from './AdvancedRulesSwitch';
  * Ad blocking section for Safari protection
  */
 function AdBlockingSectionComponent() {
-    const { safariProtection, filters, telemetry } = useSettingsStore();
+    const { safariProtection, filters, telemetry, settings } = useSettingsStore();
     const notifyError = useNotificationSomethingWentWrongText();
+
+    // The extensions convert the rules after a toggle; the design keeps the
+    // ad blocking switch disabled (and showing its target state) meanwhile.
+    const isConverting = settings.safariExtensionsLoading;
 
     const onToggleBlockAds = async (value: boolean) => {
         telemetry.trackEvent(SettingsEvent.BlockAdsProtectionClick);
@@ -47,6 +51,7 @@ function AdBlockingSectionComponent() {
             <Text className={cx(s.SafariProtection_block_title, theme.layout.content)} type="h5">{translate('safari.protection.part.ad.blocking')}</Text>
             <SettingsItemSwitch
                 description={translate('safari.protection.block.ads.desc')}
+                disabled={isConverting}
                 icon="ads"
                 setValue={onToggleBlockAds}
                 title={translate('safari.protection.block.ads')}

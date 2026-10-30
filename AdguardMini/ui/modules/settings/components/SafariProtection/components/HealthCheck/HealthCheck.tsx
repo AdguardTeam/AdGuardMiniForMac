@@ -144,7 +144,7 @@ function HealthCheckComponent({ setShowConsent }: HealthCheckProps) {
                     type="text"
                     onClick={() => setShowAllIssues((prev) => !prev)}
                 >
-                    <Text type="t2">
+                    <Text type="t2" semibold>
                         {showAllIssues
                             ? translate('safari.protection.health.show.less')
                             : translate('safari.protection.health.show.more', { more: hiddenCards.length })}

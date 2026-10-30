@@ -37,20 +37,20 @@
         min-width: min-content;
         max-height: 600px;
         overflow: auto;
-        text-align: center;
+        text-align: left;
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
-        background-color: var(--fills-backgrounds-page-background-default);
+        background-color: var(--background-main-default);
         cursor: default;
         padding-top: var(--m-l);
-        padding-bottom: var(--m-l);
+        padding-bottom: var(--m-m);
         border-radius: var(--border-radius);
         z-index: var(--zi-modal);
 
         &__horizontalPadding {
-            padding-left: var(--m-s);
-            padding-right: var(--m-s);
+            padding-left: var(--m-m);
+            padding-right: var(--m-m);
         }
 
         & > * {
@@ -68,7 +68,7 @@
 
     &_buttons {
         width: auto;
-        padding-top: var(--m-m);
+        padding-top: var(--m-s);
     }
     
 
@@ -80,12 +80,12 @@
     }
 
     &_header {
-        padding: var(--m-xs) 0 0;
+        padding: 0;
     }
 
     &_desc {
         margin-top: var(--m-xs);
-        color: var(--text-main-text-main-default);
+        color: var(--neutral-dark-default);
     }
 
     &_button {

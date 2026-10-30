@@ -25,6 +25,7 @@ function LicenseComponent() {
         license,
         isLicenseExpired,
         isTrialActive,
+        isLicenseBlocked,
     } = account;
 
     return (
@@ -34,6 +35,7 @@ function LicenseComponent() {
 
             {(!isLicenseExist
                 || isLicenseExpired
+                || isLicenseBlocked
                 // We do not show perks of full version for App Store trial versions.
                 // Apple trial license is packed with full subscription.
                 || (isTrialActive && !account.isAppStoreSubscription))

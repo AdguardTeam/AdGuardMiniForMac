@@ -58,7 +58,7 @@ function TitleComponent({ setShowNotSupportedModal, setShowResetCacheModal, setS
                 setShowNotSupportedModal('account');
             }}
         >
-            <Text className={theme.color.orange} type="t2">
+            <Text className={theme.color.orange} type="t1">
                 {text}
             </Text>
         </Button>
@@ -93,6 +93,7 @@ function TitleComponent({ setShowNotSupportedModal, setShowResetCacheModal, setS
                 action: () => setShowRemoveFilterModal(true),
                 className: theme.button.redText,
             }]}
+            maxTopPadding
             newLabel={isSystemWideProtectionPageNew}
             title={translate('advanced.blocking.system.wide')}
         >
@@ -103,14 +104,14 @@ function TitleComponent({ setShowNotSupportedModal, setShowResetCacheModal, setS
             )}
             {macos25OrLower && (
                 <div className={s.Title_wrongOsTitle}>
-                    <Text className={theme.color.orange} type="t2">
+                    <Text className={theme.color.orange} type="t1">
                         {translate('advanced.blocking.system.wide.wrong.os')}
                     </Text>
                 </div>
             )}
             {non501User && (
                 <div className={s.Title_notSupportedTitle}>
-                    <Text className={theme.color.orange} id={notSupportedId} type="t2">
+                    <Text className={theme.color.orange} id={notSupportedId} type="t1">
                         {translate('advanced.blocking.system.wide.not.supported', whyBtnParams)}
                     </Text>
                 </div>

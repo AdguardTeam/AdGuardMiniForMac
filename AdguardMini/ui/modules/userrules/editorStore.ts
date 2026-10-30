@@ -25,6 +25,13 @@ class EditorStore {
      *  hardcode `true` and revert the user's toggle. */
     private $enabled = true;
 
+    /** Rules pushed from the Assistant while the editor had unsaved edits. */
+    private $pendingRules: UserRule[] | null = null;
+
+    private $isApplyingUpdates = false;
+
+    private $justSaved = false;
+
     /** Working rule set. */
     public get rules() {
         return this.$rules;
@@ -48,6 +55,21 @@ class EditorStore {
     /** Unsaved-changes flag. */
     public get isDirty() {
         return this.$isDirty;
+    }
+
+    /** Rules pushed from the Assistant awaiting an apply decision. */
+    public get pendingRules() {
+        return this.$pendingRules;
+    }
+
+    /** Whether pending Assistant updates are being applied. */
+    public get isApplyingUpdates() {
+        return this.$isApplyingUpdates;
+    }
+
+    /** Whether the working set was just saved (shows the saved hint). */
+    public get justSaved() {
+        return this.$justSaved;
     }
 
     /** Empty-rules flag. */
@@ -104,9 +126,40 @@ class EditorStore {
         this.$loading = flag;
     }
 
-    /** Update dirty flag. */
+    /** Update dirty flag. Editing again drops the "saved" hint. */
     public setIsDirty(flag: boolean) {
         this.$isDirty = flag;
+        if (flag) {
+            this.$justSaved = false;
+        }
+    }
+
+    /** Store (or clear) rules pushed from the Assistant. */
+    public setPendingRules(rules: UserRule[] | null) {
+        this.$pendingRules = rules;
+    }
+
+    /** Mark the working set as saved. */
+    public setJustSaved(flag: boolean) {
+        this.$justSaved = flag;
+    }
+
+    /** Apply the pending Assistant rules, discarding the local edits. */
+    public applyPendingRules() {
+        const pending = this.$pendingRules;
+        if (!pending) {
+            return;
+        }
+        this.$isApplyingUpdates = true;
+        this.$pendingRules = null;
+        // `loadRules` re-seeds the editor through the `loadedRules` effect,
+        // which ends the applying state once CodeMirror has been rebuilt.
+        this.loadRules(pending, this.$enabled);
+    }
+
+    /** End the applying state once the editor has been re-seeded. */
+    public finishApplyingUpdates() {
+        this.$isApplyingUpdates = false;
     }
 
     /** Update editor language and translator language. */

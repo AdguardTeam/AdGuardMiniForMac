@@ -95,9 +95,11 @@ export class Account {
 
     /**
      * Trial availability status
-     * Show available days for trial, if 0 - trial is not available
+     * Show available days for trial, if 0 - trial is not available.
+     * `null` while the platform has not answered yet: 0 must not be read as
+     * "no trial" before then.
      */
-    public trialAvailableDays = 0;
+    public trialAvailableDays: number | null = null;
     /**
      * Checks if the license object is exist
      */
@@ -307,7 +309,8 @@ export class Account {
         if (subscription) {
             this.requestSubscription(subscription);
         } else {
-            this.requestSubscription(this.trialAvailableDays > 0 ? Subscription.trial : Subscription.standalone);
+            const trialAvailable = this.trialAvailableDays !== null && this.trialAvailableDays > 0;
+            this.requestSubscription(trialAvailable ? Subscription.trial : Subscription.standalone);
         }
     }
 

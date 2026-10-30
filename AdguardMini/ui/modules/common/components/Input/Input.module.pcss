@@ -7,7 +7,7 @@
 
     &_label {
         display: block;
-        color: var(--text-lables-labels-default);
+        color: var(--neutral-dark-default);
         margin-bottom: var(--m-xxs);
     }
 
@@ -19,8 +19,8 @@
         min-height: 56px;
         cursor: pointer;
 
-        border: 1px solid var(--stroke-inputs-inactive-input-stroke-default);
-        background-color: var(--fills-inputs-input-background-default);
+        border: 1px solid var(--neutral-blend-default);
+        background-color: var(--background-additional-default);
         border-radius: 8px;
         width: auto;
 
@@ -28,7 +28,7 @@
 
         &:hover,
         &__focus {
-            border-color: var(--stroke-inputs-active-input-stroke-default);
+            border-color: var(--neutral-light-default);
         }
 
         &__allowClear {
@@ -37,16 +37,16 @@
     }
 
     &__error {
-        border: 1px solid var(--text-links-error-link-default);
+        border: 1px solid var(--error-main-default);
     }
 
     &__invalid {
-        border: 1px solid var(--text-links-error-link-default);
+        border: 1px solid var(--error-main-default);
     }
 
     &__disabled {
         &_input {
-            color: var(--text-placeholder-placeholder-default);
+            color: var(--neutral-light-default);
         }
     }
 
@@ -64,14 +64,14 @@
         line-height: var(--lh-m);
 
         background-color: transparent;
-        color: var(--text-main-text-main-default);
+        color: var(--neutral-black-default);
 
         /* The container's focus border is the focus indicator; drop the native outline. */
         outline: none;
 
         /* Placeholder text only; typed text keeps the main text color. */
         &::placeholder {
-            color: var(--text-placeholder-placeholder-default);
+            color: var(--neutral-light-default);
         }
     }
 
@@ -101,14 +101,14 @@
     }
 
     &_cross {
-        color: var(--stroke-icons-gray-icons-default);
+        color: var(--neutral-dark-default);
     }
 
     &_errorMessage {
         margin-top: var(--m-xxs);
         margin-bottom: var(--m-xxs);
         text-align: left;
-        color: var(--text-links-error-link-default);
+        color: var(--error-main-default);
     }
 }
 

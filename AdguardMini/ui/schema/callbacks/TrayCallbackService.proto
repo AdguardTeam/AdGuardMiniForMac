@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "PrimitivesWrappers.proto";
+import "AppInfo.proto";
 import "Settings.proto";
 import "EffectiveTheme.proto";
 
@@ -10,8 +11,8 @@ service TrayCallbackService {
     rpc OnTrayWindowVisibilityChange(BoolValue) returns (EmptyValue);
     /* Fires when the application detects changes in a LoginItem service */
     rpc OnLoginItemStateChange(BoolValue) returns (EmptyValue);
-    /* Fires when swift resolve if new version is available */
-    rpc OnApplicationVersionStatusResolved(BoolValue) returns (EmptyValue);
+    /* Fires when swift resolved the version check, carrying the available version */
+    rpc OnApplicationVersionStatusResolved(ApplicationVersionStatus) returns (EmptyValue);
     /* Fires when swift resolve filters current state */
     rpc OnFilterStatusResolved(FiltersStatus) returns (EmptyValue);
     /* Fires when one of extensions updated */

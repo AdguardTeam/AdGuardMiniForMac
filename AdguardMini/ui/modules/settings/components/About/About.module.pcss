@@ -29,7 +29,7 @@
     &_dependencies {
         display: flex;
         cursor: pointer;
-        margin-top: var(--m-l);
+        margin-top: var(--m-s);
 
         @mixin focus-ring;
 
@@ -44,12 +44,13 @@
         }
 
         &_item {
-            color: var(--text-description-description-default);
+            color: var(--neutral-dark-default);
+            margin-bottom: 0;
         }
     }
 
     &_description {
-        margin-top: var(--m-s);
+        margin-top: var(--m-l);
         margin-bottom: var(--m-m);
     }
 
@@ -62,7 +63,7 @@
         margin-top: -16px;
         &_requestUpdate {
             display: inline;
-            color: var(--fills-buttons-main-button-default);
+            color: var(--accent-main-default);
             cursor: pointer;
             text-decoration: underline;
 
@@ -81,13 +82,13 @@
     }
 
     &_rights {
-        color: var(--text-placeholder-placeholder-default);
+        color: var(--neutral-light-default);
     }
 
     &_link {
         display: block;
         width: min-content;
         white-space: nowrap;
-        padding: var(--m-xxs) 0;
+        padding: 10px 0;
     }
 }

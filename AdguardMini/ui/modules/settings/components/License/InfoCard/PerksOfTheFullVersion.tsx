@@ -144,10 +144,13 @@ function PerksOfTheFullVersionComponent({
         trialAvailableDays,
         isTrialActive,
         isLicenseExpired,
+        isLicenseBlocked,
         isAppStoreSubscription,
         isFreeware,
         appStoreSubscriptions,
     } = account;
+    // 0 is the "no trial" value; the field is null until the platform answers.
+    const trialDays = trialAvailableDays ?? 0;
 
     const renderTitle = () => {
         return (
@@ -180,14 +183,14 @@ function PerksOfTheFullVersionComponent({
     const renderButton = () => {
         const renderLabel = () => {
             if (isMASReleaseVariant) {
-                if (trialAvailableDays > 0 && !isTrialActive && !appStoreSubscriptions?.result?.promoInfo) {
-                    return translate.plural('license.try.for.free', trialAvailableDays, provideTrialDaysParam(trialAvailableDays));
+                if (trialDays > 0 && !isTrialActive && !appStoreSubscriptions?.result?.promoInfo) {
+                    return translate.plural('license.try.for.free', trialDays, provideTrialDaysParam(trialDays));
                 }
 
                 return (isAppStoreSubscription || isFreeware) ? translate('license.subscribe') : translate('license.get.full.version');
             }
 
-            if (isLicenseExpired) {
+            if (isLicenseExpired || isLicenseBlocked) {
                 return translate('license.renew.license');
             }
 
@@ -198,7 +201,7 @@ function PerksOfTheFullVersionComponent({
             const key = account.license.license?.licenseKey?.getHiddenValue() || '';
             if (isTrialActive) {
                 window.API.Execute(new RequestRenewRequest({ value: key }));
-            } else if (isLicenseExpired && !isAppStoreSubscription) {
+            } else if ((isLicenseExpired || isLicenseBlocked) && !isAppStoreSubscription) {
                 account.requestRenewLicense(key);
             } else if (isAppStoreSubscription || (isMASReleaseVariant && isFreeware)) {
                 account.showPaywall();
@@ -207,7 +210,7 @@ function PerksOfTheFullVersionComponent({
             }
 
             if (isMASReleaseVariant) {
-                if (trialAvailableDays > 0 && !isTrialActive) {
+                if (trialDays > 0 && !isTrialActive) {
                     telemetry.trackEvent(SettingsEvent.Try14DaysClick);
                 } else if (isAppStoreSubscription || isFreeware) {
                     telemetry.trackEvent(SettingsEvent.SubscribeTrialEndClick);
@@ -215,7 +218,7 @@ function PerksOfTheFullVersionComponent({
                     telemetry.trackEvent(SettingsEvent.GetFullVersionClick);
                 }
             } else {
-                if (!isLicenseExpired) {
+                if (!isLicenseExpired && !isLicenseBlocked) {
                     telemetry.trackEvent(SettingsEvent.GetFullVersionClick);
                 } else {
                     telemetry.trackEvent(SettingsEvent.SubscribeTrialEndClick);

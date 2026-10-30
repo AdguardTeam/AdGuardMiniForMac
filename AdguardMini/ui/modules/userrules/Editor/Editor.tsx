@@ -28,8 +28,8 @@ type EditorProps = {
     onSave(): void;
 };
 
-const MARKER_COLOR = 'var(--stroke-icons-product-icon-default)';
-const MARKER_HTML = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 16 16" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M13.9888 3.24536C14.4056 3.60773 14.4497 4.23936 14.0873 4.65614L7.13182 12.6561C6.94683 12.8689 6.68062 12.9937 6.39875 12.9998C6.11688 13.0059 5.84553 12.8927 5.65154 12.6881L1.94039 8.77448C1.56037 8.37373 1.57718 7.74079 1.97793 7.36077C2.37868 6.98075 3.01163 6.99756 3.39165 7.39831L6.34505 10.5128L12.578 3.34389C12.9404 2.92711 13.572 2.88299 13.9888 3.24536Z" fill="var(--stroke-icons-product-icon-default)"/></svg>';
+const MARKER_COLOR = 'var(--accent-main-default)';
+const MARKER_HTML = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 16 16" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M13.9888 3.24536C14.4056 3.60773 14.4497 4.23936 14.0873 4.65614L7.13182 12.6561C6.94683 12.8689 6.68062 12.9937 6.39875 12.9998C6.11688 13.0059 5.84553 12.8927 5.65154 12.6881L1.94039 8.77448C1.56037 8.37373 1.57718 7.74079 1.97793 7.36077C2.37868 6.98075 3.01163 6.99756 3.39165 7.39831L6.34505 10.5128L12.578 3.34389C12.9404 2.92711 13.572 2.88299 13.9888 3.24536Z" fill="var(--accent-main-default)"/></svg>';
 
 /**
  * Token colors for the TextMate grammar highlight, matching the legacy
@@ -41,12 +41,12 @@ const MARKER_HTML = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="
  * the CSS must ship in a regular stylesheet to be applied.
  */
 const highlightStyle = HighlightStyle.define([
-    { tag: tags.keyword, class: 'adg-cm-keyword', color: 'var(--text-user-rules-purple-default)' },
-    { tag: tags.string, class: 'adg-cm-string', color: 'var(--text-user-rules-red-default)' },
-    { tag: tags.regexp, class: 'adg-cm-regexp', color: 'var(--text-user-rules-red-default)' },
-    { tag: tags.operator, class: 'adg-cm-operator', color: 'var(--text-user-rules-blue-default)' },
-    { tag: tags.definition(tags.variableName), class: 'adg-cm-definition', color: 'var(--text-user-rules-blue-default)' },
-    { tag: tags.comment, class: 'adg-cm-comment', color: 'var(--text-user-rules-gray-default)' },
+    { tag: tags.keyword, class: 'adg-cm-keyword', color: 'var(--additional-violet-default)' },
+    { tag: tags.string, class: 'adg-cm-string', color: 'var(--error-main-default)' },
+    { tag: tags.regexp, class: 'adg-cm-regexp', color: 'var(--error-main-default)' },
+    { tag: tags.operator, class: 'adg-cm-operator', color: 'var(--additional-blue-default)' },
+    { tag: tags.definition(tags.variableName), class: 'adg-cm-definition', color: 'var(--additional-blue-default)' },
+    { tag: tags.comment, class: 'adg-cm-comment', color: 'var(--neutral-dark-default)' },
 ]);
 
 /**
@@ -229,6 +229,9 @@ function EditorComponent({
         // prior `change` event, which is stale once the editor is re-seeded.
         debouncedEditorSync.cancel();
         setIsDirty(false);
+        // Applying Assistant updates re-seeds through this effect; the
+        // "applying" hint must stay up until CodeMirror has been rebuilt.
+        editorStore.finishApplyingUpdates();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editorStore.loadedRules]);
 

@@ -7,6 +7,7 @@ import { makeAutoObservable, flow } from 'mobx';
 
 import { GetTrayLicenseRequest, GetTrialAvailableDaysRequest } from 'Apis/requests/AccountService';
 import { GetAdguardExtraRequest, GetURLFilterStateRequest, SetURLFilterEnabledRequest } from 'Apis/requests/AdvancedBlockingService';
+import { GetAboutRequest } from 'Apis/requests/AppInfoService';
 import { CheckApplicationVersionRequest } from 'Apis/requests/AppUpdateService';
 import { GetFiltersMetadataRequest, RequestFiltersUpdateRequest } from 'Apis/requests/FiltersService';
 import { OpenSettingsWindowRequest } from 'Apis/requests/InternalService';
@@ -108,6 +109,11 @@ export class SettingsStore {
      * Bool describes if login item is enabled, undefined for pending
      */
     public newVersionAvailable: boolean | undefined = false;
+
+    /**
+     * Application version shown in the updates page app row
+     */
+    public appVersion = '';
 
     /**
      * Filters status
@@ -359,6 +365,21 @@ export class SettingsStore {
     public checkApplicationVersion() {
         window.API.Execute(new CheckApplicationVersionRequest());
         this.newVersionAvailable = undefined;
+    }
+
+    /**
+     * Fetches the application version for the updates page app row
+     */
+    public async getAppVersion() {
+        const resp = await window.API.Execute(new GetAboutRequest());
+        this.setAppVersion(resp.version);
+    }
+
+    /**
+     * Setter for the application version shown in the updates page app row
+     */
+    public setAppVersion(version: string) {
+        this.appVersion = version;
     }
 
     /**

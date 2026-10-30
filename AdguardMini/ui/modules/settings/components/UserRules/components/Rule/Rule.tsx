@@ -53,7 +53,7 @@ export function Rule({
             {/* Double-click-to-edit is a pointer shortcut; the adjacent edit
                 Button is the keyboard path to the same action. */}
             {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-            <div className={cx(s.text, theme.typo.t2)} title={rule.rule} onDblClick={() => onEdit(rule.index)}>
+            <div className={cx(s.text, type === 'comment' && s.comment, theme.typo.t2)} title={rule.rule} onDblClick={() => onEdit(rule.index)}>
                 <RuleHighlighter rule={rule.rule} />
             </div>
             <Button className={cx(theme.button.greenIcon, s.button)} icon="edit" type="icon" onClick={() => onEdit(rule.index)} />

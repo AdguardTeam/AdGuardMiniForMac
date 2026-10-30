@@ -32,6 +32,12 @@ type BasicProps = {
     modalForceHeight?: number;
     childrenClassName?: string;
     /**
+     * Extra class for the header block. Modals that opt out of
+     * `contentPadding` use it to inset the title to the design's 24px so it
+     * lines up with their rows' contents.
+     */
+    headerClassName?: string;
+    /**
      * Announces the whole body on open, for modals whose text lives in
      * `children` rather than in `description` — otherwise only the title is
      * read and the content has to be hunted for.
@@ -88,6 +94,7 @@ export function Modal({
     contentPadding = true,
     modalForceHeight,
     childrenClassName,
+    headerClassName,
     describedByChildren,
 }: ModalProps) {
     const escapeAction = cancelAction ?? onClose;
@@ -154,7 +161,7 @@ export function Modal({
                 aria-modal
             >
                 {canClose && (<Button ariaLabel={translate('close')} className={s.Modal_modalClose} icon="cross" iconClassName={theme.button.grayIcon} type="icon" onClick={onClose} />)}
-                <div className={s.Modal_header}>
+                <div className={cx(s.Modal_header, headerClassName)}>
                     {headerSlot}
                     {title && <Text id={titleId} tabIndex={-1} type="h4">{title}</Text>}
                     {loaderText && (

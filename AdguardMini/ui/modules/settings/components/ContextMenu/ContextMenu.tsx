@@ -145,7 +145,7 @@ function ContextMenuComponent({ elements, reportBug, className, showReportBugToo
                 <div className={cx(s.ContextMenu_context, reportBug && s.ContextMenu_context__tooltip)}>
                     {reportBug ? (
                         <div className={s.ContextMenu_action}>
-                            <Text lineHeight="none" type="t1">
+                            <Text lineHeight="none" type="t2">
                                 {showReportBugTooltip ? translate('context.menu.report.problem.tooltip') : translate('context.menu.report.problem')}
                             </Text>
                         </div>

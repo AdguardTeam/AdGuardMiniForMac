@@ -8,7 +8,7 @@
     flex-direction: column;
     width: 360px;
     height: 582px;
-    background: var(--fills-backgrounds-page-background-default);
+    background: var(--background-main-default);
     box-shadow: var(--bs-big);
     box-sizing: content-box;
     overflow: hidden;
@@ -26,23 +26,51 @@
             margin-left: auto;
             margin-right: var(--m-s);
         }
+
+        &_tooltipWrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        &_tooltip {
+            position: absolute;
+            top: calc(100% + var(--m-xxxs));
+            right: 0;
+            z-index: var(--zi-tooltip);
+            display: none;
+            padding: var(--m-s);
+            border-radius: var(--border-radius);
+            background: var(--background-main-default);
+            color: var(--neutral-black-default);
+            box-shadow: var(--bs-small);
+            font-size: var(--ft-m);
+            line-height: var(--lh-m);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        &_tooltipWrap:hover &_tooltip,
+        &_tooltipWrap:focus-within &_tooltip {
+            display: block;
+        }
     }
 
     &_title {
         margin-top: var(--m-xxl);
-        margin-bottom: var(--m-xxs);
+        margin-bottom: var(--m-xs);
         text-align: center;
         display: block;
     }
 
     &_status {
         text-align: center;
-        color: var(--text-description-description-default);
+        color: var(--neutral-dark-default);
         padding: 0 var(--m-xs);
     }
 
     &_extensionsDisabled {
-        color: var(--text-links-attention-link-default);
+        color: var(--attention-main-default);
     }
 
     &_link {
@@ -61,7 +89,7 @@
         @mixin focus-ring;
     }
     &_switch {
-        margin: var(--m-xxxl) auto auto;
+        margin: 62px auto auto;
     }
 
     &_storiesControls {
@@ -78,10 +106,10 @@
         &_button {
             &__right {
                 transform: rotate(180deg);
-                margin-left: var(--m-xs);
+                margin-left: var(--m-s);
             }
             &__disabled {
-                color: var(--stroke-inputs-inactive-input-stroke-default);
+                color: var(--neutral-blend-default);
             }
         }
 

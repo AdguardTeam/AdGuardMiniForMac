@@ -11,8 +11,8 @@
 
     &_notificationWrap {
         margin-top: 8px;
-        background-color: var(--fills-backgrounds-dialog-background-default);
-        padding: 16px;
+        background-color: var(--special-static-black-default);
+        padding: 12px;
         border-radius: 4px;
         animation: .2s ease-out slide-from-bottom;
 
@@ -26,7 +26,7 @@
         width: auto;
 
         &_close {
-            color: var(--stroke-icons-gray-icons-default);
+            color: var(--neutral-light-default);
         }
     }
 }
@@ -46,9 +46,9 @@
 
 .NotificationContentWrapper {
     &_content {
-        width: calc(100% - 74px);
-        margin-left: 16px;
-        margin-right: 16px;
+        width: calc(100% - 58px);
+        margin-left: 8px;
+        margin-right: 8px;
 
         &__vertical {
             display: flex;
@@ -62,15 +62,15 @@
         margin-bottom: auto;
         width: auto;
         font-size: 16px;
-        line-height: 20px;
-        color: var(--text-buttons-primary-default);
+        line-height: var(--lh-m);
+        color: var(--special-static-white-default);
     }
 }
 
 .NotificationButtonSwitch {
     &_btn {
         margin-top: var(--m-xxs);
-        color: var(--text-buttons-primary-default);
+        color: var(--special-static-white-default);
     }
 }
 
@@ -86,11 +86,11 @@
 
 .NotificationIcon {
     &__green {
-        color: var(--fills-buttons-main-button-default);
+        color: var(--accent-main-default);
     }
 
     &__orange {
-        color: var(--fills-buttons-danger-button-default);
+        color: var(--attention-main-default);
     }
 
     &__loader {

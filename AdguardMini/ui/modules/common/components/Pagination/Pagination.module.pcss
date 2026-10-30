@@ -18,11 +18,11 @@
 
     &_element {
         --size: 32px;
-        background: var(--fills-backgrounds-page-background-default);
+        background: var(--background-main-default);
         position: relative;
         width: var(--size);
         height: var(--size);
-        color: var(--text-main-text-main-default);
+        color: var(--neutral-black-default);
         font-size: 12px;
         font-weight: 600;
         text-align: center;
@@ -59,17 +59,17 @@
     }
 
     &_button {
-        border-color: var(--fills-buttons-secondary-button-pressed);
+        border-color: var(--background-main-pressed);
         cursor: pointer;
 
         &__active {
-            background: var(--fills-buttons-main-button-default);
-            color: var(--text-buttons-primary-default);
+            background: var(--accent-main-default);
+            color: var(--special-static-white-default);
             border-color: transparent;
         }
 
         &__disabled {
-            color: var(--text-buttons-secondary-disabled);
+            color: var(--neutral-black-disabled);
         }
 
         &:hover:not(&__active):not(&__disabled),

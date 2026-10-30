@@ -1,5 +1,5 @@
 /* This code was generated automatically by proto-parser tool version 1 */
-import { SafariExtensionUpdate, EmptyValue, BoolValue, ImportStatus, StringValue, EffectiveThemeValue, URLFilterState } from '../types'
+import { SafariExtensionUpdate, EmptyValue, BoolValue, ImportStatus, ApplicationVersionStatus, StringValue, EffectiveThemeValue, URLFilterState } from '../types'
 
 /* Service handles settings lists- public part for external platform calls with methods for ArrayBuffer */
 export interface ISettingsCallbackService {
@@ -11,7 +11,7 @@ export interface ISettingsCallbackService {
 	OnImportStateChange(param: ArrayBuffer): Promise<EmptyValue>;
 	/* Fires when another hardware acceleration was imported or migrated */
 	OnHardwareAccelerationChange(param: ArrayBuffer): Promise<EmptyValue>;
-	/* Fires when resolve if new version is available */
+	/* Fires when swift resolved the version check, carrying the available version */
 	OnApplicationVersionStatusResolved(param: ArrayBuffer): Promise<EmptyValue>;
 	/* Window did become main callback */
 	OnWindowDidBecomeMain(param: ArrayBuffer): Promise<EmptyValue>;
@@ -37,8 +37,8 @@ export interface ISettingsCallbackServiceInternal {
 	OnImportStateChange(param: ImportStatus): Promise<EmptyValue>;
 	/* Fires when another hardware acceleration was imported or migrated*/
 	OnHardwareAccelerationChange(param: BoolValue): Promise<EmptyValue>;
-	/* Fires when resolve if new version is available*/
-	OnApplicationVersionStatusResolved(param: BoolValue): Promise<EmptyValue>;
+	/* Fires when swift resolved the version check, carrying the available version*/
+	OnApplicationVersionStatusResolved(param: ApplicationVersionStatus): Promise<EmptyValue>;
 	/* Window did become main callback*/
 	OnWindowDidBecomeMain(param: EmptyValue): Promise<EmptyValue>;
 	/* Fires when app requests to show settings page*/
@@ -126,13 +126,13 @@ export class SettingsCallbackService implements ISettingsCallbackService {
 		return new EmptyValue();
 	};
 	/**
-	 * Fires when resolve if new version is available
+	 * Fires when swift resolved the version check, carrying the available version
 	 * @param ArrayBuffer param
 	 * @returns EmptyValue param
 	 */
 	OnApplicationVersionStatusResolved = async (param: ArrayBuffer): Promise<EmptyValue> => {
 		const bytes = new Uint8Array(param);
-		const arg = BoolValue.deserializeBinary(bytes);
+		const arg = ApplicationVersionStatus.deserializeBinary(bytes);
 
 		if (!arg) {
 			throw new Error(`Empty parameter in SettingsCallbackService.OnApplicationVersionStatusResolved: ${ param }`);

@@ -8,7 +8,7 @@ import { useState, useMemo } from 'preact/hooks';
 
 import { TDS_PARAMS, getTdsLink } from 'Common/utils/links';
 import { SettingsTitle } from 'Modules/settings/components/SettingsTitle';
-import { useSettingsStore } from 'SettingsLib/hooks';
+import { useSettingsStore, useSafariExtensionsStatus } from 'SettingsLib/hooks';
 import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
 import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType, RouteName } from 'SettingsStore/modules';
 import theme from 'Theme';
@@ -58,6 +58,7 @@ function FiltersComponent() {
         filtersIndex: { groups, customGroupId },
         filtersMap,
     } } = useSettingsStore();
+    const { hasRulesLimitExceeded } = useSafariExtensionsStatus();
     const params = router.castParams<FiltersPageParams>();
     const [groupView, setGroupView] = useState<number | undefined>(params?.groupId);
 
@@ -119,17 +120,23 @@ function FiltersComponent() {
             {!groupView && (
                 <Layout navigation={{ router, route: params?.backLink ?? RouteName.settings, title: navigationTitle }} type="settingsPage">
                     <SettingsTitle
+                        description={translate('filters.filters.desc')}
                         title={translate('filters.filters')}
                     />
                     <div className={theme.layout.content}>
-                        <Text className={s.Filters_desc} type="t1">{translate('filters.filters.desc')}</Text>
                         <ExternalLink
+                            className={s.Filters_whatAreFilters}
                             href={getTdsLink(TDS_PARAMS.what_filters, RouteName.filters)}
                             textType="t1"
                             noUnderline
                         >
                             {translate('filters.what.are.filters')}
                         </ExternalLink>
+                        {hasRulesLimitExceeded && (
+                            <Text className={s.Filters_ruleLimit} type="t1">
+                                {translate('filters.rule.limit.exceeded')}
+                            </Text>
+                        )}
                         <Input
                             className={cx(s.Filters_search, searchQuery && s.Filters_search__margin)}
                             id="search"
@@ -148,14 +155,14 @@ function FiltersComponent() {
                                 <div className={s.Filters_emptyResult}>
                                     <Icon className={s.Filters_emptyResult_icon} icon={searchQuery ? 'noRulesFound' : 'noRules'} />
                                     <div className={s.Filters_emptyResult_text}>
-                                        <Text type="t2">{searchQuery ? translate('nothing.found') : translate('user.rules.no.rules')}</Text>
+                                        <Text type="t1">{searchQuery ? translate('nothing.found') : translate('user.rules.no.rules')}</Text>
                                     </div>
                                 </div>
                             ) : (
                                 <>
                                     {data.map((group) => (
                                         <div key={group.groupId} className={s.Filters_searchGroup}>
-                                            <Text className={cx(s.Filters_searchGroup_title, theme.layout.content)} type="h4">{group.groupName}</Text>
+                                            <Text className={cx(s.Filters_searchGroup_title, theme.layout.content)} type="h5">{group.groupName}</Text>
                                             {group.filters.map((f) => (<Filter key={f} filter={filtersMap.get(f)!} />))}
                                         </div>
                                     ))}

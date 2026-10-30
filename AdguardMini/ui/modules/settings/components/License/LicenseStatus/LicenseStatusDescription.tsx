@@ -77,7 +77,7 @@ function LicenseStatusDescriptionComponent() {
                 </Text>
             )}
             {showBlocked && (
-                <Text className={s.LicenseStatusDesc_warning} type="t2">
+                <Text className={s.LicenseStatusDesc_blocked} type="t2">
                     {translate('license.license.blocked')}
                 </Text>
             )}

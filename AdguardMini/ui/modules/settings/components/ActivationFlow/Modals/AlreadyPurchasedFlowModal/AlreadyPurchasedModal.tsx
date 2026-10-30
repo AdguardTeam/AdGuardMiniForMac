@@ -31,6 +31,7 @@ function AlreadyPurchasedModalComponent({
         <Modal
             childrenClassName={s.AlreadyPurchasedModal_modalChildren}
             contentPadding={false}
+            headerClassName={s.AlreadyPurchasedModal_header}
             title={translate('settings.activation.flow.already.purchased.modal.title')}
             zIndex="paywall-modal"
             onClose={onClose}

@@ -58,7 +58,7 @@ function ActivationFlowResultModalComponent({
         case ActivationFlowResult.trialSuccess:
             modalConfig = {
                 headerSlot: <SuccessImage className={s.ActivationFlowResultModal_image} />,
-                title: translate('settings.activation.flow.trial.success.title', provideTrialDaysParam(trialAvailableDays)),
+                title: translate('settings.activation.flow.trial.success.title', provideTrialDaysParam(trialAvailableDays ?? 0)),
                 submit: true,
                 submitAction: handleModalClose,
                 submitText: translate('settings.activation.flow.trial.success.btn'),

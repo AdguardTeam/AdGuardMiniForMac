@@ -1,5 +1,5 @@
 /* This code was generated automatically by proto-parser tool version 1 */
-import { BoolValue, EmptyValue, FiltersStatus, SafariExtensionUpdate, TrayLicenseOrError, EffectiveThemeValue, StringValue } from '../types'
+import { BoolValue, EmptyValue, ApplicationVersionStatus, FiltersStatus, SafariExtensionUpdate, TrayLicenseOrError, EffectiveThemeValue, StringValue } from '../types'
 
 /* Service handles settings lists- public part for external platform calls with methods for ArrayBuffer */
 export interface ITrayCallbackService {
@@ -7,7 +7,7 @@ export interface ITrayCallbackService {
 	OnTrayWindowVisibilityChange(param: ArrayBuffer): Promise<EmptyValue>;
 	/* Fires when the application detects changes in a LoginItem service */
 	OnLoginItemStateChange(param: ArrayBuffer): Promise<EmptyValue>;
-	/* Fires when swift resolve if new version is available */
+	/* Fires when swift resolved the version check, carrying the available version */
 	OnApplicationVersionStatusResolved(param: ArrayBuffer): Promise<EmptyValue>;
 	/* Fires when swift resolve filters current state */
 	OnFilterStatusResolved(param: ArrayBuffer): Promise<EmptyValue>;
@@ -28,8 +28,8 @@ export interface ITrayCallbackServiceInternal {
 	OnTrayWindowVisibilityChange(param: BoolValue): Promise<EmptyValue>;
 	/* Fires when the application detects changes in a LoginItem service*/
 	OnLoginItemStateChange(param: BoolValue): Promise<EmptyValue>;
-	/* Fires when swift resolve if new version is available*/
-	OnApplicationVersionStatusResolved(param: BoolValue): Promise<EmptyValue>;
+	/* Fires when swift resolved the version check, carrying the available version*/
+	OnApplicationVersionStatusResolved(param: ApplicationVersionStatus): Promise<EmptyValue>;
 	/* Fires when swift resolve filters current state*/
 	OnFilterStatusResolved(param: FiltersStatus): Promise<EmptyValue>;
 	/* Fires when one of extensions updated*/
@@ -84,13 +84,13 @@ export class TrayCallbackService implements ITrayCallbackService {
 		return new EmptyValue();
 	};
 	/**
-	 * Fires when swift resolve if new version is available
+	 * Fires when swift resolved the version check, carrying the available version
 	 * @param ArrayBuffer param
 	 * @returns EmptyValue param
 	 */
 	OnApplicationVersionStatusResolved = async (param: ArrayBuffer): Promise<EmptyValue> => {
 		const bytes = new Uint8Array(param);
-		const arg = BoolValue.deserializeBinary(bytes);
+		const arg = ApplicationVersionStatus.deserializeBinary(bytes);
 
 		if (!arg) {
 			throw new Error(`Empty parameter in TrayCallbackService.OnApplicationVersionStatusResolved: ${ param }`);

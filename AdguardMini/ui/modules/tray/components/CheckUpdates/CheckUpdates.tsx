@@ -64,6 +64,7 @@ function CheckUpdatesComponent() {
         }
         if (!params?.noUpdate && globalSettings?.releaseVariant === ReleaseVariants.standAlone) {
             settings.checkApplicationVersion();
+            settings.getAppVersion();
         }
     }, [params?.noUpdate, globalSettings?.releaseVariant, settings]);
 
@@ -182,7 +183,9 @@ function CheckUpdatesComponent() {
                                 <Icon {...getIconProps(newVersionAvailable)} />
                             )}
                             <div>
-                                <Text className={s.CheckUpdates_element_title_text} type="t1">{ADGUARD_MINI_TITLE}</Text>
+                                <Text className={s.CheckUpdates_element_title_text} type="t1">
+                                    {settings.appVersion ? `${ADGUARD_MINI_TITLE} ${settings.appVersion}` : ADGUARD_MINI_TITLE}
+                                </Text>
                                 {newVersionAvailable === undefined && (<Text type="t2">{translate('tray.update.check.updates')}</Text>)}
                                 {typeof newVersionAvailable === 'boolean' && (newVersionAvailable
                                     ? (<Text type="t2">{translate('new.version.available')}</Text>)
@@ -232,7 +235,9 @@ function CheckUpdatesComponent() {
                                             <>
                                                 <Text type="t2">{translate('up.to.date')}</Text>
                                                 {lastFiltersUpdateTimestamp !== null && (
-                                                    <Text type="t2">{format(lastFiltersUpdateTimestamp, DATE_FORMAT.day_month_hours_minutes)}</Text>
+                                                    <Text type="t2">
+                                                        {translate('tray.update.filters.updated.on', { date: format(lastFiltersUpdateTimestamp, DATE_FORMAT.day_month) })}
+                                                    </Text>
                                                 )}
                                             </>
                                         )}

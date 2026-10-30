@@ -15,7 +15,7 @@
 
 type ThemeStub = {
     typo: Record<string, string | undefined>;
-    button: { greenSubmit: string; underline: string };
+    button: { greenSubmit: string; underline: string; grayIcon: string };
     color: { linkGreen: string };
 };
 
@@ -27,7 +27,7 @@ declare global {
 /** Theme token stand-ins; only the tokens read in tests need values. */
 const theme: ThemeStub = {
     typo: {},
-    button: { greenSubmit: 'greenSubmit', underline: 'underline' },
+    button: { greenSubmit: 'greenSubmit', underline: 'underline', grayIcon: 'grayIcon' },
     color: { linkGreen: 'linkGreen' },
 };
 

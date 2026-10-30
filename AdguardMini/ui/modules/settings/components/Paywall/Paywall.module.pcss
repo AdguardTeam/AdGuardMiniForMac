@@ -44,7 +44,11 @@ html[theme="light"] {
         transform: translate(-50%, -50%);
         border-radius: 16px;
 
-        background: var(--fills-backgrounds-page-background-default);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        background: var(--background-main-default);
         background-size: contain;
         background-repeat: no-repeat;
         background-origin: border-box;
@@ -78,6 +82,7 @@ html[theme="light"] {
         }
 
         &__right {
+            width: 366px;
             margin-left: auto;
             margin-right: 0;
         }
@@ -88,7 +93,7 @@ html[theme="light"] {
         top: var(--m-s);
         right: var(--m-s);
         cursor: pointer;
-        color: var(--stroke-icons-gray-icons-default);
+        color: var(--neutral-dark-default);
     }
 
     &_title {
@@ -96,7 +101,7 @@ html[theme="light"] {
     }
     
     &_desc {
-        color: var(--text-description-description-default);
+        color: var(--neutral-dark-default);
         margin-bottom: var(--m-s);
         max-width: 370px;
     }
@@ -104,17 +109,17 @@ html[theme="light"] {
     &_offer {
         position: absolute;
         right: var(--m-s);
-        bottom: 22px;
+        bottom: 16px;
         display: flex;
         align-items: flex-start;
         gap: var(--m-xxs);
         width: 280px;
         padding: var(--m-xs) var(--m-xs) var(--m-xs) var(--m-s);
-        border: 1px solid var(--fills-buttons-main-button-default);
+        border: 1px solid var(--accent-main-default);
         border-radius: var(--border-radius);
-        background: var(--fills-backgrounds-page-background-default);
-        color: var(--text-main-text-main-default);
-        box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.10), 8px 8px 12px rgba(0, 0, 0, 0.20);
+        background: var(--background-main-default);
+        color: var(--neutral-black-default);
+        box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.10), 8px 8px 24px rgba(0, 0, 0, 0.20);
         animation: 0.2s ease-out offer-appear;
 
         /* The right-content layout leaves the illustration side free, so the card mirrors there. */
@@ -135,7 +140,7 @@ html[theme="light"] {
 
         &_close {
             flex-shrink: 0;
-            color: var(--stroke-icons-gray-icons-default);
+            color: var(--neutral-dark-default);
         }
     }
 
@@ -150,7 +155,7 @@ html[theme="light"] {
             gap: var(--m-xs);
 
             &_icon {
-                color: var(--fills-buttons-main-button-default);
+                color: var(--accent-main-default);
             }
         }
     }
@@ -193,9 +198,9 @@ html[theme="light"] {
             display: inline-block;
             padding: 2px var(--m-xxs);
             margin: 0 auto;
-            color: var(--text-description-description-default);
+            color: var(--neutral-dark-default);
             &:hover {
-                color: var(--fills-buttons-main-button-hovered);
+                color: var(--accent-main-hover);
             }
         }
 
@@ -210,7 +215,7 @@ html[theme="light"] {
 
             &:hover {
                 >a {
-                    color: var(--fills-buttons-main-button-hovered);
+                    color: var(--accent-main-hover);
                 }
             }
         }

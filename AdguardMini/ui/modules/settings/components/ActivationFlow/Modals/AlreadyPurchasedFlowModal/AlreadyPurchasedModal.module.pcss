@@ -4,7 +4,18 @@
 */
 
 .AlreadyPurchasedModal {
+    /*
+     * The design's modal body pads 8px and its title block adds 16px, so the
+     * title sits 24px from the edge — the same inset as the rows' contents
+     * (8px row surface + 16px row padding).
+     */
+    &_header {
+        padding: 0 var(--m-m);
+    }
+
     &_modalChildren {
-        padding: 0 var(--m-xs);
+        /* The design starts the rows 16px below the title. */
+        margin-top: var(--m-s);
+        padding: 0 var(--m-xxs);
     }
 }

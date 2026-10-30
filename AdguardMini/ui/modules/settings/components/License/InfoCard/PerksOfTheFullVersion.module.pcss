@@ -19,7 +19,7 @@
 
     &_case {
         width: auto;
-        color: var(--text-description-description-default);
+        color: var(--neutral-dark-default);
         text-align: center;
         vertical-align: middle;
     }
@@ -36,20 +36,20 @@
 
         &__valid {
             width: auto;
-            color: var(--text-links-link-default);
+            color: var(--accent-main-default);
             text-align: center;
             vertical-align: middle;
         }
 
         &__invalid {
             width: auto;
-            color: var(--text-links-error-link-default);
+            color: var(--error-main-default);
             text-align: center;
             vertical-align: middle;
         }
 
         &__bordered {
-            border-top: 1px solid var(--stroke-dividers-item-divider-default);
+            border-top: 1px solid var(--neutral-blend-default);
         }
 
         &__bottomMargin {
@@ -60,6 +60,8 @@
     &_button {
         width: max-content;
         max-width: max-content;
+        min-height: 48px;
+        box-sizing: border-box;
         padding: var(--m-xs) var(--m-m);
     }
 }

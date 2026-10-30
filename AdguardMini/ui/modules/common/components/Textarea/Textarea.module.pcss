@@ -6,7 +6,7 @@
 .Textarea {
     &_label {
         display: block;
-        color: var(--text-lables-labels-default);
+        color: var(--neutral-dark-default);
         margin-bottom: var(--m-xxs);
     }
 
@@ -14,18 +14,18 @@
         position: relative;
         display: flex;
         border-radius: var(--border-radius);
-        border: 1px solid var(--stroke-inputs-inactive-input-stroke-default);
-        background-color: var(--fills-inputs-input-background-default);
+        border: 1px solid var(--neutral-blend-default);
+        background-color: var(--background-additional-default);
         width: auto;
         overflow: hidden;
 
         &__error {
-            border-color: var(--text-links-error-link-default);
+            border-color: var(--error-main-default);
         }
 
         &:hover,
         &__focus {
-            border-color: var(--stroke-inputs-active-input-stroke-default);
+            border-color: var(--neutral-light-default);
         }
     }
 
@@ -38,15 +38,15 @@
         border: 0;
         outline: none;
         resize: none;
-        color: var(--text-main-text-main-default);
+        color: var(--neutral-black-default);
         box-sizing: border-box;
         overflow-y: auto;
         padding: var(--m-s);
         word-wrap: break-word;
-        background-color: var(--fills-inputs-input-background-default);
+        background-color: var(--background-additional-default);
 
         &::placeholder {
-            color: var(--text-placeholder-placeholder-default);
+            color: var(--neutral-light-default);
         }
     }
 
@@ -54,6 +54,6 @@
         margin-top: var(--m-xxs);
         margin-bottom: var(--m-xxs);
         text-align: left;
-        color: var(--text-links-error-link-default);
+        color: var(--error-main-default);
     }
 }

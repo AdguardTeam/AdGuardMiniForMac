@@ -23,12 +23,12 @@ export function setupUserrulesWebViewBridge(): void {
     registerCallbackHandler(
         'UserRulesCallbackService.onUserFilterChange',
         async (bytes: Uint8Array) => {
-            // While the user is mid-edit the push must not clobber their work,
-            // so skip even decoding the (possibly large) echoed rule set.
+            const state = UserRulesCallbackState.deserializeBinary(bytes);
+            // Mid-edit pushes (Assistant, popup site-protection toggle) wait for the apply hint.
             if (editorStore.isDirty) {
+                editorStore.setPendingRules(editorStore.hasSameRules(state.rules) ? null : state.rules);
                 return;
             }
-            const state = UserRulesCallbackState.deserializeBinary(bytes);
             // After the editor's own Save, Swift echoes the saved set back as
             // a push. Re-seeding the editor with the identical working set it
             // just saved would rebuild the whole CodeMirror document

@@ -156,7 +156,7 @@ function PaywallComponent() {
                     <div className={cx(s.Paywall_offer, isContentOnRight && s.Paywall_offer__left)}>
                         <div className={s.Paywall_offer_text}>
                             <Text
-                                lineHeight="l"
+                                lineHeight="m"
                                 type="t1"
                                 semibold
                             >

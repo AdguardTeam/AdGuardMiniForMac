@@ -64,17 +64,17 @@ final class AppUpdaterImpl: NSObject, AppUpdater {
     private func onFoundUpdate(version: String) {
         LogInfo("Update found: \(version)")
         self.availableVersion = version
-        self.eventBus.post(event: .appVersionStatusResolved, userInfo: !version.isEmpty)
+        self.eventBus.post(event: .appVersionStatusResolved, userInfo: version)
     }
 
     private func onDidntFindUpdate() {
         LogInfo("Update didn't found")
-        self.eventBus.post(event: .appVersionStatusResolved, userInfo: false)
+        self.eventBus.post(event: .appVersionStatusResolved, userInfo: "")
     }
 
     private func onCancelUpdate() {
         LogInfo("Updated canceled")
-        self.eventBus.post(event: .appVersionStatusResolved, userInfo: false)
+        self.eventBus.post(event: .appVersionStatusResolved, userInfo: "")
         UIUtils.removeWindow(self)
     }
 }

@@ -5,18 +5,18 @@
  */
 
 :root {
-    --fills-backgrounds-page-background-default: #FFFFFF;
-    --text-main-text-main-default: #3D3D3D;
-    --fills-buttons-main-button-default: #67B279;
+    --background-main-default: #FFFFFF;
+    --neutral-black-default: #3B3F44;
+    --accent-main-default: #67B279;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --fills-backgrounds-page-background-default: #1F1F1F;
-        --text-main-text-main-default: #E4E4E4;
+        --background-main-default: #26292C;
+        --neutral-black-default: #FFFFFF;
     }
 }
 
 body {
-    background-color: var(--fills-backgrounds-page-background-default);
+    background-color: var(--background-main-default);
 }

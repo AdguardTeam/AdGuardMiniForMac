@@ -33,6 +33,8 @@ export function usePayedFuncsTitle(
     const sentenceId = useId();
     const { isLicenseOrTrialActive, trialAvailableDays, appStoreSubscriptions } = account;
     const { isMASReleaseVariant } = settings;
+    // 0 is the "no trial" value; the field is null until the platform answers.
+    const trialDays = trialAvailableDays ?? 0;
 
     const renderShowPaywallBtn = (text: string) => (
         <Button
@@ -55,7 +57,7 @@ export function usePayedFuncsTitle(
     const renderDescription = () => {
         const params = { btn: renderShowPaywallBtn };
 
-        if (!(isMASReleaseVariant && appStoreSubscriptions?.result?.promoInfo) && trialAvailableDays > 0) {
+        if (!(isMASReleaseVariant && appStoreSubscriptions?.result?.promoInfo) && trialDays > 0) {
             return translate('advanced.blocking.extra.try', params);
         }
 

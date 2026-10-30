@@ -90,13 +90,13 @@ function StartComponent({ trackPage }: StartProps) {
                             onChange={() => setChecked(!checked)}
                             withHover
                             title={(
-                                <Text className={s.Start_content_checkbox_text} id={eulaLabelId} type="t2">
+                                <Text className={s.Start_content_checkbox_text} id={eulaLabelId} type="t1">
                                     {translate('onboarding.accept', {
                                         eula: (text: string) => (
-                                            <ExternalLink href={getTdsLink(TDS_PARAMS.eula)} textType="t2">{text}</ExternalLink>
+                                            <ExternalLink href={getTdsLink(TDS_PARAMS.eula)} textType="t1">{text}</ExternalLink>
                                         ),
                                         privacy: (text: string) => (
-                                            <ExternalLink href={getTdsLink(TDS_PARAMS.privacy)} textType="t2">{text}</ExternalLink>
+                                            <ExternalLink href={getTdsLink(TDS_PARAMS.privacy)} textType="t1">{text}</ExternalLink>
                                         ),
                                     })}
                                 </Text>
@@ -110,10 +110,13 @@ function StartComponent({ trackPage }: StartProps) {
                             onChange={() => setTelemetry(!telemetry)}
                             withHover
                             title={(
-                                <Text className={s.Start_content_checkbox_text} id={telemetryLabelId} type="t2">
+                                <Text className={s.Start_content_checkbox_text} id={telemetryLabelId} type="t1">
                                     {translate('telemetry.accept.send.data', {
                                         link: (text: string) => (
-                                            <div className={s.Start_content_checkbox_link} {...modalLinkProps}>
+                                            <div
+                                                className={s.Start_content_checkbox_link}
+                                                {...modalLinkProps}
+                                            >
                                                 {text}
                                             </div>
                                         ),

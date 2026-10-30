@@ -48,6 +48,8 @@ export function CommentForm({ rule, setRule, errors, setErrors }: CommentFormPro
                 error={!!errors.comment}
                 errorMessage={errors.comment}
                 id="domainModifierDomains"
+                label={translate('user.rules.comment.label')}
+                placeholder={translate('user.rule.comment')}
                 textAreaClassName={s.UserRule_textarea}
                 value={currentRule.getText()}
                 onBlur={onBlur}

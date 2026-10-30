@@ -6,31 +6,31 @@
 .CheckUpdates {
     width: 360px;
     height: 582px;
-    background: var(--fills-backgrounds-page-background-default);
+    background: var(--background-main-default);
     box-shadow: var(--bs-big);
     box-sizing: content-box;
 
     &_header {
         display: flex;
-        padding: var(--m-s);
+        padding: var(--m-m);
     }
 
     &_title {
-        text-align: center;
-        margin-top: var(--m-xxs);
+        text-align: left;
+        margin-top: var(--m-l);
         margin-bottom: var(--m-xs);
     }
 
     &_desc {
-        text-align: center;
+        text-align: left;
         margin-bottom: var(--m-s);
-        color: var(--text-description-description-default);
+        color: var(--neutral-dark-default);
     }
 
     &_element {
-        color: var(--text-description-description-default);
+        color: var(--neutral-dark-default);
 
-        border-bottom: 1px solid var(--stroke-dividers-item-divider-default);
+        border-bottom: 1px solid var(--neutral-blend-default);
 
         &:last-of-type {
             border-bottom: 0;
@@ -38,7 +38,7 @@
 
         &_arrow {
             transform: rotate(180deg);
-            color: var(--text-description-description-default);
+            color: var(--neutral-dark-default);
             margin-left: auto;
         }
 
@@ -60,28 +60,27 @@
                 cursor: pointer;
 
                 &:hover {
-                    background-color: var(--fills-backgrounds-page-background-hovered);
+                    background-color: var(--background-main-hover);
                 }
             }
 
-
             &_icon {
                 margin-right: var(--m-xs);
-                margin-top: -6px;
+                margin-top: 0;
 
                 &__updated {
-                    color: var(--fills-buttons-main-button-default);
+                    color: var(--accent-main-default);
                 }
 
                 &__info {
-                    color: var(--text-links-attention-link-default);
+                    color: var(--attention-main-default);
                 }
 
             }
 
             &_text {
                 margin-bottom: var(--m-xxxs);
-                color: var(--text-main-text-main-default);
+                color: var(--neutral-black-default);
             }
 
             &_link {
@@ -91,12 +90,13 @@
             }
 
             &_fix {
-                color: var(--text-links-attention-link-default);
+                color: var(--attention-main-default);
             }
         }
 
         &_button {
-            margin: var(--m-xs) auto;
+            margin: var(--m-xxs) auto;
+            max-width: 328px;
 
             &_text {
                 line-height: var(--m-m);

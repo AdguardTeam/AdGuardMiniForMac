@@ -7,23 +7,24 @@
     overflow: auto;
     width: 360px;
     height: 582px;
-    background: var(--fills-backgrounds-page-background-default);
+    background: var(--background-main-default);
     box-shadow: var(--bs-big);
     box-sizing: content-box;
 
     &_header {
         display: flex;
-        padding: var(--m-s) var(--m-s) var(--m-m);
+        padding: var(--m-m);
     }
 
     &_title {
-        text-align: center;
+        text-align: left;
+        margin-top: var(--m-l);
         margin-bottom: var(--m-xs);
     }
 
     &_filter {
-        padding: var(--m-xs) var(--m-s);
-        border-bottom: 1px solid var(--stroke-dividers-item-divider-default);
+        padding: var(--m-xxs) var(--m-s);
+        border-bottom: 1px solid var(--neutral-blend-default);
         display: flex;
 
         &:last-of-type {
@@ -35,7 +36,7 @@
         }
 
         &__orange {
-            color: var(--text-links-attention-link-default)
+            color: var(--attention-main-default)
         }
     }
 }

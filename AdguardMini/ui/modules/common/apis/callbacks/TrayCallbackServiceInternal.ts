@@ -1,7 +1,7 @@
 /* This code was generated automatically by proto-parser tool version 1 */
 import { store } from 'TrayStore';
 import { ITrayCallbackServiceInternal } from './TrayCallbackService';
-import { BoolValue, EmptyValue, FiltersStatus, SafariExtensionUpdate, TrayLicenseOrError, EffectiveThemeValue, StringValue } from '../types'
+import { BoolValue, EmptyValue, ApplicationVersionStatus, FiltersStatus, SafariExtensionUpdate, TrayLicenseOrError, EffectiveThemeValue, StringValue } from '../types'
 
 
 /* Service handles settings lists  */
@@ -15,8 +15,8 @@ export class TrayCallbackServiceInternal implements ITrayCallbackServiceInternal
         return new EmptyValue();
     }
 
-	/* Fires when swift resolve if new version is available */
-	async OnApplicationVersionStatusResolved(param: BoolValue): Promise<EmptyValue> {
+	/* Fires when swift resolved the version check, carrying the available version */
+	async OnApplicationVersionStatusResolved(param: ApplicationVersionStatus): Promise<EmptyValue> {
         store.callbackService.OnApplicationVersionStatusResolved(param);
         return new EmptyValue();
     }

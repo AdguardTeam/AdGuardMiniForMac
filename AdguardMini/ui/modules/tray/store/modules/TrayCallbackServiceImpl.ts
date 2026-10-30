@@ -8,7 +8,7 @@ import { TrayPage } from './TrayTelemetry';
 import type { SettingsStore } from './Settings';
 import type { TrayRouterStore } from './TrayRouter';
 import type { TrayTelemetry } from './TrayTelemetry';
-import type { BoolValue, FiltersStatus, SafariExtensionUpdate, TrayLicenseOrError, EffectiveThemeValue, StringValue } from 'Apis/types';
+import type { BoolValue, FiltersStatus, SafariExtensionUpdate, TrayLicenseOrError, EffectiveThemeValue, StringValue, ApplicationVersionStatus } from 'Apis/types';
 import type { NotificationsQueue } from 'Common/stores/NotificationsQueue';
 import type { FiltersData } from 'Modules/common/stores/FiltersData';
 
@@ -84,8 +84,8 @@ export class TrayCallbackServiceImpl {
     /**
      * OnApplicationVersionStatusResolved callback handler
      */
-    public OnApplicationVersionStatusResolved(param: BoolValue) {
-        this.settings.setNewVersionAvailable(param.value);
+    public OnApplicationVersionStatusResolved(param: ApplicationVersionStatus) {
+        this.settings.setNewVersionAvailable(param.available);
     }
 
     /**
