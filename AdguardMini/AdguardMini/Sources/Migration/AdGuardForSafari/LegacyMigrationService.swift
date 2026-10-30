@@ -305,9 +305,11 @@ extension Legacy {
 }
 
 extension Legacy.MigrationServiceImpl: LegacyMigrationService {
+    // `@concurrent` so the blocking FLM transaction and config file reads stay off the caller's actor.
     /// Try migrate from legacy app.
     /// - Returns: True on success.
     /// - Throws: ``LegacyMigrationServiceError``
+    @concurrent
     func tryMigrate() async throws -> Bool {
         #if MAS
         let deployType = "MAS"

@@ -83,6 +83,8 @@ final class KeychainManagerImpl: KeychainManager, @unchecked Sendable {
         }
     }
 
+    // `@concurrent` so the blocking SecItem work stays off the caller's actor.
+    @concurrent
     func getAppStatusInfo() async -> AppStatusInfo? {
         self.getAppStatusInfoSync()
     }

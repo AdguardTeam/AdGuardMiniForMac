@@ -86,6 +86,8 @@ final class SafariConverterImpl: @unchecked Sendable {
         return preparedFilters
     }
 
+    // `@concurrent` so the blocking converter stays off the caller's actor.
+    @concurrent
     private func convertAndSave(
         safariBlockerType: SafariBlockerType,
         rules: [String],

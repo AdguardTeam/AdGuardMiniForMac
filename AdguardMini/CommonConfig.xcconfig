@@ -150,3 +150,6 @@ SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=*][arch=*] = $(GCC_PREPROCESSOR_DEFINITI
 
 // Strict mode: a missing member import fails the build.
 SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES
+
+// Runs a nonisolated async function on its caller's actor unless marked `@concurrent`.
+SWIFT_UPCOMING_FEATURE_NONISOLATED_NONSENDING_BY_DEFAULT = YES

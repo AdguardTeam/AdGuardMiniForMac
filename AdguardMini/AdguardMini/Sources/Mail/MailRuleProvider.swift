@@ -22,6 +22,8 @@ final class MailRuleProviderImpl: MailRuleProvider {
         self.filterListManager = filterListManager
     }
 
+    // `@concurrent` so the blocking FLM read stays off the caller's actor.
+    @concurrent
     func mailFilterRules() async -> [String] {
         let rules = self.filterListManager.getRules(
             for: AdGuardAdditionalFilterId.mailTrackingProtection
@@ -29,6 +31,8 @@ final class MailRuleProviderImpl: MailRuleProvider {
         return rules.map(\.ruleText)
     }
 
+    // `@concurrent` so the blocking FLM read stays off the caller's actor.
+    @concurrent
     func enabledUserRules() async -> [String] {
         let rules = self.filterListManager.getUserRules()
         return rules.filter { $0.isEnabled }.map(\.ruleText)

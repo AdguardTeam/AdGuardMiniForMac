@@ -856,6 +856,25 @@ Blocker JSON consumed by the extension targets.
     **Rationale**: Member-import visibility catches code that compiles only
     because the needed module arrived transitively.
 
+13. **Nonisolated async and `@concurrent`**: The project enables
+    `SWIFT_UPCOMING_FEATURE_NONISOLATED_NONSENDING_BY_DEFAULT = YES` for all
+    Xcode targets and configurations in `AdguardMini/CommonConfig.xcconfig`,
+    so a `nonisolated async` function runs on its caller's actor. The local
+    Swift packages (`ProtoSchema`, `AGSEDesignSystem`) do not enable the
+    feature and keep the off-actor default. A function that does blocking
+    work directly in its body MUST be marked `@concurrent` when
+    `@MainActor` code can reach it. Blocking work means FLM (a Rust FFI),
+    the content blocker converter, keychain access, or file I/O.
+    `SWIFT_APPROACHABLE_CONCURRENCY` does not imply the flag in Swift 6
+    mode. The annotation goes on the implementation, not on the protocol
+    requirement: a `@concurrent` requirement makes `self` a `sending`
+    parameter at every call site.
+
+    **Rationale**: With the flag, a `nonisolated async` function called from
+    the main actor runs on main, so a blocking body freezes the UI.
+    `@concurrent` states the off-actor guarantee at the declaration, which
+    the compiler enforces for the declaration itself.
+
 ### Testing Discipline
 
 1. **XCTest for Swift**: Unit tests are located in `AdguardMini/AdguardMiniTests/`.

@@ -149,6 +149,8 @@ final class SupportImpl: @unchecked Sendable {
         return dict
     }
 
+    // `@concurrent` so the blocking keychain and dependency reads stay off the caller's actor.
+    @concurrent
     private func createState() async -> String {
         let enabledFilters = await self.filtersSupervisor.getEnabledFilters()
             .map { info in

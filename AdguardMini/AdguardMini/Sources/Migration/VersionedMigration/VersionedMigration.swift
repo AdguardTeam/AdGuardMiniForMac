@@ -43,6 +43,7 @@ enum VersionedMigration {
 
     // MARK: - Run
 
+    // `@concurrent` so the blocking SecItem migration stays off the caller's actor.
     /// Runs version-based migrations on app launch.
     ///
     /// Call once during app startup **after** `registerUserDefaults()`,
@@ -51,6 +52,7 @@ enum VersionedMigration {
     /// - Parameters:
     ///   - storage: Persistence for migration version.
     ///   - firstRun: Whether this is a fresh install.
+    @concurrent
     static func run(storage: VersionedMigrationStorage, firstRun: Bool) async {
         let savedVersion = storage.version
 

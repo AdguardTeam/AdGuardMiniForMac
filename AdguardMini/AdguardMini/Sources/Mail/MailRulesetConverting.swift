@@ -43,6 +43,8 @@ final class MailRulesetConverter: MailRulesetConverting {
 
     // MARK: Conversion
 
+    // `@concurrent` so the conversion path stays off the caller's actor.
+    @concurrent
     func convert(
         isEnabled: Bool,
         isPremium: Bool,
@@ -71,6 +73,8 @@ final class MailRulesetConverter: MailRulesetConverting {
         )
     }
 
+    // `@concurrent` so the blocking converter stays off the caller's actor.
+    @concurrent
     private func convertAndWrite(filterRules: [String], userRules: [String]) async -> MailRulesetConversionResult {
         let combinedRules = filterRules + userRules
 

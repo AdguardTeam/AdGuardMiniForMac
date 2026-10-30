@@ -63,14 +63,12 @@ enum SettingsExportError: ConvertableError {
 /// SettingsExport public interface.
 protocol SettingsExportProtocol {
     init(api: SettingsExportApiService)
-    // `@concurrent` so the detached export stays off the caller's actor.
     /// Starts export process.
     /// - Parameters:
     ///   - fileUrl: AdGuard settings file URL (target url).
     ///   - parentProgress: Parent `Progress` object if exists.
     ///   - completion: Performs when export process completed (asynchronously).
     /// - Returns: Returns Progress object for controlling export process, which possibles canceling of the export.
-    @concurrent
     func export(
         to fileUrl: URL,
         progress parentProgress: Progress?
