@@ -19,6 +19,7 @@ import {
 import { SettingsItem } from '../SettingsItem';
 import { SettingsTitle } from '../SettingsTitle';
 
+import { getEnabledFiltersInfo } from './getEnabledFiltersInfo';
 import { useUpdateSafariExtensions } from './hooks';
 import s from './SafariExtension.module.pcss';
 
@@ -96,7 +97,11 @@ export function SafariExtensionComponent() {
     };
 
     const getInfoTextFromStatus = (extension: SafariExtensionEnt, filtersIds: number[]) => {
-        const name = filtersIds.map((id) => filtersMap.get(id)?.title).filter((v) => !!v).slice(0, 3).join(', ');
+        const { names, moreCount } = getEnabledFiltersInfo(filtersIds, filtersMap);
+        const enabledFiltersNames = [
+            names.join(', '),
+            moreCount > 0 ? translate('and.more', { value: moreCount }) : '',
+        ].filter((part) => !!part).join(' ');
         return (
             <>
                 <Text className={cx(s.SafariExtension_rules, extension.status === SafariExtensionStatus.limit_exceeded && s.SafariExtension_rules__red)} type="t2">
@@ -108,11 +113,7 @@ export function SafariExtensionComponent() {
                             <>
                                 {translate('settings.filter.enabled.names')}
                                 {' '}
-                                <b>
-                                    {name}
-                                    {' '}
-                                    {filtersIds.length > 4 ? translate('and.more', { value: filtersIds.length - 4 }) : ''}
-                                </b>
+                                <b>{enabledFiltersNames}</b>
                             </>
                         )
                         : translate('settings.no.filters.enabled')}

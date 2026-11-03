@@ -52,6 +52,7 @@
         "AdguardMini/ui/modules/tray/lib/webViewTrayBootstrap.ts",
         "AdguardMini/ui/modules/settings/lib/webViewSettingsBootstrap.ts",
         "AdguardMini/ui/modules/settings/components/Paywall/promoOffer.ts",
+        "AdguardMini/ui/modules/settings/components/SafariExtension/getEnabledFiltersInfo.ts",
         "AdguardMini/ui/modules/settings/store/modules/Account.ts",
         "AdguardMini/ui/modules/common/apis/callbacks/SettingsCallbackServiceInternal.ts",
         "AdguardMini/ui/modules/common/apis/callbacks/AccountCallbackServiceInternal.ts",
