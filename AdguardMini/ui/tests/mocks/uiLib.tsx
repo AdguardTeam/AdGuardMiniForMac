@@ -48,6 +48,13 @@ export function Button({
 }
 
 /**
+ * Renders the logo variant as an inert element tests can target.
+ */
+export function Logo({ isDarkTheme, className }: { isDarkTheme: boolean; className?: string }) {
+    return <span className={className} data-logo={isDarkTheme ? 'dark' : 'light'} />;
+}
+
+/**
  * Renders text content as a span, forwarding the attributes tests assert on.
  */
 export function Text({

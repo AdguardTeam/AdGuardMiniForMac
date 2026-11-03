@@ -26,6 +26,7 @@ export {
 export enum RouteName {
     filters = 'filters',
     contact_support = 'contact_support',
+    safari_protection = 'safari_protection',
 }
 
 /**

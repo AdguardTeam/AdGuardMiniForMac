@@ -1,0 +1,15 @@
+/* 
+    SPDX-FileCopyrightText: AdGuard Software Limited
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+.MenuLogo {
+    display: flex;
+    align-self: flex-start;
+    margin: var(--m-xxs) var(--m-xxs) var(--m-xs);
+    cursor: pointer;
+
+    --focus-ring-offset: var(--focus-ring-offset-floating);
+
+    @mixin focus-ring;
+}

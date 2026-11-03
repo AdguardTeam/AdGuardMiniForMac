@@ -10,10 +10,10 @@ import { Subscription } from 'Apis/types';
 import { getTdsLink, TDS_PARAMS } from 'Common/utils/links';
 import { useSettingsStore, useTheme } from 'SettingsLib/hooks';
 import { RouteName, SettingsEvent } from 'SettingsStore/modules';
-import { Logo, Layout, Text, Button } from 'UILib';
+import { Layout, Text, Button } from 'UILib';
 import { isDarkColorTheme } from 'Utils/colorThemes';
 
-import { MenuItem } from './components';
+import { MenuItem, MenuLogo } from './components';
 import s from './Menu.module.pcss';
 
 /**
@@ -68,7 +68,7 @@ function MenuComponent() {
 
     return (
         <Layout className={s.Menu} type="settingsMenu">
-            <Logo className={s.Menu_logo} isDarkTheme={isDarkTheme} />
+            <MenuLogo isDarkTheme={isDarkTheme} />
             {showGetFullVersionButton && (
                 <div className={s.Menu_getFullVersion}>
                     <Button
