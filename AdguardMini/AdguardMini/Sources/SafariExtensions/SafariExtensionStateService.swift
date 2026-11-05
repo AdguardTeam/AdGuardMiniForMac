@@ -188,6 +188,11 @@ extension SafariExtensionStateServiceImpl: ConversionStateDelegate {
 
     func onEndConversion(_ result: SafariConversionResult) async {
         LogDebug("Conversion ended: \(result.blockerType)")
+        // A cancelled conversion produced no rules: keep the stored state.
+        if case .failure(.cancelled) = result.conversionInfo {
+            await self.onEndProcess(blockerType: result.blockerType, activity: .conversion(.end))
+            return
+        }
         await self.updateInfo(result)
         await self.onEndProcess(blockerType: result.blockerType, activity: .conversion(.end))
     }

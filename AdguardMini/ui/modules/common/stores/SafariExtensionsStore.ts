@@ -9,18 +9,35 @@ import { SafariExtensions, SafariExtension, SafariExtensionStatus, SafariExtensi
 import type { SafariExtensionUpdate } from 'Apis/types';
 
 /**
+ * How long a pushed extension list must stay unchanged before the health check
+ * adopts it.
+ *
+ * The platform reports the extensions one by one at the end of a reload, so a
+ * filter update rewrites the list in parts; a list that survives this window
+ * is treated as settled.
+ */
+export const SAFARI_EXTENSIONS_SETTLE_MS = 3000;
+
+/**
  * Store for managing Safari extensions state.
  * Provides computed properties and actions for Safari extension management.
  */
 export class SafariExtensionsStore {
     /**
-     * Stores the last non-loading state for each extension key.
-     * Used to prevent health check card flickering during filter conversion.
+     * Extension list shown to the health check: the last list that stayed
+     * unchanged for the settle window.
      */
-    private readonly previousStates = new Map<string, {
-        status: SafariExtensionStatus;
-        isConsideredEnabled: boolean;
-    }>();
+    private settledExtensions: SafariExtension[] | null = null;
+
+    /**
+     * Extension list waiting for the settle window to elapse.
+     */
+    private pendingExtensions: SafariExtension[] | null = null;
+
+    /**
+     * Timer that adopts the pending list once it has stayed stable.
+     */
+    private settleTimer: ReturnType<typeof setTimeout> | null = null;
 
     public safariExtensions = new SafariExtensions();
 
@@ -76,34 +93,19 @@ export class SafariExtensionsStore {
     }
 
     /**
-     * Returns extensions list with loading statuses replaced by their last
-     * known non-loading status. If no previous status exists (initial load),
-     * the loading status is preserved. Used by health check card logic to
-     * prevent flickering.
+     * Returns the extension list the health check derives its warnings from.
+     *
+     * While the platform rewrites statuses (a conversion or reload is running)
+     * the last settled list is returned, so the warning cards do not appear and
+     * disappear with every pushed status.
      */
     public get effectiveExtensionsList(): SafariExtension[] {
-        return this.extensionsList.map((ext) => {
-            if (ext.status !== SafariExtensionStatus.loading) {
-                return ext;
-            }
-            const cached = this.previousStates.get(ext.id);
-            if (cached === undefined) {
-                return ext;
-            }
-            return new SafariExtension({
-                id: ext.id,
-                rulesEnabled: ext.rulesEnabled,
-                rulesTotal: ext.rulesTotal,
-                status: cached.status,
-                isConsideredEnabled: cached.isConsideredEnabled,
-            });
-        });
+        return this.settledExtensions ?? this.extensionsList;
     }
 
     /**
-     * Whether all extensions are effectively enabled, using cached statuses
-     * for extensions currently in loading state. Prevents hasExtensionsDisabled
-     * from flickering during filter conversion.
+     * Whether all extensions are effectively enabled, using the settled list
+     * so hasExtensionsDisabled does not flicker during filter conversion.
      */
     public get allExtensionsEffectivelyEnabled(): boolean {
         return this.effectiveExtensionsList.every((ext) => ext.isConsideredEnabled);
@@ -125,22 +127,44 @@ export class SafariExtensionsStore {
 
     /**
      * Set safari protection status.
-     * Updates the previous statuses cache for extensions transitioning
-     * away from loading state.
+     * Adopts the pushed list only after it has stayed unchanged for the settle
+     * window; the first list is shown immediately because the health check
+     * waits for it before rendering.
      */
     public setSafariExtensions(data: SafariExtensions): void {
-        const extensions = Object.values(data.toObject());
+        this.safariExtensions = data;
 
-        for (const ext of extensions) {
-            if (ext && ext.status !== SafariExtensionStatus.loading) {
-                this.previousStates.set(ext.id!, {
-                    status: ext.status!,
-                    isConsideredEnabled: ext.isConsideredEnabled!,
-                });
-            }
+        const extensions = this.extensionsList;
+
+        if (this.settledExtensions === null) {
+            this.settledExtensions = extensions;
+            return;
         }
 
-        this.safariExtensions = data;
+        // Any extension still loading means the cycle is still rewriting the list, push by push.
+        if (extensions.some((ext) => ext.status === SafariExtensionStatus.loading)) {
+            this.cancelPendingExtensions();
+            return;
+        }
+
+        if (this.isSameStatusList(extensions, this.settledExtensions)) {
+            this.cancelPendingExtensions();
+            return;
+        }
+
+        if (this.pendingExtensions !== null && this.isSameStatusList(extensions, this.pendingExtensions)) {
+            // Repeated final pushes must not restart the running settle window.
+            return;
+        }
+
+        this.pendingExtensions = extensions;
+        if (this.settleTimer !== null) {
+            clearTimeout(this.settleTimer);
+        }
+        this.settleTimer = setTimeout(() => {
+            this.settleTimer = null;
+            this.adoptPendingExtensions();
+        }, SAFARI_EXTENSIONS_SETTLE_MS);
     }
 
     /**
@@ -181,5 +205,41 @@ export class SafariExtensionsStore {
         }
 
         this.setSafariExtensions(newState);
+    }
+
+    /**
+     * Whether two lists carry the same health-check statuses.
+     */
+    private isSameStatusList(left: SafariExtension[], right: SafariExtension[]): boolean {
+        return left.length === right.length && left.every((extension, index) => {
+            const other = right[index];
+
+            return other !== undefined
+                && extension.id === other.id
+                && extension.status === other.status
+                && extension.isConsideredEnabled === other.isConsideredEnabled;
+        });
+    }
+
+    /**
+     * Drops the pending list and its settle timer, if any.
+     */
+    private cancelPendingExtensions(): void {
+        this.pendingExtensions = null;
+        if (this.settleTimer !== null) {
+            clearTimeout(this.settleTimer);
+            this.settleTimer = null;
+        }
+    }
+
+    /**
+     * Shows the pending list and drops it.
+     */
+    private adoptPendingExtensions(): void {
+        const pending = this.pendingExtensions;
+        this.pendingExtensions = null;
+        if (pending !== null) {
+            this.settledExtensions = pending;
+        }
     }
 }

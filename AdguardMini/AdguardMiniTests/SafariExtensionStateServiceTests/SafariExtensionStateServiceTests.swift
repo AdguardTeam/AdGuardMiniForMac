@@ -453,4 +453,40 @@ final class SafariExtensionStateServiceTests: XCTestCase {
         await self.checkOnStartReload(blockerType, testCase, stateService, callbackService)
         await self.checkOnEndReload(blockerType, testCase, stateService, callbackService)
     }
+
+    /// A cancelled conversion produced no rules and must keep the stored state
+    /// instead of recording a converter error for the interrupted update.
+    func testCancelledConversionKeepsStoredState() async {
+        let blockerType = SafariBlockerType.general
+        let storedInfo = ConversionInfo(
+            sourceRulesCount: 100,
+            sourceSafariCompatibleRulesCount: 100,
+            safariRulesCount: 100,
+            advancedRulesCount: 0,
+            discardedSafariRules: 0,
+            advancedRulesText: nil,
+            errorsCount: 0
+        )
+        let storedState = SafariExtension.State(rulesInfo: storedInfo, error: .safariError("stored"))
+        let stateStorage = SafariExtensionStateStorageMock(
+            stateHolder: [blockerType: storedState],
+            configuration: .init(isUpdateSucceed: true)
+        )
+        let callbackService = EventBusMock()
+        let stateService = SafariExtensionStateServiceImpl(
+            eventBus: callbackService,
+            safariExtensionStatusManager: ManagerMockType.extEnabled.createObject(),
+            safariExtensionStateStorage: stateStorage
+        )
+
+        await stateService.onEndConversion(
+            SafariConversionResult(
+                blockerType: blockerType,
+                conversionInfo: .failure(.cancelled)
+            )
+        )
+
+        XCTAssertEqual(stateStorage.getState(blockerType), storedState)
+        XCTAssertEqual(callbackService.lastUpdate.status, .safariError)
+    }
 }

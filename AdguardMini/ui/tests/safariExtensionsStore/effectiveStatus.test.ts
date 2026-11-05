@@ -5,7 +5,10 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { SafariExtensionsStore } from '../../modules/common/stores/SafariExtensionsStore';
+import {
+    SAFARI_EXTENSIONS_SETTLE_MS,
+    SafariExtensionsStore,
+} from '../../modules/common/stores/SafariExtensionsStore';
 import { SafariExtensions, SafariExtension, SafariExtensionStatus } from '../../modules/common/apis/types/SafariExtension';
 
 /**
@@ -63,6 +66,13 @@ function createExtensions(statuses: {
     return extensions;
 }
 
+/**
+ * Returns the extension with the given id from the effective list.
+ */
+function effectiveStatus(store: SafariExtensionsStore, id: string): SafariExtensionStatus | undefined {
+    return store.effectiveExtensionsList.find((ext) => ext.id === id)?.status;
+}
+
 test('effectiveExtensionsList returns real statuses when no extension is loading', () => {
     const store = new SafariExtensionsStore();
     store.setSafariExtensions(createExtensions({
@@ -98,13 +108,12 @@ test('effectiveExtensionsList preserves previous status when extension transitio
         general: SafariExtensionStatus.loading,
     }, false));
 
-    const effective = store.effectiveExtensionsList;
-    const general = effective.find((ext) => ext.id === 'general');
     // Should still show "disabled" not "loading"
-    assert.equal(general?.status, SafariExtensionStatus.disabled);
+    assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.disabled);
 });
 
-test('effectiveExtensionsList updates when loading resolves to new state', () => {
+test('effectiveExtensionsList adopts the status loading resolved to after the settle window', (t) => {
+    t.mock.timers.enable();
     const store = new SafariExtensionsStore();
 
     // Initial state: general is disabled
@@ -118,29 +127,28 @@ test('effectiveExtensionsList updates when loading resolves to new state', () =>
     }, false));
 
     // Resolves to ok
-    store.setSafariExtensions(createExtensions({
-        general: SafariExtensionStatus.ok,
-    }));
+    store.setSafariExtensions(createExtensions({}));
 
-    const effective = store.effectiveExtensionsList;
-    const general = effective.find((ext) => ext.id === 'general');
-    assert.equal(general?.status, SafariExtensionStatus.ok);
+    // The loaded list must not move the health check before it settles.
+    assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.disabled);
+
+    t.mock.timers.tick(SAFARI_EXTENSIONS_SETTLE_MS + 1);
+
+    assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.ok);
 });
 
 test('effectiveExtensionsList keeps loading when no previous state exists (initial load)', () => {
     const store = new SafariExtensionsStore();
 
-    // First state received is already loading — no previous state cached
+    // First state received is already loading — no previous state to keep
     store.setSafariExtensions(createExtensions({
         general: SafariExtensionStatus.loading,
     }));
 
-    const effective = store.effectiveExtensionsList;
-    const general = effective.find((ext) => ext.id === 'general');
-    assert.equal(general?.status, SafariExtensionStatus.loading);
+    assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.loading);
 });
 
-test('effectiveExtensionsList tracks each extension independently', () => {
+test('effectiveExtensionsList holds the whole settled list while any extension is loading', () => {
     const store = new SafariExtensionsStore();
 
     // Initial: general=disabled, privacy=limit_exceeded
@@ -155,11 +163,101 @@ test('effectiveExtensionsList tracks each extension independently', () => {
         privacy: SafariExtensionStatus.loading,
     }, false));
 
-    const effective = store.effectiveExtensionsList;
-    const general = effective.find((ext) => ext.id === 'general');
-    const privacy = effective.find((ext) => ext.id === 'privacy');
-    assert.equal(general?.status, SafariExtensionStatus.disabled);
-    assert.equal(privacy?.status, SafariExtensionStatus.limit_exceeded);
+    assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.disabled);
+    assert.equal(effectiveStatus(store, 'privacy'), SafariExtensionStatus.limit_exceeded);
+});
+
+test('effectiveExtensionsList ignores reload statuses while a cycle is running', (t) => {
+    t.mock.timers.enable();
+    const store = new SafariExtensionsStore();
+
+    // Settled state: general is broken.
+    store.setSafariExtensions(createExtensions({
+        general: SafariExtensionStatus.safari_error,
+    }));
+
+    // Conversion starts for two extensions.
+    store.setSafariExtensions(createExtensions({
+        general: SafariExtensionStatus.loading,
+        privacy: SafariExtensionStatus.loading,
+    }));
+
+    // General finishes its reload while privacy is still in flight.
+    store.setSafariExtensions(createExtensions({
+        general: SafariExtensionStatus.ok,
+        privacy: SafariExtensionStatus.loading,
+    }));
+
+    assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.safari_error);
+
+    // The cycle is over, but its list has not settled yet.
+    store.setSafariExtensions(createExtensions({}));
+    assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.safari_error);
+
+    t.mock.timers.tick(SAFARI_EXTENSIONS_SETTLE_MS + 1);
+
+    assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.ok);
+});
+
+test('effectiveExtensionsList never shows a status that reverts within the settle window', (t) => {
+    t.mock.timers.enable();
+    const store = new SafariExtensionsStore();
+
+    store.setSafariExtensions(createExtensions({}));
+    store.setSafariExtensions(createExtensions({
+        general: SafariExtensionStatus.safari_error,
+    }));
+    store.setSafariExtensions(createExtensions({}));
+
+    assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.ok);
+
+    t.mock.timers.tick(SAFARI_EXTENSIONS_SETTLE_MS + 1);
+
+    assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.ok);
+});
+
+test('a changed list restarts the settle window', (t) => {
+    t.mock.timers.enable();
+    const store = new SafariExtensionsStore();
+
+    store.setSafariExtensions(createExtensions({}));
+    store.setSafariExtensions(createExtensions({
+        general: SafariExtensionStatus.safari_error,
+    }));
+
+    t.mock.timers.tick(SAFARI_EXTENSIONS_SETTLE_MS - 1);
+    store.setSafariExtensions(createExtensions({
+        general: SafariExtensionStatus.safari_error,
+        privacy: SafariExtensionStatus.safari_error,
+    }));
+
+    // The window has restarted, so the earlier deadline must not fire.
+    t.mock.timers.tick(SAFARI_EXTENSIONS_SETTLE_MS - 1);
+    assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.ok);
+    assert.equal(effectiveStatus(store, 'privacy'), SafariExtensionStatus.ok);
+
+    t.mock.timers.tick(2);
+
+    assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.safari_error);
+    assert.equal(effectiveStatus(store, 'privacy'), SafariExtensionStatus.safari_error);
+});
+
+test('repeated identical pushes do not restart the settle window', (t) => {
+    t.mock.timers.enable();
+    const store = new SafariExtensionsStore();
+
+    store.setSafariExtensions(createExtensions({}));
+    store.setSafariExtensions(createExtensions({
+        general: SafariExtensionStatus.safari_error,
+    }));
+
+    t.mock.timers.tick(SAFARI_EXTENSIONS_SETTLE_MS - 1);
+    store.setSafariExtensions(createExtensions({
+        general: SafariExtensionStatus.safari_error,
+    }));
+    t.mock.timers.tick(2);
+
+    assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.safari_error);
 });
 
 test('allExtensionsEffectivelyEnabled uses effective view', () => {
@@ -204,7 +302,7 @@ test('hasExtensionsDisabled does not flicker when loading changes isConsideredEn
         { general: false },
     ));
 
-    // Should still report all enabled using cached state
+    // Should still report all enabled using the settled state
     assert.equal(store.allExtensionsEffectivelyEnabled, true);
 });
 
@@ -220,9 +318,7 @@ test('hasExtensionsBroken does not flicker during loading', () => {
     }, true));
 
     // Effective status should be "ok", not broken
-    const effective = store.effectiveExtensionsList;
-    const general = effective.find((ext) => ext.id === 'general');
-    assert.equal(general?.status, SafariExtensionStatus.ok);
+    assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.ok);
 });
 
 test('hasRulesLimitExceeded preserved during loading', () => {
@@ -238,13 +334,11 @@ test('hasRulesLimitExceeded preserved during loading', () => {
         privacy: SafariExtensionStatus.loading,
     }, true));
 
-    // Should still show limit_exceeded
-    const effective = store.effectiveExtensionsList;
-    const privacy = effective.find((ext) => ext.id === 'privacy');
-    assert.equal(privacy?.status, SafariExtensionStatus.limit_exceeded);
+    assert.equal(effectiveStatus(store, 'privacy'), SafariExtensionStatus.limit_exceeded);
 });
 
-test('isConsideredEnabled updates normally when not loading', () => {
+test('isConsideredEnabled is adopted after the settle window when not loading', (t) => {
+    t.mock.timers.enable();
     const store = new SafariExtensionsStore();
 
     // All enabled
@@ -253,5 +347,9 @@ test('isConsideredEnabled updates normally when not loading', () => {
 
     // User disables general (not loading, real state change)
     store.setSafariExtensions(createExtensions({}, true, { general: false }));
+    assert.equal(store.allExtensionsEffectivelyEnabled, true);
+
+    t.mock.timers.tick(SAFARI_EXTENSIONS_SETTLE_MS + 1);
+
     assert.equal(store.allExtensionsEffectivelyEnabled, false);
 });
