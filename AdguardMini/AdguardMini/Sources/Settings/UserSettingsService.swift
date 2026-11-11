@@ -26,6 +26,8 @@ protocol UserSettingsService: AnyObject, Sendable {
     var showSafariToolbarBadge:    Bool { get set }
     var urlFilterProtectionLevel:  URLFilterProtectionLevel { get set }
     var urlFilterIsNew:            Bool { get set }
+    var mailProtectionIsNew:       Bool { get set }
+    var mailOnboardingShown:       Bool { get set }
     var dismissedHealthCheckCards: [String] { get set }
     var dismissedPromoCards:       [String] { get set }
     var hiddenStories:             [String] { get set }
@@ -173,6 +175,16 @@ extension UserSettingsServiceImpl: UserSettingsService {
     var urlFilterIsNew: Bool {
         get { self.userSettingsManager.urlFilterIsNew }
         set { self.userSettingsManager.urlFilterIsNew = newValue }
+    }
+
+    var mailProtectionIsNew: Bool {
+        get { self.userSettingsManager.mailProtectionIsNew }
+        set { self.userSettingsManager.mailProtectionIsNew = newValue }
+    }
+
+    var mailOnboardingShown: Bool {
+        get { self.userSettingsManager.mailOnboardingShown }
+        set { self.userSettingsManager.mailOnboardingShown = newValue }
     }
 
     var dismissedHealthCheckCards: [String] {
@@ -342,6 +354,9 @@ extension UserSettingsServiceImpl: UserSettingsService {
         let oldValue = self.userSettingsManager.mailProtection
         self.userSettingsManager.mailProtection = value
         self.appSettingUpdateHandler.handleMailProtectionUpdates(oldValue, value)
+        if oldValue != value {
+            self.eventBus.post(event: .mailProtectionChanged, userInfo: value)
+        }
     }
 
     func updateSettings(newSettings: SettingsDTO) -> SettingsDTO {

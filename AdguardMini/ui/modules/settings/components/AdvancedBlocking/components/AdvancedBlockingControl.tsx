@@ -11,6 +11,7 @@ import { usePayedFuncsTitle, useSettingsStore } from 'SettingsLib/hooks';
 import theme from 'Theme';
 import { Text } from 'UILib';
 
+import { EnableMailDialog } from '../../EnableMailDialog';
 import { InstallModal } from '../../InstallModal';
 import { NotSupportedModal } from '../../NotSupportedModal';
 import { SettingsItemSwitch } from '../../SettingsItem';
@@ -18,6 +19,7 @@ import { SettingsItemSwitch } from '../../SettingsItem';
 import { AdguardExtraSwitch } from './AdguardExtraSwitch';
 import s from './AdvancedBlockingControl.module.pcss';
 import { AdvancedBlockingTitle } from './AdvancedBlockingTitle';
+import { MailProtectionSwitch } from './MailProtectionSwitch';
 import { SystemWideProtectionSwitch } from './SystemWideProtectionSwitch';
 
 import type { NotSupportedModalReason } from '../../NotSupportedModal';
@@ -28,7 +30,7 @@ import type { NotSupportedModalReason } from '../../NotSupportedModal';
 export function AdvancedBlockingControlComponent() {
     const { advancedBlocking, account, telemetry, settings } = useSettingsStore();
     const {
-        adguardExtra, realTimeFiltersUpdate,
+        adguardExtra, realTimeFiltersUpdate, mailProtectionNew,
         urlFilterState: { userIntentEnabled, isInstalled },
         urlFilterNew: isSystemWideProtectionNew,
         isSystemWideProtectionInactive,
@@ -54,6 +56,7 @@ export function AdvancedBlockingControlComponent() {
 
     const [notSupportedReason, setNotSupportedReason] = useState<NotSupportedModalReason>();
     const [showInstallModal, setShowInstallModal] = useState(false);
+    const [showEnableMailDialog, setShowEnableMailDialog] = useState(false);
 
     const { isLicenseOrTrialActive } = account;
 
@@ -123,6 +126,10 @@ export function AdvancedBlockingControlComponent() {
                     onChange={onUpdateSystemWideProtection}
                 />
             )}
+            <MailProtectionSwitch
+                isNew={mailProtectionNew}
+                onShowOnboarding={() => setShowEnableMailDialog(true)}
+            />
             <AdguardExtraSwitch
                 muted={!isLicenseOrTrialActive}
                 orangeIcon={isFree}
@@ -161,6 +168,9 @@ export function AdvancedBlockingControlComponent() {
             )}
             {showInstallModal && (
                 <InstallModal onClose={() => setShowInstallModal(false)} />
+            )}
+            {showEnableMailDialog && (
+                <EnableMailDialog onClose={() => setShowEnableMailDialog(false)} />
             )}
         </>
     );

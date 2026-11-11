@@ -6,7 +6,7 @@ import { LogLevel } from '@adg/webview-utils-kit';
 import { makeAutoObservable, flow } from 'mobx';
 
 import { GetTrayLicenseRequest, GetTrialAvailableDaysRequest } from 'Apis/requests/AccountService';
-import { GetAdguardExtraRequest, GetURLFilterStateRequest, SetURLFilterEnabledRequest } from 'Apis/requests/AdvancedBlockingService';
+import { GetAdguardExtraRequest, GetMailProtectionRequest, GetURLFilterStateRequest, SetURLFilterEnabledRequest } from 'Apis/requests/AdvancedBlockingService';
 import { GetAboutRequest } from 'Apis/requests/AppInfoService';
 import { CheckApplicationVersionRequest } from 'Apis/requests/AppUpdateService';
 import { GetFiltersMetadataRequest, RequestFiltersUpdateRequest } from 'Apis/requests/FiltersService';
@@ -164,6 +164,15 @@ export class SettingsStore {
     });
 
     /**
+     * Mail protection state.
+     *
+     * `null` until the platform answers: the mail-protection story stays
+     * hidden while the value is unknown, so it does not flicker on for users
+     * who have the feature on.
+     */
+    public mailProtection: boolean | null = null;
+
+    /**
      * Checks if the license status is active or trial
      */
     public get isLicenseOrTrialActive() {
@@ -202,7 +211,11 @@ export class SettingsStore {
      * Ctor
      */
     public constructor() {
-        makeAutoObservable(this, { getAdguardExtra: flow }, { autoBind: true });
+        makeAutoObservable(this, {
+            getAdguardExtra: flow,
+            getURLFilterState: flow,
+            getMailProtection: flow,
+        }, { autoBind: true });
         this.getSettings();
         this.getStatistics();
         this.getTrayLicense();
@@ -210,6 +223,7 @@ export class SettingsStore {
         this.getTrialAvailability();
         this.getAdguardExtra();
         this.getURLFilterState();
+        this.getMailProtection();
     }
 
     /**
@@ -301,9 +315,24 @@ export class SettingsStore {
     /**
      * Get URL filter state from swift
      */
-    public async getURLFilterState() {
-        const resp = await window.API.Execute(new GetURLFilterStateRequest());
+    public *getURLFilterState() {
+        const resp: URLFilterState = yield window.API.Execute(new GetURLFilterStateRequest());
         this.setURLFilterState(resp);
+    }
+
+    /**
+     * Get Mail protection state from swift
+     */
+    public *getMailProtection() {
+        const resp: BoolValue = yield window.API.Execute(new GetMailProtectionRequest());
+        this.mailProtection = resp.value;
+    }
+
+    /**
+     * Mail protection state setter, applied from the platform push
+     */
+    public setMailProtection(value: boolean) {
+        this.mailProtection = value;
     }
 
     /**

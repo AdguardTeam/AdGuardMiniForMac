@@ -62,7 +62,7 @@ final class MailRulesetConverter: MailRulesetConverting {
 
     private func writeEmpty(outcome: MailRulesetConversionOutcome) async -> MailRulesetConversionResult {
         let data = Data(Constants.emptyRulesetJSON.utf8)
-        let success = await self.storage.save(data)
+        let success = await self.persist(data)
         return MailRulesetConversionResult(
             outcome: outcome,
             converterErrorCount: 0,
@@ -88,7 +88,7 @@ final class MailRulesetConverter: MailRulesetConverting {
         )
 
         let data = Data(conversionResult.safariRulesJSON.utf8)
-        let success = await self.storage.save(data)
+        let success = await self.persist(data)
 
         return MailRulesetConversionResult(
             outcome: .populated,
@@ -98,5 +98,13 @@ final class MailRulesetConverter: MailRulesetConverting {
             jsonEntriesCount: conversionResult.safariRulesCount,
             discardedRules: conversionResult.discardedSafariRules
         )
+    }
+
+    /// Saves the ruleset unless the generation was superseded before the write.
+    private func persist(_ data: Data) async -> Bool {
+        guard !Task.isCancelled else {
+            return false
+        }
+        return await self.storage.save(data)
     }
 }

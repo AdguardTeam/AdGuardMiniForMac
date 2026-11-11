@@ -15,7 +15,7 @@ export type StoryId = string;
 /**
  * Story card icon classname
  */
-export type StoryCardIcon = 'info' | 'quality' | 'phone' | 'custom_filter' | 'star' | 'advanced' | 'rocket' | 'adblocking' | 'tracking' | 'apps';
+export type StoryCardIcon = 'info' | 'quality' | 'phone' | 'custom_filter' | 'star' | 'advanced' | 'rocket' | 'adblocking' | 'tracking' | 'apps' | 'feedback';
 
 export type StoryCardStyle = 'default' | 'warning' | 'redIcon' | 'orangeIcon';
 
@@ -27,7 +27,7 @@ export type StoryBackgroundColor = 'aqua' | 'blue' | 'green' | 'purple' | 'sand'
 /**
  * Story frame image classname
  */
-export type StoryFrameImage = 'advanced' | 'devices' | 'extensions' | 'extra1' | 'extra2' | 'extra3' | 'extra4' | 'filters1' | 'filters2' | 'filters3' | 'filters4' | 'filters5' | 'loginItem' | 'rate' | 'telemetry1' | 'telemetry2' | 'telemetry3' | 'telemetry4' | 'healthCheck1' | 'healthCheck2' | 'systemWide';
+export type StoryFrameImage = 'advanced' | 'devices' | 'extensions' | 'extra1' | 'extra2' | 'extra3' | 'extra4' | 'filters1' | 'filters2' | 'filters3' | 'filters4' | 'filters5' | 'loginItem' | 'rate' | 'telemetry1' | 'telemetry2' | 'telemetry3' | 'telemetry4' | 'healthCheck1' | 'healthCheck2' | 'systemWide' | 'mailProtection';
 
 /**
  * Main story model

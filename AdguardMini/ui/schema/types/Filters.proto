@@ -75,17 +75,18 @@ message FiltersIds {
 
 message FiltersIndex {
     int32 unblockSearchAdsFilterId = 1;
-    int32 cookieNoticeFilterId = 2;
-    int32 popUpsFilterId = 3;
-    int32 widgetsFilterId = 4;
-    int32 otherAnnoyanceFilterId = 5;
-    int32 mobileBannersFilter = 6;
-    FiltersDefinedGroups definedGroups = 7;
-    repeated FilterGroup groups = 8;
-    map<int32, FiltersIds> filtersByGroups = 9;
-    map<int32, FiltersIds> recommendedFiltersIdsByGroupDict = 10;
-    map<int32, FiltersIds> otherFiltersIdsByGroupDict = 11;
-    int32 customGroupId = 12;
+    int32 mailTrackingProtectionId = 2;
+    int32 cookieNoticeFilterId = 3;
+    int32 popUpsFilterId = 4;
+    int32 widgetsFilterId = 5;
+    int32 otherAnnoyanceFilterId = 6;
+    int32 mobileBannersFilter = 7;
+    FiltersDefinedGroups definedGroups = 8;
+    repeated FilterGroup groups = 9;
+    map<int32, FiltersIds> filtersByGroups = 10;
+    map<int32, FiltersIds> recommendedFiltersIdsByGroupDict = 11;
+    map<int32, FiltersIds> otherFiltersIdsByGroupDict = 12;
+    int32 customGroupId = 13;
 }
 
 message FiltersGroupedByExtensions {

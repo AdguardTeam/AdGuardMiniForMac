@@ -21,7 +21,11 @@ import s from './Menu.module.pcss';
  */
 function MenuComponent() {
     const { account, settings, telemetry, advancedBlocking, router } = useSettingsStore();
-    const { urlFilterNew } = advancedBlocking;
+    const { mailProtectionNew, urlFilterNew } = advancedBlocking;
+
+    // The System-wide Protection row is only marked new while the feature is exposed.
+    const hasNewAdvancedBlocking = mailProtectionNew
+        || (urlFilterNew && settings.settings.experimentalSystemWideProtectionEnabled);
 
     const {
         isFreeware,
@@ -99,9 +103,10 @@ function MenuComponent() {
                 <MenuItem
                     activeRoutes={[
                         RouteName.system_wide_protection,
+                        RouteName.mail_protection,
                     ]}
                     icon="advanced"
-                    isNew={urlFilterNew && settings.settings.experimentalSystemWideProtectionEnabled}
+                    isNew={hasNewAdvancedBlocking}
                     route={RouteName.advanced_blocking}
                     title={translate('menu.advanced.blocking.title')}
                 />

@@ -10,6 +10,7 @@ import {
 } from 'Apis/requests/AdvancedBlockingService';
 import {
     OptionalError,
+    BoolValue,
     EmptyValue,
     URLFilterInfo,
     URLFilterProtectionLevel,
@@ -1225,4 +1226,190 @@ test('clears the DNS failure once the filter runs again', async (t) => {
     advancedBlocking.applyPushedURLFilterState(makeRunningState());
     settleURLFilterState(t);
     assert.equal(advancedBlocking.isSystemWideProtectionUnavailable, false);
+});
+
+/**
+ * Installs an `API.Execute` stub for the Apple Mail tracking protection calls
+ * and collects the dispatched requests.
+ *
+ * @param flags Values the pull calls report.
+ */
+function installMailProtectionApi(flags: { mailProtection?: boolean; isNew?: boolean; onboardingShown?: boolean } = {}) {
+    const calls: unknown[] = [];
+    (globalThis as unknown as { API: { Execute(req: unknown): Promise<unknown> } }).API = {
+        Execute: (req: unknown) => {
+            calls.push(req);
+            const fqn = (req as { FQN: string }).FQN;
+            switch (fqn) {
+                case 'AdvancedBlockingService.GetMailProtection':
+                    return Promise.resolve(new BoolValue({ value: flags.mailProtection ?? false }));
+                case 'AdvancedBlockingService.GetMailProtectionIsNew':
+                    return Promise.resolve(new BoolValue({ value: flags.isNew ?? false }));
+                case 'AdvancedBlockingService.GetMailOnboardingShown':
+                    return Promise.resolve(new BoolValue({ value: flags.onboardingShown ?? false }));
+                case 'AdvancedBlockingService.UpdateMailProtection':
+                case 'AdvancedBlockingService.UpdateMailProtectionIsNew':
+                case 'AdvancedBlockingService.UpdateMailOnboardingShown':
+                case 'AdvancedBlockingService.OpenAppleMail':
+                case 'AdvancedBlockingService.OpenMailExtensionSettings':
+                    return Promise.resolve(new EmptyValue());
+                default:
+                    throw new Error(`Unexpected request: ${fqn}`);
+            }
+        },
+    };
+
+    return calls;
+}
+
+test('getMailProtectionIsNew pulls the "new" flag of the Apple Mail entry', async () => {
+    installMailProtectionApi({ isNew: true });
+    const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
+
+    await advancedBlocking.getMailProtectionIsNew();
+
+    assert.equal(advancedBlocking.mailProtectionNew, true);
+});
+
+test('updateMailProtectionIsNew clears the flag and persists it', async () => {
+    const calls = installMailProtectionApi({ isNew: true });
+    const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
+    await advancedBlocking.getMailProtectionIsNew();
+
+    advancedBlocking.updateMailProtectionIsNew(false);
+
+    assert.equal(advancedBlocking.mailProtectionNew, false);
+    const request = calls.at(-1) as { FQN: string; requestMessage: { value: boolean } };
+    assert.equal(request.FQN, 'AdvancedBlockingService.UpdateMailProtectionIsNew');
+    assert.equal(request.requestMessage.value, false);
+});
+
+test('getMailOnboardingShown pulls the shown flag of the extension dialog', async () => {
+    installMailProtectionApi({ onboardingShown: true });
+    const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
+    // Unknown until the platform answers: the dialog stays hidden.
+    assert.equal(advancedBlocking.mailOnboardingShown, null);
+
+    await advancedBlocking.getMailOnboardingShown();
+
+    assert.equal(advancedBlocking.mailOnboardingShown, true);
+});
+
+test('updateMailOnboardingShown marks the dialog as shown', async () => {
+    const calls = installMailProtectionApi();
+    const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
+
+    advancedBlocking.updateMailOnboardingShown(true);
+
+    assert.equal(advancedBlocking.mailOnboardingShown, true);
+    const request = calls.at(-1) as { FQN: string; requestMessage: { value: boolean } };
+    assert.equal(request.FQN, 'AdvancedBlockingService.UpdateMailOnboardingShown');
+    assert.equal(request.requestMessage.value, true);
+});
+
+test('openAppleMail dispatches the open request', () => {
+    const calls = installMailProtectionApi();
+    const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
+
+    advancedBlocking.openAppleMail();
+
+    const request = calls.at(-1) as { FQN: string };
+    assert.equal(request.FQN, 'AdvancedBlockingService.OpenAppleMail');
+});
+
+test('openMailExtensionSettings dispatches the extension settings request', () => {
+    const calls = installMailProtectionApi();
+    const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
+
+    advancedBlocking.openMailExtensionSettings();
+
+    const request = calls.at(-1) as { FQN: string };
+    assert.equal(request.FQN, 'AdvancedBlockingService.OpenMailExtensionSettings');
+});
+
+test('getMailProtection pulls the Apple Mail tracking protection state', async () => {
+    installMailProtectionApi({ mailProtection: true });
+    const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
+
+    await advancedBlocking.getMailProtection();
+
+    assert.equal(advancedBlocking.mailProtection, true);
+});
+
+test('setMailProtection applies a pushed state without persisting it back', () => {
+    const calls = installMailProtectionApi();
+    const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
+
+    advancedBlocking.setMailProtection(true);
+
+    assert.equal(advancedBlocking.mailProtection, true);
+    assert.equal(calls.length, 0);
+});
+
+test('updateMailProtection persists the new state', () => {
+    const calls = installMailProtectionApi();
+    const advancedBlocking = new AdvancedBlocking(new NotificationsQueue(), () => {});
+
+    advancedBlocking.updateMailProtection(true);
+
+    assert.equal(advancedBlocking.mailProtection, true);
+    const request = calls.at(-1) as { FQN: string; requestMessage: { value: boolean } };
+    assert.equal(request.FQN, 'AdvancedBlockingService.UpdateMailProtection');
+    assert.equal(request.requestMessage.value, true);
+});
+
+test('shows one "not applied" snack while it is on screen', (t) => {
+    t.mock.timers.enable();
+    installMailProtectionApi();
+    const queue = new NotificationsQueue();
+    const advancedBlocking = new AdvancedBlocking(queue, () => {});
+
+    advancedBlocking.showMailProtectionInactiveNotification('message', () => {});
+    advancedBlocking.showMailProtectionInactiveNotification('message', () => {});
+
+    assert.equal(queue.queueLength, 1);
+});
+
+test('re-shows the "not applied" snack once the previous one closed', (t) => {
+    t.mock.timers.enable();
+    installMailProtectionApi();
+    const queue = new NotificationsQueue();
+    const advancedBlocking = new AdvancedBlocking(queue, () => {});
+
+    advancedBlocking.showMailProtectionInactiveNotification('message', () => {});
+    const [firstId] = notificationIds(queue);
+
+    t.mock.timers.tick(DEFAULT_NOTIFY_LIFETIME + 1);
+    advancedBlocking.showMailProtectionInactiveNotification('message', () => {});
+
+    const [secondId] = notificationIds(queue);
+    assert.notEqual(secondId, firstId);
+    assert.equal(queue.queueLength, 1);
+});
+
+test('closeMailProtectionInactiveNotification closes the shown snack', (t) => {
+    t.mock.timers.enable();
+    installMailProtectionApi();
+    const queue = new NotificationsQueue();
+    const advancedBlocking = new AdvancedBlocking(queue, () => {});
+
+    advancedBlocking.showMailProtectionInactiveNotification('message', () => {});
+    advancedBlocking.closeMailProtectionInactiveNotification();
+
+    assert.equal(queue.queueLength, 0);
+});
+
+test('the "not applied" snack calls the enable callback', (t) => {
+    t.mock.timers.enable();
+    installMailProtectionApi();
+    const queue = new NotificationsQueue();
+    const advancedBlocking = new AdvancedBlocking(queue, () => {});
+    let enabled = 0;
+
+    advancedBlocking.showMailProtectionInactiveNotification('message', () => { enabled++; });
+    const [shownId] = notificationIds(queue);
+    const snack = queue.get(shownId)?.props as { onClick?(): void };
+    snack?.onClick?.();
+
+    assert.equal(enabled, 1);
 });

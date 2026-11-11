@@ -1250,6 +1250,7 @@ export class FiltersIndex extends pb_1.Message {
     #one_of_decls: number[][] = [];
     constructor(data?: any[] | {
         unblockSearchAdsFilterId?: number;
+        mailTrackingProtectionId?: number;
         cookieNoticeFilterId?: number;
         popUpsFilterId?: number;
         widgetsFilterId?: number;
@@ -1263,10 +1264,13 @@ export class FiltersIndex extends pb_1.Message {
         customGroupId?: number;
     }) {
         super();
-        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [8], this.#one_of_decls);
+        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [9], this.#one_of_decls);
         if (!Array.isArray(data) && typeof data == "object") {
             if ("unblockSearchAdsFilterId" in data && data.unblockSearchAdsFilterId != undefined) {
                 this.unblockSearchAdsFilterId = data.unblockSearchAdsFilterId;
+            }
+            if ("mailTrackingProtectionId" in data && data.mailTrackingProtectionId != undefined) {
+                this.mailTrackingProtectionId = data.mailTrackingProtectionId;
             }
             if ("cookieNoticeFilterId" in data && data.cookieNoticeFilterId != undefined) {
                 this.cookieNoticeFilterId = data.cookieNoticeFilterId;
@@ -1315,77 +1319,84 @@ export class FiltersIndex extends pb_1.Message {
     set unblockSearchAdsFilterId(value: number) {
         pb_1.Message.setField(this, 1, value);
     }
-    get cookieNoticeFilterId() {
+    get mailTrackingProtectionId() {
         return pb_1.Message.getFieldWithDefault(this, 2, 0) as number;
     }
-    set cookieNoticeFilterId(value: number) {
+    set mailTrackingProtectionId(value: number) {
         pb_1.Message.setField(this, 2, value);
     }
-    get popUpsFilterId() {
+    get cookieNoticeFilterId() {
         return pb_1.Message.getFieldWithDefault(this, 3, 0) as number;
     }
-    set popUpsFilterId(value: number) {
+    set cookieNoticeFilterId(value: number) {
         pb_1.Message.setField(this, 3, value);
     }
-    get widgetsFilterId() {
+    get popUpsFilterId() {
         return pb_1.Message.getFieldWithDefault(this, 4, 0) as number;
     }
-    set widgetsFilterId(value: number) {
+    set popUpsFilterId(value: number) {
         pb_1.Message.setField(this, 4, value);
     }
-    get otherAnnoyanceFilterId() {
+    get widgetsFilterId() {
         return pb_1.Message.getFieldWithDefault(this, 5, 0) as number;
     }
-    set otherAnnoyanceFilterId(value: number) {
+    set widgetsFilterId(value: number) {
         pb_1.Message.setField(this, 5, value);
     }
-    get mobileBannersFilter() {
+    get otherAnnoyanceFilterId() {
         return pb_1.Message.getFieldWithDefault(this, 6, 0) as number;
     }
-    set mobileBannersFilter(value: number) {
+    set otherAnnoyanceFilterId(value: number) {
         pb_1.Message.setField(this, 6, value);
     }
+    get mobileBannersFilter() {
+        return pb_1.Message.getFieldWithDefault(this, 7, 0) as number;
+    }
+    set mobileBannersFilter(value: number) {
+        pb_1.Message.setField(this, 7, value);
+    }
     get definedGroups() {
-        return pb_1.Message.getWrapperField(this, FiltersDefinedGroups, 7) as FiltersDefinedGroups;
+        return pb_1.Message.getWrapperField(this, FiltersDefinedGroups, 8) as FiltersDefinedGroups;
     }
     set definedGroups(value: FiltersDefinedGroups) {
-        pb_1.Message.setWrapperField(this, 7, value);
+        pb_1.Message.setWrapperField(this, 8, value);
     }
     get has_definedGroups() {
-        return pb_1.Message.getField(this, 7) != null;
+        return pb_1.Message.getField(this, 8) != null;
     }
     get groups() {
-        return pb_1.Message.getRepeatedWrapperField(this, FilterGroup, 8) as FilterGroup[];
+        return pb_1.Message.getRepeatedWrapperField(this, FilterGroup, 9) as FilterGroup[];
     }
     set groups(value: FilterGroup[]) {
-        pb_1.Message.setRepeatedWrapperField(this, 8, value);
+        pb_1.Message.setRepeatedWrapperField(this, 9, value);
     }
     get filtersByGroups() {
-        return pb_1.Message.getField(this, 9) as any as Map<number, FiltersIds>;
-    }
-    set filtersByGroups(value: Map<number, FiltersIds>) {
-        pb_1.Message.setField(this, 9, value as any);
-    }
-    get recommendedFiltersIdsByGroupDict() {
         return pb_1.Message.getField(this, 10) as any as Map<number, FiltersIds>;
     }
-    set recommendedFiltersIdsByGroupDict(value: Map<number, FiltersIds>) {
+    set filtersByGroups(value: Map<number, FiltersIds>) {
         pb_1.Message.setField(this, 10, value as any);
     }
-    get otherFiltersIdsByGroupDict() {
+    get recommendedFiltersIdsByGroupDict() {
         return pb_1.Message.getField(this, 11) as any as Map<number, FiltersIds>;
     }
-    set otherFiltersIdsByGroupDict(value: Map<number, FiltersIds>) {
+    set recommendedFiltersIdsByGroupDict(value: Map<number, FiltersIds>) {
         pb_1.Message.setField(this, 11, value as any);
     }
+    get otherFiltersIdsByGroupDict() {
+        return pb_1.Message.getField(this, 12) as any as Map<number, FiltersIds>;
+    }
+    set otherFiltersIdsByGroupDict(value: Map<number, FiltersIds>) {
+        pb_1.Message.setField(this, 12, value as any);
+    }
     get customGroupId() {
-        return pb_1.Message.getFieldWithDefault(this, 12, 0) as number;
+        return pb_1.Message.getFieldWithDefault(this, 13, 0) as number;
     }
     set customGroupId(value: number) {
-        pb_1.Message.setField(this, 12, value);
+        pb_1.Message.setField(this, 13, value);
     }
     static fromObject(data: {
         unblockSearchAdsFilterId?: number;
+        mailTrackingProtectionId?: number;
         cookieNoticeFilterId?: number;
         popUpsFilterId?: number;
         widgetsFilterId?: number;
@@ -1407,6 +1418,9 @@ export class FiltersIndex extends pb_1.Message {
         const message = new FiltersIndex({});
         if (data.unblockSearchAdsFilterId != null) {
             message.unblockSearchAdsFilterId = data.unblockSearchAdsFilterId;
+        }
+        if (data.mailTrackingProtectionId != null) {
+            message.mailTrackingProtectionId = data.mailTrackingProtectionId;
         }
         if (data.cookieNoticeFilterId != null) {
             message.cookieNoticeFilterId = data.cookieNoticeFilterId;
@@ -1446,6 +1460,7 @@ export class FiltersIndex extends pb_1.Message {
     toObject() {
         const data: {
             unblockSearchAdsFilterId?: number;
+            mailTrackingProtectionId?: number;
             cookieNoticeFilterId?: number;
             popUpsFilterId?: number;
             widgetsFilterId?: number;
@@ -1466,6 +1481,9 @@ export class FiltersIndex extends pb_1.Message {
         } = {};
         if (this.unblockSearchAdsFilterId != null) {
             data.unblockSearchAdsFilterId = this.unblockSearchAdsFilterId;
+        }
+        if (this.mailTrackingProtectionId != null) {
+            data.mailTrackingProtectionId = this.mailTrackingProtectionId;
         }
         if (this.cookieNoticeFilterId != null) {
             data.cookieNoticeFilterId = this.cookieNoticeFilterId;
@@ -1508,40 +1526,42 @@ export class FiltersIndex extends pb_1.Message {
         const writer = w || new pb_1.BinaryWriter();
         if (this.unblockSearchAdsFilterId != 0)
             writer.writeInt32(1, this.unblockSearchAdsFilterId);
+        if (this.mailTrackingProtectionId != 0)
+            writer.writeInt32(2, this.mailTrackingProtectionId);
         if (this.cookieNoticeFilterId != 0)
-            writer.writeInt32(2, this.cookieNoticeFilterId);
+            writer.writeInt32(3, this.cookieNoticeFilterId);
         if (this.popUpsFilterId != 0)
-            writer.writeInt32(3, this.popUpsFilterId);
+            writer.writeInt32(4, this.popUpsFilterId);
         if (this.widgetsFilterId != 0)
-            writer.writeInt32(4, this.widgetsFilterId);
+            writer.writeInt32(5, this.widgetsFilterId);
         if (this.otherAnnoyanceFilterId != 0)
-            writer.writeInt32(5, this.otherAnnoyanceFilterId);
+            writer.writeInt32(6, this.otherAnnoyanceFilterId);
         if (this.mobileBannersFilter != 0)
-            writer.writeInt32(6, this.mobileBannersFilter);
+            writer.writeInt32(7, this.mobileBannersFilter);
         if (this.has_definedGroups)
-            writer.writeMessage(7, this.definedGroups, () => this.definedGroups.serialize(writer));
+            writer.writeMessage(8, this.definedGroups, () => this.definedGroups.serialize(writer));
         if (this.groups.length)
-            writer.writeRepeatedMessage(8, this.groups, (item: FilterGroup) => item.serialize(writer));
+            writer.writeRepeatedMessage(9, this.groups, (item: FilterGroup) => item.serialize(writer));
         for (const [key, value] of this.filtersByGroups) {
-            writer.writeMessage(9, this.filtersByGroups, () => {
+            writer.writeMessage(10, this.filtersByGroups, () => {
                 writer.writeInt32(1, key);
                 writer.writeMessage(2, value, () => value.serialize(writer));
             });
         }
         for (const [key, value] of this.recommendedFiltersIdsByGroupDict) {
-            writer.writeMessage(10, this.recommendedFiltersIdsByGroupDict, () => {
+            writer.writeMessage(11, this.recommendedFiltersIdsByGroupDict, () => {
                 writer.writeInt32(1, key);
                 writer.writeMessage(2, value, () => value.serialize(writer));
             });
         }
         for (const [key, value] of this.otherFiltersIdsByGroupDict) {
-            writer.writeMessage(11, this.otherFiltersIdsByGroupDict, () => {
+            writer.writeMessage(12, this.otherFiltersIdsByGroupDict, () => {
                 writer.writeInt32(1, key);
                 writer.writeMessage(2, value, () => value.serialize(writer));
             });
         }
         if (this.customGroupId != 0)
-            writer.writeInt32(12, this.customGroupId);
+            writer.writeInt32(13, this.customGroupId);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -1555,48 +1575,51 @@ export class FiltersIndex extends pb_1.Message {
                     message.unblockSearchAdsFilterId = reader.readInt32();
                     break;
                 case 2:
-                    message.cookieNoticeFilterId = reader.readInt32();
+                    message.mailTrackingProtectionId = reader.readInt32();
                     break;
                 case 3:
-                    message.popUpsFilterId = reader.readInt32();
+                    message.cookieNoticeFilterId = reader.readInt32();
                     break;
                 case 4:
-                    message.widgetsFilterId = reader.readInt32();
+                    message.popUpsFilterId = reader.readInt32();
                     break;
                 case 5:
-                    message.otherAnnoyanceFilterId = reader.readInt32();
+                    message.widgetsFilterId = reader.readInt32();
                     break;
                 case 6:
-                    message.mobileBannersFilter = reader.readInt32();
+                    message.otherAnnoyanceFilterId = reader.readInt32();
                     break;
                 case 7:
-                    reader.readMessage(message.definedGroups, () => message.definedGroups = FiltersDefinedGroups.deserialize(reader));
+                    message.mobileBannersFilter = reader.readInt32();
                     break;
                 case 8:
-                    reader.readMessage(message.groups, () => pb_1.Message.addToRepeatedWrapperField(message, 8, FilterGroup.deserialize(reader), FilterGroup));
+                    reader.readMessage(message.definedGroups, () => message.definedGroups = FiltersDefinedGroups.deserialize(reader));
                     break;
                 case 9:
+                    reader.readMessage(message.groups, () => pb_1.Message.addToRepeatedWrapperField(message, 9, FilterGroup.deserialize(reader), FilterGroup));
+                    break;
+                case 10:
                     reader.readMessage(message, () => pb_1.Map.deserializeBinary(message.filtersByGroups as any, reader, reader.readInt32, () => {
                         let value;
                         reader.readMessage(message, () => value = FiltersIds.deserialize(reader));
                         return value;
                     }));
                     break;
-                case 10:
+                case 11:
                     reader.readMessage(message, () => pb_1.Map.deserializeBinary(message.recommendedFiltersIdsByGroupDict as any, reader, reader.readInt32, () => {
                         let value;
                         reader.readMessage(message, () => value = FiltersIds.deserialize(reader));
                         return value;
                     }));
                     break;
-                case 11:
+                case 12:
                     reader.readMessage(message, () => pb_1.Map.deserializeBinary(message.otherFiltersIdsByGroupDict as any, reader, reader.readInt32, () => {
                         let value;
                         reader.readMessage(message, () => value = FiltersIds.deserialize(reader));
                         return value;
                     }));
                     break;
-                case 12:
+                case 13:
                     message.customGroupId = reader.readInt32();
                     break;
                 default: reader.skipField();

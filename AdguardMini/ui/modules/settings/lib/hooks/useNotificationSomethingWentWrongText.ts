@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { useCallback } from 'preact/hooks';
+
 import { NotificationContext, NotificationsQueueIconType, NotificationsQueueType } from 'SettingsStore/modules';
 
 import { getNotificationSomethingWentWrongText } from '../utils/translate';
@@ -18,7 +20,7 @@ export function useNotificationSomethingWentWrongText() {
     /**
      * Notify the user about something went wrong
      */
-    function notifySomethingWentWrong() {
+    const notifySomethingWentWrong = useCallback(() => {
         notification.notify({
             message: getNotificationSomethingWentWrongText(),
             notificationContext: NotificationContext.info,
@@ -26,7 +28,7 @@ export function useNotificationSomethingWentWrongText() {
             iconType: NotificationsQueueIconType.error,
             closeable: true,
         });
-    };
+    }, [notification]);
 
     return notifySomethingWentWrong;
 };

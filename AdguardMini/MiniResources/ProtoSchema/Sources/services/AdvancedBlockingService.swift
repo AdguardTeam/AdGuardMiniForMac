@@ -39,6 +39,30 @@ public protocol AdvancedBlockingServiceProtocol
 	func updateMailProtection (
 						_ message: BoolValue,
 						_ promise: sending @escaping (EmptyValue) -> Void) -> Void
+	/// Get MailProtection is-new state
+	func getMailProtectionIsNew (
+						_ message: EmptyValue,
+						_ promise: sending @escaping (BoolValue) -> Void) -> Void
+	/// Update MailProtection is-new state
+	func updateMailProtectionIsNew (
+						_ message: BoolValue,
+						_ promise: sending @escaping (EmptyValue) -> Void) -> Void
+	/// Get Apple Mail extension onboarding shown state
+	func getMailOnboardingShown (
+						_ message: EmptyValue,
+						_ promise: sending @escaping (BoolValue) -> Void) -> Void
+	/// Update Apple Mail extension onboarding shown state
+	func updateMailOnboardingShown (
+						_ message: BoolValue,
+						_ promise: sending @escaping (EmptyValue) -> Void) -> Void
+	/// Open Apple Mail
+	func openAppleMail (
+						_ message: EmptyValue,
+						_ promise: sending @escaping (EmptyValue) -> Void) -> Void
+	/// Open Apple Mail extension settings
+	func openMailExtensionSettings (
+						_ message: EmptyValue,
+						_ promise: sending @escaping (EmptyValue) -> Void) -> Void
 	/// Get RealTimeFiltersUpdate
 	func getRealTimeFiltersUpdate (
 						_ message: EmptyValue,
@@ -181,6 +205,96 @@ open class AdvancedBlockingService: WebViewBridge
 				}
 			} catch {
 				BridgeLog.error("AdvancedBlockingService.UpdateMailProtection: failed to deserialize request: \(error)")
+				promise(Data())
+			}
+		case "GetMailProtectionIsNew":
+			do {
+				let input = try EmptyValue(serializedBytes: bytes)
+				cast.getMailProtectionIsNew(input) { result in
+					do {
+						promise(try result.serializedData())
+					} catch {
+						BridgeLog.error("AdvancedBlockingService.GetMailProtectionIsNew: failed to serialize reply: \(error)")
+						promise(Data())
+					}
+				}
+			} catch {
+				BridgeLog.error("AdvancedBlockingService.GetMailProtectionIsNew: failed to deserialize request: \(error)")
+				promise(Data())
+			}
+		case "UpdateMailProtectionIsNew":
+			do {
+				let input = try BoolValue(serializedBytes: bytes)
+				cast.updateMailProtectionIsNew(input) { result in
+					do {
+						promise(try result.serializedData())
+					} catch {
+						BridgeLog.error("AdvancedBlockingService.UpdateMailProtectionIsNew: failed to serialize reply: \(error)")
+						promise(Data())
+					}
+				}
+			} catch {
+				BridgeLog.error("AdvancedBlockingService.UpdateMailProtectionIsNew: failed to deserialize request: \(error)")
+				promise(Data())
+			}
+		case "GetMailOnboardingShown":
+			do {
+				let input = try EmptyValue(serializedBytes: bytes)
+				cast.getMailOnboardingShown(input) { result in
+					do {
+						promise(try result.serializedData())
+					} catch {
+						BridgeLog.error("AdvancedBlockingService.GetMailOnboardingShown: failed to serialize reply: \(error)")
+						promise(Data())
+					}
+				}
+			} catch {
+				BridgeLog.error("AdvancedBlockingService.GetMailOnboardingShown: failed to deserialize request: \(error)")
+				promise(Data())
+			}
+		case "UpdateMailOnboardingShown":
+			do {
+				let input = try BoolValue(serializedBytes: bytes)
+				cast.updateMailOnboardingShown(input) { result in
+					do {
+						promise(try result.serializedData())
+					} catch {
+						BridgeLog.error("AdvancedBlockingService.UpdateMailOnboardingShown: failed to serialize reply: \(error)")
+						promise(Data())
+					}
+				}
+			} catch {
+				BridgeLog.error("AdvancedBlockingService.UpdateMailOnboardingShown: failed to deserialize request: \(error)")
+				promise(Data())
+			}
+		case "OpenAppleMail":
+			do {
+				let input = try EmptyValue(serializedBytes: bytes)
+				cast.openAppleMail(input) { result in
+					do {
+						promise(try result.serializedData())
+					} catch {
+						BridgeLog.error("AdvancedBlockingService.OpenAppleMail: failed to serialize reply: \(error)")
+						promise(Data())
+					}
+				}
+			} catch {
+				BridgeLog.error("AdvancedBlockingService.OpenAppleMail: failed to deserialize request: \(error)")
+				promise(Data())
+			}
+		case "OpenMailExtensionSettings":
+			do {
+				let input = try EmptyValue(serializedBytes: bytes)
+				cast.openMailExtensionSettings(input) { result in
+					do {
+						promise(try result.serializedData())
+					} catch {
+						BridgeLog.error("AdvancedBlockingService.OpenMailExtensionSettings: failed to serialize reply: \(error)")
+						promise(Data())
+					}
+				}
+			} catch {
+				BridgeLog.error("AdvancedBlockingService.OpenMailExtensionSettings: failed to deserialize request: \(error)")
 				promise(Data())
 			}
 		case "GetRealTimeFiltersUpdate":

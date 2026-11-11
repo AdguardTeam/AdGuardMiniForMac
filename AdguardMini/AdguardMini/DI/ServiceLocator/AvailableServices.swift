@@ -27,6 +27,7 @@ protocol ProtectionServiceDependent: ServiceDependent { var protectionService: P
 protocol StatisticsServiceDependent: ServiceDependent { var statisticsService: StatisticsService! { get set } }
 
 protocol MailFiltersUpdaterDependent: ServiceDependent { var mailFiltersUpdater: MailFiltersUpdater! { get set } }
+protocol MailAppOpenerDependent: ServiceDependent { var mailAppOpener: MailAppOpening! { get set } }
 protocol AppLifecycleServiceDependent: ServiceDependent { var appLifecycleService: AppLifecycleService! { get set } }
 protocol ImportExportServiceDependent: ServiceDependent { var importExportService: ImportExportService! { get set } }
 protocol UserSettingsServiceDependent: ServiceDependent { var userSettingsService: UserSettingsService! { get set } }

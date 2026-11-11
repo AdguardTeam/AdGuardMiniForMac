@@ -33,7 +33,7 @@ import {
 
 /**
  * Behavioral tests for `SettingsCallbackServiceInternal` — what each of the
- * 11 `SettingsCallbackService` pushes actually does to the settings store.
+ * 12 `SettingsCallbackService` pushes actually does to the settings store.
  * The store singleton is mocked via the `SettingsStore` path mapping
  * (`tests/mocks/settingsStore`).
  */
@@ -177,6 +177,17 @@ test('OnProtectionStatusChanged forwards the value to setProtectionEnabled', asy
     await service.OnProtectionStatusChanged(new BoolValue({ value: false }));
 
     assert.deepEqual(received, [false]);
+});
+
+test('OnMailProtectionChanged forwards the value to setMailProtection', async () => {
+    __resetSettingsTestStore();
+    const received: boolean[] = [];
+    store.advancedBlocking = { setMailProtection: (v: boolean) => { received.push(v); } };
+
+    const service = new SettingsCallbackServiceInternal();
+    await service.OnMailProtectionChanged(new BoolValue({ value: true }));
+
+    assert.deepEqual(received, [true]);
 });
 
 test('OnApplicationVersionStatusResolved forwards the status and version to the store', async () => {

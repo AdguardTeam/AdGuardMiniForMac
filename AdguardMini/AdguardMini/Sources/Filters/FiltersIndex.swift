@@ -94,6 +94,7 @@ enum AdGuardAnnoyancesFilterId {
 
 protocol FiltersIndex: Sendable {
     var unblockSearchAdsFilterId: Int { get }
+    var mailTrackingProtectionId: Int { get }
     var cookieNoticeFilterId: Int { get }
     var popUpsFilterId: Int { get }
     var widgetsFilterId: Int { get }
@@ -115,6 +116,9 @@ protocol FiltersIndex: Sendable {
 final class FiltersIndexImpl: FiltersIndex, Sendable {
     /// Id of filter to unblock search ads.
     let unblockSearchAdsFilterId: Int = AdGuardAdditionalFilterId.unblockSearchAdsFilterId
+
+    /// Id of mail tracking protection filter.
+    let mailTrackingProtectionId: Int = AdGuardAdditionalFilterId.mailTrackingProtection
 
     /// Id of cookie notice filter.
     let cookieNoticeFilterId: Int = AdGuardAnnoyancesFilterId.cookieNotice

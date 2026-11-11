@@ -22,6 +22,7 @@ export enum SettingsPage {
     SafariExtensions = 'safari_extensions',
     ContactSupport = 'contact_support',
     SystemWideProtection = 'system_wide_protection',
+    MailProtection = 'mail_protection',
 }
 
 /**
@@ -90,6 +91,21 @@ export enum SettingsEvent {
     SystemWideProtectionGetFullVersionClick = 'system_wide_protection_get_full_version_click',
     RemoveURLFilterClick = 'remove_URL_filter_click',
     InstallURLFilterClick = 'install_URL_filter_click',
+    SystemWideBannerClick = 'system_wide_banner_click',
+    EmailTrackersBlockToggleOnClick = 'email_trackers_block_toggle_on_click',
+    EmailTrackersBlockToggleOffClick = 'email_trackers_block_toggle_off_click',
+    PromoProtectAppleMailClose = 'promo_protect_apple_mail_close',
+    PromoProtectAppleMailClick = 'promo_protect_apple_mail_click',
+    MailProtectionToggleOffClick = 'mail_protection_toggle_off_click',
+    MailProtectionPaywallClick = 'mail_protection_paywall_click',
+    MailProtectionToggleOnClick = 'mail_protection_toggle_on_click',
+    MailProtectionEntryClick = 'mail_protection_entry_click',
+    MailProtectionEnableFilterClick = 'mail_protection_enable_filter_click',
+    MailProtectionOpenMailClick = 'mail_protection_open_mail_click',
+    MailProtectionOpenExtensionsClick = 'mail_protection_open_extensions_click',
+    PrivacyMailProtectionToggleOnClick = 'privacy_mail_protection_toggle_on_click',
+    PrivacyMailProtectionToggleOffClick = 'privacy_mail_protection_toggle_off_click',
+    PrivacyMailProtectionPaywallClick = 'privacy_mail_protection_paywall_click',
     AdguardProductsClick = 'adguard_products_click',
 }
 

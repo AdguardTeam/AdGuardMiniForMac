@@ -15,13 +15,12 @@ import { Button, ExternalLink, Icon, Text } from 'UILib';
 
 import { AlreadyPurchasedFlowModal } from '../ActivationFlow';
 
+import { getPaywallAdvantages } from './advantages';
 import { AppStoreVersionActions } from './AppStoreVersionActions';
 import { TermsAndConditionsModal } from './Modals';
 import s from './Paywall.module.pcss';
 import { visiblePromoOffer } from './promoOffer';
 import { StandaloneVersionActions } from './StandaloneVersionActions';
-
-import type { IconType } from 'UILib';
 
 /**
  * Paywall component
@@ -46,24 +45,7 @@ function PaywallComponent() {
     /**
      * License advantages list
      */
-    const ADVANTAGES: { label: string; icon: IconType }[] = [
-        {
-            label: translate('settings.paywall.advantage.1'),
-            icon: 'quality',
-        },
-        ...(experimentalSystemWideProtectionEnabled ? [{
-            label: translate('settings.paywall.advantage.2'),
-            icon: 'apps' as IconType,
-        }] : []),
-        {
-            label: translate('settings.paywall.advantage.3'),
-            icon: 'update',
-        },
-        {
-            label: translate('settings.paywall.advantage.4'),
-            icon: 'phone',
-        },
-    ];
+    const ADVANTAGES = getPaywallAdvantages(experimentalSystemWideProtectionEnabled);
 
     const { isStandaloneReleaseVariant } = settings;
     const [showAlreadyPurchasedFlowModal, setShowAlreadyPurchasedFlowModal] = useState(false);

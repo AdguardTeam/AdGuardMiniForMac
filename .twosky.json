@@ -49,13 +49,15 @@
       "AdguardMini/SecurityContentBlocker/en.lproj/InfoPlist.strings",
       "AdguardMini/SocialContentBlocker/en.lproj/InfoPlist.strings",
       "AdguardMini/OtherContentBlocker/en.lproj/InfoPlist.strings",
-      "AdguardMini/CustomContentBlocker/en.lproj/InfoPlist.strings"
+      "AdguardMini/CustomContentBlocker/en.lproj/InfoPlist.strings",
+      "AdguardMini/MailBlocker/en.lproj/InfoPlist.strings"
     ],
     "metadata": {
       "sciter_locales_file_index": 0,
       "folders_map": {
         "PopupExtension": "popup-extension",
-        "[\\w]*ContentBlocker": "content-blockers"
+        "[\\w]*ContentBlocker": "content-blockers",
+        "MailBlocker": "content-blockers"
       },
       "filename_map": {
         "GeneralContentBlocker/en.lproj/InfoPlist.strings": "contentblocker_general_InfoPlist.strings",
@@ -63,7 +65,8 @@
         "SecurityContentBlocker/en.lproj/InfoPlist.strings": "contentblocker_security_InfoPlist.strings",
         "SocialContentBlocker/en.lproj/InfoPlist.strings": "contentblocker_social_InfoPlist.strings",
         "OtherContentBlocker/en.lproj/InfoPlist.strings": "contentblocker_other_InfoPlist.strings",
-        "CustomContentBlocker/en.lproj/InfoPlist.strings": "contentblocker_custom_InfoPlist.strings"
+        "CustomContentBlocker/en.lproj/InfoPlist.strings": "contentblocker_custom_InfoPlist.strings",
+        "MailBlocker/en.lproj/InfoPlist.strings": "mailblocker_InfoPlist.strings"
       }
     }
   }

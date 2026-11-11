@@ -48,6 +48,8 @@ function RouteToPage(currentRoute: RouteName): SettingsPage | 'unknown' {
             return SettingsPage.ContactSupport;
         case RouteName.system_wide_protection:
             return SettingsPage.SystemWideProtection;
+        case RouteName.mail_protection:
+            return SettingsPage.MailProtection;
         default:
             return 'unknown';
     }

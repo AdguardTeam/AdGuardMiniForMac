@@ -21,7 +21,7 @@ import { TrayPage } from '../../modules/tray/store/modules/TrayTelemetry';
  * (`TrayCallbackServiceImpl`, reached via
  * `TrayCallbackServiceInternal` → `store.callbackService`).
  *
- * These verify what each of the 8 `TrayCallbackService` pushes actually does
+ * These verify what each of the 9 `TrayCallbackService` pushes actually does
  * to the tray store/UI state — the part the bootstrap tests (which only check
  * that `window.__dispatchCallback` reaches the service) do NOT cover.
  */
@@ -35,6 +35,7 @@ interface FakeSettings {
     getAdguardExtra: () => Promise<void>;
     getURLFilterState: () => Promise<void>;
     getEffectiveTheme: () => Promise<void>;
+    getMailProtection: () => Promise<void>;
     setLoginItem: (v: boolean) => void;
     setNewVersionAvailable: (v: boolean) => void;
     setFiltersStatus: (s: unknown) => void;
@@ -42,6 +43,7 @@ interface FakeSettings {
     setLicense: (l: unknown) => void;
     setEffectiveTheme: (t: unknown) => void;
     setTrayWindowVisible: (v: boolean) => void;
+    setMailProtection: (v: boolean) => void;
     effectiveTheme: unknown;
     trayWindowVisible: boolean;
 }
@@ -76,6 +78,7 @@ const makeFakes = () => {
         getAdguardExtra: () => Promise.resolve(),
         getURLFilterState: () => Promise.resolve(),
         getEffectiveTheme: () => Promise.resolve(),
+        getMailProtection: () => Promise.resolve(),
         setLoginItem: () => {},
         setNewVersionAvailable: () => {},
         setFiltersStatus: () => {},
@@ -85,6 +88,7 @@ const makeFakes = () => {
         setTrayWindowVisible: (v) => {
             settings.trayWindowVisible = v;
         },
+        setMailProtection: () => {},
         effectiveTheme: null,
         trayWindowVisible: false,
     };
@@ -250,9 +254,11 @@ test('OnLicenseUpdate stores the license and refreshes adguard extra + URL filte
     const received: unknown[] = [];
     let adguardExtraCalls = 0;
     let urlFilterCalls = 0;
+    let mailProtectionCalls = 0;
     settings.setLicense = (l) => { received.push(l); };
     settings.getAdguardExtra = () => { adguardExtraCalls++; return Promise.resolve(); };
     settings.getURLFilterState = () => { urlFilterCalls++; return Promise.resolve(); };
+    settings.getMailProtection = () => { mailProtectionCalls++; return Promise.resolve(); };
     const license = {} as never;
 
     void service.OnLicenseUpdate(license);
@@ -260,6 +266,7 @@ test('OnLicenseUpdate stores the license and refreshes adguard extra + URL filte
     assert.deepEqual(received, [license]);
     assert.equal(adguardExtraCalls, 1);
     assert.equal(urlFilterCalls, 1);
+    assert.equal(mailProtectionCalls, 1);
 });
 
 test('OnEffectiveThemeChanged forwards the theme to setEffectiveTheme', () => {
@@ -283,4 +290,15 @@ test('OnTrayPageRequested navigates for known routes only', () => {
     void service.OnTrayPageRequested(new StringValue({ value: 'not-a-route' }));
 
     assert.deepEqual(navigated, [TrayRoute.updates, TrayRoute.filters]);
+});
+
+test('OnMailProtectionChanged forwards the value to setMailProtection', () => {
+    const { settings, service } = makeFakes();
+    const received: boolean[] = [];
+    settings.setMailProtection = (v) => { received.push(v); };
+
+    void service.OnMailProtectionChanged(new BoolValue({ value: true }));
+    void service.OnMailProtectionChanged(new BoolValue({ value: false }));
+
+    assert.deepEqual(received, [true, false]);
 });

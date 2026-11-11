@@ -18,13 +18,17 @@ import type { SettingsEvent } from 'Modules/settings/store/modules';
  * Trial available: "Try for free" action;
  * No trial available, standalone version: "Get full version" action;
  * No trial available, MAS version: "Subscribe" action;
+ * Apple Mail copy: "Apple Mail" wording for the Mail Tracking Protection promo,
+ * in place of the trial and license ones;
  *
  * @param trackTelemetryEvent - The telemetry event to track when the paywall is shown
  * @param textClassName - Optional class name for the text element
+ * @param appleMailText - Replaces the trial and license copy with the Apple Mail one
  */
 export function usePayedFuncsTitle(
     trackTelemetryEvent?: SettingsEvent,
     textClassName?: string,
+    appleMailText?: boolean,
 ) {
     const { account, settings, telemetry } = useSettingsStore();
 
@@ -41,7 +45,8 @@ export function usePayedFuncsTitle(
             ariaDescribedby={sentenceId}
             className={s.PayedFuncsTitle_button}
             type="text"
-            onClick={() => {
+            onClick={(e) => {
+                e?.stopPropagation();
                 if (trackTelemetryEvent) {
                     telemetry.trackEvent(trackTelemetryEvent);
                 }
@@ -56,6 +61,10 @@ export function usePayedFuncsTitle(
 
     const renderDescription = () => {
         const params = { btn: renderShowPaywallBtn };
+
+        if (appleMailText) {
+            return translate('advanced.blocking.extra.apple.mail', params);
+        }
 
         if (!(isMASReleaseVariant && appStoreSubscriptions?.result?.promoInfo) && trialDays > 0) {
             return translate('advanced.blocking.extra.try', params);

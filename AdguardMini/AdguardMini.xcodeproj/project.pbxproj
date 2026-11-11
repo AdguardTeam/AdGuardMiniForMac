@@ -199,6 +199,7 @@
 		ECBA97502A8A5F8200D6088E /* MainAppDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA974F2A8A5F8200D6088E /* MainAppDiscovery.swift */; };
 		ECDF56912A6029580017A270 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDF56902A6029580017A270 /* SafariExtensionHandler.swift */; };
 		ECDF56A02A6029580017A270 /* PopupExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = ECDF568E2A6029570017A270 /* PopupExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F5611BDD3049A18B0090AB23 /* MailBlocker.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 162E77642FF2B04E00232A89 /* MailBlocker.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -454,6 +455,13 @@
 			remoteGlobalIDString = ECDF568D2A6029570017A270;
 			remoteInfo = EntryExtension;
 		};
+		F5611BDE3049A18B0090AB23 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC3462EC2A29DD9200F59ABC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 162E77632FF2B04E00232A89;
+			remoteInfo = MailBlocker;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -523,6 +531,7 @@
 			files = (
 				ECDF56A02A6029580017A270 /* PopupExtension.appex in Embed Foundation Extensions */,
 				EBAA09B72BAC7DDA0032C591 /* SecurityContentBlocker.appex in Embed Foundation Extensions */,
+				F5611BDD3049A18B0090AB23 /* MailBlocker.appex in Embed Foundation Extensions */,
 				EC4197BE2A6FE790000F363D /* GeneralContentBlocker.appex in Embed Foundation Extensions */,
 				EBAA09A32BAC7AD60032C591 /* PrivacyContentBlocker.appex in Embed Foundation Extensions */,
 				EBAA09DF2BAC7EBD0032C591 /* OtherContentBlocker.appex in Embed Foundation Extensions */,
@@ -668,13 +677,24 @@
 				Core/Models/QuitReaction.swift,
 				Core/RestartableService.swift,
 				Filters/FilteringDecision.swift,
+				Filters/FiltersIndex.swift,
 				Filters/Models/BlockerConversionError.swift,
+				"Filters/Models/FLMTypes+Sendable.swift",
 				Filters/Models/SafariConversionResult.swift,
 				Filters/Safari/FiltersConverter.swift,
 				Filters/Safari/SafariUserRulesDistributor.swift,
 				Filters/UrlFilteringChecker.swift,
+				Mail/MailAppOpener.swift,
 				Mail/MailExtensionReloader.swift,
+				Mail/MailExtensionStateService.swift,
+				Mail/MailExtensionStateStorage.swift,
+				Mail/MailFiltersUpdater.swift,
+				Mail/MailPremiumStatusProvider.swift,
 				Mail/MailProtectionStatusProvider.swift,
+				Mail/MailRegenerationDecision.swift,
+				Mail/MailRuleProvider.swift,
+				Mail/MailRulesetConverting.swift,
+				Mail/MailRulesetStorage.swift,
 				Mail/Models/MailExtension/MailConversionInfo.swift,
 				Mail/Models/MailExtension/MailExtension.State.ExtensionError.swift,
 				Mail/Models/MailExtension/MailExtension.State.swift,
@@ -1893,6 +1913,7 @@
 				EB0A20BD2D5B56C1002A8029 /* PBXTargetDependency */,
 				162E776E2FF2B04F00232A89 /* PBXTargetDependency */,
 				168279CE3008F8DA001486BD /* PBXTargetDependency */,
+				F5611BDF3049A18B0090AB23 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				16148DD02E01CDA4000A55E9 /* Localization */,
@@ -2957,6 +2978,11 @@
 			target = ECDF568D2A6029570017A270 /* PopupExtension */;
 			targetProxy = ECDF569E2A6029580017A270 /* PBXContainerItemProxy */;
 		};
+		F5611BDF3049A18B0090AB23 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 162E77632FF2B04E00232A89 /* MailBlocker */;
+			targetProxy = F5611BDE3049A18B0090AB23 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -3466,7 +3492,6 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MailBlocker/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = BlockerMail;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -3491,7 +3516,6 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MailBlocker/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = BlockerMail;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -3516,7 +3540,6 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MailBlocker/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = BlockerMail;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -3541,7 +3564,6 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MailBlocker/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = BlockerMail;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

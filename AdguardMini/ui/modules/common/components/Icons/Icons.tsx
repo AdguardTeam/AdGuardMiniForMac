@@ -69,7 +69,9 @@ export type IconType
         | 'rocket'
         | 'eye'
         | 'apps'
-        | 'bullet';
+        | 'bullet'
+        | 'mail'
+        | 'feedback';
 
 /**
  * Props accepted by the `Icons` component.
@@ -611,6 +613,19 @@ export function Icons({ icon }: IconsProps): JSXInternal.Element {
             return (
                 <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
                     <path clip-rule="evenodd" d="M12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16C14.2091 16 16 14.2091 16 12C15.9974 9.79193 14.2081 8.00258 12 8Z" fill="currentColor" fill-rule="evenodd" />
+                </svg>
+            );
+        case 'mail':
+            return (
+                <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 7.7L7.67446 10.8163C7.94414 10.9961 8.07898 11.086 8.22486 11.1497C8.35434 11.2062 8.49003 11.2473 8.62912 11.2721C8.78582 11.3 8.94788 11.3 9.27199 11.3H14.728C15.0521 11.3 15.2142 11.3 15.3709 11.2721C15.51 11.2473 15.6457 11.2062 15.7751 11.1497C15.921 11.086 16.0559 10.9961 16.3255 10.8163L21 7.7M7.32 19.4H16.68C18.1921 19.4 18.9482 19.4 19.5258 19.1057C20.0338 18.8469 20.4469 18.4338 20.7057 17.9258C21 17.3482 21 16.5921 21 15.08V9.32C21 7.80786 21 7.05179 20.7057 6.47423C20.4469 5.96619 20.0338 5.55314 19.5258 5.29428C18.9482 5 18.1921 5 16.68 5H7.32C5.80786 5 5.05179 5 4.47423 5.29428C3.96619 5.55314 3.55314 5.96619 3.29428 6.47423C3 7.05179 3 7.80786 3 9.32V15.08C3 16.5921 3 17.3482 3.29428 17.9258C3.55314 18.4338 3.96619 18.8469 4.47423 19.1057C5.05179 19.4 5.80786 19.4 7.32 19.4Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
+                </svg>
+            );
+        case 'feedback':
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <rect x="3.75" y="5.75" width="16.5" height="12.5" rx="1.25" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M4 6L10.2 10.65C11.2667 11.45 12.7333 11.45 13.8 10.65L20 6" stroke="currentColor" stroke-width="1.5"/>
                 </svg>
             );
     }

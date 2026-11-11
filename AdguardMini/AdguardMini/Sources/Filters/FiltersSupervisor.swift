@@ -233,8 +233,7 @@ final class FiltersSupervisorImpl: RestartableServiceBase, @unchecked Sendable {
         if isSuccess {
             self.safariFiltersUpdater.updateSafariFilters()
         }
-        // `affectsMail` defaults to `false`. Only user-rules callers pass
-        // `affectsMail: true`. Filter toggles use the filter-25 decision.
+        // `affectsMail` defaults to `false`; filter toggles decide via `MailRegenerationDecision`.
         if isSuccess, affectsMail {
             self.mailFiltersUpdater.updateMailFilters()
         }
@@ -362,7 +361,10 @@ extension FiltersSupervisorImpl: FlmApi.Interact {
             }
             self.updateContentBlockersOnSuccess(
                 true,
-                affectsMail: MailRegenerationDecision.includesMailFilter(filterIds)
+                affectsMail: MailRegenerationDecision.includesMailFilter(
+                    filterIds,
+                    userRulesFilterId: self.filtersSpecialIds.userRulesId
+                )
             )
         }
     }
@@ -645,9 +647,12 @@ extension FiltersSupervisorImpl: FLMUpdateDelegate {
             LogInfo("\(LogTag.flm) filtersUpdate end (updated: \(updated.updatedList.count))")
             if updated.hasAnyUpdates {
                 // Every successful update triggers Safari regeneration.
-                // Mail regenerates only when filter 25 was among the updated filter IDs.
+                // Mail regenerates only for the mail and user-rules filters.
                 self.updateContentBlockersOnSuccess(true, affectsMail: false)
-                if MailRegenerationDecision.includesMailFilter(updated.updatedList.map(\.filterId)) {
+                if MailRegenerationDecision.includesMailFilter(
+                    updated.updatedList.map(\.filterId),
+                    userRulesFilterId: self.filtersSpecialIds.userRulesId
+                ) {
                     self.mailFiltersUpdater.updateMailFilters()
                 }
                 self.eventBus.post(event: .filtersRulesUpdated, userInfo: nil)

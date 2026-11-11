@@ -233,4 +233,24 @@ public class SettingsCallbackService: WebViewCallbackBridge
 		}
 		return EmptyValue()
 	}
+	/// Fires when the Apple Mail tracking protection switch changes
+	/// Dispatch callback through the attached bridge.
+	@discardableResult public func onMailProtectionChanged (_ message: BoolValue) -> EmptyValue {
+		if let bridge {
+			do {
+				bridge.dispatchCallback(
+					method: "SettingsCallbackService.OnMailProtectionChanged",
+					data: try message.serializedData()
+				)
+			} catch {
+				BridgeLog.error("SettingsCallbackService.OnMailProtectionChanged: failed to serialize: \(error)")
+			}
+		} else {
+			// A nil bridge is an expected transient condition during
+			// startup (before the host attaches); debug-level avoids
+			// error-monitoring noise for a routine startup race.
+			BridgeLog.debug("SettingsCallbackService.OnMailProtectionChanged: bridge is nil — callback dropped")
+		}
+		return EmptyValue()
+	}
 }

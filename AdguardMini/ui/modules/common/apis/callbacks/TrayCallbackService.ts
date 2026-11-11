@@ -20,6 +20,8 @@ export interface ITrayCallbackService {
 	OnEffectiveThemeChanged(param: ArrayBuffer): Promise<EmptyValue>;
 	/* Fires when tray should open specific page */
 	OnTrayPageRequested(param: ArrayBuffer): Promise<EmptyValue>;
+	/* Fires when the Apple Mail tracking protection switch changes */
+	OnMailProtectionChanged(param: ArrayBuffer): Promise<EmptyValue>;
 }
 
 /* Service handles settings lists- private part for operations with unmarshalled params */
@@ -41,6 +43,8 @@ export interface ITrayCallbackServiceInternal {
 	OnEffectiveThemeChanged(param: EffectiveThemeValue): Promise<EmptyValue>;
 	/* Fires when tray should open specific page*/
 	OnTrayPageRequested(param: StringValue): Promise<EmptyValue>;
+	/* Fires when the Apple Mail tracking protection switch changes*/
+	OnMailProtectionChanged(param: BoolValue): Promise<EmptyValue>;
 }
 
 /* Service handles settings lists */
@@ -178,6 +182,22 @@ export class TrayCallbackService implements ITrayCallbackService {
 		}
 		log.dbg('Callback data', 'TrayCallbackService.OnTrayPageRequested', arg.toObject());
 		await this.trayCallbackServiceInternal.OnTrayPageRequested(arg);
+		return new EmptyValue();
+	};
+	/**
+	 * Fires when the Apple Mail tracking protection switch changes
+	 * @param ArrayBuffer param
+	 * @returns EmptyValue param
+	 */
+	OnMailProtectionChanged = async (param: ArrayBuffer): Promise<EmptyValue> => {
+		const bytes = new Uint8Array(param);
+		const arg = BoolValue.deserializeBinary(bytes);
+
+		if (!arg) {
+			throw new Error(`Empty parameter in TrayCallbackService.OnMailProtectionChanged: ${ param }`);
+		}
+		log.dbg('Callback data', 'TrayCallbackService.OnMailProtectionChanged', arg.toObject());
+		await this.trayCallbackServiceInternal.OnMailProtectionChanged(arg);
 		return new EmptyValue();
 	};
 }

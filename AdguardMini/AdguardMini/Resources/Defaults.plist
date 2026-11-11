@@ -74,6 +74,10 @@
 	<array/>
 	<key>mailProtection</key>
 	<false/>
+	<key>mailProtectionIsNew</key>
+	<true/>
+	<key>mailOnboardingShown</key>
+	<false/>
 	<key>reportProblemLabelShown</key>
 	<false/>
 	<key>experimentalSystemWideProtectionEnabled</key>

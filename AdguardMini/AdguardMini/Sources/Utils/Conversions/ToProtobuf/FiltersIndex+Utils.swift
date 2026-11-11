@@ -41,6 +41,7 @@ extension FiltersIndex {
 
         return ProtoSchema.FiltersIndex(
             unblockSearchAdsFilterID: Int32(self.unblockSearchAdsFilterId),
+            mailTrackingProtectionID: Int32(self.mailTrackingProtectionId),
             cookieNoticeFilterID: Int32(self.cookieNoticeFilterId),
             popUpsFilterID: Int32(self.popUpsFilterId),
             widgetsFilterID: Int32(self.widgetsFilterId),

@@ -27,6 +27,17 @@ function TrackingSectionComponent() {
         }
     };
 
+    const onToggleBlockEmailTrackers = async (value: boolean) => {
+        telemetry.trackEvent(value
+            ? SettingsEvent.EmailTrackersBlockToggleOnClick
+            : SettingsEvent.EmailTrackersBlockToggleOffClick
+        );
+        const error = await safariProtection.updateBlockEmailTrackers(value);
+        if (error) {
+            notifyError();
+        }
+    };
+
     return (
         <div className={s.SafariProtection_block}>
             <Text className={cx(s.SafariProtection_block_title, theme.layout.content)} type="h5">{translate('safari.protection.part.tracking')}</Text>
@@ -36,6 +47,13 @@ function TrackingSectionComponent() {
                 setValue={onToggleBlockTrackers}
                 title={translate('safari.protection.block.trackers')}
                 value={safariProtection.blockTrackers}
+            />
+            <SettingsItemSwitch
+                description={translate('safari.protection.block.email.trackers.desc')}
+                icon="feedback"
+                setValue={onToggleBlockEmailTrackers}
+                title={translate('safari.protection.block.email.trackers')}
+                value={safariProtection.blockEmailTrackers}
             />
         </div>
     );

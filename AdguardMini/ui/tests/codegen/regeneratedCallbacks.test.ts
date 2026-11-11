@@ -48,7 +48,7 @@ void describe('regenerated TS callback services', () => {
 
     it('TrayCallbackService.OnEffectiveThemeChanged routes via window.__dispatchCallback', async () => {
         let invoked = false;
-        // Provide stubs for all 8 methods required by ITrayCallbackServiceInternal.
+        // Provide stubs for all 9 methods required by ITrayCallbackServiceInternal.
         // Use as-cast since the Internal class is empty and the test only checks routing.
         const internal = {
             OnEffectiveThemeChanged: async () => { invoked = true; },
@@ -59,6 +59,7 @@ void describe('regenerated TS callback services', () => {
             OnSafariExtensionUpdate: async () => { /* noop */ },
             OnLicenseUpdate: async () => { /* noop */ },
             OnTrayPageRequested: async () => { /* noop */ },
+            OnMailProtectionChanged: async () => { /* noop */ },
         } as unknown as import('../../modules/common/apis/callbacks/TrayCallbackService').ITrayCallbackServiceInternal;
         const service = new TrayCallbackService(internal);
         // Register the routing — when __dispatchCallback is called with

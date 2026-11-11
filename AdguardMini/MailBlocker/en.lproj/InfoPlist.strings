@@ -1,0 +1,5 @@
+/* Human Readable Description */
+"NSHumanReadableDescription" = "Lets AdGuard Mini block hidden trackers in your emails";
+
+/* Bundle display name */
+"CFBundleDisplayName" = "AdGuard Mail Tracking Protection";

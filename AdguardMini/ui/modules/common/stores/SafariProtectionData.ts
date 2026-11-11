@@ -62,12 +62,25 @@ export class SafariProtectionData {
     }
 
     /**
+     * Recommended privacy filter IDs controlled by the "Block trackers"
+     * switch.
+     *
+     * The email-trackers filter is excluded because it has its own switch
+     * in the Tracking section.
+     */
+    public get trackerBlockingFiltersIds(): number[] | undefined {
+        const { recommendedFiltersByGroups, filtersIndex } = this.filters;
+        const definedGroups = filtersIndex.definedGroups || {};
+        return recommendedFiltersByGroups[definedGroups.privacy]?.filter(
+            (id) => id !== filtersIndex.mailTrackingProtectionId,
+        );
+    }
+
+    /**
      * Whether all recommended privacy (tracker-blocking) filters are enabled.
      */
     public get blockTrackers() {
-        const { recommendedFiltersByGroups, filtersIndex } = this.filters;
-        const definedGroups = filtersIndex.definedGroups || {};
-        return !!recommendedFiltersByGroups[definedGroups.privacy]?.every(
+        return !!this.trackerBlockingFiltersIds?.every(
             (id) => this.enabledFilters.includes(id),
         );
     }
@@ -89,6 +102,14 @@ export class SafariProtectionData {
     public get blockCookieNotice() {
         const { filtersIndex } = this.filters;
         return this.enabledFilters.includes(filtersIndex.cookieNoticeFilterId);
+    }
+
+    /**
+     * Whether the email trackers filter is enabled.
+     */
+    public get blockEmailTrackers() {
+        const { filtersIndex } = this.filters;
+        return this.enabledFilters.includes(filtersIndex.mailTrackingProtectionId);
     }
 
     /**
@@ -137,12 +158,14 @@ export class SafariProtectionData {
             blockAds: computed,
             blockSearchAds: computed,
             languageSpecific: computed,
+            trackerBlockingFiltersIds: computed,
             blockTrackers: computed,
             blockSocialButtons: computed,
             blockCookieNotice: computed,
             blockPopups: computed,
             blockWidgets: computed,
             blockOtherAnnoyance: computed,
+            blockEmailTrackers: computed,
             enabledCustomFiltersCount: computed,
         }, { autoBind: true });
     }

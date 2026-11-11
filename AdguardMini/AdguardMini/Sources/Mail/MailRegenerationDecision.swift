@@ -10,11 +10,10 @@
 import Foundation
 
 /// Whether a filter update should trigger mail regeneration.
-/// Only filter 25 (Mail Tracking Protection) affects mail.
+/// The Mail ruleset is built from the mail filter and the user-rules filter.
 enum MailRegenerationDecision {
-    private static let mailTrackingProtectionFilterId = 25
-
-    static func includesMailFilter(_ filterIds: [Int]) -> Bool {
-        filterIds.contains(Self.mailTrackingProtectionFilterId)
+    static func includesMailFilter(_ filterIds: [Int], userRulesFilterId: Int) -> Bool {
+        filterIds.contains(AdGuardAdditionalFilterId.mailTrackingProtection)
+            || filterIds.contains(userRulesFilterId)
     }
 }

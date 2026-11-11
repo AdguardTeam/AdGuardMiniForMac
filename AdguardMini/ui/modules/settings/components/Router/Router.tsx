@@ -14,6 +14,7 @@ import { ConvertingStatus } from '../ConvertingStatus/ConvertingStatus';
 import { Filters } from '../Filters';
 import { LanguageSpecific } from '../LanguageSpecific';
 import { License } from '../License';
+import { MailProtection } from '../MailProtection';
 import { Menu } from '../Menu';
 import { Migration } from '../Migration';
 import { QuitReaction } from '../QuitReaction';
@@ -83,6 +84,9 @@ function RouterComponent() {
             component = settings.settings.experimentalSystemWideProtectionEnabled
                 ? <SystemWideProtection />
                 : <AdvancedBlocking />;
+            break;
+        case RouteName.mail_protection:
+            component = <MailProtection />;
             break;
         case RouteName.migration:
             break;

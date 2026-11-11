@@ -19,6 +19,14 @@ import {
     GetAdvancedRulesRequest,
     UpdateAdvancedRulesRequest,
     UpdateAdguardExtraRequest,
+    GetMailProtectionRequest,
+    UpdateMailProtectionRequest,
+    GetMailProtectionIsNewRequest,
+    UpdateMailProtectionIsNewRequest,
+    GetMailOnboardingShownRequest,
+    UpdateMailOnboardingShownRequest,
+    OpenAppleMailRequest,
+    OpenMailExtensionSettingsRequest,
 } from 'Apis/requests/AdvancedBlockingService';
 import {
     URLFilterState,
@@ -34,6 +42,7 @@ import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/transla
 
 import type { BoolValue, URLFilterInfo, URLFilterProtectionLevel } from 'Apis/types';
 import type { NotificationsQueue } from 'Common/stores/NotificationsQueue';
+import type { ComponentChild } from 'preact';
 
 /**
  * How long the stats of a pushed URL filter state are held before they are
@@ -109,6 +118,15 @@ export class AdvancedBlocking {
     private unavailableSnackShownThisVisit = false;
 
     /**
+     * Id of the shown "Apple Mail tracking protection is not applied" snack.
+     *
+     * Owned by the store so the deduplication survives the page re-entry:
+     * a component-scoped id would let the same reason show a second snack
+     * after the page is reopened while the first one is still on screen.
+     */
+    private mailProtectionInactiveNotificationId: string | null = null;
+
+    /**
      * Notifications queue used to surface error toasts.
      */
     private readonly notification: NotificationsQueue;
@@ -182,6 +200,28 @@ export class AdvancedBlocking {
      * AdGuard Extra state
      */
     public adguardExtra = false;
+
+    /**
+     * Mail protection
+     */
+    public mailProtection = false;
+
+    /**
+     * Whether the Apple Mail tracking protection entry is new.
+     *
+     * Stays `true` until the user opens the Apple Mail tracking protection
+     * screen; drives the "New" label on the row and on the screen title.
+     */
+    public mailProtectionNew = false;
+
+    /**
+     * Whether the "Enable AdGuard in Apple Mail" dialog has been shown.
+     *
+     * The dialog is a one-time hint, so it is shown only on the first attempt
+     * to enable Apple Mail tracking protection. `null` until the platform
+     * answers: while the value is unknown the dialog stays hidden.
+     */
+    public mailOnboardingShown: boolean | null = null;
 
     /**
      * Real-time filters update state
@@ -274,6 +314,9 @@ export class AdvancedBlocking {
             getAdvancedRules: flow,
             getAdguardExtra: flow,
             getRealTimeFiltersUpdate: flow,
+            getMailProtection: flow,
+            getMailProtectionIsNew: flow,
+            getMailOnboardingShown: flow,
         }, { autoBind: true });
     }
 
@@ -680,6 +723,10 @@ export class AdvancedBlocking {
         this.getAdguardExtra();
         this.getAdvancedRules();
         this.getRealTimeFiltersUpdate();
+        this.getMailProtection();
+        this.getMailProtectionIsNew();
+        this.getMailOnboardingShown();
+        this.getURLFilterSeen();
     }
 
     /**
@@ -696,6 +743,124 @@ export class AdvancedBlocking {
     public *getAdguardExtra() {
         const resp: BoolValue = yield window.API.Execute(new GetAdguardExtraRequest());
         this.adguardExtra = resp.value;
+    }
+
+    /**
+     * Get mailProtection state
+     */
+    public *getMailProtection() {
+        const resp: BoolValue = yield window.API.Execute(new GetMailProtectionRequest());
+        this.mailProtection = resp.value;
+    }
+
+    /**
+     * Applies a pushed Mail protection state.
+     *
+     * The platform owns the setting, so the open window learns about a change
+     * made elsewhere (the tray) from the push, not only on the next focus.
+     *
+     * @param value New state of mail protection.
+     */
+    public setMailProtection(value: boolean) {
+        this.mailProtection = value;
+    }
+
+    /**
+     * Update mailProtection setting
+     */
+    public updateMailProtection(value: boolean) {
+        this.setMailProtection(value);
+        window.API.Execute(new UpdateMailProtectionRequest({ value }));
+    }
+
+    /**
+     * Get MailProtection is-new state
+     */
+    public *getMailProtectionIsNew() {
+        const resp: BoolValue = yield window.API.Execute(new GetMailProtectionIsNewRequest());
+        this.mailProtectionNew = resp.value;
+    }
+
+    /**
+     * Marks the Apple Mail tracking protection screen as seen.
+     */
+    public updateMailProtectionIsNew(value: boolean) {
+        this.mailProtectionNew = value;
+        window.API.Execute(new UpdateMailProtectionIsNewRequest({ value }));
+    }
+
+    /**
+     * Get Apple Mail extension onboarding shown state
+     */
+    public *getMailOnboardingShown() {
+        const resp: BoolValue = yield window.API.Execute(new GetMailOnboardingShownRequest());
+        this.mailOnboardingShown = resp.value;
+    }
+
+    /**
+     * Marks the "Enable AdGuard in Apple Mail" dialog as shown.
+     */
+    public updateMailOnboardingShown(value: boolean) {
+        this.mailOnboardingShown = value;
+        window.API.Execute(new UpdateMailOnboardingShownRequest({ value }));
+    }
+
+    /**
+     * Shows the snack that the Apple Mail tracking protection is not applied.
+     *
+     * The page can be re-entered and the filter state arrives more than once,
+     * so one reason maps to one snack while it is on screen.
+     *
+     * @param message Snack message.
+     * @param onEnable Enables the Block email trackers filter.
+     */
+    public showMailProtectionInactiveNotification(message: ComponentChild, onEnable: () => void) {
+        // The queue, not the id, tells whether the snack shows: another one can drop it.
+        const isSnackShown = this.mailProtectionInactiveNotificationId !== null
+            && this.notification.get(this.mailProtectionInactiveNotificationId) !== undefined;
+        if (isSnackShown) {
+            return;
+        }
+
+        this.mailProtectionInactiveNotificationId = this.notification.notify({
+            message,
+            notificationContext: NotificationContext.ctaButton,
+            type: NotificationsQueueType.success,
+            iconType: NotificationsQueueIconType.info,
+            variant: NotificationsQueueVariant.textOnly,
+            closeable: true,
+            btnLabel: translate('enable'),
+            onClick: () => {
+                onEnable();
+            },
+            onClose: () => {
+                this.mailProtectionInactiveNotificationId = null;
+            },
+        });
+    }
+
+    /**
+     * Closes the snack once the protection is applied again.
+     */
+    public closeMailProtectionInactiveNotification() {
+        if (this.mailProtectionInactiveNotificationId === null) {
+            return;
+        }
+        this.notification.closeNotify(this.mailProtectionInactiveNotificationId);
+        this.mailProtectionInactiveNotificationId = null;
+    }
+    /**
+     * Opens Apple Mail.
+     */
+    public openAppleMail() {
+        window.API.Execute(new OpenAppleMailRequest());
+    }
+
+    /**
+     * Opens Apple Mail with the Extensions settings pane selected.
+     */
+    public openMailExtensionSettings() {
+        window.API.Execute(new OpenMailExtensionSettingsRequest());
     }
 
     /**

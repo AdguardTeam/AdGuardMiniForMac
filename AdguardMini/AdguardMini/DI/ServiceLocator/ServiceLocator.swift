@@ -45,6 +45,7 @@ extension ServiceLocator {
         (client as? URLFilterServiceDependent)?.urlFilterService = self.urlFilterService
         (client as? FiltersSupervisorDependent)?.filtersSupervisor = self.filtersSupervisor
         (client as? MailFiltersUpdaterDependent)?.mailFiltersUpdater = self.mailFiltersUpdater
+        (client as? MailAppOpenerDependent)?.mailAppOpener = self.mailAppOpener
         (client as? SystemInfoManagerDependent)?.systemInfoManager = self.coreDIContainer.systemInfoManager
         (client as? ProtectionServiceDependent)?.protectionService = self.protectionService
         (client as? StatisticsServiceDependent)?.statisticsService = self.statisticsService
@@ -171,7 +172,7 @@ final class ServiceLocator {
     )
 
     private lazy var mailRuleProvider: MailRuleProvider = MailRuleProviderImpl(
-        filterListManager: self.filterListManager
+        filterListManager: FLMMailRulesSource(self.filterListManager)
     )
 
     private lazy var mailPremiumStatusProvider: MailPremiumStatusProvider = MailPremiumStatusProviderImpl(
@@ -180,7 +181,19 @@ final class ServiceLocator {
 
     private lazy var mailExtensionReloader: MailExtensionReloader = MailExtensionReloaderImpl()
 
-    private lazy var mailFiltersUpdater: MailFiltersUpdater = MailFiltersUpdaterNoOp()
+    private lazy var mailAppOpener: MailAppOpening = MailAppOpenerImpl()
+
+    private lazy var mailFiltersUpdater: MailFiltersUpdater = {
+        MailFiltersUpdaterImpl(
+            converter: self.mailRulesetConverter,
+            ruleProvider: self.mailRuleProvider,
+            licenseProvider: self.mailPremiumStatusProvider,
+            reloader: self.mailExtensionReloader,
+            protectionProvider: self.userSettingsManager,
+            extensionStateService: self.mailExtensionStateService
+        )
+    }()
+
     private lazy var filtersUpdateModeProvider: FiltersUpdateModeProvider = {
         FiltersUpdateModeProviderImpl(
             storage: self.userSettingsManager,

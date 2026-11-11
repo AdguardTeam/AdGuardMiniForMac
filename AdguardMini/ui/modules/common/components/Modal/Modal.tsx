@@ -32,6 +32,11 @@ type BasicProps = {
     modalForceHeight?: number;
     childrenClassName?: string;
     /**
+     * Extra class for the dialog surface, applied alongside the modal's own
+     * content styles.
+     */
+    contentClassName?: string;
+    /**
      * Extra class for the header block. Modals that opt out of
      * `contentPadding` use it to inset the title to the design's 24px so it
      * lines up with their rows' contents.
@@ -94,6 +99,7 @@ export function Modal({
     contentPadding = true,
     modalForceHeight,
     childrenClassName,
+    contentClassName,
     headerClassName,
     describedByChildren,
 }: ModalProps) {
@@ -154,6 +160,7 @@ export function Modal({
                 className={cx(
                     s.Modal_modalContent,
                     contentPadding && s.Modal_modalContent__horizontalPadding,
+                    contentClassName,
                 )}
                 role="dialog"
                 style={{ height: modalForceHeight ? `${modalForceHeight}px` : undefined }}

@@ -6,8 +6,8 @@ import { observer } from 'mobx-react-lite';
 import { useState } from 'preact/hooks';
 
 import { buttonProps } from 'Common/lib/keyboardActivation';
-import { NotificationContext, NotificationsQueueType, NotificationsQueueIconType, RouteName } from 'Modules/settings/store/modules';
-import { useSettingsStore, useDateFormat, DATE_FORMAT } from 'SettingsLib/hooks';
+import { NotificationContext, NotificationsQueueType, NotificationsQueueIconType, RouteName, SettingsEvent } from 'Modules/settings/store/modules';
+import { useSettingsStore, useDateFormat, DATE_FORMAT, usePayedFuncsTitle } from 'SettingsLib/hooks';
 import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
 import theme from 'Theme';
 import { ExternalLink, Text, ConsentModal } from 'UILib';
@@ -30,10 +30,22 @@ function FilterComponent({
 }: FilterProps) {
     const [showConsentModal, setShowConsentModal] = useState(false);
     const {
-        filters, notification, settings, settings: { settings: { consentFiltersIds } }, router } = useSettingsStore();
-    const { enabledFilters, filtersMap, filtersIndex: { definedGroups }, languageSpecific } = filters;
+        filters, notification, settings, settings: { settings: { consentFiltersIds } }, router, telemetry,
+    } = useSettingsStore();
+    const {
+        enabledFilters,
+        filtersMap,
+        filtersIndex: { definedGroups, mailTrackingProtectionId },
+        languageSpecific,
+    } = filters;
 
     const format = useDateFormat();
+
+    const payedFuncsTitle = usePayedFuncsTitle(
+        SettingsEvent.PrivacyMailProtectionPaywallClick,
+        undefined,
+        true,
+    );
 
     if (!filter) {
         return null;
@@ -42,6 +54,12 @@ function FilterComponent({
     const serverFilter = filtersMap.get(filter.id);
 
     const onFilterUpdate = async (e: boolean) => {
+        if (filter.id === mailTrackingProtectionId) {
+            telemetry.trackEvent(e
+                ? SettingsEvent.PrivacyMailProtectionToggleOnClick
+                : SettingsEvent.PrivacyMailProtectionToggleOffClick);
+        }
+
         if (!consentFiltersIds.includes(filter.id) && e && filter.groupId === definedGroups.annoyances) {
             setShowConsentModal(true);
             return;
@@ -80,7 +98,7 @@ function FilterComponent({
     const date = format(timeUpdated, DATE_FORMAT.hours_minutes_day_month_year);
 
     const showLanguageSpecificDisabled = filter.groupId === definedGroups.languageSpecific && !languageSpecific;
-
+    const showPayedFuncsTitle = !!payedFuncsTitle && filter.id === mailTrackingProtectionId;
     return (
         <>
             <SettingsItemSwitch
@@ -120,6 +138,7 @@ function FilterComponent({
                                 })}
                             </Text>
                         )}
+                        {showPayedFuncsTitle && payedFuncsTitle}
                     </>
                 )}
                 description={filter.description}

@@ -225,6 +225,11 @@ public struct FiltersIndex: @unchecked Sendable {
     set {_uniqueStorage()._unblockSearchAdsFilterID = newValue}
   }
 
+  public var mailTrackingProtectionID: Int32 {
+    get {return _storage._mailTrackingProtectionID}
+    set {_uniqueStorage()._mailTrackingProtectionID = newValue}
+  }
+
   public var cookieNoticeFilterID: Int32 {
     get {return _storage._cookieNoticeFilterID}
     set {_uniqueStorage()._cookieNoticeFilterID = newValue}
@@ -819,10 +824,11 @@ extension FiltersIds: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
 
 extension FiltersIndex: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "FiltersIndex"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}unblockSearchAdsFilterId\0\u{1}cookieNoticeFilterId\0\u{1}popUpsFilterId\0\u{1}widgetsFilterId\0\u{1}otherAnnoyanceFilterId\0\u{1}mobileBannersFilter\0\u{1}definedGroups\0\u{1}groups\0\u{1}filtersByGroups\0\u{1}recommendedFiltersIdsByGroupDict\0\u{1}otherFiltersIdsByGroupDict\0\u{1}customGroupId\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}unblockSearchAdsFilterId\0\u{1}mailTrackingProtectionId\0\u{1}cookieNoticeFilterId\0\u{1}popUpsFilterId\0\u{1}widgetsFilterId\0\u{1}otherAnnoyanceFilterId\0\u{1}mobileBannersFilter\0\u{1}definedGroups\0\u{1}groups\0\u{1}filtersByGroups\0\u{1}recommendedFiltersIdsByGroupDict\0\u{1}otherFiltersIdsByGroupDict\0\u{1}customGroupId\0")
 
   fileprivate class _StorageClass {
     var _unblockSearchAdsFilterID: Int32 = 0
+    var _mailTrackingProtectionID: Int32 = 0
     var _cookieNoticeFilterID: Int32 = 0
     var _popUpsFilterID: Int32 = 0
     var _widgetsFilterID: Int32 = 0
@@ -845,6 +851,7 @@ extension FiltersIndex: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
 
     init(copying source: _StorageClass) {
       _unblockSearchAdsFilterID = source._unblockSearchAdsFilterID
+      _mailTrackingProtectionID = source._mailTrackingProtectionID
       _cookieNoticeFilterID = source._cookieNoticeFilterID
       _popUpsFilterID = source._popUpsFilterID
       _widgetsFilterID = source._widgetsFilterID
@@ -875,17 +882,18 @@ extension FiltersIndex: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
         // enabled. https://github.com/apple/swift-protobuf/issues/1034
         switch fieldNumber {
         case 1: try { try decoder.decodeSingularInt32Field(value: &_storage._unblockSearchAdsFilterID) }()
-        case 2: try { try decoder.decodeSingularInt32Field(value: &_storage._cookieNoticeFilterID) }()
-        case 3: try { try decoder.decodeSingularInt32Field(value: &_storage._popUpsFilterID) }()
-        case 4: try { try decoder.decodeSingularInt32Field(value: &_storage._widgetsFilterID) }()
-        case 5: try { try decoder.decodeSingularInt32Field(value: &_storage._otherAnnoyanceFilterID) }()
-        case 6: try { try decoder.decodeSingularInt32Field(value: &_storage._mobileBannersFilter) }()
-        case 7: try { try decoder.decodeSingularMessageField(value: &_storage._definedGroups) }()
-        case 8: try { try decoder.decodeRepeatedMessageField(value: &_storage._groups) }()
-        case 9: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt32,FiltersIds>.self, value: &_storage._filtersByGroups) }()
-        case 10: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt32,FiltersIds>.self, value: &_storage._recommendedFiltersIdsByGroupDict) }()
-        case 11: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt32,FiltersIds>.self, value: &_storage._otherFiltersIdsByGroupDict) }()
-        case 12: try { try decoder.decodeSingularInt32Field(value: &_storage._customGroupID) }()
+        case 2: try { try decoder.decodeSingularInt32Field(value: &_storage._mailTrackingProtectionID) }()
+        case 3: try { try decoder.decodeSingularInt32Field(value: &_storage._cookieNoticeFilterID) }()
+        case 4: try { try decoder.decodeSingularInt32Field(value: &_storage._popUpsFilterID) }()
+        case 5: try { try decoder.decodeSingularInt32Field(value: &_storage._widgetsFilterID) }()
+        case 6: try { try decoder.decodeSingularInt32Field(value: &_storage._otherAnnoyanceFilterID) }()
+        case 7: try { try decoder.decodeSingularInt32Field(value: &_storage._mobileBannersFilter) }()
+        case 8: try { try decoder.decodeSingularMessageField(value: &_storage._definedGroups) }()
+        case 9: try { try decoder.decodeRepeatedMessageField(value: &_storage._groups) }()
+        case 10: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt32,FiltersIds>.self, value: &_storage._filtersByGroups) }()
+        case 11: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt32,FiltersIds>.self, value: &_storage._recommendedFiltersIdsByGroupDict) }()
+        case 12: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt32,FiltersIds>.self, value: &_storage._otherFiltersIdsByGroupDict) }()
+        case 13: try { try decoder.decodeSingularInt32Field(value: &_storage._customGroupID) }()
         default: break
         }
       }
@@ -901,38 +909,41 @@ extension FiltersIndex: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
       if _storage._unblockSearchAdsFilterID != 0 {
         try visitor.visitSingularInt32Field(value: _storage._unblockSearchAdsFilterID, fieldNumber: 1)
       }
+      if _storage._mailTrackingProtectionID != 0 {
+        try visitor.visitSingularInt32Field(value: _storage._mailTrackingProtectionID, fieldNumber: 2)
+      }
       if _storage._cookieNoticeFilterID != 0 {
-        try visitor.visitSingularInt32Field(value: _storage._cookieNoticeFilterID, fieldNumber: 2)
+        try visitor.visitSingularInt32Field(value: _storage._cookieNoticeFilterID, fieldNumber: 3)
       }
       if _storage._popUpsFilterID != 0 {
-        try visitor.visitSingularInt32Field(value: _storage._popUpsFilterID, fieldNumber: 3)
+        try visitor.visitSingularInt32Field(value: _storage._popUpsFilterID, fieldNumber: 4)
       }
       if _storage._widgetsFilterID != 0 {
-        try visitor.visitSingularInt32Field(value: _storage._widgetsFilterID, fieldNumber: 4)
+        try visitor.visitSingularInt32Field(value: _storage._widgetsFilterID, fieldNumber: 5)
       }
       if _storage._otherAnnoyanceFilterID != 0 {
-        try visitor.visitSingularInt32Field(value: _storage._otherAnnoyanceFilterID, fieldNumber: 5)
+        try visitor.visitSingularInt32Field(value: _storage._otherAnnoyanceFilterID, fieldNumber: 6)
       }
       if _storage._mobileBannersFilter != 0 {
-        try visitor.visitSingularInt32Field(value: _storage._mobileBannersFilter, fieldNumber: 6)
+        try visitor.visitSingularInt32Field(value: _storage._mobileBannersFilter, fieldNumber: 7)
       }
       try { if let v = _storage._definedGroups {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
       } }()
       if !_storage._groups.isEmpty {
-        try visitor.visitRepeatedMessageField(value: _storage._groups, fieldNumber: 8)
+        try visitor.visitRepeatedMessageField(value: _storage._groups, fieldNumber: 9)
       }
       if !_storage._filtersByGroups.isEmpty {
-        try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt32,FiltersIds>.self, value: _storage._filtersByGroups, fieldNumber: 9)
+        try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt32,FiltersIds>.self, value: _storage._filtersByGroups, fieldNumber: 10)
       }
       if !_storage._recommendedFiltersIdsByGroupDict.isEmpty {
-        try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt32,FiltersIds>.self, value: _storage._recommendedFiltersIdsByGroupDict, fieldNumber: 10)
+        try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt32,FiltersIds>.self, value: _storage._recommendedFiltersIdsByGroupDict, fieldNumber: 11)
       }
       if !_storage._otherFiltersIdsByGroupDict.isEmpty {
-        try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt32,FiltersIds>.self, value: _storage._otherFiltersIdsByGroupDict, fieldNumber: 11)
+        try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt32,FiltersIds>.self, value: _storage._otherFiltersIdsByGroupDict, fieldNumber: 12)
       }
       if _storage._customGroupID != 0 {
-        try visitor.visitSingularInt32Field(value: _storage._customGroupID, fieldNumber: 12)
+        try visitor.visitSingularInt32Field(value: _storage._customGroupID, fieldNumber: 13)
       }
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -944,6 +955,7 @@ extension FiltersIndex: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
         let _storage = _args.0
         let rhs_storage = _args.1
         if _storage._unblockSearchAdsFilterID != rhs_storage._unblockSearchAdsFilterID {return false}
+        if _storage._mailTrackingProtectionID != rhs_storage._mailTrackingProtectionID {return false}
         if _storage._cookieNoticeFilterID != rhs_storage._cookieNoticeFilterID {return false}
         if _storage._popUpsFilterID != rhs_storage._popUpsFilterID {return false}
         if _storage._widgetsFilterID != rhs_storage._widgetsFilterID {return false}

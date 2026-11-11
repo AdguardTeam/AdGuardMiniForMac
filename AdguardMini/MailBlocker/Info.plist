@@ -16,5 +16,9 @@
 		<key>NSExtensionPrincipalClass</key>
 		<string>$(PRODUCT_MODULE_NAME).MailExtension</string>
 	</dict>
+	<key>CFBundleDisplayName</key>
+	<string>AdGuard Mail Tracking Protection</string>
+	<key>NSHumanReadableDescription</key>
+	<string>Lets AdGuard Mini block hidden trackers in your emails</string>
 </dict>
 </plist>

@@ -34,11 +34,12 @@ SPDX-License-Identifier: GPL-3.0-or-later
 ## Project Overview
 
 AdGuard Mini (formerly AdGuard for Safari) is a macOS ad-blocking application
-for Safari. It consists of a platform layer written in Swift (main app + Safari
-extensions) and a UI layer written in TypeScript (Preact/MobX modules rendered
-via WKWebView). The app uses Safari Content Blocker and Web Extension APIs
-to block ads, trackers, and annoyances. It also includes a Safari popup
-extension for in-browser controls and a Protobuf-based schema for Swift/TS data
+for Safari and Apple Mail. It consists of a platform layer written in Swift
+(main app + Safari extensions and the MailKit extension) and a UI layer written
+in TypeScript (Preact/MobX modules rendered via WKWebView). The app uses Safari
+Content Blocker, Web Extension, and MailKit Content Blocker APIs to block ads,
+trackers, and annoyances. It also includes a Safari popup extension for
+in-browser controls and a Protobuf-based schema for Swift/TS data
 synchronization.
 
 ## Technical Context
@@ -62,8 +63,8 @@ synchronization.
       `sciter-rules-builder` repository — the user-rules builder and
       simple tokenizer extracted from rules-editor v1, backed by
       `@adguard/agtree`), classix, date-fns, lodash
-- **Storage**: UserDefaults, file-based storage (JSON/plist), Safari Content
-  Blocker rules (JSON)
+- **Storage**: UserDefaults, file-based storage (JSON/plist), Safari and
+  MailKit Content Blocker rules (JSON)
 - **Testing**: XCTest (Swift), node:test (TypeScript)
 - **Target Platform**: macOS 13+ (deployment), macOS 26+ (development machine),
   Safari extensions
@@ -400,9 +401,9 @@ long-lived environment:
   through `ServiceSupervisor` before the app exits.
 - Handle crashes gracefully — report through Sentry and never corrupt the
   shared App Group data that Safari extensions depend on.
-- Safari extensions run in separate sandboxed processes and MUST keep working
-  when the main app is absent (see the Extension independence guideline in
-  Other).
+- Safari extensions and the MailKit extension run in separate sandboxed
+  processes and MUST keep working when the main app is absent (see the
+  Extension independence guideline in Other).
 
 ### Architecture
 
@@ -462,20 +463,20 @@ Blocker JSON consumed by the extension targets.
    **Rationale**: Decouples components and enables testability across multiple
    targets.
 
-2. **Multi-target structure**: Code shared between the main app and Safari
-   extensions MUST be placed in `SharedSources/`. Extension-specific code stays
-   in the respective extension directory.
+2. **Multi-target structure**: Code shared between the main app and its Safari
+   and MailKit extensions MUST be placed in `SharedSources/`.
+   Extension-specific code stays in the respective extension directory.
 
-   **Rationale**: Safari extensions run in separate processes; shared code
+   **Rationale**: The extensions run in separate processes; shared code
    avoids duplication while respecting target boundaries.
 
 3. **Protobuf schema sync**: Swift and TypeScript communicate via Protobuf.
    Schema definitions live in `AdguardMini/ui/schema/`. Generated Swift
    code goes to `AdguardMini/MiniResources/ProtoSchema/Sources/`, generated
-   TypeScript stays in the schema directory. Generated service protocols
-   declare each reply `promise` as `sending`: implementations MUST declare
-   the same `sending` parameter and hand the promise to the `Task` as is,
-   without re-binding it through `nonisolated(unsafe)`.
+   TypeScript goes to `AdguardMini/ui/modules/common/apis/`. Generated service
+   protocols declare each reply `promise` as `sending`: implementations MUST
+   declare the same `sending` parameter and hand the promise to the `Task` as
+   is, without re-binding it through `nonisolated(unsafe)`.
 
    **Rationale**: Ensures type-safe communication between Swift platform layer
    and TypeScript UI layer; the `sending` contract states the reply handover
@@ -1060,11 +1061,11 @@ humans and AI agents that consume project documentation.
    When reviewing code, do not flag missing imports for these injected globals.
 
 6. **Extension independence**: Safari extensions (content blockers, popup,
-   web extension) MUST remain functional when the main app is absent or not
-   running. The current codebase does not fully satisfy this goal, but you MUST
-   NOT make it worse. Any new code that causes an extension to lose
-   functionality (or fail entirely) solely because the main app is unavailable
-   is incorrect and MUST be reworked.
+   web extension) and the MailKit extension MUST remain functional when the
+   main app is absent or not running. The current codebase does not fully
+   satisfy this goal, but you MUST NOT make it worse. Any new code that causes
+   an extension to lose functionality (or fail entirely) solely because the
+   main app is unavailable is incorrect and MUST be reworked.
 
 7. **Constants grouping (Swift)**: Repeated literal values within a type MUST
    be extracted into a `private enum Constants` nested type. Each constant gets

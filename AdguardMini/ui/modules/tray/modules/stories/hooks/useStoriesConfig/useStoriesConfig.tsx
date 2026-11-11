@@ -66,6 +66,7 @@ export function useStoriesConfig(): StoryInfo[] {
         license,
         statistics,
         lastUpdateMoreSevenDays,
+        mailProtection,
     } = settings;
 
     const {
@@ -322,6 +323,53 @@ export function useStoriesConfig(): StoryInfo[] {
                 backgroundColor: 'purple',
             },
             telemetryEvent: TrayEvent.TrayStorySystemWideClick,
+        });
+    }
+
+    if (!isLicenseOrTrialActive || mailProtection === false) {
+        let actionButtonTitle = '';
+        let actionButton = noop;
+        if (!isLicenseOrTrialActive && trialAvailableDays > 0) {
+            actionButtonTitle = translate.plural('tray.story.mail.protection.action.trial', trialAvailableDays, provideTrialDaysParam(trialAvailableDays));
+            actionButton = () => {
+                telemetry.trackEvent(TrayEvent.StoryMailProtection14DaysClick);
+                settings.requestOpenPaywallScreen();
+            };
+        } else if (!isLicenseOrTrialActive) {
+            actionButtonTitle = translate('tray.story.mail.protection.action');
+            actionButton = () => {
+                telemetry.trackEvent(TrayEvent.StoryMailProtectionFullVersionClick);
+                settings.requestOpenPaywallScreen();
+            };
+        } else {
+            actionButtonTitle = translate('enable');
+            actionButton = () => {
+                telemetry.trackEvent(TrayEvent.StoryMailProtectionEnableClick);
+                window.API.Execute(new OpenSettingsWindowRequest());
+                window.API.Execute(new RequestOpenSettingsPageRequest({
+                    value: RouteNameSettings.mail_protection,
+                }));
+            };
+        }
+        stories.push({
+            icon: 'feedback',
+            text: translate('tray.story.mail.protection.card'),
+            storyConfig: {
+                id: 'mailProtection',
+                frames: [{
+                    title: translate('tray.story.mail.protection.card'),
+                    description: translate('tray.story.mail.protection.desc'),
+                    image: 'mailProtection',
+                    buttons: [{
+                        title: actionButtonTitle,
+                        type: 'primary',
+                        action: actionButton,
+                    }],
+                    frameId: 'mailProtection1',
+                }],
+                backgroundColor: 'emerald',
+            },
+            telemetryEvent: TrayEvent.StoryMailTrackersClick,
         });
     }
 

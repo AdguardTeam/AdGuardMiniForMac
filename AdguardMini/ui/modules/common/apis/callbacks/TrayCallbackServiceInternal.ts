@@ -49,4 +49,10 @@ export class TrayCallbackServiceInternal implements ITrayCallbackServiceInternal
         store.callbackService.OnTrayPageRequested(param);
         return new EmptyValue();
     }
+
+    /* Fires when the Apple Mail tracking protection switch changes */
+    async OnMailProtectionChanged(param: BoolValue): Promise<EmptyValue> {
+        store.callbackService.OnMailProtectionChanged(param);
+        return new EmptyValue();
+    }
 }

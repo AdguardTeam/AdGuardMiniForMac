@@ -54,6 +54,7 @@ extension FiltersIds {
 extension FiltersIndex {
     public init(
          unblockSearchAdsFilterID: Int32 = 0,
+         mailTrackingProtectionID: Int32 = 0,
          cookieNoticeFilterID: Int32 = 0,
          popUpsFilterID: Int32 = 0,
          widgetsFilterID: Int32 = 0,
@@ -68,6 +69,7 @@ extension FiltersIndex {
     ) {
         self.init()
         self.unblockSearchAdsFilterID = unblockSearchAdsFilterID
+        self.mailTrackingProtectionID = mailTrackingProtectionID
         self.cookieNoticeFilterID = cookieNoticeFilterID
         self.popUpsFilterID = popUpsFilterID
         self.widgetsFilterID = widgetsFilterID

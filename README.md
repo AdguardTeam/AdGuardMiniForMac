@@ -66,6 +66,7 @@ With AdGuard Mini you can manage ad blocking directly from Safari – pause prot
 * Real-time filter updates for precise ad blocking
 * AdGuard Extra to handle anti-adblock scripts and complex cases
 * Advanced custom filters to add any filters you wish
+* Apple Mail tracking protection to block hidden trackers in your emails
 
 Advanced features can be unlocked by an AdGuard Ad Blocker license, which can be obtained on our website or through in-app purchase.
 

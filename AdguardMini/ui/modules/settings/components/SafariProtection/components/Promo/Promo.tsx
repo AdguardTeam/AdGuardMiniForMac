@@ -3,56 +3,109 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { observer } from 'mobx-react-lite';
-import { useId } from 'preact/hooks';
+import { useId, useState } from 'preact/hooks';
 
 import { Button, Text } from 'Modules/common/components';
 import { useSettingsStore } from 'SettingsLib/hooks';
-import { RouteName } from 'SettingsStore/modules';
+import { RouteName, SettingsEvent } from 'SettingsStore/modules';
 
-import promoIllustration from './images/promo_illustration.svg';
+import mail_protection from './images/mail_protection_promo.svg';
+import system_wide from './images/promo_illustration.svg';
 import s from './Promo.module.pcss';
 
 const SYSTEM_WIDE_ID = 'system_wide_protection';
+const MAIL_PROTECTION_ID = 'mail_protection';
 
 /**
- * Promo card component for system-wide protection.
+ * Promo card configuration.
+ */
+type PromoConfig = {
+    /** Promo id persisted in the dismissed cards list. */
+    id: string;
+    /** Whether the advertised setting is already enabled. */
+    isEnabled: boolean;
+    /** Promo illustration source. */
+    illustration: string;
+    /** Promo title. */
+    title: string;
+    /** Promo description. */
+    description: string;
+    /** Promo action button text. */
+    buttonText: string;
+    /** Persists the promo dismissal. */
+    dismiss(): void;
+    /** Navigates to the advertised feature page. */
+    action(): void;
+};
+
+/**
+ * Promo card component for Safari protection features.
  */
 export function PromoComponent() {
     const titleId = useId();
     const descId = useId();
 
-    const { advancedBlocking, router, settings } = useSettingsStore();
+    const { advancedBlocking, account, router, settings, telemetry } = useSettingsStore();
     const { urlFilterState, isURLFilterStateLoaded } = advancedBlocking;
     const { userIntentEnabled } = urlFilterState;
-
-    const isPromoDismissed = settings.dismissedPromoCards.has(SYSTEM_WIDE_ID);
+    const { isLicenseOrTrialActive } = account;
     const { experimentalSystemWideProtectionEnabled } = settings.settings;
 
-    if (
-        !experimentalSystemWideProtectionEnabled
-        || !isURLFilterStateLoaded
-        || !settings.promoDismissedLoaded
-        || userIntentEnabled
-        || isPromoDismissed
-    ) {
+    // Whether the user dismissed a promo on the current page open.
+    const [dismissedThisVisit, setDismissedThisVisit] = useState(false);
+
+    const promos: PromoConfig[] = [
+        ...(experimentalSystemWideProtectionEnabled ? [{
+            id: SYSTEM_WIDE_ID,
+            isEnabled: userIntentEnabled,
+            illustration: system_wide,
+            title: translate('advanced.blocking.system.wide.promo.title'),
+            description: translate('advanced.blocking.system.wide.promo.desc'),
+            buttonText: translate('advanced.blocking.system.wide.promo.button'),
+            dismiss: () => {
+                settings.updatePromoDismissedCards([...settings.dismissedPromoCards, SYSTEM_WIDE_ID]);
+            },
+            action: () => {
+                telemetry.trackEvent(SettingsEvent.SystemWideBannerClick);
+                router.changePath(RouteName.system_wide_protection);
+            },
+        }] : []),
+        {
+            id: MAIL_PROTECTION_ID,
+            isEnabled: isLicenseOrTrialActive && advancedBlocking.mailProtection,
+            illustration: mail_protection,
+            title: translate('advanced.blocking.mail.protection.promo.title'),
+            description: translate('advanced.blocking.mail.protection.promo.desc'),
+            buttonText: translate('advanced.blocking.mail.protection.promo.button'),
+            dismiss: () => {
+                telemetry.trackEvent(SettingsEvent.PromoProtectAppleMailClose);
+                settings.updatePromoDismissedCards([...settings.dismissedPromoCards, MAIL_PROTECTION_ID]);
+            },
+            action: () => {
+                telemetry.trackEvent(SettingsEvent.PromoProtectAppleMailClick);
+                router.changePath(RouteName.mail_protection);
+            },
+        },
+    ];
+
+    // The default state is not an answer: wait for the platform before deciding.
+    if (!isURLFilterStateLoaded || !settings.promoDismissedLoaded) {
         return null;
     }
 
-    // Will be used for future promo cards, for now we only have one.
-    const promos = [{
-        id: SYSTEM_WIDE_ID,
-        title: translate('advanced.blocking.system.wide.promo.title'),
-        description: translate('advanced.blocking.system.wide.promo.desc'),
-        buttonText: translate('advanced.blocking.system.wide.promo.button'),
-        dismiss: () => {
-            settings.updatePromoDismissedCards([...settings.dismissedPromoCards, SYSTEM_WIDE_ID]);
-        },
-        action: () => {
-            router.changePath(RouteName.system_wide_protection);
-        },
-    }];
+    const promo = promos.find((item) => (
+        !settings.dismissedPromoCards.has(item.id)
+        && !item.isEnabled
+    ));
 
-    const promo = promos[0];
+    if (!promo || dismissedThisVisit) {
+        return null;
+    }
+
+    const dismiss = () => {
+        setDismissedThisVisit(true);
+        promo.dismiss();
+    };
 
     return (
         <div className={s.Promo}>
@@ -62,7 +115,7 @@ export function PromoComponent() {
                 className={s.Promo_close}
                 icon="cross"
                 type="icon"
-                onClick={promo.dismiss}
+                onClick={dismiss}
             />
             <div className={s.Promo_left}>
                 {/*
@@ -87,7 +140,7 @@ export function PromoComponent() {
                 </Button>
             </div>
             <div className={s.Promo_illustration}>
-                <img alt="" src={promoIllustration} />
+                <img alt="" src={promo.illustration} />
             </div>
         </div>
     );

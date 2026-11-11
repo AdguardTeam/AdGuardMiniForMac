@@ -30,6 +30,7 @@ enum Event: String {
     case loginItemStateChange     = "LoginItemStateChange"
     case hardwareAccelerationChanged = "HardwareAccelerationChanged"
     case protectionStatusChanged  = "ProtectionStatusChanged"
+    case mailProtectionChanged    = "MailProtectionChanged"
 
     case filtersUpdateStarted   = "FiltersUpdateStarted"
     case filtersRulesUpdated    = "FiltersRulesUpdated"

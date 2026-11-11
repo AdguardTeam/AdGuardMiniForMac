@@ -45,6 +45,11 @@ export enum TrayEvent {
     TrayStorySystemWideTryFreeClick = 'tray_story_system_wide_try_free_click',
     TrayStorySystemWideBuyClick = 'tray_story_system_wide_buy_click',
     TrayStorySystemWideEnableClick = 'tray_story_system_wide_enable_click',
+    /* Mail protection */
+    StoryMailProtection14DaysClick = 'story_mail_protection_14_days_click',
+    StoryMailProtectionFullVersionClick = 'story_mail_protection_full_version_click',
+    StoryMailProtectionEnableClick = 'story_mail_protection_enable_click',
+    StoryMailTrackersClick = 'story_mail_trackers_click',
 }
 
 /**

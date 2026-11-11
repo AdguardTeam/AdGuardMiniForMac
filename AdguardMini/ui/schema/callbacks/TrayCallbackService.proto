@@ -23,4 +23,6 @@ service TrayCallbackService {
     rpc OnEffectiveThemeChanged(EffectiveThemeValue) returns (EmptyValue);
     /* Fires when tray should open specific page */
     rpc OnTrayPageRequested(StringValue) returns (EmptyValue);
+    /* Fires when the Apple Mail tracking protection switch changes */
+    rpc OnMailProtectionChanged(BoolValue) returns (EmptyValue);
 }

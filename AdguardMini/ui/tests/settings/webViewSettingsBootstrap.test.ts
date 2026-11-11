@@ -48,9 +48,10 @@ const SETTINGS_METHODS = [
     'OnSettingsWindowOpened',
     'OnURLFilterStateChanged',
     'OnProtectionStatusChanged',
+    'OnMailProtectionChanged',
 ] as const;
 
-/** Minimal stub recording the 11 method calls (avoids log/store deps). */
+/** Minimal stub recording the 12 method calls (avoids log/store deps). */
 const makeStubService = () => {
     const calls: Array<{ method: string; buffer: ArrayBuffer }> = [];
     const stub: Record<string, (buffer: ArrayBuffer) => Promise<unknown>> = {};
@@ -121,7 +122,7 @@ test('routes SystemClipboard.writeText to the Swift NSPasteboard bridge', () => 
     assert.deepEqual(posted, [{ name: 'systemClipboard', body: 'LICENSE-KEY-1234' }]);
 });
 
-test('registers all 11 SettingsCallbackService handlers', async () => {
+test('registers all 12 SettingsCallbackService handlers', async () => {
     const { w } = setupFakeWindow();
     __resetForTests();
     const { stub, calls } = makeStubService();
@@ -141,7 +142,7 @@ test('registers all 11 SettingsCallbackService handlers', async () => {
         await dispatch(`SettingsCallbackService.${method}`, 'AA==');
     }
 
-    assert.equal(calls.length, 11);
+    assert.equal(calls.length, 12);
     assert.deepEqual(
         calls.map((c) => c.method).sort(),
         [...SETTINGS_METHODS].sort(),

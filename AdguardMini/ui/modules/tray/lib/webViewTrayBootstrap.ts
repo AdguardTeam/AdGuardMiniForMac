@@ -29,6 +29,7 @@ export function setupTrayWebViewBridge(trayCallbackService: TrayCallbackService)
         'OnLicenseUpdate',
         'OnEffectiveThemeChanged',
         'OnTrayPageRequested',
+        'OnMailProtectionChanged',
     ] as const;
 
     for (const method of methods) {

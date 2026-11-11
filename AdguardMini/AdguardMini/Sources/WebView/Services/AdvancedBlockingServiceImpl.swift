@@ -14,7 +14,8 @@ import AML
 extension AdvancedBlockingServiceImpl:
     UserSettingsServiceDependent,
     URLFilterServiceDependent,
-    URLFilterStateAssemblerDependent {}
+    URLFilterStateAssemblerDependent,
+    MailAppOpenerDependent {}
 
 /// `@unchecked Sendable` because the injected services are assigned once
 /// during DI setup and only read afterwards.
@@ -22,6 +23,7 @@ final class AdvancedBlockingServiceImpl: AdvancedBlockingService.ServiceType, @u
     var userSettingsService: UserSettingsService!
     var urlFilterService: URLFilterService!
     var urlFilterStateAssembler: URLFilterStateAssembler!
+    var mailAppOpener: MailAppOpening!
 
     override init() {
         super.init()
@@ -51,12 +53,47 @@ final class AdvancedBlockingServiceImpl: AdvancedBlockingService.ServiceType, @u
     }
 
     func getMailProtection(_ message: EmptyValue,
-                           _ promise: @escaping (BoolValue) -> Void) {
-        promise(BoolValue(false))
+                           _ promise: sending @escaping (BoolValue) -> Void) {
+        promise(BoolValue(self.userSettingsService.mailProtection))
     }
 
     func updateMailProtection(_ message: BoolValue,
-                              _ promise: @escaping (EmptyValue) -> Void) {
+                              _ promise: sending @escaping (EmptyValue) -> Void) {
+        self.userSettingsService.setMailProtection(message.value)
+        promise(EmptyValue())
+    }
+
+    func getMailProtectionIsNew(_ message: EmptyValue,
+                                _ promise: sending @escaping (BoolValue) -> Void) {
+        promise(BoolValue(self.userSettingsService.mailProtectionIsNew))
+    }
+
+    func updateMailProtectionIsNew(_ message: BoolValue,
+                                   _ promise: sending @escaping (EmptyValue) -> Void) {
+        self.userSettingsService.mailProtectionIsNew = message.value
+        promise(EmptyValue())
+    }
+
+    func getMailOnboardingShown(_ message: EmptyValue,
+                                _ promise: sending @escaping (BoolValue) -> Void) {
+        promise(BoolValue(self.userSettingsService.mailOnboardingShown))
+    }
+
+    func updateMailOnboardingShown(_ message: BoolValue,
+                                   _ promise: sending @escaping (EmptyValue) -> Void) {
+        self.userSettingsService.mailOnboardingShown = message.value
+        promise(EmptyValue())
+    }
+
+    func openAppleMail(_ message: EmptyValue,
+                       _ promise: sending @escaping (EmptyValue) -> Void) {
+        self.mailAppOpener.openAppleMail()
+        promise(EmptyValue())
+    }
+
+    func openMailExtensionSettings(_ message: EmptyValue,
+                                   _ promise: sending @escaping (EmptyValue) -> Void) {
+        self.mailAppOpener.openMailExtensionSettings()
         promise(EmptyValue())
     }
 

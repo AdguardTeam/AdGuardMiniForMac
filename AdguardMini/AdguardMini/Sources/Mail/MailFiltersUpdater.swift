@@ -20,6 +20,11 @@ private enum Constants {
 /// Regenerates the Mail Tracking Protection ruleset and reloads the MailKit
 /// extension. Starts, stops, and debounces update requests.
 protocol MailFiltersUpdater: RestartableService {
+    /// Requests a debounced ruleset regeneration.
+    ///
+    /// A Mail protection toggle-off clears the ruleset and reloads the
+    /// extension even while the updater is stopped, so the extension stops
+    /// blocking with a stale ruleset once the user turns the feature off.
     func updateMailFilters()
 }
 
@@ -75,8 +80,10 @@ final class MailFiltersUpdaterImpl: RestartableServiceBase, MailFiltersUpdater, 
     }
 
     func updateMailFilters() {
+        // A toggle-off clears the ruleset even if the main protection keeps us stopped.
+        let mustClearRuleset = !self.protectionProvider.mailProtection
         locked(self.lk) {
-            guard self.isStarted else {
+            guard self.isStarted || mustClearRuleset else {
                 self.hasPendingUpdates = true
                 return
             }
@@ -99,6 +106,8 @@ final class MailFiltersUpdaterImpl: RestartableServiceBase, MailFiltersUpdater, 
     /// One conversion→reload→log cycle. Internal so tests drive it directly,
     /// without debounce timing.
     func convert() async {
+        guard !Task.isCancelled else { return }
+
         let updateId = locked(self.lk) {
             self.hasPendingUpdates = false
             self.updateCounter += 1
@@ -113,12 +122,24 @@ final class MailFiltersUpdaterImpl: RestartableServiceBase, MailFiltersUpdater, 
         let filterRules = await self.ruleProvider.mailFilterRules()
         let userRules = await self.ruleProvider.enabledUserRules()
 
+        // A superseded run must not overwrite the ruleset the newer run builds.
+        guard !Task.isCancelled else {
+            LogInfo("Mail filters update was cancelled (ID: \(updateId))")
+            return
+        }
+
         let result = await self.converter.convert(
             isEnabled: isEnabled,
             isPremium: isPremium,
             filterRules: filterRules,
             userRules: userRules
         )
+
+        // A superseded run must not persist state or reload the extension.
+        guard !Task.isCancelled else {
+            LogInfo("Mail filters update was cancelled (ID: \(updateId))")
+            return
+        }
 
         // The generation outcome has no entry-count field.
         // Populated outcomes log converter errors; empty outcomes publish `[]`.
@@ -180,14 +201,4 @@ final class MailFiltersUpdaterImpl: RestartableServiceBase, MailFiltersUpdater, 
             .init(rulesInfo: rulesInfo, status: status)
         )
     }
-}
-
-// MARK: - MailFiltersUpdaterNoOp
-
-/// A no-op implementation of ``MailFiltersUpdater``.
-///
-/// Remove this type and switch back to ``MailFiltersUpdaterImpl``
-/// in ``ServiceLocator`` once MTP is ready for production.
-final class MailFiltersUpdaterNoOp: RestartableServiceBase, MailFiltersUpdater {
-    func updateMailFilters() {}
 }

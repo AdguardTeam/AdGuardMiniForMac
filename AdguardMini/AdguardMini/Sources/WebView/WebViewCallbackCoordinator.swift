@@ -84,6 +84,7 @@ final class WebViewCallbackCoordinator: @unchecked Sendable {
         subscribe(#selector(customFilterSubscriptionUrlReceived(_:)), .customFilterSubscriptionUrlReceived)
         subscribe(#selector(hardwareAccelerationChanged(_:)), .hardwareAccelerationChanged)
         subscribe(#selector(protectionStatusChanged(_:)), .protectionStatusChanged)
+        subscribe(#selector(mailProtectionChanged(_:)), .mailProtectionChanged)
         subscribe(#selector(urlFilterStateChanged(_:)), .urlFilterStatusChanged)
         subscribe(#selector(urlFilterStateChanged(_:)), .urlFilterConfigurationChanged)
     }
@@ -227,6 +228,14 @@ final class WebViewCallbackCoordinator: @unchecked Sendable {
     @objc private func protectionStatusChanged(_ note: Notification) {
         guard let enabled: Bool = self.eventBus.parseNotification(note) else { return }
         self.settings.onProtectionStatusChanged(BoolValue(enabled))
+    }
+
+    /// Forwards the Apple Mail tracking protection switch state to tray and settings.
+    @objc private func mailProtectionChanged(_ note: Notification) {
+        guard let enabled: Bool = self.eventBus.parseNotification(note) else { return }
+        let value = BoolValue(enabled)
+        self.tray.onMailProtectionChanged(value)
+        self.settings.onMailProtectionChanged(value)
     }
 
     /// Rebuilds and pushes full URL-filter state to settings.

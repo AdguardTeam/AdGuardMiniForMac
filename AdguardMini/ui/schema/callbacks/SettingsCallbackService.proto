@@ -30,4 +30,6 @@ service SettingsCallbackService {
     rpc OnURLFilterStateChanged(URLFilterState) returns (EmptyValue);
     /* Fires when the main protection switch changes */
     rpc OnProtectionStatusChanged(BoolValue) returns (EmptyValue);
+    /* Fires when the Apple Mail tracking protection switch changes */
+    rpc OnMailProtectionChanged(BoolValue) returns (EmptyValue);
 }

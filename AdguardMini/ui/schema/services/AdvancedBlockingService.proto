@@ -18,6 +18,18 @@ service AdvancedBlockingService {
     rpc GetMailProtection(EmptyValue) returns (BoolValue);
     /* Update MailProtection */
     rpc UpdateMailProtection(BoolValue) returns (EmptyValue);
+    /* Get MailProtection is-new state */
+    rpc GetMailProtectionIsNew(EmptyValue) returns (BoolValue);
+    /* Update MailProtection is-new state */
+    rpc UpdateMailProtectionIsNew(BoolValue) returns (EmptyValue);
+    /* Get Apple Mail extension onboarding shown state */
+    rpc GetMailOnboardingShown(EmptyValue) returns (BoolValue);
+    /* Update Apple Mail extension onboarding shown state */
+    rpc UpdateMailOnboardingShown(BoolValue) returns (EmptyValue);
+    /* Open Apple Mail */
+    rpc OpenAppleMail(EmptyValue) returns (EmptyValue);
+    /* Open Apple Mail extension settings */
+    rpc OpenMailExtensionSettings(EmptyValue) returns (EmptyValue);
      /* Get RealTimeFiltersUpdate */
     rpc GetRealTimeFiltersUpdate(EmptyValue) returns (BoolValue);
     /* Update RealTimeFiltersUpdate */

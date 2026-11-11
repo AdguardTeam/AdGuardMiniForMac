@@ -24,6 +24,7 @@ export enum RouteName {
     migration = 'migration',
     theme = 'theme',
     system_wide_protection = 'system_wide_protection',
+    mail_protection = 'mail_protection',
 }
 
 /**

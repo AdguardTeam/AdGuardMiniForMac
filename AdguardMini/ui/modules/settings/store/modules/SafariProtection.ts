@@ -44,6 +44,7 @@ export class SafariProtection extends SafariProtectionData {
             updateBlockPopups: action,
             updateBlockWidgets: action,
             updateBlockOther: action,
+            updateBlockEmailTrackers: action,
         });
     }
 
@@ -80,10 +81,22 @@ export class SafariProtection extends SafariProtectionData {
      * @param value Whether tracker blocking should be enabled.
      */
     public async updateBlockTrackers(value: boolean) {
-        const { recommendedFiltersByGroups, filtersIndex } = this.filters;
-        const definedGroups = filtersIndex.definedGroups || {};
+        const ids = this.trackerBlockingFiltersIds;
+        if (!ids) {
+            return;
+        }
+        return this.filtersStore.switchFiltersState(ids, value);
+    }
+
+    /**
+     * Update blockEmailTrackers in safari protection.
+     *
+     * @param value Whether email-tracker blocking should be enabled.
+     */
+    public async updateBlockEmailTrackers(value: boolean) {
+        const { filtersIndex } = this.filters;
         return this.filtersStore.switchFiltersState(
-            recommendedFiltersByGroups[definedGroups.privacy],
+            [filtersIndex.mailTrackingProtectionId],
             value,
         );
     }

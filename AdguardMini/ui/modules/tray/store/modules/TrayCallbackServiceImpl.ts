@@ -53,6 +53,7 @@ export class TrayCallbackServiceImpl {
             this.settings.checkApplicationVersion();
             this.settings.getAdguardExtra();
             this.settings.getURLFilterState();
+            this.settings.getMailProtection();
             this.settings.getEffectiveTheme();
             this.filters.getEnabledFilters();
             this.filters.getFilters();
@@ -112,6 +113,7 @@ export class TrayCallbackServiceImpl {
         this.settings.setLicense(param);
         this.settings.getAdguardExtra();
         this.settings.getURLFilterState();
+        this.settings.getMailProtection();
     }
 
     /**
@@ -128,5 +130,12 @@ export class TrayCallbackServiceImpl {
         if (Object.values(TrayRoute).includes(param.value as TrayRoute)) {
             this.router.changePath(param.value as TrayRoute);
         }
+    }
+
+    /**
+     * OnMailProtectionChanged callback handler
+     */
+    public OnMailProtectionChanged(param: BoolValue) {
+        this.settings.setMailProtection(param.value);
     }
 }

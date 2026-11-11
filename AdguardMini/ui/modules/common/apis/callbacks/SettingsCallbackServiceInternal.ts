@@ -111,4 +111,10 @@ async OnSafariExtensionUpdate(param: SafariExtensionUpdate): Promise<EmptyValue>
         store.settings.setProtectionEnabled(param.value);
         return new EmptyValue();
     }
+
+    /* Fires when the Apple Mail tracking protection switch changes */
+    async OnMailProtectionChanged(param: BoolValue): Promise<EmptyValue> {
+        store.advancedBlocking.setMailProtection(param.value);
+        return new EmptyValue();
+    }
 }

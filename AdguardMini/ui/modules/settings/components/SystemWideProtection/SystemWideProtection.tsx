@@ -47,7 +47,7 @@ function SystemWideProtectionComponent() {
 
     useEffect(() => {
         if (urlFilterNew) {
-            return () => advancedBlocking.updateURLFilterSeen(true);
+            return () => advancedBlocking.updateURLFilterSeen(false);
         }
     }, [advancedBlocking, urlFilterNew]);
 

@@ -40,6 +40,7 @@ export function setupSettingsWebViewBridge(
         'OnSettingsWindowOpened',
         'OnURLFilterStateChanged',
         'OnProtectionStatusChanged',
+        'OnMailProtectionChanged',
     ] as const;
 
     for (const method of methods) {
