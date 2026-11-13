@@ -78,19 +78,6 @@ jobs:
         with:
           key: sciter-adguard-mini/build-number
 
-  # The runner image lives in the KV store so it can be rotated without edits.
-  resolve-runner:
-    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
-    name: Resolve runner
-    runs-on: [team-mac]
-    outputs:
-      image: ${{ steps.kv.outputs.value }}
-    steps:
-      - uses: AdGuardSoftwareLimited/actions/actions/kv-get@master
-        id: kv
-        with:
-          key: build-images/macos
-
   # Single source for artifact names, download URLs, the deployer module,
   # and the resolved Slack notification channel.
   constants:
@@ -284,11 +271,11 @@ jobs:
   package:
     if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
     name: Package & sign
-    needs: [meta, build-number, constants, resolve-runner, build-standalone]
+    needs: [meta, build-number, constants, build-standalone]
     runs-on:
       - ephemeral
       - ephemeral-mac
-      - ${{ needs.resolve-runner.outputs.image }}
+      - registry.int.agrd.dev/macos/tahoe-github-xcode26.4.1-26.11:@edge
       - ephemeral-limit-memory-8192
       - ephemeral-limit-cpu-4
       - ephemeral-limit-disk-gb-20

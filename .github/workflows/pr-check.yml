@@ -62,19 +62,6 @@ jobs:
       - uses: AdGuardSoftwareLimited/actions/actions/epoch-version-metadata@master
         id: meta
 
-  # The runner image lives in the KV store so it can be rotated without edits.
-  resolve-runner:
-    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
-    name: Resolve runner
-    runs-on: [team-mac]
-    outputs:
-      image: ${{ steps.kv.outputs.value }}
-    steps:
-      - uses: AdGuardSoftwareLimited/actions/actions/kv-get@master
-        id: kv
-        with:
-          key: build-images/macos
-
   build-standalone-release:
     if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
     name: Build Standalone Release
@@ -102,14 +89,13 @@ jobs:
   test:
     if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
     name: Tests
-    needs: [resolve-runner]
     uses: AdGuardSoftwareLimited/actions/.github/workflows/junit-tests.yml@master
     with:
       runs-on: >-
         [
           "ephemeral",
           "ephemeral-mac",
-          "${{ needs.resolve-runner.outputs.image }}",
+          "registry.int.agrd.dev/macos/tahoe-github-xcode26.4.1-26.11:@edge",
           "ephemeral-limit-memory-7168",
           "ephemeral-limit-cpu-4",
           "ephemeral-limit-disk-gb-20",
