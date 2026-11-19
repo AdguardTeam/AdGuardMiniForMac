@@ -13,9 +13,16 @@ import AML
 
 // MARK: - LoginItemManager
 
-protocol LoginItemManager {
+/// The object responsible for the app's login item (background helper).
+protocol LoginItemManager: Sendable {
+    /// Reads the current helper status.
     func checkHelperStatus() -> LoginItemManagerRegisterStatus
+
+    /// Startup routine: picks the action from the status and can re-register an enabled helper.
     func checkAndRegisterHelper() -> LoginItemManagerRegisterStatus
+
+    /// Registers without the status dispatch: unregister, register, then read the status.
+    func registerHelper() -> LoginItemManagerRegisterStatus
 }
 
 // MARK: - LoginItemManagerImpl
@@ -33,26 +40,7 @@ final class LoginItemManagerImpl: LoginItemManager {
         self.modernCheckAndRegisterHelper()
     }
 
-    // MARK: Modern section
-
-    private func modernCheckAndRegisterHelper() -> LoginItemManagerRegisterStatus {
-        var status = self.helperLoginItem.status.registerStatus
-        switch status {
-        case .notRegistered, .notFound:
-            LogInfo("Helper not registered")
-            status = self.modernRegisterHelperItem()
-        case .unexpected:
-            LogError("Unexpected status for loginItem: \(status)")
-        case .requiresApproval:
-            LogDebug("Helper requires approval")
-        case .enabled:
-            LogDebug("Helper status: enabled")
-            status = self.modernRegisterHelperItem()
-        }
-        return status
-    }
-
-    private func modernRegisterHelperItem() -> LoginItemManagerRegisterStatus {
+    func registerHelper() -> LoginItemManagerRegisterStatus {
         do {
             do {
                 try self.helperLoginItem.unregister()
@@ -64,5 +52,24 @@ final class LoginItemManagerImpl: LoginItemManager {
             LogError("Failed to register helper: \(error)")
         }
         return self.helperLoginItem.status.registerStatus
+    }
+
+    // MARK: Modern section
+
+    private func modernCheckAndRegisterHelper() -> LoginItemManagerRegisterStatus {
+        var status = self.helperLoginItem.status.registerStatus
+        switch status {
+        case .notRegistered, .notFound:
+            LogInfo("Helper not registered")
+            status = self.registerHelper()
+        case .unexpected:
+            LogError("Unexpected status for loginItem: \(status)")
+        case .requiresApproval:
+            LogDebug("Helper requires approval")
+        case .enabled:
+            LogDebug("Helper status: enabled")
+            status = self.registerHelper()
+        }
+        return status
     }
 }

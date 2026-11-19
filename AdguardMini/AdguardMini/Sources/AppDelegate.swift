@@ -618,14 +618,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @unchecked Sendable {
         return true
     }
 
+    @MainActor
+    func applicationWillTerminate(_ notification: Notification) {
+        self.loginItemService.stop()
+    }
+
+    /// Registers the helper and starts the Safari API endpoint.
+    @MainActor
     private func checkLoginItem() {
         self.loginItemService.delegate = self
         if !self.loginItemService.tryRegisterHelper() {
-            LogError("Can't register item")
+            LogError("Can't register item, recovery started")
             self.eventBus.post(event: .loginItemStateChange, userInfo: false)
-        } else {
-            self.safariApiHandler.start()
         }
+        // `start()` is idempotent, and the endpoint must outlive a failed attempt.
+        self.safariApiHandler.start()
     }
 
     @MainActor
@@ -771,6 +778,8 @@ extension AppDelegate {
 // MARK: - LoginItemServiceDelegate implementation
 
 extension AppDelegate: LoginItemServiceDelegate {
+    /// Handles a late registration success.
+    @MainActor
     func registrationSuccessful() {
         LogWarn("LoginItem Registration Successful")
         self.eventBus.post(event: .loginItemStateChange, userInfo: true)
