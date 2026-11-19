@@ -13,53 +13,60 @@ import XPCGateLib
 // MARK: - MainAppApi
 
 extension ExtensionSafariApiClientImpl: MainAppApi {
-    func appState(after time: EBATimestamp, reply: @escaping (EBAAppState?, Error?) -> Void) {
+    func appState(after time: EBATimestamp, reply: @escaping @Sendable (EBAAppState?, Error?) -> Void) {
         LogDebugTrace()
+        let reply = OneShotReply.make(reply)
         self.withSafariApi(else: { reply(nil, ExtensionSafariApiClientErrorCode.linkTimeout) }) {
             $0.appState(after: time, reply: reply)
         }
     }
 
-    func appState(_ reply: @escaping (EBAAppState?, Error?) -> Void) {
+    func appState(_ reply: @escaping @Sendable (EBAAppState?, Error?) -> Void) {
         LogDebugTrace()
+        let reply = OneShotReply.make(reply)
         self.withSafariApi(else: { reply(nil, ExtensionSafariApiClientErrorCode.linkTimeout) }) {
             $0.appState(reply)
         }
     }
 
     func getCurrentFilteringState(withUrl url: String,
-                                  reply: @escaping (EBACurrentFilteringState?, Error?) -> Void) {
+                                  reply: @escaping @Sendable (EBACurrentFilteringState?, Error?) -> Void) {
         LogDebugTrace()
+        let reply = OneShotReply.make(reply)
         self.withSafariApi(else: { reply(nil, ExtensionSafariApiClientErrorCode.linkTimeout) }) {
             $0.getCurrentFilteringState(withUrl: url, reply: reply)
         }
     }
 
-    func getExtraState(withUrl url: String, reply: @escaping (Bool, Error?) -> Void) {
+    func getExtraState(withUrl url: String, reply: @escaping @Sendable (Bool, Error?) -> Void) {
         LogDebugTrace()
+        let reply = OneShotReply.make(reply)
         self.withSafariApi(else: { reply(false, ExtensionSafariApiClientErrorCode.linkTimeout) }) {
             $0.getExtraState(withUrl: url, reply: reply)
         }
     }
 
     func popupPresentationState(
-        reply: @escaping (_ hasAttention: Bool, _ isUpsellAvailable: Bool, _ error: Error?) -> Void
+        reply: @escaping @Sendable (_ hasAttention: Bool, _ isUpsellAvailable: Bool, _ error: Error?) -> Void
     ) {
         LogDebugTrace()
+        let reply = OneShotReply.make(reply)
         self.withSafariApi(else: { reply(false, false, ExtensionSafariApiClientErrorCode.linkTimeout) }) {
             $0.popupPresentationState(reply: reply)
         }
     }
 
-    func isOnboardingCompleted(reply: @escaping (Bool, Error?) -> Void) {
+    func isOnboardingCompleted(reply: @escaping @Sendable (Bool, Error?) -> Void) {
         LogDebugTrace()
+        let reply = OneShotReply.make(reply)
         self.withSafariApi(else: { reply(false, ExtensionSafariApiClientErrorCode.linkTimeout) }) {
             $0.isOnboardingCompleted(reply: reply)
         }
     }
 
-    func setProtectionStatus(_ enabled: Bool, reply: @escaping (EBATimestamp, Error?) -> Void) {
+    func setProtectionStatus(_ enabled: Bool, reply: @escaping @Sendable (EBATimestamp, Error?) -> Void) {
         LogDebugTrace()
+        let reply = OneShotReply.make(reply)
         self.withSafariApi(else: { reply(EBATimestamp.zero, ExtensionSafariApiClientErrorCode.linkTimeout) }) {
             $0.setProtectionStatus(enabled, reply: reply)
         }
@@ -67,8 +74,9 @@ extension ExtensionSafariApiClientImpl: MainAppApi {
 
     func setFilteringStatusWithUrl(_ url: String,
                                    isEnabled: Bool,
-                                   reply: @escaping (EBATimestamp, Error?) -> Void) {
+                                   reply: @escaping @Sendable (EBATimestamp, Error?) -> Void) {
         LogDebugTrace()
+        let reply = OneShotReply.make(reply)
         self.withSafariApi(else: { reply(EBATimestamp.zero, ExtensionSafariApiClientErrorCode.linkTimeout) }) {
             $0.setFilteringStatusWithUrl(url,
                                          isEnabled: isEnabled,
@@ -76,44 +84,50 @@ extension ExtensionSafariApiClientImpl: MainAppApi {
         }
     }
 
-    func addRule(_ ruleText: String, reply: @escaping (Error?) -> Void) {
+    func addRule(_ ruleText: String, reply: @escaping @Sendable (Error?) -> Void) {
         LogDebugTrace()
+        let reply = OneShotReply.make(reply)
         self.withSafariApi(else: { reply(ExtensionSafariApiClientErrorCode.linkTimeout) }) {
             $0.addRule(ruleText, reply: reply)
         }
     }
 
     func reportSite(with url: String,
-                    reply: @escaping (String?, Error?) -> Void) {
+                    reply: @escaping @Sendable (String?, Error?) -> Void) {
         LogDebugTrace()
+        let reply = OneShotReply.make(reply)
         self.withSafariApi(else: { reply(nil, ExtensionSafariApiClientErrorCode.linkTimeout) }) {
             $0.reportSite(with: url, reply: reply)
         }
     }
 
-    func openSafariSettings(reply: @escaping (Error?) -> Void) {
+    func openSafariSettings(reply: @escaping @Sendable (Error?) -> Void) {
         LogDebugTrace()
+        let reply = OneShotReply.make(reply)
         self.withSafariApi(else: { reply(ExtensionSafariApiClientErrorCode.linkTimeout) }) {
             $0.openSafariSettings(reply: reply)
         }
     }
 
-    func telemetryPageViewEvent(_ screenName: String, reply: @escaping (Error?) -> Void) {
+    func telemetryPageViewEvent(_ screenName: String, reply: @escaping @Sendable (Error?) -> Void) {
         LogDebugTrace()
+        let reply = OneShotReply.make(reply)
         self.withSafariApi(else: { reply(ExtensionSafariApiClientErrorCode.linkTimeout) }) {
             $0.telemetryPageViewEvent(screenName, reply: reply)
         }
     }
 
-    func telemetryActionEvent(screenName: String, action: String, reply: @escaping (Error?) -> Void) {
+    func telemetryActionEvent(screenName: String, action: String, reply: @escaping @Sendable (Error?) -> Void) {
         LogDebugTrace()
+        let reply = OneShotReply.make(reply)
         self.withSafariApi(else: { reply(ExtensionSafariApiClientErrorCode.linkTimeout) }) {
             $0.telemetryActionEvent(screenName: screenName, action: action, reply: reply)
         }
     }
 
-    func notifyWindowOpened(reply: @escaping (Error?) -> Void) {
+    func notifyWindowOpened(reply: @escaping @Sendable (Error?) -> Void) {
         LogDebugTrace()
+        let reply = OneShotReply.make(reply)
         self.withSafariApi(else: { reply(ExtensionSafariApiClientErrorCode.linkTimeout) }) {
             $0.notifyWindowOpened(reply: reply)
         }

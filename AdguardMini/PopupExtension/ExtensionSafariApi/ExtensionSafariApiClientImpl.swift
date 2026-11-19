@@ -15,14 +15,11 @@ import XPCGateLib
 // MARK: - ExtensionSafariApiClientManager
 
 protocol ExtensionSafariApiClientManager: SafariPopupApi, MainAppApi {
-    /// Convenience method to wait for the remote XPC service is ready to accept requests
-    @inlinable
-    func waitForApi(timeout: TimeInterval, block: @escaping (_ error: ExtensionSafariApiClientErrorCode?) -> Void)
     @inlinable
     func withSafariApi(
         timeout: TimeInterval,
-        else failHandler: @escaping () -> Void,
-        block: @escaping (_ api: MainAppApi) -> Void
+        else failHandler: @escaping @Sendable () -> Void,
+        block: @escaping @Sendable (_ api: MainAppApi) -> Void
     )
 }
 
@@ -74,11 +71,8 @@ final class ExtensionSafariApiClientImpl: @unchecked Sendable {
 
     private func withSafariApi(timeout: TimeInterval,
                                start: Date?,
-                               else failHandler: @escaping () -> Void,
-                               block: @escaping (_ api: MainAppApi) -> Void) {
-        // Both closures belong to one call chain and are dispatched serially within it.
-        nonisolated(unsafe) let failHandler = failHandler
-        nonisolated(unsafe) let block = block
+                               else failHandler: @escaping @Sendable () -> Void,
+                               block: @escaping @Sendable (_ api: MainAppApi) -> Void) {
         var delay = 0.0
 
         /* In recursive call (when the start argument is not zero),
@@ -133,18 +127,10 @@ final class ExtensionSafariApiClientImpl: @unchecked Sendable {
 // MARK: - ExtensionSafariApiClientManager implementation
 
 extension ExtensionSafariApiClientImpl: ExtensionSafariApiClientManager {
-    /// Convenience method to wait for the remote XPC service is ready to accept requests
-    @inlinable
-    func waitForApi(timeout: TimeInterval, block: @escaping (_ error: ExtensionSafariApiClientErrorCode?) -> Void) {
-        self.withSafariApi(timeout: timeout, else: { block(.linkTimeout) }) { _ in
-            block(nil)
-        }
-    }
-
     @inlinable
     func withSafariApi(timeout: TimeInterval = 0,
-                       else failHandler: @escaping () -> Void,
-                       block: @escaping (_ api: MainAppApi) -> Void) {
+                       else failHandler: @escaping @Sendable () -> Void,
+                       block: @escaping @Sendable (_ api: MainAppApi) -> Void) {
         self.withSafariApi(timeout: timeout, start: nil, else: failHandler, block: block)
     }
 }

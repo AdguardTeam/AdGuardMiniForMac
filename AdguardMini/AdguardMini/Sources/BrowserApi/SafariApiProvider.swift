@@ -196,27 +196,22 @@ extension SafariApiProvider: MainAppApi {
         return appState
     }
 
-    func appState(after time: EBATimestamp, reply: @escaping (EBAAppState?, Error?) -> Void) {
-        // `nonisolated(unsafe)` because the reply is invoked once, from this task.
-        nonisolated(unsafe) let reply = reply
+    func appState(after time: EBATimestamp, reply: @escaping @Sendable (EBAAppState?, Error?) -> Void) {
         Task {
             let appState = await self.createAppState(after: time)
             reply(appState, nil)
         }
     }
 
-    func appState(_ reply: @escaping (EBAAppState?, Error?) -> Void) {
-        // `nonisolated(unsafe)` because the reply is invoked once, from this task.
-        nonisolated(unsafe) let reply = reply
+    func appState(_ reply: @escaping @Sendable (EBAAppState?, Error?) -> Void) {
         Task {
             let appState = await self.createAppState()
             reply(appState, nil)
         }
     }
 
-    func getCurrentFilteringState(withUrl url: String, reply: @escaping (EBACurrentFilteringState?, Error?) -> Void) {
-        // `nonisolated(unsafe)` because the reply is invoked once, from this task.
-        nonisolated(unsafe) let reply = reply
+    func getCurrentFilteringState(withUrl url: String,
+                                  reply: @escaping @Sendable (EBACurrentFilteringState?, Error?) -> Void) {
         Task {
             let host = URL(string: url)?.host ?? "(invalid url)"
             let filteringState = EBACurrentFilteringState()
@@ -226,9 +221,7 @@ extension SafariApiProvider: MainAppApi {
         }
     }
 
-    func getExtraState(withUrl url: String, reply: @escaping (Bool, Error?) -> Void) {
-        // `nonisolated(unsafe)` because the reply is invoked once, from this task.
-        nonisolated(unsafe) let reply = reply
+    func getExtraState(withUrl url: String, reply: @escaping @Sendable (Bool, Error?) -> Void) {
         Task {
             let isProtectionEnabled = self.protectionService.isProtectionEnabled
             let isPaid = await self.licenseStateProvider.isPaid()
@@ -242,10 +235,8 @@ extension SafariApiProvider: MainAppApi {
     /// The upsell block is shown to free users only; on MAS an active promo
     /// offer replaces it, so the upsell is hidden while a promo is actual.
     func popupPresentationState(
-        reply: @escaping (_ hasAttention: Bool, _ isUpsellAvailable: Bool, _ error: Error?) -> Void
+        reply: @escaping @Sendable (_ hasAttention: Bool, _ isUpsellAvailable: Bool, _ error: Error?) -> Void
     ) {
-        // `nonisolated(unsafe)` because the reply is invoked once, from this task.
-        nonisolated(unsafe) let reply = reply
         Task {
             let hasAttention = await self.healthCheckAttentionProvider.hasAttention()
             let isPaid = await self.licenseStateProvider.isPaid()
@@ -259,14 +250,12 @@ extension SafariApiProvider: MainAppApi {
         }
     }
 
-    func isOnboardingCompleted(reply: @escaping (Bool, Error?) -> Void) {
+    func isOnboardingCompleted(reply: @escaping @Sendable (Bool, Error?) -> Void) {
         let completed = !self.userSettingsService.firstRun
         reply(completed, nil)
     }
 
-    func setProtectionStatus(_ enabled: Bool, reply: @escaping (EBATimestamp, Error?) -> Void) {
-        // `nonisolated(unsafe)` because the reply is invoked once, from this task.
-        nonisolated(unsafe) let reply = reply
+    func setProtectionStatus(_ enabled: Bool, reply: @escaping @Sendable (EBATimestamp, Error?) -> Void) {
         Task {
             LogInfo("Set protection status \(enabled)")
             await self.protectionService.setProtectionStatus(isEnabled: enabled)
@@ -274,9 +263,9 @@ extension SafariApiProvider: MainAppApi {
         }
     }
 
-    func setFilteringStatusWithUrl(_ url: String, isEnabled: Bool, reply: @escaping (EBATimestamp, Error?) -> Void) {
-        // `nonisolated(unsafe)` because the reply is invoked once, from this task.
-        nonisolated(unsafe) let reply = reply
+    func setFilteringStatusWithUrl(_ url: String,
+                                   isEnabled: Bool,
+                                   reply: @escaping @Sendable (EBATimestamp, Error?) -> Void) {
         Task {
             var commonError: Error?
 
@@ -350,9 +339,7 @@ extension SafariApiProvider: MainAppApi {
         return lastResult && addResult
     }
 
-    func addRule(_ ruleText: String, reply: @escaping (Error?) -> Void) {
-        // `nonisolated(unsafe)` because the reply is invoked once, from this task.
-        nonisolated(unsafe) let reply = reply
+    func addRule(_ ruleText: String, reply: @escaping @Sendable (Error?) -> Void) {
         Task {
             if await self.filtersSupervisor.addUserRule(ruleText) {
                 await self.onUserRulesChanged()
@@ -363,9 +350,7 @@ extension SafariApiProvider: MainAppApi {
         }
     }
 
-    func reportSite(with url: String, reply: @escaping (String?, Error?) -> Void) {
-        // `nonisolated(unsafe)` because the reply is invoked once, from this task.
-        nonisolated(unsafe) let reply = reply
+    func reportSite(with url: String, reply: @escaping @Sendable (String?, Error?) -> Void) {
         Task {
             guard let reportUrl = await self.supportService.reportSiteUrl(
                 reportUrl: url,
@@ -379,9 +364,7 @@ extension SafariApiProvider: MainAppApi {
         }
     }
 
-    func openSafariSettings(reply: @escaping (Error?) -> Void) {
-        // `nonisolated(unsafe)` because the reply is invoked once, from this task.
-        nonisolated(unsafe) let reply = reply
+    func openSafariSettings(reply: @escaping @Sendable (Error?) -> Void) {
         Task {
             var commonError: Error?
             let identifier =
@@ -397,25 +380,21 @@ extension SafariApiProvider: MainAppApi {
         }
     }
 
-    func telemetryPageViewEvent(_ screenName: String, reply: @escaping (Error?) -> Void) {
-        // `nonisolated(unsafe)` because the reply is invoked once, from this task.
-        nonisolated(unsafe) let reply = reply
+    func telemetryPageViewEvent(_ screenName: String, reply: @escaping @Sendable (Error?) -> Void) {
         Task {
             await self.telemetry.sendEvent(.pageview(.init(name: screenName)))
             reply(nil)
         }
     }
 
-    func telemetryActionEvent(screenName: String, action: String, reply: @escaping (Error?) -> Void) {
-        // `nonisolated(unsafe)` because the reply is invoked once, from this task.
-        nonisolated(unsafe) let reply = reply
+    func telemetryActionEvent(screenName: String, action: String, reply: @escaping @Sendable (Error?) -> Void) {
         Task {
             await self.telemetry.sendEvent(.customEvent(.init(name: action, refName: screenName)))
             reply(nil)
         }
     }
 
-    func notifyWindowOpened(reply: @escaping (Error?) -> Void) {
+    func notifyWindowOpened(reply: @escaping @Sendable (Error?) -> Void) {
         reply(nil)
     }
 }

@@ -567,6 +567,21 @@ Blocker JSON consumed by the extension targets.
    `UserDefaults` makes the intended semantics — shown on the first open,
    never again afterwards — hold for every module.
 
+9. **XPC reply sendability and one-shot delivery**: Every reply closure of
+   `@objc protocol MainAppApi` MUST be declared `@escaping @Sendable`, and
+   both conformers (`SafariApiProvider` and `ExtensionSafariApiClientImpl`)
+   MUST repeat the identical type: the compiler accepts a witness that omits
+   `@Sendable`, so review checks the repetition. `withSafariApi` takes
+   `@Sendable` closures because the reply crosses `DispatchQueue` boundaries
+   and a retry. Each forwarder wraps its reply with `OneShotReply.make`
+   before the failure path and the remote proxy can deliver it. Do not add
+   `nonisolated(unsafe)`: the only permitted binding is the compiler-required
+   one in the `CheckedContinuation` callback of `SafariApiInteractor`,
+   limited to `resume(returning:)`.
+
+   **Rationale**: `sending` does not fit this path, and a second delivery
+   would double-resume a `CheckedContinuation` and trap.
+
 **Known exclusions** (acceptable today, to be improved over time):
 
 - `ServiceLocator` is a large Service Locator / God Object that lazily builds

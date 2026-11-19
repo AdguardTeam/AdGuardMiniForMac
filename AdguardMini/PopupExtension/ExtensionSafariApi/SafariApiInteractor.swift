@@ -151,7 +151,7 @@ final class SafariApiInteractorImpl: SafariApiInteractor {
 }
 
 private extension CheckedContinuation where T == Void, E == Error {
-    var callback: (E?) -> Void {
+    var callback: @Sendable (E?) -> Void {
         { error in
             if let err = error {
                 self.resume(throwing: err)
@@ -163,7 +163,7 @@ private extension CheckedContinuation where T == Void, E == Error {
 }
 
 private extension CheckedContinuation where E == Error {
-    var callback: (T?, E?) -> Void {
+    var callback: @Sendable (T?, E?) -> Void {
         { result, error in
             if let err = error {
                 self.resume(throwing: err)
