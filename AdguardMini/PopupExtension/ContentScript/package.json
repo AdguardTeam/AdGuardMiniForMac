@@ -36,6 +36,6 @@
   },
   "dependencies": {
     "@adguard/assistant": "^4.4.13",
-    "@adguard/safari-extension": "^4.3.0"
+    "@adguard/safari-extension": "^4.3.2"
   }
 }
