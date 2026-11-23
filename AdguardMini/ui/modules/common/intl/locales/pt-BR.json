@@ -490,8 +490,6 @@
     "settings.paywall.payment.plan.monthly": "Mensal (%currencyAndPrice%/mês)",
     "settings.paywall.trial.then.yearly": "depois, %currencyAndPrice%/ano",
     "settings.paywall.trial.then.monthly": "depois, %currencyAndPrice%/mês",
-    "settings.paywall.plan.with.discount": "Anual (<standard>%price%</standard> %withDiscount% no primeiro ano)",
-    "settings.paywall.plan.with.discount.month": "Mensal (<standard>%price%</standard> %withDiscount% para o primeiro mês)",
     "settings.activation.flow.already.purchased": "Já comprou?",
     "settings.activation.flow.already.purchased.modal.title": "Já comprado",
     "settings.activation.flow.already.purchased.modal.log.in": "Entrar",

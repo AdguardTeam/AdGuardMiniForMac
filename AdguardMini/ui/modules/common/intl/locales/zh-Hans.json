@@ -490,8 +490,6 @@
     "settings.paywall.payment.plan.monthly": "每月（%currencyAndPrice%/月）",
     "settings.paywall.trial.then.yearly": "然后 %currencyAndPrice%/年",
     "settings.paywall.trial.then.monthly": "然后 %currencyAndPrice%/月",
-    "settings.paywall.plan.with.discount": "每年（首年 <standard>%price%</standard>%withDiscount%）",
-    "settings.paywall.plan.with.discount.month": "每月（第一个月 <standard>%price%</standard> %withDiscount%）",
     "settings.activation.flow.already.purchased": "已购买？",
     "settings.activation.flow.already.purchased.modal.title": "已购买",
     "settings.activation.flow.already.purchased.modal.log.in": "登录",

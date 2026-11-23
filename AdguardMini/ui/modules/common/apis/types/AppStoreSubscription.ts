@@ -8,18 +8,123 @@ export enum AppStoreSubscription {
     monthly = 0,
     annual = 1
 }
+export enum AppStoreSubscriptionOfferType {
+    no_offer = 0,
+    free_trial = 1,
+    pay_as_you_go = 2,
+    pay_up_front = 3
+}
+export enum AppStoreSubscriptionOfferPeriodUnit {
+    day = 0,
+    week = 1,
+    month = 2,
+    year = 3
+}
 export enum AppStoreSubscriptionsError {
     unknown = 0,
     products_banned = 1,
     other_error = 2
 }
+export class AppStoreSubscriptionOfferPeriod extends pb_1.Message {
+    #one_of_decls: number[][] = [];
+    constructor(data?: any[] | {
+        unit?: AppStoreSubscriptionOfferPeriodUnit;
+        value?: number;
+    }) {
+        super();
+        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+        if (!Array.isArray(data) && typeof data == "object") {
+            if ("unit" in data && data.unit != undefined) {
+                this.unit = data.unit;
+            }
+            if ("value" in data && data.value != undefined) {
+                this.value = data.value;
+            }
+        }
+    }
+    get unit() {
+        return pb_1.Message.getFieldWithDefault(this, 1, AppStoreSubscriptionOfferPeriodUnit.day) as AppStoreSubscriptionOfferPeriodUnit;
+    }
+    set unit(value: AppStoreSubscriptionOfferPeriodUnit) {
+        pb_1.Message.setField(this, 1, value);
+    }
+    get value() {
+        return pb_1.Message.getFieldWithDefault(this, 2, 0) as number;
+    }
+    set value(value: number) {
+        pb_1.Message.setField(this, 2, value);
+    }
+    static fromObject(data: {
+        unit?: AppStoreSubscriptionOfferPeriodUnit;
+        value?: number;
+    }): AppStoreSubscriptionOfferPeriod {
+        const message = new AppStoreSubscriptionOfferPeriod({});
+        if (data.unit != null) {
+            message.unit = data.unit;
+        }
+        if (data.value != null) {
+            message.value = data.value;
+        }
+        return message;
+    }
+    toObject() {
+        const data: {
+            unit?: AppStoreSubscriptionOfferPeriodUnit;
+            value?: number;
+        } = {};
+        if (this.unit != null) {
+            data.unit = this.unit;
+        }
+        if (this.value != null) {
+            data.value = this.value;
+        }
+        return data;
+    }
+    serialize(): Uint8Array;
+    serialize(w: pb_1.BinaryWriter): void;
+    serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+        const writer = w || new pb_1.BinaryWriter();
+        if (this.unit != AppStoreSubscriptionOfferPeriodUnit.day)
+            writer.writeEnum(1, this.unit);
+        if (this.value != 0)
+            writer.writeInt32(2, this.value);
+        if (!w)
+            return writer.getResultBuffer();
+    }
+    static deserialize(bytes: Uint8Array | pb_1.BinaryReader): AppStoreSubscriptionOfferPeriod {
+        const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new AppStoreSubscriptionOfferPeriod();
+        while (reader.nextField()) {
+            if (reader.isEndGroup())
+                break;
+            switch (reader.getFieldNumber()) {
+                case 1:
+                    message.unit = reader.readEnum();
+                    break;
+                case 2:
+                    message.value = reader.readInt32();
+                    break;
+                default: reader.skipField();
+            }
+        }
+        return message;
+    }
+    serializeBinary(): Uint8Array {
+        return this.serialize();
+    }
+    static deserializeBinary(bytes: Uint8Array): AppStoreSubscriptionOfferPeriod {
+        return AppStoreSubscriptionOfferPeriod.deserialize(bytes);
+    }
+}
 export class AppStoreSubscriptionInfo extends pb_1.Message {
-    #one_of_decls: number[][] = [[3]];
+    #one_of_decls: number[][] = [[2], [4]];
     constructor(data?: any[] | ({
         displayPrice?: string;
-        trialDays?: number;
+        introOfferType?: AppStoreSubscriptionOfferType;
+        introOfferPeriodCount?: number;
     } & (({
         introOfferDisplayPrice?: string;
+    }) | ({
+        introOfferPeriod?: AppStoreSubscriptionOfferPeriod;
     })))) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
@@ -27,11 +132,17 @@ export class AppStoreSubscriptionInfo extends pb_1.Message {
             if ("displayPrice" in data && data.displayPrice != undefined) {
                 this.displayPrice = data.displayPrice;
             }
-            if ("trialDays" in data && data.trialDays != undefined) {
-                this.trialDays = data.trialDays;
-            }
             if ("introOfferDisplayPrice" in data && data.introOfferDisplayPrice != undefined) {
                 this.introOfferDisplayPrice = data.introOfferDisplayPrice;
+            }
+            if ("introOfferType" in data && data.introOfferType != undefined) {
+                this.introOfferType = data.introOfferType;
+            }
+            if ("introOfferPeriod" in data && data.introOfferPeriod != undefined) {
+                this.introOfferPeriod = data.introOfferPeriod;
+            }
+            if ("introOfferPeriodCount" in data && data.introOfferPeriodCount != undefined) {
+                this.introOfferPeriodCount = data.introOfferPeriodCount;
             }
         }
     }
@@ -41,61 +152,101 @@ export class AppStoreSubscriptionInfo extends pb_1.Message {
     set displayPrice(value: string) {
         pb_1.Message.setField(this, 1, value);
     }
-    get trialDays() {
-        return pb_1.Message.getFieldWithDefault(this, 2, 0) as number;
-    }
-    set trialDays(value: number) {
-        pb_1.Message.setField(this, 2, value);
-    }
     get introOfferDisplayPrice() {
-        return pb_1.Message.getFieldWithDefault(this, 3, "") as string;
+        return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
     }
     set introOfferDisplayPrice(value: string) {
-        pb_1.Message.setOneofField(this, 3, this.#one_of_decls[0], value);
+        pb_1.Message.setOneofField(this, 2, this.#one_of_decls[0], value);
     }
     get has_intro_offer_display_price() {
-        return pb_1.Message.getField(this, 3) != null;
+        return pb_1.Message.getField(this, 2) != null;
+    }
+    get introOfferType() {
+        return pb_1.Message.getFieldWithDefault(this, 3, AppStoreSubscriptionOfferType.no_offer) as AppStoreSubscriptionOfferType;
+    }
+    set introOfferType(value: AppStoreSubscriptionOfferType) {
+        pb_1.Message.setField(this, 3, value);
+    }
+    get introOfferPeriod() {
+        return pb_1.Message.getWrapperField(this, AppStoreSubscriptionOfferPeriod, 4) as AppStoreSubscriptionOfferPeriod;
+    }
+    set introOfferPeriod(value: AppStoreSubscriptionOfferPeriod) {
+        pb_1.Message.setOneofWrapperField(this, 4, this.#one_of_decls[1], value);
+    }
+    get has_intro_offer_period() {
+        return pb_1.Message.getField(this, 4) != null;
+    }
+    get introOfferPeriodCount() {
+        return pb_1.Message.getFieldWithDefault(this, 5, 0) as number;
+    }
+    set introOfferPeriodCount(value: number) {
+        pb_1.Message.setField(this, 5, value);
     }
     get _introOfferDisplayPrice() {
         const cases: {
             [index: number]: "none" | "introOfferDisplayPrice";
         } = {
             0: "none",
-            3: "introOfferDisplayPrice"
+            2: "introOfferDisplayPrice"
         };
-        return cases[pb_1.Message.computeOneofCase(this, [3])];
+        return cases[pb_1.Message.computeOneofCase(this, [2])];
+    }
+    get _introOfferPeriod() {
+        const cases: {
+            [index: number]: "none" | "introOfferPeriod";
+        } = {
+            0: "none",
+            4: "introOfferPeriod"
+        };
+        return cases[pb_1.Message.computeOneofCase(this, [4])];
     }
     static fromObject(data: {
         displayPrice?: string;
-        trialDays?: number;
         introOfferDisplayPrice?: string;
+        introOfferType?: AppStoreSubscriptionOfferType;
+        introOfferPeriod?: ReturnType<typeof AppStoreSubscriptionOfferPeriod.prototype.toObject>;
+        introOfferPeriodCount?: number;
     }): AppStoreSubscriptionInfo {
         const message = new AppStoreSubscriptionInfo({});
         if (data.displayPrice != null) {
             message.displayPrice = data.displayPrice;
         }
-        if (data.trialDays != null) {
-            message.trialDays = data.trialDays;
-        }
         if (data.introOfferDisplayPrice != null) {
             message.introOfferDisplayPrice = data.introOfferDisplayPrice;
+        }
+        if (data.introOfferType != null) {
+            message.introOfferType = data.introOfferType;
+        }
+        if (data.introOfferPeriod != null) {
+            message.introOfferPeriod = AppStoreSubscriptionOfferPeriod.fromObject(data.introOfferPeriod);
+        }
+        if (data.introOfferPeriodCount != null) {
+            message.introOfferPeriodCount = data.introOfferPeriodCount;
         }
         return message;
     }
     toObject() {
         const data: {
             displayPrice?: string;
-            trialDays?: number;
             introOfferDisplayPrice?: string;
+            introOfferType?: AppStoreSubscriptionOfferType;
+            introOfferPeriod?: ReturnType<typeof AppStoreSubscriptionOfferPeriod.prototype.toObject>;
+            introOfferPeriodCount?: number;
         } = {};
         if (this.displayPrice != null) {
             data.displayPrice = this.displayPrice;
         }
-        if (this.trialDays != null) {
-            data.trialDays = this.trialDays;
-        }
         if (this.introOfferDisplayPrice != null) {
             data.introOfferDisplayPrice = this.introOfferDisplayPrice;
+        }
+        if (this.introOfferType != null) {
+            data.introOfferType = this.introOfferType;
+        }
+        if (this.introOfferPeriod != null) {
+            data.introOfferPeriod = this.introOfferPeriod.toObject();
+        }
+        if (this.introOfferPeriodCount != null) {
+            data.introOfferPeriodCount = this.introOfferPeriodCount;
         }
         return data;
     }
@@ -105,10 +256,14 @@ export class AppStoreSubscriptionInfo extends pb_1.Message {
         const writer = w || new pb_1.BinaryWriter();
         if (this.displayPrice.length)
             writer.writeString(1, this.displayPrice);
-        if (this.trialDays != 0)
-            writer.writeInt32(2, this.trialDays);
         if (this.has_intro_offer_display_price)
-            writer.writeString(3, this.introOfferDisplayPrice);
+            writer.writeString(2, this.introOfferDisplayPrice);
+        if (this.introOfferType != AppStoreSubscriptionOfferType.no_offer)
+            writer.writeEnum(3, this.introOfferType);
+        if (this.has_intro_offer_period)
+            writer.writeMessage(4, this.introOfferPeriod, () => this.introOfferPeriod.serialize(writer));
+        if (this.introOfferPeriodCount != 0)
+            writer.writeInt32(5, this.introOfferPeriodCount);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -122,10 +277,16 @@ export class AppStoreSubscriptionInfo extends pb_1.Message {
                     message.displayPrice = reader.readString();
                     break;
                 case 2:
-                    message.trialDays = reader.readInt32();
+                    message.introOfferDisplayPrice = reader.readString();
                     break;
                 case 3:
-                    message.introOfferDisplayPrice = reader.readString();
+                    message.introOfferType = reader.readEnum();
+                    break;
+                case 4:
+                    reader.readMessage(message.introOfferPeriod, () => message.introOfferPeriod = AppStoreSubscriptionOfferPeriod.deserialize(reader));
+                    break;
+                case 5:
+                    message.introOfferPeriodCount = reader.readInt32();
                     break;
                 default: reader.skipField();
             }

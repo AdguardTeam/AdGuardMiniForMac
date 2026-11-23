@@ -490,8 +490,6 @@
     "settings.paywall.payment.plan.monthly": "월간(%currencyAndPrice%/월)",
     "settings.paywall.trial.then.yearly": "그 다음 %currencyAndPrice%/년",
     "settings.paywall.trial.then.monthly": "그 다음 %currencyAndPrice%/월",
-    "settings.paywall.plan.with.discount": "연간(첫 해 <standard>%price%</standard> %withDiscount%)",
-    "settings.paywall.plan.with.discount.month": "월간(첫 해 <standard>%price%</standard> %withDiscount%)",
     "settings.activation.flow.already.purchased": "이미 구매하셨나요?",
     "settings.activation.flow.already.purchased.modal.title": "이미 구매함",
     "settings.activation.flow.already.purchased.modal.log.in": "로그인",

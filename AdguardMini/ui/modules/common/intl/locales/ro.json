@@ -490,8 +490,6 @@
     "settings.paywall.payment.plan.monthly": "Lunar (%currencyAndPrice%/lună)",
     "settings.paywall.trial.then.yearly": "apoi %currencyAndPrice%/an",
     "settings.paywall.trial.then.monthly": "apoi %currencyAndPrice%/lună",
-    "settings.paywall.plan.with.discount": "Anual (<standard>%price%</standard> %withDiscount% pentru primul an)",
-    "settings.paywall.plan.with.discount.month": "Lunar (<standard>%price%</standard> %withDiscount% pentru prima lună)",
     "settings.activation.flow.already.purchased": "Ați cumpărat deja?",
     "settings.activation.flow.already.purchased.modal.title": "Ați cumpărat deja",
     "settings.activation.flow.already.purchased.modal.log.in": "Conectare",

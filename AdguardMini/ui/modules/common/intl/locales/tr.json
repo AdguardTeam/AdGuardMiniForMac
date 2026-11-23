@@ -490,8 +490,6 @@
     "settings.paywall.payment.plan.monthly": "Aylık (%currencyAndPrice%/ay)",
     "settings.paywall.trial.then.yearly": "sonra %currencyAndPrice%/yıl",
     "settings.paywall.trial.then.monthly": "sonra %currencyAndPrice%/ay",
-    "settings.paywall.plan.with.discount": "Yıllık (<standard>%price%</standard> %withDiscount% ilk yıl için)",
-    "settings.paywall.plan.with.discount.month": "Aylık (<standard>%price%</standard> %withDiscount% ilk ay için)",
     "settings.activation.flow.already.purchased": "Zaten satın aldınız mı?",
     "settings.activation.flow.already.purchased.modal.title": "Zaten satın alındı",
     "settings.activation.flow.already.purchased.modal.log.in": "Giriş yap",

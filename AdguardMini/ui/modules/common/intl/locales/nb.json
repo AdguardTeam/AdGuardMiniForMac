@@ -407,8 +407,6 @@
     "settings.paywall.payment.plan.monthly": "Månedlig (%currencyAndPrice%/måned)",
     "settings.paywall.trial.then.yearly": "deretter %currencyAndPrice%/år",
     "settings.paywall.trial.then.monthly": "deretter %currencyAndPrice%/måned",
-    "settings.paywall.plan.with.discount": "Årlig (<standard>%price%</standard> %withDiscount% for det første året)",
-    "settings.paywall.plan.with.discount.month": "Månedlig (<standard>%price%</standard> %withDiscount% for den første måneden)",
     "settings.activation.flow.already.purchased": "Allerede kjøpt?",
     "settings.activation.flow.already.purchased.modal.title": "Allerede kjøpt",
     "settings.activation.flow.already.purchased.modal.log.in": "LOGG INN",

@@ -490,8 +490,6 @@
     "settings.paywall.payment.plan.monthly": "Mesečno (%currencyAndPrice%/mesec)",
     "settings.paywall.trial.then.yearly": "zatim %currencyAndPrice%/godina",
     "settings.paywall.trial.then.monthly": "zatim %currencyAndPrice%/mesec",
-    "settings.paywall.plan.with.discount": "Godišnje (<standard>%price%</standard> %withDiscount% za prvu godinu)",
-    "settings.paywall.plan.with.discount.month": "Mesečno (<standard>%price%</standard> %withDiscount% za prvi mesec)",
     "settings.activation.flow.already.purchased": "Već kupljeno?",
     "settings.activation.flow.already.purchased.modal.title": "Već kupljeno",
     "settings.activation.flow.already.purchased.modal.log.in": "Prijavi se",

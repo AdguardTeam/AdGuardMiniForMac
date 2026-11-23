@@ -3,9 +3,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { AppStoreSubscription } from 'Apis/types';
+import { getUILanguageTag } from 'Common/utils/translate';
 import { useSettingsStore } from 'Modules/settings/lib/hooks';
 import { SettingsEvent } from 'Modules/settings/store/modules';
 import { Button, Text, Icon } from 'UILib';
+
+import { formatOfferPeriodLength, getPlanPaidOffer } from '../planOffer';
 
 import s from './SubscriptionPrices.module.pcss';
 
@@ -26,9 +29,11 @@ export function SubscriptionPrices({
     setCurrentSelectedPlan,
 }: SubscriptionPricesProps) {
     const { telemetry } = useSettingsStore();
-    const { annual, monthly, promoInfo } = appStoreSubscriptions || {};
+    const { annual, monthly } = appStoreSubscriptions || {};
 
-    const isPromoAvailable = !!promoInfo;
+    const locale = getUILanguageTag();
+    const annualOffer = getPlanPaidOffer(annual);
+    const monthlyOffer = getPlanPaidOffer(monthly);
 
     return (
         <>
@@ -37,16 +42,17 @@ export function SubscriptionPrices({
                     s.SubscriptionPrices_btn,
                     currentSelectedPlan === AppStoreSubscription.annual && s.SubscriptionPrices_btn__active,
                 )}
-                div={!!(isPromoAvailable && annual?.introOfferDisplayPrice)}
+                div={!!annualOffer}
                 type="outlined"
                 onClick={() => setCurrentSelectedPlan(AppStoreSubscription.annual)}
             >
                 <Text className={s.SubscriptionPrices_btn_text} lineHeight="none" type="t1">
-                    {(isPromoAvailable && annual?.introOfferDisplayPrice)
-                        ? translate('settings.paywall.plan.with.discount', {
+                    {annualOffer
+                        ? translate('settings.paywall.plan.with.discount.period', {
                             standard: (text: string) => <span className={s.SubscriptionPrices_offer}>{text}</span>,
                             price: annual?.displayPrice,
-                            withDiscount: annual?.introOfferDisplayPrice,
+                            withDiscount: annualOffer.displayPrice,
+                            period: formatOfferPeriodLength(annualOffer.period, annualOffer.periodCount, locale),
                         })
                         : translate('settings.paywall.payment.plan.yearly', {
                             currencyAndPrice: annual?.displayPrice,
@@ -59,7 +65,7 @@ export function SubscriptionPrices({
                     s.SubscriptionPrices_btn,
                     currentSelectedPlan === AppStoreSubscription.monthly && s.SubscriptionPrices_btn__active,
                 )}
-                div={!!(isPromoAvailable && monthly?.introOfferDisplayPrice)}
+                div={!!monthlyOffer}
                 type="outlined"
                 onClick={() => {
                     setCurrentSelectedPlan(AppStoreSubscription.monthly);
@@ -67,11 +73,12 @@ export function SubscriptionPrices({
                 }}
             >
                 <Text className={s.SubscriptionPrices_btn_text} lineHeight="none" type="t1">
-                    {isPromoAvailable && monthly?.introOfferDisplayPrice
-                        ? translate('settings.paywall.plan.with.discount.month', {
+                    {monthlyOffer
+                        ? translate('settings.paywall.plan.with.discount.month.period', {
                             standard: (text: string) => <span className={s.SubscriptionPrices_offer}>{text}</span>,
                             price: monthly?.displayPrice,
-                            withDiscount: monthly?.introOfferDisplayPrice,
+                            withDiscount: monthlyOffer.displayPrice,
+                            period: formatOfferPeriodLength(monthlyOffer.period, monthlyOffer.periodCount, locale),
                         })
                         : translate('settings.paywall.payment.plan.monthly', {
                             currencyAndPrice: monthly?.displayPrice,

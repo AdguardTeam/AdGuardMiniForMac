@@ -490,8 +490,6 @@
     "settings.paywall.payment.plan.monthly": "Μηνιαίως (%currencyAndPrice%/μήνα)",
     "settings.paywall.trial.then.yearly": "στη συνέχεια %currencyAndPrice%/έτος",
     "settings.paywall.trial.then.monthly": "στη συνέχεια %currencyAndPrice%/μήνα",
-    "settings.paywall.plan.with.discount": "Ετήσια (<standard>%price%</standard> %withDiscount% για το πρώτο έτος)",
-    "settings.paywall.plan.with.discount.month": "Μηνιαία (<standard>%price%</standard> %withDiscount% για τον πρώτο μήνα)",
     "settings.activation.flow.already.purchased": "Εχεις ήδη αγοράσει;",
     "settings.activation.flow.already.purchased.modal.title": "Ήδη αγορασμένο",
     "settings.activation.flow.already.purchased.modal.log.in": "ΣΥΝΔΕΣΗ",

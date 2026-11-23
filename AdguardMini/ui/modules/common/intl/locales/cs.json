@@ -490,8 +490,6 @@
     "settings.paywall.payment.plan.monthly": "Měsíčně (%currencyAndPrice%/měsíc)",
     "settings.paywall.trial.then.yearly": "poté %currencyAndPrice%/rok",
     "settings.paywall.trial.then.monthly": "poté %currencyAndPrice%/měsíc",
-    "settings.paywall.plan.with.discount": "Ročně (<standard>%price%</standard> %withDiscount% za první rok)",
-    "settings.paywall.plan.with.discount.month": "Měsíčně (<standard>%price%</standard> %withDiscount% za první měsíc)",
     "settings.activation.flow.already.purchased": "Již jste zakoupili?",
     "settings.activation.flow.already.purchased.modal.title": "Již jste zakoupili",
     "settings.activation.flow.already.purchased.modal.log.in": "Přihlásit se",

@@ -490,8 +490,6 @@
     "settings.paywall.payment.plan.monthly": "Månedligt (%currencyAndPrice%/måned)",
     "settings.paywall.trial.then.yearly": "derefter %currencyAndPrice%/år",
     "settings.paywall.trial.then.monthly": "derefter %currencyAndPrice%/måned",
-    "settings.paywall.plan.with.discount": "Årligt (<standard>%price%</standard> %withDiscount% for det første år)",
-    "settings.paywall.plan.with.discount.month": "Månedligt (<standard>%price%</standard> %withDiscount% for den første måned)",
     "settings.activation.flow.already.purchased": "Allerede købt?",
     "settings.activation.flow.already.purchased.modal.title": "Allerede købt",
     "settings.activation.flow.already.purchased.modal.log.in": "Log ind",

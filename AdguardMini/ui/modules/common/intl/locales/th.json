@@ -490,8 +490,6 @@
     "settings.paywall.payment.plan.monthly": "รายเดือน (%currencyAndPrice%/เดือน)",
     "settings.paywall.trial.then.yearly": "จากนั้น %currencyAndPrice%/ปี",
     "settings.paywall.trial.then.monthly": "จากนั้น %currencyAndPrice%/เดือน",
-    "settings.paywall.plan.with.discount": "รายปี (<standard>%price%</standard> %withDiscount% สำหรับปีแรก)",
-    "settings.paywall.plan.with.discount.month": "รายเดือน (<standard>%price%</standard> %withDiscount% สำหรับเดือนแรก)",
     "settings.activation.flow.already.purchased": "ได้ซื้อแล้วหรือยัง?",
     "settings.activation.flow.already.purchased.modal.title": "ซื้อแล้ว",
     "settings.activation.flow.already.purchased.modal.log.in": "เข้าสู่ระบบ",

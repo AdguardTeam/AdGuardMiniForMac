@@ -650,6 +650,7 @@
 		1639AF1B2EE9854100185A05 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				AppStore/Models/AppStoreProductInfo.swift,
 				Backend/Models/ApplicationKeyStatus.swift,
 				Backend/Models/AppStatusInfo.swift,
 				Backend/Models/LicenseStatus.swift,
@@ -715,6 +716,7 @@
 				URLFilter/URLFilterStateAssembler.swift,
 				URLFilter/URLFilterStatus.swift,
 				URLFilter/URLFilterUIState.swift,
+				"Utils/Conversions/ToProtobuf/AppStoreProductInfo+Utils.swift",
 				"Utils/Date+Utils.swift",
 				"Utils/EffectiveThemeValue+Utils.swift",
 				Utils/LogTag.swift,

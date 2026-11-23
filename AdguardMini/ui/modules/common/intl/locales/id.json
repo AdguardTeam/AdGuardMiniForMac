@@ -490,8 +490,6 @@
     "settings.paywall.payment.plan.monthly": "Bulanan (%currencyAndPrice%/bulan)",
     "settings.paywall.trial.then.yearly": "lalu %currencyAndPrice%/tahun",
     "settings.paywall.trial.then.monthly": "lalu %currencyAndPrice%/bulan",
-    "settings.paywall.plan.with.discount": "Tahunan (<standard>%price%</standard> %withDiscount% untuk tahun pertama)",
-    "settings.paywall.plan.with.discount.month": "Bulanan (<standard>%price%</standard> %withDiscount% untuk bulan pertama)",
     "settings.activation.flow.already.purchased": "Sudah membeli?",
     "settings.activation.flow.already.purchased.modal.title": "Sudah dibeli",
     "settings.activation.flow.already.purchased.modal.log.in": "Masuk",

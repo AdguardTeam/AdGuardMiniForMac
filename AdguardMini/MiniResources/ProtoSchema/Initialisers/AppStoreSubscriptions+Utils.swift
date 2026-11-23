@@ -31,17 +31,35 @@ extension PromoInfo {
     }
 }
 
-// MARK: - AppStoreSubscriptions init
+// MARK: - AppStoreSubscriptionOfferPeriod init
+
+extension AppStoreSubscriptionOfferPeriod {
+    public init(unit: AppStoreSubscriptionOfferPeriodUnit, value: Int32) {
+        self.init()
+        self.unit = unit
+        self.value = value
+    }
+}
+
+// MARK: - AppStoreSubscriptionInfo init
 
 extension AppStoreSubscriptionInfo {
     public init(
         displayPrice: String = "",
-        introOfferDisplayPrice: String? = nil
+        introOfferDisplayPrice: String? = nil,
+        offerType: AppStoreSubscriptionOfferType = .noOffer,
+        offerPeriod: AppStoreSubscriptionOfferPeriod? = nil,
+        offerPeriodCount: Int32 = 0
     ) {
         self.init()
         self.displayPrice = displayPrice
+        self.introOfferType = offerType
+        self.introOfferPeriodCount = offerPeriodCount
         if let introOfferDisplayPrice {
             self.introOfferDisplayPrice = introOfferDisplayPrice
+        }
+        if let offerPeriod {
+            self.introOfferPeriod = offerPeriod
         }
     }
 }

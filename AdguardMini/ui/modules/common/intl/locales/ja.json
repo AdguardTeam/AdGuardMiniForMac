@@ -490,8 +490,6 @@
     "settings.paywall.payment.plan.monthly": "月額（%currencyAndPrice%/月）",
     "settings.paywall.trial.then.yearly": "その後は %currencyAndPrice%/年",
     "settings.paywall.trial.then.monthly": "その後は %currencyAndPrice%/月",
-    "settings.paywall.plan.with.discount": "年額 (初年度は <standard>%price%</standard> %withDiscount%)",
-    "settings.paywall.plan.with.discount.month": "月額 (最初の1ヶ月は <standard>%price%</standard> %withDiscount%)",
     "settings.activation.flow.already.purchased": "すでにご購入済みの場合はこちら",
     "settings.activation.flow.already.purchased.modal.title": "すでにご購入済み",
     "settings.activation.flow.already.purchased.modal.log.in": "ログイン",

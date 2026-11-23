@@ -210,7 +210,7 @@ final class LicenseStateProviderImpl: LicenseStateProviderBase {
             let isFreeTrialAvailable = product.isEligibleForIntroOffer
             && product.introductoryOffer?.paymentMode == .freeTrial
             if isFreeTrialAvailable {
-                let availableDays = product.introductoryOffer?.period.value ?? 0
+                let availableDays = product.introductoryOffer?.period.numberOfDays() ?? 0
                 return TrialAvailability(isAvailable: true, availableDays: availableDays)
             }
         }

@@ -490,8 +490,6 @@
     "settings.paywall.payment.plan.monthly": "Maandelijks (%currencyAndPrice%/maand)",
     "settings.paywall.trial.then.yearly": "daarna %currencyAndPrice%/jaar",
     "settings.paywall.trial.then.monthly": "daarna %currencyAndPrice%/maand",
-    "settings.paywall.plan.with.discount": "Jaarlijks (<standard>%price%</standard> %withDiscount% voor het eerste jaar)",
-    "settings.paywall.plan.with.discount.month": "Maandelijks (<standard>%price%</standard> %withDiscount% voor de eerste maand)",
     "settings.activation.flow.already.purchased": "Reeds aangeschaft?",
     "settings.activation.flow.already.purchased.modal.title": "Reeds aangeschaft",
     "settings.activation.flow.already.purchased.modal.log.in": "Aanmelden",

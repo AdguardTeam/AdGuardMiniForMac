@@ -8,11 +8,35 @@ enum AppStoreSubscription {
     AppStoreSubscription_annual = 1;
 }
 
+// AppStore subscription introductory offer type
+enum AppStoreSubscriptionOfferType {
+    AppStoreSubscriptionOfferType_no_offer = 0;
+    AppStoreSubscriptionOfferType_free_trial = 1;
+    AppStoreSubscriptionOfferType_pay_as_you_go = 2;
+    AppStoreSubscriptionOfferType_pay_up_front = 3;
+}
+
+// Unit of an AppStore subscription offer period
+enum AppStoreSubscriptionOfferPeriodUnit {
+    AppStoreSubscriptionOfferPeriodUnit_day = 0;
+    AppStoreSubscriptionOfferPeriodUnit_week = 1;
+    AppStoreSubscriptionOfferPeriodUnit_month = 2;
+    AppStoreSubscriptionOfferPeriodUnit_year = 3;
+}
+
+// Length of one period of an AppStore subscription offer
+message AppStoreSubscriptionOfferPeriod {
+    AppStoreSubscriptionOfferPeriodUnit unit = 1;
+    int32 value = 2;
+}
+
 // Describes AppStore Subscription
 message AppStoreSubscriptionInfo {
     string display_price = 1;
-    int32 trial_days = 2;
-    optional string intro_offer_display_price = 3;
+    optional string intro_offer_display_price = 2;
+    AppStoreSubscriptionOfferType intro_offer_type = 3;
+    optional AppStoreSubscriptionOfferPeriod intro_offer_period = 4;
+    int32 intro_offer_period_count = 5;
 }
 
 // Additional promo info

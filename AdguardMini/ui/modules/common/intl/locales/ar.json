@@ -490,8 +490,6 @@
     "settings.paywall.payment.plan.monthly": "شهريًا (%currencyAndPrice%/شهر)",
     "settings.paywall.trial.then.yearly": "ثم %currencyAndPrice%/سنة",
     "settings.paywall.trial.then.monthly": "ثم %currencyAndPrice%/شهر",
-    "settings.paywall.plan.with.discount": "سنويا (<standard>%price%</standard> %withDiscount% للسنة الأولى)",
-    "settings.paywall.plan.with.discount.month": "شهريا (<standard>%price%</standard> %withDiscount% للشهر الأول)",
     "settings.activation.flow.already.purchased": "هل تم الشراء بالفعل؟",
     "settings.activation.flow.already.purchased.modal.title": "تم الشراء بالفعل",
     "settings.activation.flow.already.purchased.modal.log.in": "تسجيل الدخول",

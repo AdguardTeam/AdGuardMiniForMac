@@ -490,8 +490,6 @@
     "settings.paywall.payment.plan.monthly": "Щомісяця (%currencyAndPrice%/місяць)",
     "settings.paywall.trial.then.yearly": "далі %currencyAndPrice%/рік",
     "settings.paywall.trial.then.monthly": "далі %currencyAndPrice%/міс",
-    "settings.paywall.plan.with.discount": "Щорічнo (<standard>%price%</standard> %withDiscount% за перший рік)",
-    "settings.paywall.plan.with.discount.month": "Щомісяця (<standard>%price%</standard> %withDiscount% за перший місяць)",
     "settings.activation.flow.already.purchased": "Вже придбано?",
     "settings.activation.flow.already.purchased.modal.title": "Вже придбано",
     "settings.activation.flow.already.purchased.modal.log.in": "Увійти",

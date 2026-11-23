@@ -8,3 +8,11 @@
 export const provideTrialDaysParam = (availableDays: number) => ({
     trialDays: availableDays,
 });
+
+/**
+ * Returns the BCP 47 tag of the language the UI is translated into, for the
+ * `Intl` formats that spell numbers, units and dates.
+ */
+export function getUILanguageTag(): string {
+    return document.documentElement.lang || 'en';
+}

@@ -490,8 +490,6 @@
     "settings.paywall.payment.plan.monthly": "Kuukausittain (%currencyAndPrice%/kuukausi)",
     "settings.paywall.trial.then.yearly": "jonka jälkeen %currencyAndPrice%/vuosi",
     "settings.paywall.trial.then.monthly": "jonka jälkeen %currencyAndPrice%/kuukausi",
-    "settings.paywall.plan.with.discount": "Vuosittain (<standard>%price%</standard> %withDiscount% ensimmäiseltä vuodelta)",
-    "settings.paywall.plan.with.discount.month": "Kuukausittain (<standard>%price%</standard> %withDiscount% ensimmäisen kuukauden ajan)",
     "settings.activation.flow.already.purchased": "Oletko jo ostanut?",
     "settings.activation.flow.already.purchased.modal.title": "Oletko jo ostanut",
     "settings.activation.flow.already.purchased.modal.log.in": "Kirjaudu",

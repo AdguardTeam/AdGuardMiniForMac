@@ -6,7 +6,7 @@ import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'preact/hooks';
 
 import { AppStoreSubscription, AppStoreSubscriptionsError } from 'Apis/types';
-import { provideTrialDaysParam } from 'Common/utils/translate';
+import { getUILanguageTag } from 'Common/utils/translate';
 import { useSettingsStore } from 'SettingsLib/hooks';
 import { getNotificationSomethingWentWrongText } from 'SettingsLib/utils/translate';
 import { NotificationContext, NotificationsQueueType, NotificationsQueueIconType, SettingsEvent } from 'SettingsStore/modules';
@@ -14,6 +14,7 @@ import theme from 'Theme';
 import { Button, Loader, Text } from 'UILib';
 
 import s from '../Paywall.module.pcss';
+import { formatOfferPeriod, getPlanTrial } from '../planOffer';
 
 import { SubscriptionPrices } from './SubscriptionPrices';
 
@@ -23,10 +24,20 @@ import { SubscriptionPrices } from './SubscriptionPrices';
 function AppStoreVersionActionsComponent() {
     const { account, notification, telemetry } = useSettingsStore();
 
-    const { appStoreSubscriptions, subscriptionPricesAvailable, trialAvailableDays } = account;
+    const { appStoreSubscriptions, subscriptionPricesAvailable } = account;
 
     const [currentSelectedPlan, setCurrentSelectedPlan] = useState<AppStoreSubscription>(AppStoreSubscription.annual);
     const [errorAppears, setErrorAppears] = useState(false);
+
+    const subscriptions = appStoreSubscriptions?.result;
+    const selectedPlanInfo = currentSelectedPlan === AppStoreSubscription.monthly
+        ? subscriptions?.monthly
+        : subscriptions?.annual;
+    // The promo campaign and a free trial never run together, so the trial belongs to the selected plan only.
+    const trial = subscriptions?.promoInfo ? undefined : getPlanTrial(selectedPlanInfo);
+    const trialPeriod = trial
+        ? formatOfferPeriod(trial.period, trial.periodCount, getUILanguageTag())
+        : undefined;
 
     useEffect(() => {
         if (appStoreSubscriptions?.error
@@ -69,8 +80,8 @@ function AppStoreVersionActionsComponent() {
     };
 
     let buttonTitle = translate('settings.paywall.subscribe');
-    if (trialAvailableDays > 0 && !appStoreSubscriptions?.result?.promoInfo) {
-        buttonTitle = translate.plural('settings.paywall.try.for.free', trialAvailableDays, provideTrialDaysParam(trialAvailableDays));
+    if (trialPeriod) {
+        buttonTitle = translate('settings.paywall.try.for.free.period', { period: trialPeriod });
         sendTelemetryOnClick = () => {
             telemetry.layersRelay.trackEvent(SettingsEvent.Try14SellingScreenClick);
         };
@@ -113,22 +124,16 @@ function AppStoreVersionActionsComponent() {
                     <Text lineHeight="none" type="t1">
                         {buttonTitle}
                     </Text>
-                    {!appStoreSubscriptions?.result?.promoInfo
-                        && trialAvailableDays > 0
-                        && appStoreSubscriptions?.result
-                        && (
-                            <Text lineHeight="none" type="t3">
-                                {currentSelectedPlan === AppStoreSubscription.annual
-                                    ? translate('settings.paywall.trial.then.yearly', {
-                                        currencyAndPrice: appStoreSubscriptions.result.annual?.introOfferDisplayPrice
-                                            || appStoreSubscriptions.result.annual?.displayPrice,
-                                    })
-                                    : translate('settings.paywall.trial.then.monthly', {
-                                        currencyAndPrice: appStoreSubscriptions.result.monthly?.introOfferDisplayPrice
-                                            || appStoreSubscriptions.result.monthly?.displayPrice,
-                                    })}
-                            </Text>
-                        )}
+                    {trialPeriod && selectedPlanInfo && (
+                        <Text lineHeight="none" type="t3">
+                            {translate(
+                                currentSelectedPlan === AppStoreSubscription.annual
+                                    ? 'settings.paywall.trial.then.yearly'
+                                    : 'settings.paywall.trial.then.monthly',
+                                { currencyAndPrice: selectedPlanInfo.displayPrice },
+                            )}
+                        </Text>
+                    )}
                 </Button>
             )}
         </div>

@@ -59,6 +59,92 @@ public enum AppStoreSubscription: SwiftProtobuf.Enum, Swift.CaseIterable {
 
 }
 
+/// AppStore subscription introductory offer type
+public enum AppStoreSubscriptionOfferType: SwiftProtobuf.Enum, Swift.CaseIterable {
+  public typealias RawValue = Int
+  case noOffer // = 0
+  case freeTrial // = 1
+  case payAsYouGo // = 2
+  case payUpFront // = 3
+  case UNRECOGNIZED(Int)
+
+  public init() {
+    self = .noOffer
+  }
+
+  public init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .noOffer
+    case 1: self = .freeTrial
+    case 2: self = .payAsYouGo
+    case 3: self = .payUpFront
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  public var rawValue: Int {
+    switch self {
+    case .noOffer: return 0
+    case .freeTrial: return 1
+    case .payAsYouGo: return 2
+    case .payUpFront: return 3
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static let allCases: [AppStoreSubscriptionOfferType] = [
+    .noOffer,
+    .freeTrial,
+    .payAsYouGo,
+    .payUpFront,
+  ]
+
+}
+
+/// Unit of an AppStore subscription offer period
+public enum AppStoreSubscriptionOfferPeriodUnit: SwiftProtobuf.Enum, Swift.CaseIterable {
+  public typealias RawValue = Int
+  case day // = 0
+  case week // = 1
+  case month // = 2
+  case year // = 3
+  case UNRECOGNIZED(Int)
+
+  public init() {
+    self = .day
+  }
+
+  public init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .day
+    case 1: self = .week
+    case 2: self = .month
+    case 3: self = .year
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  public var rawValue: Int {
+    switch self {
+    case .day: return 0
+    case .week: return 1
+    case .month: return 2
+    case .year: return 3
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static let allCases: [AppStoreSubscriptionOfferPeriodUnit] = [
+    .day,
+    .week,
+    .month,
+    .year,
+  ]
+
+}
+
 /// AppStore subscriptions error
 public enum AppStoreSubscriptionsError: SwiftProtobuf.Enum, Swift.CaseIterable {
   public typealias RawValue = Int
@@ -98,6 +184,21 @@ public enum AppStoreSubscriptionsError: SwiftProtobuf.Enum, Swift.CaseIterable {
 
 }
 
+/// Length of one period of an AppStore subscription offer
+public struct AppStoreSubscriptionOfferPeriod: Sendable {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var unit: AppStoreSubscriptionOfferPeriodUnit = .day
+
+  public var value: Int32 = 0
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 /// Describes AppStore Subscription
 public struct AppStoreSubscriptionInfo: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
@@ -105,8 +206,6 @@ public struct AppStoreSubscriptionInfo: Sendable {
   // methods supported on all messages.
 
   public var displayPrice: String = String()
-
-  public var trialDays: Int32 = 0
 
   public var introOfferDisplayPrice: String {
     get {return _introOfferDisplayPrice ?? String()}
@@ -117,11 +216,25 @@ public struct AppStoreSubscriptionInfo: Sendable {
   /// Clears the value of `introOfferDisplayPrice`. Subsequent reads from it will return its default value.
   public mutating func clearIntroOfferDisplayPrice() {self._introOfferDisplayPrice = nil}
 
+  public var introOfferType: AppStoreSubscriptionOfferType = .noOffer
+
+  public var introOfferPeriod: AppStoreSubscriptionOfferPeriod {
+    get {return _introOfferPeriod ?? AppStoreSubscriptionOfferPeriod()}
+    set {_introOfferPeriod = newValue}
+  }
+  /// Returns true if `introOfferPeriod` has been explicitly set.
+  public var hasIntroOfferPeriod: Bool {return self._introOfferPeriod != nil}
+  /// Clears the value of `introOfferPeriod`. Subsequent reads from it will return its default value.
+  public mutating func clearIntroOfferPeriod() {self._introOfferPeriod = nil}
+
+  public var introOfferPeriodCount: Int32 = 0
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
   fileprivate var _introOfferDisplayPrice: String? = nil
+  fileprivate var _introOfferPeriod: AppStoreSubscriptionOfferPeriod? = nil
 }
 
 /// Additional promo info
@@ -203,27 +316,30 @@ public struct AppStoreSubscriptions: Sendable {
 }
 
 /// Defines AppStore subscriptions message
-public struct AppStoreSubscriptionsMessage: Sendable {
+public struct AppStoreSubscriptionsMessage: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var error: AppStoreSubscriptionsError = .unknown
+  public var error: AppStoreSubscriptionsError {
+    get {return _storage._error}
+    set {_uniqueStorage()._error = newValue}
+  }
 
   public var result: AppStoreSubscriptions {
-    get {return _result ?? AppStoreSubscriptions()}
-    set {_result = newValue}
+    get {return _storage._result ?? AppStoreSubscriptions()}
+    set {_uniqueStorage()._result = newValue}
   }
   /// Returns true if `result` has been explicitly set.
-  public var hasResult: Bool {return self._result != nil}
+  public var hasResult: Bool {return _storage._result != nil}
   /// Clears the value of `result`. Subsequent reads from it will return its default value.
-  public mutating func clearResult() {self._result = nil}
+  public mutating func clearResult() {_uniqueStorage()._result = nil}
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
-  fileprivate var _result: AppStoreSubscriptions? = nil
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -232,13 +348,56 @@ extension AppStoreSubscription: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0AppStoreSubscription_monthly\0\u{1}AppStoreSubscription_annual\0")
 }
 
+extension AppStoreSubscriptionOfferType: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0AppStoreSubscriptionOfferType_no_offer\0\u{1}AppStoreSubscriptionOfferType_free_trial\0\u{1}AppStoreSubscriptionOfferType_pay_as_you_go\0\u{1}AppStoreSubscriptionOfferType_pay_up_front\0")
+}
+
+extension AppStoreSubscriptionOfferPeriodUnit: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0AppStoreSubscriptionOfferPeriodUnit_day\0\u{1}AppStoreSubscriptionOfferPeriodUnit_week\0\u{1}AppStoreSubscriptionOfferPeriodUnit_month\0\u{1}AppStoreSubscriptionOfferPeriodUnit_year\0")
+}
+
 extension AppStoreSubscriptionsError: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0AppStoreSubscriptionsError_unknown\0\u{1}AppStoreSubscriptionsError_products_banned\0\u{1}AppStoreSubscriptionsError_other_error\0")
 }
 
+extension AppStoreSubscriptionOfferPeriod: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "AppStoreSubscriptionOfferPeriod"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}unit\0\u{1}value\0")
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularEnumField(value: &self.unit) }()
+      case 2: try { try decoder.decodeSingularInt32Field(value: &self.value) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.unit != .day {
+      try visitor.visitSingularEnumField(value: self.unit, fieldNumber: 1)
+    }
+    if self.value != 0 {
+      try visitor.visitSingularInt32Field(value: self.value, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: AppStoreSubscriptionOfferPeriod, rhs: AppStoreSubscriptionOfferPeriod) -> Bool {
+    if lhs.unit != rhs.unit {return false}
+    if lhs.value != rhs.value {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
 extension AppStoreSubscriptionInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "AppStoreSubscriptionInfo"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}display_price\0\u{3}trial_days\0\u{3}intro_offer_display_price\0")
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}display_price\0\u{3}intro_offer_display_price\0\u{3}intro_offer_type\0\u{3}intro_offer_period\0\u{3}intro_offer_period_count\0")
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -247,8 +406,10 @@ extension AppStoreSubscriptionInfo: SwiftProtobuf.Message, SwiftProtobuf._Messag
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self.displayPrice) }()
-      case 2: try { try decoder.decodeSingularInt32Field(value: &self.trialDays) }()
-      case 3: try { try decoder.decodeSingularStringField(value: &self._introOfferDisplayPrice) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self._introOfferDisplayPrice) }()
+      case 3: try { try decoder.decodeSingularEnumField(value: &self.introOfferType) }()
+      case 4: try { try decoder.decodeSingularMessageField(value: &self._introOfferPeriod) }()
+      case 5: try { try decoder.decodeSingularInt32Field(value: &self.introOfferPeriodCount) }()
       default: break
       }
     }
@@ -262,19 +423,27 @@ extension AppStoreSubscriptionInfo: SwiftProtobuf.Message, SwiftProtobuf._Messag
     if !self.displayPrice.isEmpty {
       try visitor.visitSingularStringField(value: self.displayPrice, fieldNumber: 1)
     }
-    if self.trialDays != 0 {
-      try visitor.visitSingularInt32Field(value: self.trialDays, fieldNumber: 2)
-    }
     try { if let v = self._introOfferDisplayPrice {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 3)
+      try visitor.visitSingularStringField(value: v, fieldNumber: 2)
     } }()
+    if self.introOfferType != .noOffer {
+      try visitor.visitSingularEnumField(value: self.introOfferType, fieldNumber: 3)
+    }
+    try { if let v = self._introOfferPeriod {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+    } }()
+    if self.introOfferPeriodCount != 0 {
+      try visitor.visitSingularInt32Field(value: self.introOfferPeriodCount, fieldNumber: 5)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: AppStoreSubscriptionInfo, rhs: AppStoreSubscriptionInfo) -> Bool {
     if lhs.displayPrice != rhs.displayPrice {return false}
-    if lhs.trialDays != rhs.trialDays {return false}
     if lhs._introOfferDisplayPrice != rhs._introOfferDisplayPrice {return false}
+    if lhs.introOfferType != rhs.introOfferType {return false}
+    if lhs._introOfferPeriod != rhs._introOfferPeriod {return false}
+    if lhs.introOfferPeriodCount != rhs.introOfferPeriodCount {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -377,36 +546,74 @@ extension AppStoreSubscriptionsMessage: SwiftProtobuf.Message, SwiftProtobuf._Me
   public static let protoMessageName: String = "AppStoreSubscriptionsMessage"
   public static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}error\0\u{1}result\0")
 
+  fileprivate class _StorageClass {
+    var _error: AppStoreSubscriptionsError = .unknown
+    var _result: AppStoreSubscriptions? = nil
+
+      // This property is used as the initial default value for new instances of the type.
+      // The type itself is protecting the reference to its storage via CoW semantics.
+      // This will force a copy to be made of this reference when the first mutation occurs;
+      // hence, it is safe to mark this as `nonisolated(unsafe)`.
+      static nonisolated(unsafe) let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _error = source._error
+      _result = source._result
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularEnumField(value: &self.error) }()
-      case 2: try { try decoder.decodeSingularMessageField(value: &self._result) }()
-      default: break
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        // The use of inline closures is to circumvent an issue where the compiler
+        // allocates stack space for every case branch when no optimizations are
+        // enabled. https://github.com/apple/swift-protobuf/issues/1034
+        switch fieldNumber {
+        case 1: try { try decoder.decodeSingularEnumField(value: &_storage._error) }()
+        case 2: try { try decoder.decodeSingularMessageField(value: &_storage._result) }()
+        default: break
+        }
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    if self.error != .unknown {
-      try visitor.visitSingularEnumField(value: self.error, fieldNumber: 1)
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
+      if _storage._error != .unknown {
+        try visitor.visitSingularEnumField(value: _storage._error, fieldNumber: 1)
+      }
+      try { if let v = _storage._result {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+      } }()
     }
-    try { if let v = self._result {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: AppStoreSubscriptionsMessage, rhs: AppStoreSubscriptionsMessage) -> Bool {
-    if lhs.error != rhs.error {return false}
-    if lhs._result != rhs._result {return false}
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._error != rhs_storage._error {return false}
+        if _storage._result != rhs_storage._result {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
