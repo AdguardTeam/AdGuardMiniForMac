@@ -158,13 +158,13 @@ private extension UpdaterControllerImpl {
             do {
                 let response = try await NetworkManagerImpl().data(
                     request:
-                        Request(
+                        HTTPRequest(
                             url: probe.url,
-                            useProtocolCachePolicy: false,
+                            cachePolicy: .reloadIgnoringLocalCacheData,
                             timeoutInterval: Constants.updaterFeedCheckDataTimeout
                         )
                 )
-                hasError = !(200...299).contains(response.code)
+                hasError = !response.isSuccessful
             } catch {
                 LogInfo("Checking appcast url error: \(error)")
                 hasError = true

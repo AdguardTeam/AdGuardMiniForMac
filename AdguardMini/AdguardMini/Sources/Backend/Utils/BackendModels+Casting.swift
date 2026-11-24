@@ -49,7 +49,7 @@ extension AppStatusResponse.LicenseStatus {
     }
 }
 
-extension AppStatusResponse.ApplicationKeyStatus {
+extension ApplicationKeyStatus {
     func toAppDomain() -> AppStatusInfo.ApplicationKeyStatus {
         switch self {
         case .valid:              .valid
@@ -61,7 +61,7 @@ extension AppStatusResponse.ApplicationKeyStatus {
     }
 }
 
-extension AppStatusResponse.LicenseType {
+extension LicenseType {
     func toAppDomain() -> AppStatusInfo.LicenseType {
         switch self {
         case .personal: .personal
@@ -75,7 +75,7 @@ extension AppStatusResponse.LicenseType {
     }
 }
 
-extension AppStatusResponse.SubscriptionStatusDetail {
+extension SubscriptionStatusDetail {
     func toAppDomain() -> AppStatusInfo.SubscriptionStatusDetail {
         .init(
             status: self.status.toAppDomain(),
@@ -86,7 +86,7 @@ extension AppStatusResponse.SubscriptionStatusDetail {
     }
 }
 
-extension AppStatusResponse.SubscriptionStatusDetail.Status {
+extension SubscriptionStatus {
     func toAppDomain() -> AppStatusInfo.SubscriptionStatusDetail.Status {
         switch self {
         case .active:  .active
@@ -97,7 +97,7 @@ extension AppStatusResponse.SubscriptionStatusDetail.Status {
     }
 }
 
-extension AppStatusResponse.SubscriptionStatusDetail.Duration {
+extension SubscriptionDuration {
     func toAppDomain() -> AppStatusInfo.SubscriptionStatusDetail.Duration {
         switch self {
         case .monthly: .monthly
@@ -106,12 +106,11 @@ extension AppStatusResponse.SubscriptionStatusDetail.Duration {
     }
 }
 
-extension AppStatusResponse.SubscriptionStatusDetail.InAppPaymentSystem {
+extension InAppPaymentSystem {
     func toAppDomain() -> AppStatusInfo.SubscriptionStatusDetail.InAppPaymentSystem {
         switch self {
         case .appleAppStore: .appleAppStore
         case .googlePlay:    .googlePlay
-        case .other:         .other
         }
     }
 }

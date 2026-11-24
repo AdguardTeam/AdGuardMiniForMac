@@ -16,12 +16,6 @@ import AppBackend
 
 private enum Constants {
     static let requestEncryptionKey = SensitiveBuildConfig.SENS_REQUEST_ENCRYPTION_KEY
-
-    #if MAS
-    static let appName = "adguard_safari_store"
-    #else
-    static let appName = "adguard_safari"
-    #endif
 }
 
 // MARK: - LicenseService
@@ -30,7 +24,7 @@ private enum Constants {
 protocol LicenseService: Sendable {
     func requestAppStatus() async throws -> AppStatusResponse
     func activateApp(appKey: String) async throws -> ActivationResponse
-    func validateReceipt(jws: String, restore: Bool) async throws -> ValidateReceiptResponse
+    func validateReceipt(jws: String, restore: Bool) async throws -> ActivationResponse
     func resetLicense() async throws
 
     func promoInfo() async throws -> PromotionResponse
@@ -59,48 +53,53 @@ final class LicenseServiceImpl: LicenseService, @unchecked Sendable {
         self.sharedSettings = sharedSettings
     }
 
+    private var backend: AppBackend.Backend {
+        get async {
+            BackendFactory.make(appId: await self.productInfo.applicationId)
+        }
+    }
+
     func resetLicense() async throws {
-        let request = BackendRequest.resetLicense(applicationId: await self.productInfo.applicationId)
+        let backend = await self.backend
+        let request = backend.resetLicense()
 
         let response = try await self.networkManager.data(request: request.request)
         try response.check(of: request, action: "resetLicense")
     }
 
     func requestAppStatus() async throws -> AppStatusResponse {
+        let backend = await self.backend
         let request = try
-        BackendRequest.appStatus(
+        backend.appStatus(
             encryptionKey: Constants.requestEncryptionKey,
-            appVersion:    BuildConfig.AG_VERSION,
-            appId:         await self.productInfo.applicationId,
-            appName:       Constants.appName,
-            locale:        Locale.currentLocaleIdentifier,
-            sysLocale:     Locale.systemLocaleIdentifier,
-            activeProtectionEnabled: self.sharedSettings.protectionEnabled,
-            computerName:  self.systemInfo.name,
-            mac:           self.systemInfo.mac,
-            hid:           self.systemInfo.hid
+            parameters: Backend.AppStatusParameters(
+                locale:        Locale.currentLocaleIdentifier,
+                sysLocale:     Locale.systemLocaleIdentifier,
+                activeProtectionEnabled: self.sharedSettings.protectionEnabled,
+                computerName:  self.systemInfo.name,
+                mac:           self.systemInfo.mac,
+                hid:           self.systemInfo.hid
+            )
         )
         return try await self.makeRequest(request, action: "requestAppStatus")
     }
 
     func activateApp(appKey: String) async throws -> ActivationResponse {
+        let backend = await self.backend
         let request = try
-        BackendRequest.activate(
+        backend.activate(
             encryptionKey: Constants.requestEncryptionKey,
-            appId:         await self.productInfo.applicationId,
             appKey:        appKey,
-            appName:       Constants.appName,
             locale:        Locale.currentLocaleIdentifier
         )
         return try await self.makeRequest(request, action: "activateApp")
     }
 
-    func validateReceipt(jws: String, restore: Bool) async throws -> ValidateReceiptResponse {
+    func validateReceipt(jws: String, restore: Bool) async throws -> ActivationResponse {
+        let backend = await self.backend
         let request = try
-        BackendRequest.validateReceipt(
+        backend.validateReceipt(
             encryptionKey: Constants.requestEncryptionKey,
-            appId: await self.productInfo.applicationId,
-            appName: Constants.appName,
             locale: Locale.currentLocaleIdentifier,
             bundleId: BuildConfig.AG_APP_ID,
             signedTransaction: jws,
@@ -110,11 +109,9 @@ final class LicenseServiceImpl: LicenseService, @unchecked Sendable {
     }
 
     func promoInfo() async throws -> PromotionResponse {
-        let request = try BackendRequest.promotion(
+        let backend = await self.backend
+        let request = try backend.promotion(
             encryptionKey: Constants.requestEncryptionKey,
-            appVersion: BuildConfig.AG_VERSION,
-            appId: await self.productInfo.applicationId,
-            appName: Constants.appName,
             locale: Locale.currentLocaleIdentifier,
             sysLocale: Locale.systemLocaleIdentifier
         )

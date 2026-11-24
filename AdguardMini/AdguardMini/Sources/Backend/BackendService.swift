@@ -10,15 +10,11 @@
 import Foundation
 
 import AML
-// `@preconcurrency` because the package builds in Swift 5 mode and its response types carry no `Sendable` annotations.
-@preconcurrency import AppBackend
+import AppBackend
 
 // MARK: - Constants
 
 private enum Constants {
-    static let backendRequestKey = SensitiveBuildConfig.SENS_BACKEND_REQUEST_KEY
-    static let userAgentString = ProductInfo.userAgentString
-
     static let refreshAppStatusInfoInterval: Double = 1.hour
     static let networkRelaxationTimeout: TimeInterval = 5.seconds
     /// How often the background keeps the shared promo cache fresh.
@@ -33,14 +29,6 @@ enum BackendServiceError: Error {
     case notConnectedToInternet
 }
 
-// MARK: - CommonBackendParameters
-
-/// Common static parameters for our backend services.
-enum CommonBackendParameters {
-    /// In other words this is an application type.
-    static let appSlug = "SAFARI"
-}
-
 // MARK: - BackendService
 
 /// `Sendable` because the implementation is an actor.
@@ -52,9 +40,9 @@ protocol BackendService: Sendable {
     func webBindKeyToOwner(licenseKey: String, from screen: String) async throws -> WebActivateResult
     func cancelWebSession() async
 
-    func activateApp(appKey: String) async throws -> ActivationResponse.ApplicationKeyStatus
+    func activateApp(appKey: String) async throws -> ApplicationKeyStatus
     func refreshAppStatusInfo() async throws
-    func validateReceipt(jws: String, restore: Bool) async throws -> ValidateReceiptResponse
+    func validateReceipt(jws: String, restore: Bool) async throws -> ActivationResponse
 
     func promoInfo() async throws -> PromotionResponse
 
@@ -83,7 +71,6 @@ final actor BackendServiceImpl: BackendService {
 
     // MARK: Dependencies
 
-    private let productInfo: ProductInfoStorage
     private let keychain: KeychainManager
 
     private let netReachability: NetworkReachability
@@ -117,7 +104,6 @@ final actor BackendServiceImpl: BackendService {
         webFlowService: WebFlowService,
         subscribeWebFlowService: SubscribeWebFlowService,
         licenseService: LicenseService,
-        productInfo: ProductInfoStorage,
         keychain: KeychainManager,
         netReachability: NetworkReachability,
         eventBus: EventBus
@@ -127,19 +113,9 @@ final actor BackendServiceImpl: BackendService {
         self.webFlowService = webFlowService
         self.subscribeWebFlowService = subscribeWebFlowService
         self.licenseService = licenseService
-        self.productInfo = productInfo
         self.keychain = keychain
         self.netReachability = netReachability
         self.eventBus = eventBus
-
-        AppBackend.Core.configure(
-            backendRequestKey: Constants.backendRequestKey,
-            userAgentString: Constants.userAgentString,
-            backendApiUrlOverride: DeveloperConfigUtils[.backendApiUrl] as? String,
-            webApiUrlOverride: DeveloperConfigUtils[.webApiUrl] as? String,
-            subscribeApiUrlOverride: DeveloperConfigUtils[.subscribeApiUrl] as? String,
-            reportsApiUrlOverride: DeveloperConfigUtils[.reportsApiUrl] as? String
-        )
     }
 
     deinit {
@@ -205,7 +181,7 @@ final actor BackendServiceImpl: BackendService {
         try await self.subscribeWebFlowService.startRenewalFlow(licenseKey: licenseKey, from: screen)
     }
 
-    func activateApp(appKey: String) async throws -> ActivationResponse.ApplicationKeyStatus {
+    func activateApp(appKey: String) async throws -> ApplicationKeyStatus {
         LogDebugTrace()
         self.ensureBootstrapped()
 
@@ -238,7 +214,7 @@ final actor BackendServiceImpl: BackendService {
         }
     }
 
-    func validateReceipt(jws: String, restore: Bool) async throws -> ValidateReceiptResponse {
+    func validateReceipt(jws: String, restore: Bool) async throws -> ActivationResponse {
         LogDebugTrace()
         self.ensureBootstrapped()
 

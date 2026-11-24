@@ -37,16 +37,12 @@ private enum Constants {
     }
 }
 
-// MARK: - Parameters
-
-typealias Parameters = [String: String]
-
 // MARK: - NetworkManagerProtocol
 
 /// `Sendable` because the implementation is stateless over `URLSession`.
 protocol NetworkManager: AnyObject, Sendable {
-    func data(request: Request) async throws -> Response
-    func data(request: URLRequest) async throws -> Response
+    func data(request: HTTPRequest) async throws -> HTTPResponse
+    func data(request: URLRequest) async throws -> HTTPResponse
 }
 
 // MARK: - NetworkManager
@@ -59,20 +55,15 @@ final class NetworkManagerImpl: NetworkManager, @unchecked Sendable {
 
     // MARK: Public methods
 
-    func data(request: Request) async throws -> Response {
-        let urlRequest = request.toUrlRequest()
+    func data(request: HTTPRequest) async throws -> HTTPResponse {
+        let urlRequest = request.toURLRequest()
         return try await self.data(request: urlRequest)
     }
 
-    func data(request: URLRequest) async throws -> Response {
+    func data(request: URLRequest) async throws -> HTTPResponse {
         do {
             let (data, response) = try await self.session.data(for: request)
-
-            var headers: [AnyHashable: Any] = [:]
-            if let allHeaderFields = (response as? HTTPURLResponse)?.allHeaderFields {
-                headers = allHeaderFields
-            }
-            return Response(code: response.getStatusCode(), data: data, headers: headers)
+            return HTTPResponse(urlResponse: response, data: data)
         } catch {
             LogError("Network request failed: \(error)")
             throw error

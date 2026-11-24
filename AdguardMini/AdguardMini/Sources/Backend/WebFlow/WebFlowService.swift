@@ -16,13 +16,6 @@ import AppBackend
 // MARK: - Constants
 
 private enum Constants {
-    #if !MAS
-    // `nonisolated(unsafe)` because the value is a write-once constant from a Swift 5 module.
-    nonisolated(unsafe) static let appType = WebAPI.AppType.standalone
-    #else
-    nonisolated(unsafe) static let appType = WebAPI.AppType.store
-    #endif
-
     static let redirectUrl = "\(MainUrlSchemeActionUrl.webFlowRedirect.url)"
 
     static let webSessionTimeout: TimeInterval = 30.minutes
@@ -110,15 +103,8 @@ final class WebFlowServiceImpl: @unchecked Sendable {
 
 extension WebFlowServiceImpl: WebFlowService {
     func activate(from screen: String) async throws -> WebActivateResult {
-        let appId = await self.productInfo.applicationId
-        guard let url = WebAPI.activate(
-            tds: .macMini(appid: appId, from: screen),
-            appId: appId,
-            appSlug: CommonBackendParameters.appSlug,
-            appType: Constants.appType,
-            returnUrl: Constants.redirectUrl
-        )
-        else {
+        let backend = BackendFactory.make(appId: await self.productInfo.applicationId)
+        guard let url = backend.activateURL(from: screen, returnUrl: Constants.redirectUrl) else {
             throw WebFlowServiceError.cantCreateUrl
         }
 
@@ -126,14 +112,8 @@ extension WebFlowServiceImpl: WebFlowService {
     }
 
     func activateTrial(from screen: String) async throws -> WebActivateResult {
-        let appId = await self.productInfo.applicationId
-        guard let url = WebAPI.trial(
-            tds: .macMini(appid: appId, from: screen),
-            appId: appId,
-            appSlug: CommonBackendParameters.appSlug,
-            appType: Constants.appType,
-            returnUrl: Constants.redirectUrl
-        ) else {
+        let backend = BackendFactory.make(appId: await self.productInfo.applicationId)
+        guard let url = backend.trialURL(from: screen, returnUrl: Constants.redirectUrl) else {
             throw WebFlowServiceError.cantCreateUrl
         }
 
@@ -141,15 +121,8 @@ extension WebFlowServiceImpl: WebFlowService {
     }
 
     func bindLicense(licenseKey: String, from screen: String) async throws -> WebActivateResult {
-        let appId = await self.productInfo.applicationId
-        guard let url = WebAPI.bind(
-            tds: .macMini(appid: appId, from: screen),
-            licenseKey: licenseKey,
-            appId: appId,
-            appSlug: CommonBackendParameters.appSlug,
-            appType: Constants.appType,
-            returnUrl: Constants.redirectUrl
-        ) else {
+        let backend = BackendFactory.make(appId: await self.productInfo.applicationId)
+        guard let url = backend.bindURL(licenseKey: licenseKey, from: screen, returnUrl: Constants.redirectUrl) else {
             throw WebFlowServiceError.cantCreateUrl
         }
 

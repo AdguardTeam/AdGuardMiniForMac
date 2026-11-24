@@ -17,13 +17,11 @@ import FLM
 private enum Constants {
     static let stateFilename = "state.txt"
 
-    static var agExtraExtension: ReportsWebAPI.Extension {
-        .init(
-            name: "AdGuard Extra",
-            type: .script,
-            url: nil
-        )
-    }
+    static let agExtraExtension = SiteReport.Extension(
+        name: "AdGuard Extra",
+        type: .script,
+        url: nil
+    )
 }
 
 // MARK: - Support
@@ -307,13 +305,13 @@ final class SupportImpl: @unchecked Sendable {
         return lines.joined(separator: "\n")
     }
 
-    private func generateAttachments(shouldSendLogs: Bool, applicationState: String) async -> RequestFileEntities {
+    private func generateAttachments(shouldSendLogs: Bool, applicationState: String) async -> [RequestFileEntity] {
         guard shouldSendLogs else {
             let appState = Data(applicationState.utf8)
             return [
                 RequestFileEntity(
                     fileName: Constants.stateFilename,
-                    mimeType: MimeType.textPlain.rawValue,
+                    mimeType: .textPlain,
                     fileContent: appState
                 )
             ]
@@ -344,7 +342,7 @@ final class SupportImpl: @unchecked Sendable {
             return [
                 RequestFileEntity(
                     fileName: logsName,
-                    mimeType: MimeType.applicationZip.rawValue,
+                    mimeType: .applicationZip,
                     fileContent: logsData
                 )
             ]
@@ -370,8 +368,8 @@ extension SupportImpl: ReportSiteProtocol {
     func reportSiteUrl(reportUrl: String?, from screen: String) async -> URL? {
         let isPaid = await self.licenseStateProvider.isPaid()
 
-        var enabledFilterIDs: [Int] = []
-        var enabledCustomFilters: [ReportsWebAPI.CustomFilter] = []
+        var enabledFilterIds: [Int] = []
+        var enabledCustomFilters: [SiteReport.CustomFilter] = []
 
         let enabledFilters = await self.filtersSupervisor.getEnabledFilters()
 
@@ -379,30 +377,26 @@ extension SupportImpl: ReportSiteProtocol {
             if filter.isCustom {
                 enabledCustomFilters.append(.init(name: filter.name, url: filter.url))
             } else {
-                enabledFilterIDs.append(filter.filterId)
+                enabledFilterIds.append(filter.filterId)
             }
         }
 
-        let advancedRules = self.userSettings.advancedRules
-        let isExtraEnabled = self.userSettings.adguardExtra
+        let state = SiteReportState(
+            screen: screen,
+            pageUrl: reportUrl,
+            isPaid: isPaid,
+            enabledFilterIds: enabledFilterIds,
+            customFilters: enabledCustomFilters,
+            extensions: [Constants.agExtraExtension],
+            extensionsEnabled: self.userSettings.adguardExtra,
+            advancedRules: self.userSettings.advancedRules,
+            lastFiltersUpdate: self.userSettings.lastFiltersUpdateTime,
+            languageSpecificAdblocking: self.filtersSupervisor.languageSpecific
+        )
 
-        let extensions: [ReportsWebAPI.Extension] = [
-            Constants.agExtraExtension
-        ]
-
-        return await ReportsWebAPI.newIssue(
-            tds:               .macMini(appid: self.productInfo.applicationId, from: screen),
-            productType:       .macMini,
-            productVersion:    BuildConfig.AG_VERSION_TITLE,
-            licenseType:       isPaid ? .paid : .free,
-            browser:           .safari,
-            url:               reportUrl,
-            filters:           enabledFilterIDs,
-            filtersLastUpdate: self.userSettings.lastFiltersUpdateTime,
-            customFilters:     enabledCustomFilters.isEmpty ? nil : enabledCustomFilters,
-            extensions:        extensions.isEmpty ? nil : extensions,
-            extensionsEnabled: isExtraEnabled,
-            advancedRules:     advancedRules
+        return SiteReportUrlBuilder.makeUrl(
+            backend: BackendFactory.make(appId: await self.productInfo.applicationId),
+            state: state
         )
     }
 }

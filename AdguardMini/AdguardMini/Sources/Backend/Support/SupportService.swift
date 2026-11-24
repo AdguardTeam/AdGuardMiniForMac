@@ -19,7 +19,7 @@ protocol SupportService {
         email: String,
         subject: String,
         description: String,
-        attachments: RequestFileEntities
+        attachments: [RequestFileEntity]
     ) async throws
 }
 
@@ -41,11 +41,10 @@ final class SupportServiceImpl: SupportService {
         email: String,
         subject: String,
         description: String,
-        attachments: RequestFileEntities
+        attachments: [RequestFileEntity]
     ) async throws {
-        let request = BackendRequest.supportFeedback(
-            applicationId: await self.productInfo.applicationId,
-            version: BuildConfig.AG_VERSION_TITLE,
+        let backend = BackendFactory.make(appId: await self.productInfo.applicationId)
+        let request = backend.supportFeedback(
             email: email,
             language: Locale.current.language.languageCode?.identifier ?? "en",
             subject: subject,

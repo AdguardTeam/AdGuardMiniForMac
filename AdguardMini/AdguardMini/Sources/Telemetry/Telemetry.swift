@@ -251,9 +251,11 @@ extension Telemetry {
         ) async -> Data? {
             do {
                 let response = try await self.network.data(request: request)
-                if response.code / 100 != 2 {
+                if !response.isSuccessful {
                     LogDebug(
-                        "Error telemetry request: HTTP status code \(response.code)", function: function, line: line
+                        "Error telemetry request: HTTP status code \(response.statusCode)",
+                        function: function,
+                        line: line
                     )
                     return nil
                 }

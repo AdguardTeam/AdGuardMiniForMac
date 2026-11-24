@@ -1,4 +1,5 @@
 {
+  "originHash" : "f41ec2216f1b58b12fb2a64e5cdcfe0c213708f3d409c169cb8e61fdbed80067",
   "pins" : [
     {
       "identity" : "filterlistmanager",
@@ -30,7 +31,7 @@
       "kind" : "registry",
       "location" : "",
       "state" : {
-        "version" : "0.8.1"
+        "version" : "0.9.0"
       }
     },
     {
@@ -142,10 +143,10 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CoreOffice/XMLCoder.git",
       "state" : {
-        "revision" : "b1e944cbd0ef33787b13f639a5418d55b3bed501",
-        "version" : "0.17.1"
+        "revision" : "42f62383dbcd074440cb1f6a750b9c02df9e7325",
+        "version" : "0.18.2"
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

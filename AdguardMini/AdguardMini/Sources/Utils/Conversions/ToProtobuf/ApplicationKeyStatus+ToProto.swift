@@ -3,14 +3,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 //
-//  ActivationResponse.ApplicationKeyStatus+ToProto.swift
+//  ApplicationKeyStatus+ToProto.swift
 //  AdguardMini
 //
 
 import AppBackend
 import ProtoSchema
 
-extension ActivationResponse.ApplicationKeyStatus {
+extension ApplicationKeyStatus {
     func toProto() -> EnterActivationCodeResult {
         // Improve readability
         // swiftlint:disable switch_case_on_newline

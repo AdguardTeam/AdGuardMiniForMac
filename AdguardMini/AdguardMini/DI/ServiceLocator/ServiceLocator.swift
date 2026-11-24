@@ -546,7 +546,6 @@ final class ServiceLocator {
         webFlowService: self.webFlowService,
         subscribeWebFlowService: self.subscribeWebFlowService,
         licenseService: self.licenseService,
-        productInfo: self.productInfoStorage,
         keychain: self.coreDIContainer.keychain,
         netReachability: self.networkReachabilityMonitor,
         eventBus: self.eventBus

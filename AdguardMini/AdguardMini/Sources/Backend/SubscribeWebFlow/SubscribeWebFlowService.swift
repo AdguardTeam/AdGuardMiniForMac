@@ -40,25 +40,18 @@ final class SubscribeWebFlowServiceImpl: @unchecked Sendable {
 
 extension SubscribeWebFlowServiceImpl: SubscribeWebFlowService {
     func startPurchaseFlow(from screen: String) async throws {
-        let appId = await self.productInfo.applicationId
-        guard let url = SubscribeWebAPI.purchase(
-            tds: .macMini(appid: appId, from: screen),
-            appId: appId,
-            appSlug: CommonBackendParameters.appSlug,
-            returnUrl: Constants.redirectUrl
-        ) else {
+        let backend = BackendFactory.make(appId: await self.productInfo.applicationId)
+        guard let url = backend.purchaseURL(from: screen, returnUrl: Constants.redirectUrl) else {
             throw SubscribeWebFlowServiceError.cantCreateUrl
         }
         NSWorkspace.shared.open(url)
     }
 
     func startRenewalFlow(licenseKey: String, from screen: String) async throws {
-        let appId = await self.productInfo.applicationId
-        guard let url = SubscribeWebAPI.renewal(
-            tds: .macMini(appid: appId, from: screen),
-            appId: appId,
-            appSlug: CommonBackendParameters.appSlug,
+        let backend = BackendFactory.make(appId: await self.productInfo.applicationId)
+        guard let url = backend.renewalURL(
             licenseKey: licenseKey,
+            from: screen,
             returnUrl: Constants.redirectUrl
         ) else {
             throw SubscribeWebFlowServiceError.cantCreateUrl
