@@ -2,10 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import '../mocks/domEnvironment';
-
 import assert from 'node:assert/strict';
-import { test, beforeEach, afterEach } from 'node:test';
+import { onTestFinished, test, beforeEach, afterEach } from 'vitest';
 
 import { render } from 'preact';
 
@@ -25,7 +23,6 @@ import { __resetSettingsTestStore, store } from 'SettingsStore';
 type UserRulesFileActions = ReturnType<typeof useUserRulesFileActions>;
 
 /** Hooks a test case registers for teardown. */
-type TestHooks = { after(callback: () => void): void };
 
 /** Notification the page queued during one case. */
 interface QueuedNotification {
@@ -88,10 +85,9 @@ function installStore(
 /**
  * Renders the hook through a harness and registers its teardown.
  *
- * @param testContext Test hooks used to unregister the teardown.
  * @returns The hook's return value.
  */
-function mountActions(testContext: TestHooks): { current: UserRulesFileActions } {
+function mountActions(): { current: UserRulesFileActions } {
     const actions: { current?: UserRulesFileActions } = {};
     const container = document.createElement('div');
     document.body.appendChild(container);
@@ -103,7 +99,7 @@ function mountActions(testContext: TestHooks): { current: UserRulesFileActions }
 
     render(<Harness />, container);
 
-    testContext.after(() => {
+    onTestFinished(() => {
         render(null, container);
         container.remove();
     });
@@ -122,10 +118,10 @@ afterEach(() => {
     delete (window as unknown as { API?: unknown }).API;
 });
 
-test('import reports success only when the platform applied the rules', async (testContext) => {
+test('import reports success only when the platform applied the rules', async () => {
     installStore(async () => true, async () => false);
     installPlatform('/Users/test/Documents/rules.txt');
-    const actions = mountActions(testContext);
+    const actions = mountActions();
 
     await actions.current.onImportRules();
 
@@ -135,10 +131,10 @@ test('import reports success only when the platform applied the rules', async (t
     assert.deepEqual(rememberedDirectories, ['/Users/test/Documents']);
 });
 
-test('import reports a failure when the platform replies without rules', async (testContext) => {
+test('import reports a failure when the platform replies without rules', async () => {
     installStore(async () => false, async () => false);
     installPlatform('/Users/test/Documents/rules.txt');
-    const actions = mountActions(testContext);
+    const actions = mountActions();
 
     await actions.current.onImportRules();
 
@@ -148,12 +144,12 @@ test('import reports a failure when the platform replies without rules', async (
     assert.equal(notifications[0].message, 'notification.user.rules.import.failed');
 });
 
-test('import reports a failure when the request rejects', async (testContext) => {
+test('import reports a failure when the request rejects', async () => {
     installStore(async () => {
         throw new Error('rpc rejected');
     }, async () => false);
     installPlatform('/Users/test/Documents/rules.txt');
-    const actions = mountActions(testContext);
+    const actions = mountActions();
 
     await actions.current.onImportRules();
 
@@ -162,10 +158,10 @@ test('import reports a failure when the request rejects', async (testContext) =>
     assert.equal(notifications[0].message, 'notification.user.rules.import.failed');
 });
 
-test('export reports success with a Finder action when the file was written', async (testContext) => {
+test('export reports success with a Finder action when the file was written', async () => {
     installStore(async () => false, async () => false);
     installPlatform('/Users/test/Documents/user_rules.txt');
-    const actions = mountActions(testContext);
+    const actions = mountActions();
 
     await actions.current.onExportRules();
 
@@ -184,10 +180,10 @@ test('export reports success with a Finder action when the file was written', as
     );
 });
 
-test('export reports a failure when the platform rejected the write', async (testContext) => {
+test('export reports a failure when the platform rejected the write', async () => {
     installStore(async () => false, async () => true);
     installPlatform('/Users/test/Documents/user_rules.txt');
-    const actions = mountActions(testContext);
+    const actions = mountActions();
 
     await actions.current.onExportRules();
 
@@ -196,12 +192,12 @@ test('export reports a failure when the platform rejected the write', async (tes
     assert.equal(notifications[0].message, 'something went wrong');
 });
 
-test('export reports a failure when the request rejects', async (testContext) => {
+test('export reports a failure when the request rejects', async () => {
     installStore(async () => false, async () => {
         throw new Error('rpc rejected');
     });
     installPlatform('/Users/test/Documents/user_rules.txt');
-    const actions = mountActions(testContext);
+    const actions = mountActions();
 
     await actions.current.onExportRules();
 

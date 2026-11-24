@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { afterEach, describe, it } from 'node:test';
+import { afterEach, describe, it } from 'vitest';
 import assert from 'node:assert/strict';
 
 import { debouncedEditorSync } from 'Modules/userrules/lib/debouncedEditorSync';

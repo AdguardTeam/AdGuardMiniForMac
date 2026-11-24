@@ -110,10 +110,10 @@ function EditorComponent({
         let cancelled = false;
 
         const init = async () => {
-            // `wasmUrl` is inlined as a `data:` URL by webpack `asset/inline`;
-            // vscode-oniguruma's `loadWASM` fetches string arguments, which the
-            // module's strict CSP (`connect-src 'none'`) blocks. Hand it the
-            // raw bytes instead so the editor loads without any network
+            // `wasmUrl` is inlined as a `data:` URL by the bundler's `dataurl`
+            // loader; vscode-oniguruma's `loadWASM` fetches string arguments,
+            // which the module's strict CSP (`connect-src 'none'`) blocks. Hand
+            // it the raw bytes instead so the editor loads without any network
             // connection.
             let wasmBytes: ArrayBuffer;
             try {

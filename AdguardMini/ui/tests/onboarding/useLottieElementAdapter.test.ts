@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import assert from 'node:assert/strict';
-import { beforeEach, test } from 'node:test';
+import { beforeEach, test } from 'vitest';
 
 import { preloadLottieAnimation } from '../../modules/onboarding/lib/hooks/useLottieElementAdapter';
 import { __getLottiePreloadCalls, __resetLottiePreloadCalls } from '../mocks/webview-utils-kit';

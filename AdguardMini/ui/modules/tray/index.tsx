@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import 'expose-loader?exposes=preactHooks!preact/hooks';
-// eslint-disable-next-line import/order
 import { instantiateLogger } from '@adg/webview-utils-kit';
 import { render } from 'preact';
 

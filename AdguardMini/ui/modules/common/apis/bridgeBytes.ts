@@ -14,7 +14,7 @@
  * @param base64 - The base64-encoded payload as sent by the native side.
  * @returns The decoded payload bytes.
  */
-export const base64ToBytes = (base64: string): Uint8Array => {
+export const base64ToBytes = (base64: string): Uint8Array<ArrayBuffer> => {
     // `atob` throws an `InvalidCharacterError` on malformed input (e.g. a
     // truncated payload or a native/web version mismatch). Annotate it so a
     // caller (e.g. `__resolveRpc`) can surface a descriptive error instead of

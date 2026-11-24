@@ -8,7 +8,7 @@
 //
 
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -87,7 +87,7 @@ function readModulePolicy(module: string): string {
     );
     const html = fs.readFileSync(filePath, 'utf8')
         // The critical CSS and its CSP hash are inlined at build time (see
-        // `webpack.config.base.js`). Expand the lodash placeholders so the
+        // `esbuild.config.base.js`). Expand the lodash placeholders so the
         // `<meta>` tag parses like the emitted page — the placeholder's `%>`
         // would otherwise truncate the tag in the regex below.
         .replace(/<%= criticalCss %>/g, '')

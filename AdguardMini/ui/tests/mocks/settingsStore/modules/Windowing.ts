@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * Node-test stub for `SettingsStore/modules/Windowing` (the module-level
+ * Test stub for `SettingsStore/modules/Windowing` (the module-level
  * `windowing` singleton). `UserRulesCallbackServiceInternal.onUserRulesWindowClosed`
  * calls `windowing.setUserRulesEditorWindowOpened(false)`; tests install a spy
  * and reset it between cases.

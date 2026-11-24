@@ -23,7 +23,7 @@ import { base64ToBytes } from './bridgeBytes';
  * Design — Callback Dispatch failure modes).
  */
 
-type CallbackHandler = (bytes: Uint8Array) => Promise<void>;
+type CallbackHandler = (bytes: Uint8Array<ArrayBuffer>) => Promise<void>;
 
 const handlers = new Map<string, CallbackHandler>();
 

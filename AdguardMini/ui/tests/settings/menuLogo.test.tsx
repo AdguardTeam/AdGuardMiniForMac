@@ -2,10 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import '../mocks/domEnvironment';
-
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { onTestFinished, test } from 'vitest';
 
 import { render } from 'preact';
 
@@ -13,7 +11,6 @@ import { MenuLogo } from 'Modules/settings/components/Menu/components/MenuLogo';
 import { store, __resetSettingsTestStore } from 'SettingsStore';
 import { RouteName } from 'SettingsStore/modules';
 
-type TestHooks = { after(callback: () => void): void };
 
 /**
  * Installs a `translate` stub that resolves the control's composed aria label.
@@ -39,10 +36,9 @@ function installTranslate() {
  * Renders the logo into a fresh container, wires the navigation recording, and
  * registers the teardown.
  *
- * @param testContext Test hooks used to unregister the teardown.
  * @param changePath Records the route the logo navigates to.
  */
-function mountMenuLogo(testContext: TestHooks, changePath: (path: string) => void): HTMLElement {
+function mountMenuLogo(changePath: (path: string) => void): HTMLElement {
     installTranslate();
     __resetSettingsTestStore();
     store.router = { changePath };
@@ -51,7 +47,7 @@ function mountMenuLogo(testContext: TestHooks, changePath: (path: string) => voi
     document.body.appendChild(container);
     render(<MenuLogo isDarkTheme={false} />, container);
 
-    testContext.after(() => {
+    onTestFinished(() => {
         render(null, container);
         container.remove();
         __resetSettingsTestStore();
@@ -63,18 +59,18 @@ function mountMenuLogo(testContext: TestHooks, changePath: (path: string) => voi
     return logo;
 }
 
-test('the logo opens Safari protection on click', (testContext) => {
+test('the logo opens Safari protection on click', () => {
     const navigated: string[] = [];
-    const logo = mountMenuLogo(testContext, (path) => navigated.push(path));
+    const logo = mountMenuLogo((path) => navigated.push(path));
 
     logo.click();
 
     assert.deepEqual(navigated, [RouteName.safari_protection], 'the click selects the main screen');
 });
 
-test('the whole logo area activates the control', (testContext) => {
+test('the whole logo area activates the control', () => {
     const navigated: string[] = [];
-    const logo = mountMenuLogo(testContext, (path) => navigated.push(path));
+    const logo = mountMenuLogo((path) => navigated.push(path));
     const image = logo.querySelector('[data-logo]');
     assert.ok(image, 'the logo image is inside the control');
 
@@ -83,8 +79,8 @@ test('the whole logo area activates the control', (testContext) => {
     assert.deepEqual(navigated, [RouteName.safari_protection], 'a click on the logo image activates the control');
 });
 
-test('the logo exposes an accessible navigation label', (testContext) => {
-    const logo = mountMenuLogo(testContext, () => {});
+test('the logo exposes an accessible navigation label', () => {
+    const logo = mountMenuLogo(() => {});
 
     assert.equal(logo.getAttribute('tabindex'), '0', 'the logo is in the tab order');
     assert.equal(
@@ -94,9 +90,9 @@ test('the logo exposes an accessible navigation label', (testContext) => {
     );
 });
 
-test('Enter and Space activate the logo, other keys do not', (testContext) => {
+test('Enter and Space activate the logo, other keys do not', () => {
     const navigated: string[] = [];
-    const logo = mountMenuLogo(testContext, (path) => navigated.push(path));
+    const logo = mountMenuLogo((path) => navigated.push(path));
 
     logo.dispatchEvent(new window.KeyboardEvent('keydown', { code: 'Enter' }));
     logo.dispatchEvent(new window.KeyboardEvent('keydown', { code: 'Space' }));

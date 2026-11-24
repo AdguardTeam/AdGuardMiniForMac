@@ -169,8 +169,8 @@ for common symptom → file-area hints.
 - Card-based composition, design tokens from Figma, localization for user-facing
   strings, no `[DBG]` logging, top-level documentation comments (JSDoc).
 - Check `AdguardMini/ui/@types` custom type definitions before editing TS.
-- Do not flag as "missing import" globals provided by webpack `ProvidePlugin`
-  (see `scripts/webpack/webpack.config.base.js`).
+- Do not flag as "missing import" globals provided by the bundler inject
+  modules (see `AdguardMini/ui/scripts/esbuild/inject/injectLibs.js`).
 
 **4d. Rebuild.** For UI-only changes:
 

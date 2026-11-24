@@ -3,13 +3,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * Node-test stub for the `TrayStore` module alias. The real module
+ * Test stub for the `TrayStore` module alias. The real module
  * (`modules/tray/store/index.ts`) constructs the full tray store singleton —
  * not Node-loadable in the test runner. `TrayCallbackServiceImpl`'s
  * transitive type-only imports (`modules/tray/store/modules/Settings.ts`)
  * reference `TrayStore` purely as a type, so only the type surface is needed
- * here. Production resolves `TrayStore` via webpack; only
- * `tsconfig.node-tests.json` maps it here.
+ * here. Production resolves `TrayStore` via the bundler alias;
+ * `testMockAliases()` in `vitest.config.mjs` points it here.
  */
 
 /**

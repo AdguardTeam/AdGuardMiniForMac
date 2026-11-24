@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 
 import { PromoInfo } from '../../modules/common/apis/types/AppStoreSubscription';
 import { visiblePromoOffer } from '../../modules/settings/components/Paywall/promoOffer';

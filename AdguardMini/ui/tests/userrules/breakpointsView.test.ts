@@ -2,12 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-// The DOM environment must load before `@codemirror/view`, which reads the
-// document at module scope.
-import '../mocks/domEnvironment';
-
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 
 import { history, undo } from '@codemirror/commands';
 import { EditorState } from '@codemirror/state';

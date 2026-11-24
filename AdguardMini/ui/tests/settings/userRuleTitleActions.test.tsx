@@ -2,31 +2,27 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import '../mocks/domEnvironment';
-
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { onTestFinished, test } from 'vitest';
 
 import { render } from 'preact';
 
 import { UserRuleTitleActions } from 'Modules/settings/components/UserRule/UserRuleTitleActions';
 
-type TestHooks = { after(callback: () => void): void };
 
 /**
  * Renders the heading actions into a fresh container and registers teardown.
  *
- * @param testContext Test hooks used to unregister the teardown.
  * @param canDelete Whether the edited rule can be removed.
  * @param onDelete Records the delete action.
  */
-function mountActions(testContext: TestHooks, canDelete: boolean, onDelete: () => void) {
+function mountActions(canDelete: boolean, onDelete: () => void) {
     const container = document.createElement('div');
     document.body.appendChild(container);
 
     render(<UserRuleTitleActions canDelete={canDelete} onDelete={onDelete} />, container);
 
-    testContext.after(() => {
+    onTestFinished(() => {
         render(null, container);
         container.remove();
     });
@@ -43,8 +39,8 @@ async function flushRender() {
     });
 }
 
-test('offers only the report flag when the rule cannot be deleted', (testContext) => {
-    const container = mountActions(testContext, false, () => {});
+test('offers only the report flag when the rule cannot be deleted', () => {
+    const container = mountActions(false, () => {});
 
     const buttons = container.querySelectorAll('button');
     assert.equal(buttons.length, 1, 'the create page has no context menu trigger');
@@ -52,9 +48,9 @@ test('offers only the report flag when the rule cannot be deleted', (testContext
     assert.equal(container.querySelector('[role="button"]'), null, 'no action row is rendered');
 });
 
-test('offers the delete action for an edited rule', async (testContext) => {
+test('offers the delete action for an edited rule', async () => {
     let deleted = 0;
-    const container = mountActions(testContext, true, () => {
+    const container = mountActions(true, () => {
         deleted += 1;
     });
 

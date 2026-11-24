@@ -5,7 +5,7 @@
 // A rejected delete must put the optimistically removed rule back.
 
 import assert from 'node:assert/strict';
-import { afterEach, beforeEach, test } from 'node:test';
+import { afterEach, beforeEach, test } from 'vitest';
 
 import { OptionalError, UserRule, UserRules as UserRulesEnt } from 'Apis/types';
 

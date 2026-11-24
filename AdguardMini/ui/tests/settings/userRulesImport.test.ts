@@ -5,7 +5,7 @@
 // A failed import must leave the displayed rules untouched.
 
 import assert from 'node:assert/strict';
-import { test, beforeEach, afterEach } from 'node:test';
+import { test, beforeEach, afterEach } from 'vitest';
 
 import { UserRule, UserRules as UserRulesEnt, UserRulesOrError } from 'Apis/types';
 

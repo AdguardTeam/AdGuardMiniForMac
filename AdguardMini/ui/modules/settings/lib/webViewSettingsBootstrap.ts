@@ -44,14 +44,14 @@ export function setupSettingsWebViewBridge(
     ] as const;
 
     for (const method of methods) {
-        registerCallbackHandler(`SettingsCallbackService.${method}`, async (bytes: Uint8Array) => {
+        registerCallbackHandler(`SettingsCallbackService.${method}`, async (bytes) => {
             await settingsCallbackService[method](bytes.buffer);
         });
     }
 
     registerCallbackHandler(
         'AccountCallbackService.OnLicenseUpdate',
-        async (bytes: Uint8Array) => {
+        async (bytes) => {
             await accountCallbackService.OnLicenseUpdate(bytes.buffer);
         },
     );
@@ -63,21 +63,21 @@ export function setupSettingsWebViewBridge(
     ] as const;
 
     for (const method of filterMethods) {
-        registerCallbackHandler(`FiltersCallbackService.${method}`, async (bytes: Uint8Array) => {
+        registerCallbackHandler(`FiltersCallbackService.${method}`, async (bytes) => {
             await filtersCallbackService[method](bytes.buffer);
         });
     }
 
     registerCallbackHandler(
         'UserRulesCallbackService.onUserFilterChange',
-        async (bytes: Uint8Array) => {
+        async (bytes) => {
             await userRulesCallbackService.onUserFilterChange(bytes.buffer);
         },
     );
 
     registerCallbackHandler(
         'UserRulesCallbackService.onUserRulesWindowClosed',
-        async (bytes: Uint8Array) => {
+        async (bytes) => {
             await userRulesCallbackService.onUserRulesWindowClosed(bytes.buffer);
         },
     );

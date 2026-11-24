@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * Node-test stub for the `@adg/webview-utils-kit` package. The real package
+ * Test stub for the `@adg/webview-utils-kit` package. The real package
  * (`packages/webview-utils-kit`) is a TypeScript source package whose entry
  * (`src/index.ts`) is not Node-loadable in the test runner. Production
- * resolves `@adg/webview-utils-kit` to the real package via webpack; only
- * `tsconfig.node-tests.json` maps it here.
+ * resolves `@adg/webview-utils-kit` to the real package via the bundler;
+ * `testMockAliases()` in `vitest.config.mjs` points it here.
  *
  * The type-only import of the real `vendor/index.d.ts` keeps its
  * `declare global` blocks (`log`, `window.xcallWrapper`, `HTMLLottieElement`)

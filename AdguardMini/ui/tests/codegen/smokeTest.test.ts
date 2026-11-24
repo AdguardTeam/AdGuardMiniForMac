@@ -6,12 +6,11 @@
  * Codegen smoke test. Regenerates Swift + TS output from a
  * fixture `.proto` via the vendored proto-generator + asserts no
  * Sciter-specific references appear in the regenerated output (US14.1,
- * US14.2). Self-skips when the project `.venv` Python is unavailable
- * (mirrors the `RUN_BUILD=1` self-skip precedent — the smoke test is a
- * developer-invoked check, not a hard CI gate).
+ * US14.2). Self-skips when the project `.venv` Python is unavailable, so it
+ * stays a developer-invoked check rather than a hard CI gate.
  */
 
-import { describe, it } from 'node:test';
+import { describe, it } from 'vitest';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { readFileSync, mkdtempSync, existsSync } from 'node:fs';
@@ -54,10 +53,9 @@ const generator = path.join(
     'AdguardMini/ui/packages/proto-generator/proto-parser/src/main.py',
 );
 
-// Self-skip when the project `.venv` Python cannot drive the generator
-// (mirrors the RUN_BUILD=1 precedent: the smoke test is a developer-
-// invoked check, not a hard CI gate). `PYTHON` is only dereferenced
-// inside `describe`, which is skipped when `SKIP` is true.
+// Self-skip when the project `.venv` Python cannot drive the generator,
+// because this is a developer-invoked check, not a hard CI gate. `PYTHON` is
+// only dereferenced inside `describe`, which is skipped when `SKIP` is true.
 const resolvedPython = resolvePython(repoRoot);
 const SKIP = resolvedPython == null || !pythonCanRunGenerator(resolvedPython, generator);
 const PYTHON = resolvedPython!;

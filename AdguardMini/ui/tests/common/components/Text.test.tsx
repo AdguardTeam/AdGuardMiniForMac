@@ -2,27 +2,23 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import '../../mocks/domEnvironment';
-
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { onTestFinished, test } from 'vitest';
 
 import { render } from 'preact';
 
 import { Text } from '../../../modules/common/components/Text/Text';
 
-type TestContext = { after(callback: () => void): void };
-
 /**
  * Renders the text into a fresh container and registers its teardown.
  */
-function mountText(testContext: TestContext, props: Parameters<typeof Text>[0]) {
+function mountText(props: Parameters<typeof Text>[0]) {
     const container = document.createElement('div');
     document.body.appendChild(container);
 
     render(<Text {...props} />, container);
 
-    testContext.after(() => {
+    onTestFinished(() => {
         render(null, container);
         container.remove();
     });
@@ -30,8 +26,8 @@ function mountText(testContext: TestContext, props: Parameters<typeof Text>[0]) 
     return container;
 }
 
-test('programmatically focused text stays ringless', (testContext: TestContext) => {
-    const container = mountText(testContext, {
+test('programmatically focused text stays ringless', () => {
+    const container = mountText({
         children: 'Heading',
         id: 'heading',
         tabIndex: -1,
@@ -48,8 +44,8 @@ test('programmatically focused text stays ringless', (testContext: TestContext) 
     );
 });
 
-test('a deliberate tab stop keeps the focus-ring control class', (testContext: TestContext) => {
-    const container = mountText(testContext, {
+test('a deliberate tab stop keeps the focus-ring control class', () => {
+    const container = mountText({
         children: 'Tab stop',
         tabIndex: 0,
         type: 'h4',

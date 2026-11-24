@@ -41,7 +41,7 @@ export interface BoundedEmitterOptions {
 export const DEFAULT_VIOLATION_OPTIONS: BoundedEmitterOptions = {
     // `performance.now()` is monotonic (per the documented contract), so a
     // wall-clock jump (NTP sync, manual change, DST) cannot pin the window
-    // open or close it early. Available in WKWebView and `node:test`.
+    // open or close it early. Available in WKWebView and in the test runtime.
     now: () => performance.now(),
     windowMs: 5_000,
     maxPerWindow: 10,

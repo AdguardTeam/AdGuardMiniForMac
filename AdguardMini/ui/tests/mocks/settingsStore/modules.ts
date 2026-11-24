@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * Node-test stub for the `SettingsStore/modules` barrel. The real barrel
+ * Test stub for the `SettingsStore/modules` barrel. The real barrel
  * (`modules/settings/store/modules/index.ts`) re-exports the full settings
  * store module chain, which is not Node-loadable in the test runner. The
  * callback `*Internal` services import the notification enums + `RouteName`

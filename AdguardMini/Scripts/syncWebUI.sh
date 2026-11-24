@@ -13,7 +13,7 @@
 #
 #  Pipeline:
 #    1. Locate an existing built app (DerivedData / repo `build/` / --app).
-#    2. Build the UI with webpack (skipped with --no-build).
+#    2. Build the UI with the bundler (skipped with --no-build).
 #    3. Quit the running app.
 #    4. rsync AdguardMini/MiniResources/WebUI -> <App>/Contents/Resources/WebUI.
 #    5. Re-sign the app bundle (resource changes break the code signature seal).
@@ -48,7 +48,7 @@ Rebuilds the WKWebView UI bundle and injects it into an existing built
 .app (no Xcode rebuild), then relaunches the app.
 
 Options:
-  --no-build            Do not run webpack; reuse the current
+  --no-build            Do not run the UI build; reuse the current
                         MiniResources/WebUI output (use together with
                         `yarn start` watch mode).
   --prod                Build the UI with `yarn build:prod` (default: build:dev).
@@ -171,7 +171,7 @@ run_xcodebuild() {
         build
 }
 
-# Builds the TypeScript UI with webpack via the captured yarn wrapper.
+# Builds the TypeScript UI with esbuild via the captured yarn wrapper.
 build_web_ui() {
     local yarn_bin="${ROOT_DIR}/bin/yarn"
     [[ -x "${yarn_bin}" ]] || yarn_bin="yarn"
@@ -270,8 +270,8 @@ if [[ ${DO_BUILD} -eq 1 ]]; then
     build_web_ui
 fi
 
-# Verify the staged WebUI actually contains a build before syncing: webpack's
-# `output.clean: true` wipes the dir before emitting, so a failed/interrupted
+# Verify the staged WebUI actually contains a build before syncing: the build's
+# `fs.emptyDir` wipes the dir before emitting, so a failed/interrupted
 # build would empty it and `rsync --delete` would then delete the app's working
 # WebUI (requiring a full rebuild to recover).
 [[ -d "${WEBUI_SRC}" ]] || fail "${WEBUI_SRC} is missing. Run 'yarn build:dev' first."

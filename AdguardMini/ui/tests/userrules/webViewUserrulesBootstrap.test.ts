@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import assert from 'node:assert/strict';
-import { afterEach, beforeEach, describe, it } from 'node:test';
+import { afterEach, beforeEach, describe, it } from 'vitest';
 
 import { EffectiveTheme, EffectiveThemeValue, UserRule, UserRulesCallbackState } from '../../modules/common/apis/types';
 import { __resetForTests } from '../../modules/common/apis/callbackDispatch';

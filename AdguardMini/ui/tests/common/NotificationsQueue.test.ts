@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { afterEach, test, vi } from 'vitest';
 
 import {
     NotificationsQueue,
@@ -14,6 +14,11 @@ import {
 } from '../../modules/common/stores/NotificationsQueue';
 
 import type { InfoNotificationProperties } from '../../modules/common/stores/NotificationsQueue';
+
+// Restores real timers so a leak cannot mask a failure in the next test.
+afterEach(() => {
+    vi.useRealTimers();
+});
 
 /**
  * Helper to create a basic info notification
@@ -125,10 +130,10 @@ test('mapQueue() returns empty array for empty queue', () => {
     assert.deepEqual(result, []);
 });
 
-test('notify() with timeout:false disables auto-close', (t) => {
-    // Use fake timers so the test does not depend on real wall-clock time.
-    // The auto-close timer (if any) only fires when we explicitly advance it.
-    t.mock.timers.enable();
+test('notify() with timeout:false disables auto-close', () => {
+    // Fake timers keep the test off the wall clock: the auto-close timer, if any,
+    // only fires when time is advanced explicitly.
+    vi.useFakeTimers();
 
     const queue = new NotificationsQueue();
 
@@ -137,17 +142,16 @@ test('notify() with timeout:false disables auto-close', (t) => {
 
     // Advance fake time just past the default notify lifetime. Because
     // timeout:false means no timer was scheduled, the notification must remain.
-    t.mock.timers.tick(DEFAULT_NOTIFY_LIFETIME + 1);
+    vi.advanceTimersByTime(DEFAULT_NOTIFY_LIFETIME + 1);
     assert.equal(queue.queueLength, 1);
 
     // Clean up
     queue.closeNotify(uuid);
 });
 
-test('notify() with numeric timeout auto-closes after specified time', (t) => {
-    // Use fake timers so the auto-close fires deterministically on tick()
-    // instead of relying on real wall-clock scheduling.
-    t.mock.timers.enable();
+test('notify() with numeric timeout auto-closes after specified time', () => {
+    // Fake timers make the auto-close fire deterministically when time advances.
+    vi.useFakeTimers();
 
     const queue = new NotificationsQueue();
 
@@ -155,11 +159,10 @@ test('notify() with numeric timeout auto-closes after specified time', (t) => {
     assert.equal(queue.queueLength, 1);
 
     // Just before the deadline the notification is still present.
-    t.mock.timers.tick(9);
+    vi.advanceTimersByTime(9);
     assert.equal(queue.queueLength, 1);
 
-    // Advancing to/past the deadline fires the auto-close timer
-    // synchronously on tick(), removing the notification.
-    t.mock.timers.tick(1);
+    // Advancing to/past the deadline fires the auto-close timer synchronously.
+    vi.advanceTimersByTime(1);
     assert.equal(queue.queueLength, 0);
 });

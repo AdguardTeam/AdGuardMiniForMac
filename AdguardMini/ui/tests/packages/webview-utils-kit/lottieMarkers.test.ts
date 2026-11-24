@@ -3,18 +3,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 
 import { extractMarkerFrames } from '../../../packages/webview-utils-kit/src/replacements/lottieMarkers';
 
 // Inline marker tables mirroring the shipped Lottie JSON assets at
 // `AdguardMini/ui/modules/lottie/{ads,trackers,annoyances}.json`.
-// Hardcoded here (instead of read from disk at test runtime) because
-// `tsconfig.node-tests.json` (`outDir: "build/tests"`, `rootDir: "."`)
-// does NOT emit `.json` files to `outDir`, so `readFileSync` against the
-// source-tree path would `ENOENT` under the compiled test's CWD. The
-// assertions below already hardcode the expected frame values, so
-// this removes the disk-read dependency entirely and keeps the test pure.
+// Hardcoded here instead of read from disk at test runtime so the test stays
+// independent of the repository state, as the Testing Discipline requires.
+// The assertions below already hardcode the expected frame values, so this
+// removes the disk-read dependency entirely and keeps the test pure.
 const adsData = {
     markers: [
         { tm: 0, cm: 'animationStartFirstMarker', dr: 0 },

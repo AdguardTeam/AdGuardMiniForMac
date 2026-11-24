@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 
 import { StoryNavigation } from '../../modules/tray/modules/stories/classes';
 import { actions, navigationReducer } from '../../modules/tray/modules/stories/reducers';

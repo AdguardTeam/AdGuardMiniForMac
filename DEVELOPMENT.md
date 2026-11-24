@@ -14,6 +14,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 - [Development Workflow](#development-workflow)
   - [Code Style](#code-style)
   - [Frontend Development](#frontend-development)
+  - [Type Checking](#type-checking)
   - [Linting](#linting)
   - [Testing](#testing)
   - [Building](#building)
@@ -37,7 +38,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 | Tool | Version | Notes |
 |------|---------|-------|
 | Xcode | 26+ | Required for `.icon` asset format |
-| Node.js | 22+ | JavaScript runtime (used by Yarn, Webpack, Web UI build) |
+| Node.js | 22+ | JavaScript runtime (used by Yarn, esbuild, Vitest) |
 | Ruby | 3.2.2+ | Build scripts, RuboCop, ruby-lsp |
 | Bundler | 2.6+ | Ruby dependency management |
 | Yarn | 1.22+ | Frontend dependency management |
@@ -123,15 +124,14 @@ repository.
 4. **Build the project** in Xcode: open `AdguardMini/AdguardMini.xcodeproj`
    and build the `AdguardMini` scheme.
 
-   > **Note:** The UI is built by webpack (`yarn build:dev` / `yarn build:prod`)
+   > **Note:** The UI is built by esbuild (`yarn build:dev` / `yarn build:prod`)
    > into `AdguardMini/MiniResources/WebUI/` (per-module `*.html` +
-   > `*.app.js` + `*.css`). The Xcode build phase copies this folder into the
-   > app bundle; the Swift WKWebView host loads each module's HTML via
-   > `Bundle.main.url(forResource:withExtension:)`. For hot-reload
-   > development, `yarn syncUI` / `yarn watchProject` inject the freshly built
-   > bundle into the already built `.app` and relaunch it, so no Xcode rebuild
-   > is needed for UI-only changes. No manual UI build step is required for a
-   > release build that uses the committed `WebUI/` artifacts.
+   > `<module>.app.js` + `<module>.app.css` + `assets/`). The Xcode build phase
+   > copies this folder into the app bundle; the Swift WKWebView host loads each
+   > module's HTML via `Bundle.main.url(forResource:withExtension:)`. For
+   > hot-reload development, `yarn syncUI` / `yarn watchProject` inject the
+   > freshly built bundle into the already built `.app` and relaunch it, so no
+   > Xcode rebuild is needed for UI-only changes.
 
 ## Development Workflow
 
@@ -156,11 +156,18 @@ yarn start
 # (no Xcode rebuild) and relaunches the app
 yarn syncUI
 
-# Continuous hot-swap — webpack watch + inject into the existing build
+# Continuous hot-swap — esbuild watch + inject into the existing build
 # Terminal 1:
 yarn start
 # Terminal 2:
 yarn watchProject
+```
+
+### Type Checking
+
+```bash
+# One-shot type check (also runs as part of build:dev / build:prod)
+yarn typecheck
 ```
 
 ### Linting
@@ -187,8 +194,8 @@ xcodebuild test \
   -skipPackagePluginValidation \
   CODE_SIGNING_ALLOWED=NO
 
-# TypeScript: run node:test suites (compiles tsconfig.node-tests.json first)
-yarn test:node
+# TypeScript: run the Vitest suite; `yarn test:coverage` adds coverage
+yarn test
 ```
 
 > **Note:** In CI, the same Swift test command is run via the shared

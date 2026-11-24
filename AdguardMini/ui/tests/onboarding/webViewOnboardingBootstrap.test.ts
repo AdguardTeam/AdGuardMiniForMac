@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 
 import type { OnboardingCallbackService } from '../../modules/common/apis/callbacks/OnboardingCallbackService';
 import { __resetForTests } from '../../modules/common/apis/callbackDispatch';

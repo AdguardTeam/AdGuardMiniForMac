@@ -1,0 +1,34 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "paths": {
+            "Apis/*": ["AdguardMini/ui/modules/common/apis/*"],
+            "ApiWindow": ["AdguardMini/ui/modules/common/apis/apiWindow.ts"],
+            "Intl": ["AdguardMini/ui/tests/mocks/intl"],
+            "Theme": ["AdguardMini/ui/tests/mocks/theme"],
+            "Theme/*": ["AdguardMini/ui/modules/common/theme/*"],
+            "Modules/*": ["AdguardMini/ui/modules/*"],
+            "Common": ["AdguardMini/ui/modules/common/index"],
+            "Common/*": ["AdguardMini/ui/modules/common/*"],
+            "Hooks": ["AdguardMini/ui/modules/common/hooks/hooks.ts"],
+            "Utils/*": ["AdguardMini/ui/modules/common/utils/*"],
+            "Hooks/*": ["AdguardMini/ui/modules/common/hooks/*"],
+            "UILib": ["AdguardMini/ui/tests/mocks/uiLib"],
+            "@adg/webview-utils-kit": ["AdguardMini/ui/tests/mocks/webview-utils-kit"],
+            "TrayStore": ["AdguardMini/ui/tests/mocks/trayStore"],
+            "TrayStore/*": ["AdguardMini/ui/modules/tray/store/*"],
+            "TrayLib/*": ["AdguardMini/ui/modules/tray/lib/*"],
+            "SettingsStore/modules/SettingsRouter": ["AdguardMini/ui/modules/settings/store/modules/SettingsRouter"],
+            "SettingsStore": ["AdguardMini/ui/tests/mocks/settingsStore"],
+            "SettingsStore/*": ["AdguardMini/ui/tests/mocks/settingsStore/*"],
+            "SettingsLib/*": ["AdguardMini/ui/tests/mocks/settingsLib/*"],
+            "OnboardingStore": ["AdguardMini/ui/tests/mocks/onboardingStore"],
+            "OnboardingStore/*": ["AdguardMini/ui/modules/onboarding/store/*"],
+            "OnboardingLib/*": ["AdguardMini/ui/modules/onboarding/lib/*"]
+        }
+    },
+    "include": [
+        "AdguardMini/ui/tests/**/*",
+        "AdguardMini/ui/@types/**/*"
+    ]
+}

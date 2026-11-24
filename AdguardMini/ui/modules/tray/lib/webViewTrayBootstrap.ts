@@ -33,7 +33,7 @@ export function setupTrayWebViewBridge(trayCallbackService: TrayCallbackService)
     ] as const;
 
     for (const method of methods) {
-        registerCallbackHandler(`TrayCallbackService.${method}`, async (bytes: Uint8Array) => {
+        registerCallbackHandler(`TrayCallbackService.${method}`, async (bytes) => {
             await trayCallbackService[method](bytes.buffer);
         });
     }

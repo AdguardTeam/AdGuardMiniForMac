@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import assert from 'node:assert/strict';
-import { afterEach, beforeEach, test } from 'node:test';
+import { afterEach, beforeEach, test } from 'vitest';
 
 import { AppStoreSubscriptionInfo, AppStoreSubscriptions, AppStoreSubscriptionsMessage } from '../../modules/common/apis/types/AppStoreSubscription';
 import { Account } from '../../modules/settings/store/modules/Account';

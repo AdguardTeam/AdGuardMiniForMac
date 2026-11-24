@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import 'expose-loader?exposes=preactHooks!preact/hooks';
 import lottie from 'lottie-web';
 // eslint-disable-next-line import/order
 import { __setLoadAnimationFactory, instantiateLogger } from '@adg/webview-utils-kit';

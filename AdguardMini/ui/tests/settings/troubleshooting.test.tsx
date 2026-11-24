@@ -2,10 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import '../mocks/domEnvironment';
-
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { onTestFinished, test } from 'vitest';
 
 import { render } from 'preact';
 
@@ -13,7 +11,6 @@ import { Troubleshooting } from 'Modules/settings/components/SystemWideProtectio
 
 import type { RefObject } from 'preact';
 
-type TestHooks = { after(callback: () => void): void };
 
 const DNS_KEY = 'advanced.blocking.system.wide.part.troubleshooting.dns';
 
@@ -85,13 +82,11 @@ function installTranslate() {
 /**
  * Renders the block into a fresh container and registers its teardown.
  *
- * @param testContext Test hooks used to unregister the teardown.
  * @param onCall Records the action a step link runs.
  * @param isInstalled Whether the filter is installed.
  * @param blockRef Optional ref the page passes to scroll the block into view.
  */
 function mountTroubleshooting(
-    testContext: TestHooks,
     onCall: (action: string) => void,
     isInstalled = true,
     blockRef?: RefObject<HTMLDivElement>,
@@ -110,7 +105,7 @@ function mountTroubleshooting(
         container,
     );
 
-    testContext.after(() => {
+    onTestFinished(() => {
         render(null, container);
         container.remove();
     });
@@ -118,17 +113,17 @@ function mountTroubleshooting(
     return container;
 }
 
-test('renders the troubleshooting steps', (testContext) => {
+test('renders the troubleshooting steps', () => {
     installTranslate();
-    const container = mountTroubleshooting(testContext, () => {});
+    const container = mountTroubleshooting(() => {});
 
     assert.equal(container.querySelectorAll('li').length, 6, 'all six steps are rendered');
     assert.match(container.textContent ?? '', /gateway\.icloud\.com/, 'the DNS step lists the iCloud hosts');
 });
 
-test('wraps the DNS host list in its own selection root', (testContext) => {
+test('wraps the DNS host list in its own selection root', () => {
     installTranslate();
-    const container = mountTroubleshooting(testContext, () => {});
+    const container = mountTroubleshooting(() => {});
 
     const dnsStep = container.querySelectorAll('li')[1];
     assert.ok(dnsStep, 'the DNS step is rendered');
@@ -145,10 +140,10 @@ test('wraps the DNS host list in its own selection root', (testContext) => {
     assert.doesNotMatch(hosts.textContent ?? '', /Allow them/, 'the trailing sentence stays outside the wrapper');
 });
 
-test('the step links run their actions', (testContext) => {
+test('the step links run their actions', () => {
     installTranslate();
     const calls: string[] = [];
-    const container = mountTroubleshooting(testContext, (action) => calls.push(action));
+    const container = mountTroubleshooting((action) => calls.push(action));
 
     const links = container.querySelectorAll('[role="button"]');
     assert.equal(links.length, 3, 'the steps carry the reset, remove, and support links');
@@ -163,20 +158,20 @@ test('the step links run their actions', (testContext) => {
     assert.deepEqual(calls, ['resetCache', 'removeFilter', 'contactSupport'], 'the support link opens the support screen');
 });
 
-test('exposes the steps block through the ref for scrolling', (testContext) => {
+test('exposes the steps block through the ref for scrolling', () => {
     installTranslate();
     const blockRef: RefObject<HTMLDivElement> = { current: null };
-    const container = mountTroubleshooting(testContext, () => {}, true, blockRef);
+    const container = mountTroubleshooting(() => {}, true, blockRef);
 
     assert.ok(blockRef.current, 'the block ref is attached');
     assert.equal(blockRef.current, container.firstElementChild, 'the ref points to the steps block');
     assert.match(blockRef.current?.textContent ?? '', /Troubleshooting/, 'the block carries the steps');
 });
 
-test('disables the reset and remove links when the filter is not installed', (testContext) => {
+test('disables the reset and remove links when the filter is not installed', () => {
     installTranslate();
     const calls: string[] = [];
-    const container = mountTroubleshooting(testContext, (action) => calls.push(action), false);
+    const container = mountTroubleshooting((action) => calls.push(action), false);
 
     assert.equal(container.querySelectorAll('li').length, 6, 'the steps stay readable');
     assert.match(container.textContent ?? '', /Reset the filter cache/, 'the reset step is not hidden');

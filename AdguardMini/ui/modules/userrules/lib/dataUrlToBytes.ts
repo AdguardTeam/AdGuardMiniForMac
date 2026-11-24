@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-/** Decode webpack inlined data URL into an `ArrayBuffer`.
+/** Decode a bundler-inlined data URL into an `ArrayBuffer`.
  * @throws Error when input is not a comma-separated data URL.
  */
 export const dataUrlToBytes = (dataUrl: string): ArrayBuffer => {

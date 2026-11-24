@@ -11,29 +11,29 @@
 
 # Xcode "Build Web UI" build phase.
 #
-# Builds the WKWebView user interface (Preact/MobX modules bundled by webpack).
-# webpack emits its output (per-module HTML/JS/CSS) directly into
-# MiniResources/WebUI/ (see DIST_PATH in webpack.config.base.js), which the
+# Builds the WKWebView user interface (Preact/MobX modules bundled by esbuild).
+# esbuild emits its output (per-module HTML/JS/CSS) directly into
+# MiniResources/WebUI/ (see the `outdir` in esbuild.config.base.js), which the
 # subsequent "Build And Copy Addition Resources Script" phase rsyncs into the
 # app bundle. Without this phase, building from Xcode leaves
 # MiniResources/WebUI stale (or absent) and WKWebViewAppHost traps at
 # runtime with "missing WebUI/<module>.html".
 #
 # This restores the behaviour of the "Build Sciter UI" PBXLegacyTarget deleted
-# by the WKWebView migration (master commit 7e708e06), which ran webpack and
-# packaged the output. Unlike the deleted master pipeline (and the former
-# mirrorWebUI.sh two-step build/ -> MiniResources/WebUI/), webpack now writes
-# straight to the resource dir: `output.clean: true` reproduces the old
-# `rsync --delete` semantics in a single stage.
+# by the WKWebView migration (master commit 7e708e06), which ran the UI build
+# and packaged the output. Unlike the deleted master pipeline (and the former
+# mirrorWebUI.sh two-step build/ -> MiniResources/WebUI/), the bundler writes
+# straight to the resource dir: `fs.emptyDir` in esbuild.config.base.js
+# reproduces the old `rsync --delete` semantics in a single stage.
 #
 # Differences from the deleted master pipeline, required by AGENTS.md:
 #   * Toolchain goes through bin/ wrappers (bin/yarn) instead of
 #     `bundle exec fastlane` / hardcoded /opt/homebrew paths (AGENTS.md
 #     "Toolchain wrappers" guideline in "Other").
 #
-# Incremental: to avoid running webpack on every Swift-only rebuild (the legacy
-# make target likewise skipped when ui/ was unchanged), this phase only
-# runs webpack when at least one file under ui/ is newer than the staged
+# Incremental: to avoid running the bundler on every Swift-only rebuild (the
+# legacy make target likewise skipped when ui/ was unchanged), this phase only
+# runs the bundler when at least one file under ui/ is newer than the staged
 # MiniResources/WebUI directory, or when the staged output is missing. The
 # phase itself is marked alwaysOutOfDate so Xcode still runs this cheap check
 # on every build.
@@ -51,7 +51,7 @@ YARN="${PROJECT_ROOT}/bin/yarn"
 UI_DIR="${SRCROOT}/ui"
 WEBUI_STAGED="${SRCROOT}/MiniResources/WebUI"
 
-# Map the Xcode build configuration to the webpack build script: Debug
+# Map the Xcode build configuration to the UI build script: Debug
 # configurations use the unminified dev bundle, everything else the prod bundle.
 # The project's debug configurations are `Debug-Standalone` and `Debug-MAS`
 # (see the XCConfigurationList entries in AdguardMini.xcodeproj).
@@ -73,10 +73,10 @@ if [[ ! -d "${UI_DIR}" ]]; then
   exit 1
 fi
 
-# Ensure Node.js dependencies are installed before invoking webpack. On CI the
+# Ensure Node.js dependencies are installed before invoking the bundler. On CI the
 # prepare step runs `./configure.sh` (non-dev) which intentionally skips
 # `bin/yarn install`; the master pipeline installs deps inside the private
-# checkout, but the Xcode webpack build phase replaces the legacy
+# checkout, but the Xcode UI build phase replaces the legacy
 # `build_sciter_ui` fastlane lane and has no such install step, so install
 # repo-root deps here when `node_modules` is missing.
 if [[ ! -d "${PROJECT_ROOT}/node_modules" ]]; then
@@ -87,13 +87,13 @@ if [[ ! -d "${PROJECT_ROOT}/node_modules" ]]; then
   )
 fi
 
-# Stamp file touched ONLY after a webpack run completes successfully. A
-# directory mtime is not a reliable staleness signal: webpack's
-# `output.clean: true` wipes the output dir, so a failed/partial run leaves it
-# newer than the sources and the next build would wrongly skip webpack.
+# Stamp file touched ONLY after a bundler run completes successfully. A
+# directory mtime is not a reliable staleness signal: the build's `fs.emptyDir`
+# wipes the output dir, so a failed/partial run leaves it
+# newer than the sources and the next build would wrongly skip the bundler.
 WEBUI_STAMP="${WEBUI_STAGED}/.build-stamp"
 
-# Returns 0 (true) when webpack needs to run: the stamp is missing, or a
+# Returns 0 (true) when the bundler needs to run: the stamp is missing, or a
 # tracked UI source changed since the last successful build. Invoked from an
 # `if` condition, where errexit (set -e) is suspended for the call, so the
 # explicit returns are authoritative.
@@ -114,8 +114,8 @@ if ui_is_stale; then
     "${YARN}" "${BUILD_SCRIPT}"
   )
   # `set -e` is in effect inside the subshell sequence: reaching this line
-  # means webpack exited 0, so stamp the output as a successful build.
+  # means the bundler exited 0, so stamp the output as a successful build.
   touch "${WEBUI_STAMP}"
 else
-  echo "WebUI is up to date - skipping webpack."
+  echo "WebUI is up to date - skipping the UI build."
 fi

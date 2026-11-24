@@ -27,7 +27,7 @@ export function setupOnboardingWebViewBridge(
     ] as const;
 
     for (const method of methods) {
-        registerCallbackHandler(`OnboardingCallbackService.${method}`, async (bytes: Uint8Array) => {
+        registerCallbackHandler(`OnboardingCallbackService.${method}`, async (bytes) => {
             await onboardingCallbackService[method](bytes.buffer);
         });
     }

@@ -2,10 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import '../../mocks/domEnvironment';
-
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { onTestFinished, test } from 'vitest';
 
 import { render } from 'preact';
 import { createPortal } from 'preact/compat';
@@ -24,7 +22,6 @@ import type { InfoNotificationProperties } from '../../../modules/common/stores/
 type RerenderTrigger = { current(): void };
 
 /** Test context surface used for teardown registration. */
-type TestHooks = { after(callback: () => void): void };
 
 /**
  * Host that re-renders its portal subtree on demand, the way a module App
@@ -50,7 +47,7 @@ function Host({ notification, trigger }: { notification: NotificationsQueue; tri
 /**
  * Renders the host into a fresh container and registers its teardown.
  */
-function mountHost(testContext: TestHooks, queue: NotificationsQueue) {
+function mountHost(queue: NotificationsQueue) {
     const notifyContainer = document.getElementById('notify')!;
     const appContainer = document.createElement('div');
     document.body.appendChild(appContainer);
@@ -58,7 +55,7 @@ function mountHost(testContext: TestHooks, queue: NotificationsQueue) {
     const trigger: RerenderTrigger = { current: () => {} };
     render(<Host notification={queue} trigger={trigger} />, appContainer);
 
-    testContext.after(() => {
+    onTestFinished(() => {
         render(null, appContainer);
         appContainer.remove();
         notifyContainer.innerHTML = '';
@@ -123,11 +120,11 @@ function infoNotifyProps(overrides?: Partial<InfoNotificationProperties>): InfoN
     };
 }
 
-test('a host re-render keeps the notifications DOM in place', async (testContext) => {
+test('a host re-render keeps the notifications DOM in place', async () => {
     const queue = new NotificationsQueue();
     queue.notify(infoNotifyProps());
 
-    const { notifyContainer, trigger } = mountHost(testContext, queue);
+    const { notifyContainer, trigger } = mountHost(queue);
     const toast = notifyContainer.querySelector('[class*="notificationWrap"]');
     assert.ok(toast, 'the notification is rendered');
 
@@ -146,10 +143,10 @@ test('a host re-render keeps the notifications DOM in place', async (testContext
     );
 });
 
-test('the renderer reacts to queue changes without a host re-render', async (testContext) => {
+test('the renderer reacts to queue changes without a host re-render', async () => {
     const queue = new NotificationsQueue();
 
-    const { notifyContainer } = mountHost(testContext, queue);
+    const { notifyContainer } = mountHost(queue);
     assert.equal(
         notifyContainer.querySelector('[class*="notificationsContainer"]'),
         null,
@@ -169,11 +166,11 @@ test('the renderer reacts to queue changes without a host re-render', async (tes
     );
 });
 
-test('the renderer closes a notification through the close button', async (testContext) => {
+test('the renderer closes a notification through the close button', async () => {
     const queue = new NotificationsQueue();
     queue.notify(infoNotifyProps());
 
-    const { notifyContainer } = mountHost(testContext, queue);
+    const { notifyContainer } = mountHost(queue);
     const closeButton = notifyContainer.querySelector('button');
     assert.ok(closeButton, 'the close button is rendered');
 

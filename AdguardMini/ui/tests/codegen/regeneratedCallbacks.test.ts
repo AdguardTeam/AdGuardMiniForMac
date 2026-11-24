@@ -11,7 +11,7 @@
  * regenerated consumer-side routing.
  */
 
-import { describe, it, before, after } from 'node:test';
+import { afterAll, beforeAll, describe, it } from 'vitest';
 import assert from 'node:assert/strict';
 
 import {
@@ -23,7 +23,7 @@ import {
 import { TrayCallbackService } from '../../modules/common/apis/callbacks/TrayCallbackService';
 
 void describe('regenerated TS callback services', () => {
-    before(() => {
+    beforeAll(() => {
         // `installCallbackDispatch` installs on `window`, so a fake window
         // must exist first (mirrors `setupFakeWindow` in the other tests).
         (globalThis as Record<string, unknown>).window = {
@@ -42,7 +42,7 @@ void describe('regenerated TS callback services', () => {
         installCallbackDispatch();
     });
 
-    after(() => {
+    afterAll(() => {
         __resetForTests();
     });
 

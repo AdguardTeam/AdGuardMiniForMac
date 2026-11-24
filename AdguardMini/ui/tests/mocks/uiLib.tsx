@@ -5,7 +5,7 @@
 import type { ComponentChildren } from 'preact';
 
 /*
- * Minimal UI-kit stand-ins for the node:test runs: tests render real
+ * Minimal UI-kit stand-ins for the tests: tests render real
  * components, and the kit's own dependencies (images, themes, animations) are
  * irrelevant there. Props used by the rendered components are kept, the icon
  * name is exposed as `data-icon` so tests can assert on it.

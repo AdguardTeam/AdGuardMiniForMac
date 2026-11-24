@@ -2,27 +2,24 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import '../../mocks/domEnvironment';
-
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { onTestFinished, test } from 'vitest';
 
 import { render } from 'preact';
 
 import { Switch } from '../../../modules/common/components/Switch/Switch';
 
-type TestContext = { after(callback: () => void): void };
 
 /**
  * Renders the switch into a fresh container and registers its teardown.
  */
-function mountSwitch(testContext: TestContext, props: Parameters<typeof Switch>[0]) {
+function mountSwitch(props: Parameters<typeof Switch>[0]) {
     const container = document.createElement('div');
     document.body.appendChild(container);
 
     render(<Switch {...props} />, container);
 
-    testContext.after(() => {
+    onTestFinished(() => {
         render(null, container);
         container.remove();
     });
@@ -30,9 +27,9 @@ function mountSwitch(testContext: TestContext, props: Parameters<typeof Switch>[
     return container;
 }
 
-test('an enabling switch carries the in-progress state and ignores clicks', (testContext: TestContext) => {
+test('an enabling switch carries the in-progress state and ignores clicks', () => {
     const changes: boolean[] = [];
-    const container = mountSwitch(testContext, {
+    const container = mountSwitch({
         checked: true,
         enabling: true,
         onChange: (value) => changes.push(value),
@@ -47,8 +44,8 @@ test('an enabling switch carries the in-progress state and ignores clicks', (tes
     assert.deepEqual(changes, [], 'a click does not toggle the enabling switch');
 });
 
-test('a disabled switch without the enabling state keeps the plain disabled look', (testContext: TestContext) => {
-    const container = mountSwitch(testContext, {
+test('a disabled switch without the enabling state keeps the plain disabled look', () => {
+    const container = mountSwitch({
         checked: true,
         disabled: true,
         onChange: () => {},
@@ -63,9 +60,9 @@ test('a disabled switch without the enabling state keeps the plain disabled look
     );
 });
 
-test('an idle switch toggles on click', (testContext: TestContext) => {
+test('an idle switch toggles on click', () => {
     const changes: boolean[] = [];
-    const container = mountSwitch(testContext, {
+    const container = mountSwitch({
         checked: false,
         onChange: (value) => changes.push(value),
     });

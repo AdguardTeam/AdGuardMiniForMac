@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { afterEach, test, vi } from 'vitest';
 
 import {
     rpcCall,
@@ -11,6 +11,11 @@ import {
     __installResolveRpc,
     __installRpcTimeoutAlertSurface,
 } from '../../modules/common/apis/rpcPostMessage';
+
+// Restores real timers so a leak cannot mask a failure in the next test.
+afterEach(() => {
+    vi.useRealTimers();
+});
 
 // Mock window.webkit.messageHandlers.rpc.postMessage
 // NOTE: the source reads `window.webkit.messageHandlers.rpc` (not
@@ -47,12 +52,12 @@ test('rpcCall resolves when Swift calls window.__resolveRpc with matching id', a
     assert.deepEqual(Array.from(result), [0x08, 0x01]);
 });
 
-test('rpcCall rejects with timeout error naming the method after 10 minutes', async (t) => {
-    t.mock.timers.enable();
+test('rpcCall rejects with timeout error naming the method after 10 minutes', async () => {
+    vi.useFakeTimers();
     __resetForTests();
     const promise = rpcCall('ThemeService.GetEffectiveTheme', new Uint8Array([0]));
     // Advance so the timer actually fires before the test exits.
-    t.mock.timers.tick(600_001);
+    vi.advanceTimersByTime(600_001);
     // The source's error message is "RPC \"<methodName>\" timed out after 600000 ms".
     // Validation accepts either the literal word "timeout" or the natural phrasing
     // "timed out" (the source currently emits the latter; the spec requires only that
@@ -79,8 +84,8 @@ test('concurrent rpcCall invocations return their own reply (no cross-talk)', as
     assert.deepEqual(Array.from(r1), [0xff]);
 });
 
-test('rpcCall: 3 consecutive timeouts invoke the alert surface once', async (t) => {
-    t.mock.timers.enable();
+test('rpcCall: 3 consecutive timeouts invoke the alert surface once', async () => {
+    vi.useFakeTimers();
     __resetForTests();
     let surfaceInvocations = 0;
     __installRpcTimeoutAlertSurface(() => { surfaceInvocations += 1; });
@@ -88,36 +93,36 @@ test('rpcCall: 3 consecutive timeouts invoke the alert surface once', async (t) 
     const p0 = rpcCall('A', new Uint8Array([0]));
     const p1 = rpcCall('B', new Uint8Array([1]));
     const p2 = rpcCall('C', new Uint8Array([2]));
-    t.mock.timers.tick(600_001);
+    vi.advanceTimersByTime(600_001);
     await assert.rejects(p0, (err: Error) => err.message.includes('A'));
     await assert.rejects(p1, (err: Error) => err.message.includes('B'));
     await assert.rejects(p2, (err: Error) => err.message.includes('C'));
     assert.equal(surfaceInvocations, 1, 'surface invoked exactly once when count crosses threshold');
 });
 
-test('rpcCall: 2 consecutive timeouts do NOT invoke the alert surface', async (t) => {
-    t.mock.timers.enable();
+test('rpcCall: 2 consecutive timeouts do NOT invoke the alert surface', async () => {
+    vi.useFakeTimers();
     __resetForTests();
     let surfaceInvocations = 0;
     __installRpcTimeoutAlertSurface(() => { surfaceInvocations += 1; });
 
     const p0 = rpcCall('A', new Uint8Array([0]));
     const p1 = rpcCall('B', new Uint8Array([1]));
-    t.mock.timers.tick(600_001);
+    vi.advanceTimersByTime(600_001);
     await assert.rejects(p0, (err: Error) => err.message.includes('A'));
     await assert.rejects(p1, (err: Error) => err.message.includes('B'));
     assert.equal(surfaceInvocations, 0, 'surface NOT invoked below threshold');
 });
 
-test('rpcCall: success after 2 timeouts resets the counter; 3 more timeouts re-invoke surface', async (t) => {
-    t.mock.timers.enable();
+test('rpcCall: success after 2 timeouts resets the counter; 3 more timeouts re-invoke surface', async () => {
+    vi.useFakeTimers();
     __resetForTests();
     let surfaceInvocations = 0;
     __installRpcTimeoutAlertSurface(() => { surfaceInvocations += 1; });
 
     const p0 = rpcCall('A', new Uint8Array([0]));
     const p1 = rpcCall('B', new Uint8Array([1]));
-    t.mock.timers.tick(600_001);
+    vi.advanceTimersByTime(600_001);
     await assert.rejects(p0, (err: Error) => err.message.includes('A'));
     await assert.rejects(p1, (err: Error) => err.message.includes('B'));
     assert.equal(surfaceInvocations, 0, 'pre-reset: below threshold');
@@ -133,7 +138,7 @@ test('rpcCall: success after 2 timeouts resets the counter; 3 more timeouts re-i
     const q0 = rpcCall('D', new Uint8Array([3]));
     const q1 = rpcCall('E', new Uint8Array([4]));
     const q2 = rpcCall('F', new Uint8Array([5]));
-    t.mock.timers.tick(600_001);
+    vi.advanceTimersByTime(600_001);
     await assert.rejects(q0, (err: Error) => err.message.includes('D'));
     await assert.rejects(q1, (err: Error) => err.message.includes('E'));
     await assert.rejects(q2, (err: Error) => err.message.includes('F'));
@@ -216,15 +221,15 @@ test('window.__rejectRpc with an unknown id is a no-op', async () => {
     });
 });
 
-test('a postMessage throw breaks the timeout streak (immediate local failure)', async (t) => {
-    t.mock.timers.enable();
+test('a postMessage throw breaks the timeout streak (immediate local failure)', async () => {
+    vi.useFakeTimers();
     __resetForTests();
     let surfaceInvocations = 0;
     __installRpcTimeoutAlertSurface(() => { surfaceInvocations += 1; });
 
     // One timeout: counter reaches 1.
     const p0 = rpcCall('A', new Uint8Array([0]));
-    t.mock.timers.tick(600_001);
+    vi.advanceTimersByTime(600_001);
     await assert.rejects(p0, (err: Error) => err.message.includes('A'));
 
     // A synchronous postMessage throw is an immediate local failure, not a
@@ -241,7 +246,7 @@ test('a postMessage throw breaks the timeout streak (immediate local failure)', 
 
     const p2 = rpcCall('C', new Uint8Array([2]));
     const p3 = rpcCall('D', new Uint8Array([3]));
-    t.mock.timers.tick(600_001);
+    vi.advanceTimersByTime(600_001);
     await assert.rejects(p2, (err: Error) => err.message.includes('C'));
     await assert.rejects(p3, (err: Error) => err.message.includes('D'));
     assert.equal(surfaceInvocations, 0,

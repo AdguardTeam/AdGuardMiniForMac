@@ -55,12 +55,13 @@ Every row is executed by a human on a built app. All result cells are
   (`click-events-have-key-events`, `no-static-element-interactions`,
   `no-noninteractive-element-interactions`, `control-has-associated-label`)
   in the CI `ts-lint` lane.
-- `bin/yarn test:node` runs the pure-helper tests (activation predicate,
-  focus-restore target resolution) in the `ts-test` lane.
+- `bin/yarn test:coverage` runs the pure-helper tests (activation predicate,
+  focus-restore target resolution) in the `ts-test` lane; run the same
+  command locally to reproduce it.
 - The focus ring is declared once as the `focus-ring` mixin in
   `common/theme/default/mixins.css`; a compiled-CSS check can confirm that
-  each module's `style.<module>.css` carries the `--focus-ring-color`
-  outline instead of counting per-component copies.
+  each module's `<module>.app.css` in `MiniResources/WebUI/` carries the
+  `--focus-ring-color` outline instead of counting per-component copies.
 - AGENTS.md item 16 documents the ring, activation keys and the
   no-silent-outline-removal rule.
 
@@ -164,7 +165,7 @@ Edge cases:
 | SC-003 | Dialogs/overlays restore focus to opener; fallback when gone; 0 body | `EDGE-3`–`EDGE-7`, `SET-12`, `TRAY-8`, `UR-3` | `resolveFocusRestoreTarget` unit tests |
 | SC-004 | Full Tab cycle per module without stalling or landing on non-operable elements | module cycle rows (`SET-18`, `TRAY-1`, `TRAY-5`, `TRAY-6`, `ONB-1`, `ONB-5`, `ONB-6`, `UR-1`) | source census of `tabIndex`/`role` per module |
 | SC-005 | 0 rings after mouse-only interaction; 100% keyboard rings | `GEN-1`, `GEN-2`, `EDGE-4` | compiled CSS check: the ring is scoped to `:focus-visible` |
-| SC-006 | Lint + tests + CI green | — (CI) | `bin/yarn lint --quiet`, `bin/yarn test:node`; `ts-lint`/`ts-test` lanes in `.github/workflows/pr-check.yml` |
+| SC-006 | Lint + tests + CI green | — (CI) | `bin/yarn lint --quiet`, `bin/yarn test:coverage`; `ts-lint`/`ts-test` lanes in `.github/workflows/pr-check.yml` |
 | SC-007 | No regressions: select keyboard handling, tray story arrows, modal trap, heading announcements | module regression rows + `EDGE-3`, `TRAY-7` | existing unit tests |
 
 Runtime confirmation of SC-001–SC-005 and SC-007 is pending the human

@@ -121,7 +121,7 @@ export function __makePlayer(
  * ref object. `useRef`-style refs are stable across Preact renders, so keying
  * on the ref object gives the same stability a `useRef`/`useCallback` pair
  * would, without importing `preact/hooks` (which crashes outside a rendering
- * context and would break Node `node:test` suites).
+ * context and would break the test suites).
  */
 interface PlaybackState {
     currentOnNextRef: { current: LottieElementPlayCallback | null };

@@ -6,9 +6,9 @@ SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * Mixins shared by the UI modules.
  *
- * This file is not imported by the theme bundle: `postcss-mixins` loads it
- * through the webpack PostCSS configuration (see `getPostcssLoader` in
- * `AdguardMini/ui/scripts/webpack/webpack.config.base.js`), which makes every
+ * This file is not imported by the theme bundle: `postcss-mixins` loads it in
+ * the esbuild PostCSS pipeline (`createStylePlugin` in
+ * `AdguardMini/ui/scripts/esbuild/esbuild.config.base.js`), which makes every
  * mixin below available to every `.pcss` and `.css` file at build time.
  */
 

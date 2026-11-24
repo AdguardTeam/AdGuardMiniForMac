@@ -4,6 +4,7 @@
         "alwaysStrict": true,
         "baseUrl": "./",
         "allowJs": true,
+        "skipLibCheck": true,
         "target": "es6",
         "module": "ESNext",
         "moduleResolution": "node",

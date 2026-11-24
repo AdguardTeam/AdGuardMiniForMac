@@ -3,12 +3,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 
 import { dataUrlToBytes } from '../../modules/userrules/lib/dataUrlToBytes';
 
 /**
- * Encodes bytes the way webpack `asset/inline` does (base64 data URL).
+ * Encodes bytes the way the bundler's `dataurl` loader does (base64 data URL).
  */
 const toDataUrl = (mime: string, bytes: number[]): string => (
     `data:${mime};base64,${btoa(String.fromCharCode(...bytes))}`

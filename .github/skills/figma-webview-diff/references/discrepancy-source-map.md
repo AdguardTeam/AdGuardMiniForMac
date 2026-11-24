@@ -43,8 +43,10 @@ actual component. Use the `Explorer` subagent (read-only) or `grep_search`.
 - **Protobuf-backed data:** if a value is summarised from the platform layer,
   check the schema in `AdguardMini/ui/schema/` and the generated Swift
   in `AdguardMini/MiniResources/ProtoSchema/Sources/`.
-- **Globally injected imports** (do NOT report as missing): webpack
-  `ProvidePlugin` entries in `scripts/webpack/webpack.config.base.js`.
+- **Globally injected imports** (do NOT report as missing): the inject
+  modules in `AdguardMini/ui/scripts/esbuild/inject/` and the `define`
+  entries derived from them in
+  `AdguardMini/ui/scripts/esbuild/esbuild.config.base.js`.
 - **Custom TS types:** check `AdguardMini/ui/@types` before trusting
   inferred types.
 

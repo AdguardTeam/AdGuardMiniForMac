@@ -3,11 +3,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * Node-test stub for the `Intl` module. The real `Intl`
+ * Test stub for the `Intl` module. The real `Intl`
  * (`modules/common/intl/index.ts`) imports ~40 locale JSON files and the
  * `@adg/webview-utils-kit` workspace package, neither of which is
  * Node-loadable in the test runner. Production resolves `Intl` to the real
- * module via webpack; only `tsconfig.node-tests.json` maps `Intl` here.
+ * module via the bundler; `testMockAliases()` in `vitest.config.mjs` maps
+ * `Intl` here.
  */
 
 // The real `Intl` module declares the ambient `translate` global (its

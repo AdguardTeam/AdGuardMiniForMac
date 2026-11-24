@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 
 import { resolveNumberLocale, formatLocalizedNumber, compactThreshold, projectSupportedNumberLocales } from '../../modules/common/lib/number/index';
 import { NUMBER_LOCALE_RULES } from '../../modules/common/lib/number/rules';

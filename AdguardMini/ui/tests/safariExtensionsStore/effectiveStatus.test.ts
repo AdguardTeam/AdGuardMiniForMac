@@ -3,13 +3,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { afterEach, test, vi } from 'vitest';
 
 import {
     SAFARI_EXTENSIONS_SETTLE_MS,
     SafariExtensionsStore,
 } from '../../modules/common/stores/SafariExtensionsStore';
 import { SafariExtensions, SafariExtension, SafariExtensionStatus } from '../../modules/common/apis/types/SafariExtension';
+
+// Restores real timers so a leak cannot mask a failure in the next test.
+afterEach(() => {
+    vi.useRealTimers();
+});
 
 /**
  * Creates a SafariExtensions object with the given statuses for each extension.
@@ -112,8 +117,8 @@ test('effectiveExtensionsList preserves previous status when extension transitio
     assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.disabled);
 });
 
-test('effectiveExtensionsList adopts the status loading resolved to after the settle window', (t) => {
-    t.mock.timers.enable();
+test('effectiveExtensionsList adopts the status loading resolved to after the settle window', () => {
+    vi.useFakeTimers();
     const store = new SafariExtensionsStore();
 
     // Initial state: general is disabled
@@ -132,7 +137,7 @@ test('effectiveExtensionsList adopts the status loading resolved to after the se
     // The loaded list must not move the health check before it settles.
     assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.disabled);
 
-    t.mock.timers.tick(SAFARI_EXTENSIONS_SETTLE_MS + 1);
+    vi.advanceTimersByTime(SAFARI_EXTENSIONS_SETTLE_MS + 1);
 
     assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.ok);
 });
@@ -167,8 +172,8 @@ test('effectiveExtensionsList holds the whole settled list while any extension i
     assert.equal(effectiveStatus(store, 'privacy'), SafariExtensionStatus.limit_exceeded);
 });
 
-test('effectiveExtensionsList ignores reload statuses while a cycle is running', (t) => {
-    t.mock.timers.enable();
+test('effectiveExtensionsList ignores reload statuses while a cycle is running', () => {
+    vi.useFakeTimers();
     const store = new SafariExtensionsStore();
 
     // Settled state: general is broken.
@@ -194,13 +199,13 @@ test('effectiveExtensionsList ignores reload statuses while a cycle is running',
     store.setSafariExtensions(createExtensions({}));
     assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.safari_error);
 
-    t.mock.timers.tick(SAFARI_EXTENSIONS_SETTLE_MS + 1);
+    vi.advanceTimersByTime(SAFARI_EXTENSIONS_SETTLE_MS + 1);
 
     assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.ok);
 });
 
-test('effectiveExtensionsList never shows a status that reverts within the settle window', (t) => {
-    t.mock.timers.enable();
+test('effectiveExtensionsList never shows a status that reverts within the settle window', () => {
+    vi.useFakeTimers();
     const store = new SafariExtensionsStore();
 
     store.setSafariExtensions(createExtensions({}));
@@ -211,13 +216,13 @@ test('effectiveExtensionsList never shows a status that reverts within the settl
 
     assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.ok);
 
-    t.mock.timers.tick(SAFARI_EXTENSIONS_SETTLE_MS + 1);
+    vi.advanceTimersByTime(SAFARI_EXTENSIONS_SETTLE_MS + 1);
 
     assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.ok);
 });
 
-test('a changed list restarts the settle window', (t) => {
-    t.mock.timers.enable();
+test('a changed list restarts the settle window', () => {
+    vi.useFakeTimers();
     const store = new SafariExtensionsStore();
 
     store.setSafariExtensions(createExtensions({}));
@@ -225,25 +230,25 @@ test('a changed list restarts the settle window', (t) => {
         general: SafariExtensionStatus.safari_error,
     }));
 
-    t.mock.timers.tick(SAFARI_EXTENSIONS_SETTLE_MS - 1);
+    vi.advanceTimersByTime(SAFARI_EXTENSIONS_SETTLE_MS - 1);
     store.setSafariExtensions(createExtensions({
         general: SafariExtensionStatus.safari_error,
         privacy: SafariExtensionStatus.safari_error,
     }));
 
     // The window has restarted, so the earlier deadline must not fire.
-    t.mock.timers.tick(SAFARI_EXTENSIONS_SETTLE_MS - 1);
+    vi.advanceTimersByTime(SAFARI_EXTENSIONS_SETTLE_MS - 1);
     assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.ok);
     assert.equal(effectiveStatus(store, 'privacy'), SafariExtensionStatus.ok);
 
-    t.mock.timers.tick(2);
+    vi.advanceTimersByTime(2);
 
     assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.safari_error);
     assert.equal(effectiveStatus(store, 'privacy'), SafariExtensionStatus.safari_error);
 });
 
-test('repeated identical pushes do not restart the settle window', (t) => {
-    t.mock.timers.enable();
+test('repeated identical pushes do not restart the settle window', () => {
+    vi.useFakeTimers();
     const store = new SafariExtensionsStore();
 
     store.setSafariExtensions(createExtensions({}));
@@ -251,11 +256,11 @@ test('repeated identical pushes do not restart the settle window', (t) => {
         general: SafariExtensionStatus.safari_error,
     }));
 
-    t.mock.timers.tick(SAFARI_EXTENSIONS_SETTLE_MS - 1);
+    vi.advanceTimersByTime(SAFARI_EXTENSIONS_SETTLE_MS - 1);
     store.setSafariExtensions(createExtensions({
         general: SafariExtensionStatus.safari_error,
     }));
-    t.mock.timers.tick(2);
+    vi.advanceTimersByTime(2);
 
     assert.equal(effectiveStatus(store, 'general'), SafariExtensionStatus.safari_error);
 });
@@ -337,8 +342,8 @@ test('hasRulesLimitExceeded preserved during loading', () => {
     assert.equal(effectiveStatus(store, 'privacy'), SafariExtensionStatus.limit_exceeded);
 });
 
-test('isConsideredEnabled is adopted after the settle window when not loading', (t) => {
-    t.mock.timers.enable();
+test('isConsideredEnabled is adopted after the settle window when not loading', () => {
+    vi.useFakeTimers();
     const store = new SafariExtensionsStore();
 
     // All enabled
@@ -349,7 +354,7 @@ test('isConsideredEnabled is adopted after the settle window when not loading', 
     store.setSafariExtensions(createExtensions({}, true, { general: false }));
     assert.equal(store.allExtensionsEffectivelyEnabled, true);
 
-    t.mock.timers.tick(SAFARI_EXTENSIONS_SETTLE_MS + 1);
+    vi.advanceTimersByTime(SAFARI_EXTENSIONS_SETTLE_MS + 1);
 
     assert.equal(store.allExtensionsEffectivelyEnabled, false);
 });

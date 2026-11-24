@@ -186,6 +186,7 @@ playground.xcworkspace
 node_modules
 yarn-error.log
 metadata.json
+coverage/
 AdguardMini/MiniResources/WebUI/
 AdguardMini/ui/packages/proto-generator/proto-parser/src/__pycache__/
 AdguardMini/ui/packages/proto-generator/proto-parser/logs

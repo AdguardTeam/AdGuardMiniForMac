@@ -2,16 +2,13 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import '../../mocks/domEnvironment';
-
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { onTestFinished, test } from 'vitest';
 
 import { render } from 'preact';
 
 import { Template } from '../../../modules/common/views/EnableExtensions/Template';
 
-type TestContext = { after(callback: () => void): void };
 
 /**
  * Waits for preact's effect flush and the re-render it may trigger.
@@ -26,7 +23,7 @@ function tick() {
     });
 }
 
-test('the onboarding page heading is announced without becoming a tab stop', async (testContext: TestContext) => {
+test('the onboarding page heading is announced without becoming a tab stop', async () => {
     const container = document.createElement('div');
     document.body.appendChild(container);
 
@@ -40,7 +37,7 @@ test('the onboarding page heading is announced without becoming a tab stop', asy
         container,
     );
 
-    testContext.after(() => {
+    onTestFinished(() => {
         render(null, container);
         container.remove();
     });

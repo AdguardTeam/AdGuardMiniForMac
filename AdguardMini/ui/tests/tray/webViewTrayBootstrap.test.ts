@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 
 import type { TrayCallbackService } from '../../modules/common/apis/callbacks/TrayCallbackService';
 import { __resetForTests } from '../../modules/common/apis/callbackDispatch';

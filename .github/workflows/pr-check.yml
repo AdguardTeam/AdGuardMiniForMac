@@ -157,7 +157,14 @@ jobs:
       - name: ESLint
         run: yarn lint --quiet
 
-  # node:test gate matching the local pre-commit hook (yarn test:node).
+      - name: TypeScript type check
+        run: yarn typecheck
+
+      - name: TypeScript type check (tests)
+        run: yarn typecheck:tests
+
+  # Vitest gate: `--coverage` fails on both a test failure and a threshold
+  # breach, so one run covers the local pre-commit hook and the ratchet.
   ts-test:
     if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
     name: TS tests
@@ -184,5 +191,5 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: TypeScript tests (node:test)
-        run: yarn test:node
+      - name: TypeScript tests (vitest, coverage)
+        run: yarn test:coverage
