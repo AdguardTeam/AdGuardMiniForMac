@@ -96,6 +96,8 @@ Single source of truth for this table is `build-variant-config.yml`.
 2. GitHub → Actions → **Tag & Deploy** → Run workflow; pick the branch
    and set the tag (e.g. `v2.5.0`). Optionally pin `ref` to a specific
    SHA or branch — empty means the HEAD of the picked branch.
-3. Deployment environments may require manual approval.
+3. Standalone deployment uses per-channel static-storage environments and may
+   require manual approval; the MAS TestFlight upload uses the fixed
+   `autodeploy-testflight` environment without approval.
 4. Standalone lands in the static storage, MAS in TestFlight; submit
    the MAS build for App Store review manually when ready.

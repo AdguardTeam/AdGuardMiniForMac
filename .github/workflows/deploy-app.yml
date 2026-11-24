@@ -413,7 +413,8 @@ jobs:
       environment: ${{ needs.meta.outputs.release-channel }}-static-server
     secrets: inherit
 
-  # Mac App Store: uploads to TestFlight (internal group); external
+  # Mac App Store: uploads to TestFlight automatically via the fixed
+  # autodeploy-testflight environment (internal group); external
   # distribution and review submission are done manually afterwards.
   deploy-mas:
     if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
@@ -426,7 +427,7 @@ jobs:
       groups: 'App Store Connect Users'
       distribute-external: false
       submit-beta-review: false
-      environment: ${{ needs.meta.outputs.release-channel }}-testflight
+      environment: autodeploy-testflight
     secrets: inherit
 
   # ---------------------------------------------------------------------------
