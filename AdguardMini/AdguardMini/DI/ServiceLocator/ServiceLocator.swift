@@ -242,7 +242,7 @@ final class ServiceLocator {
                 i18nURL: DeveloperConfigUtils[.filtersI18nUrl] as? String ?? "https://filters.adtidy.org/extension/safari/filters_i18n.js",
                 appName: BuildConfig.AG_PRODUCT_NAME,
                 version: BuildConfig.AG_VERSION_TITLE,
-                filtersCompilationPolicyConstants: ["adguard_ext_safari"]
+                filtersCompilationPolicyConstants: FiltersCompilationConstants.all
             )
         )
     }()

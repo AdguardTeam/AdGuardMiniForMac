@@ -135,6 +135,7 @@ adguard-mini/
 │   │   ├── CustomUrlSchemes/             # Shared URL scheme definitions
 │   │   ├── ExtensionBrowserApi/          # Browser API abstractions
 │   │   ├── FileSystem/                   # File storage protocols
+│   │   ├── FiltersCompilation/           # FLM conditional-compilation constants
 │   │   ├── ProductInfo/                  # App metadata and version info
 │   │   ├── Statistics/                   # CoreData blocking statistics
 │   │   ├── Storages/                     # Shared keychain / storage

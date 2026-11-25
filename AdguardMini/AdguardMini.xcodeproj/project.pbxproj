@@ -1126,7 +1126,9 @@
 		EB1A0D9D2D81E81D006DB3CF /* Helper */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (EB1A0D9F2D81E81D006DB3CF /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Helper; sourceTree = "<group>"; };
 		EB1A0DA42D81EC17006DB3CF /* Utils */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (EB1A0DAE2D81ECC2006DB3CF /* PBXFileSystemSynchronizedBuildFileExceptionSet */, EB1A0DAF2D81ECC2006DB3CF /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 165BA8C02F1E509500511F4E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 163C1C492FB4860E00752872 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Utils; sourceTree = "<group>"; };
 		EB3D65C02D4D130F00BC6AE6 /* Scripts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Scripts; sourceTree = "<group>"; };
+		A62329F1A4C0000000000001 /* FiltersCompilation */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = FiltersCompilation; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
+
 
 /* Begin PBXFrameworksBuildPhase section */
 		162E77612FF2B04E00232A89 /* Frameworks */ = {
@@ -1440,6 +1442,7 @@
 				1644A07A2DB8D8AB003852C6 /* DI */,
 				16E54ED32E69E4BD006C7856 /* ContentBlockers */,
 				16E54F182E69E4C0006C7856 /* FileSystem */,
+				A62329F1A4C0000000000001 /* FiltersCompilation */,
 				16209B4B2E0C267E00F0B9F5 /* ExtensionBrowserApi */,
 				16E54F732E69E4C2006C7856 /* ProductInfo */,
 				16FA01012FE10A0000000001 /* Statistics */,
@@ -1623,6 +1626,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				16148DC52E01CD85000A55E9 /* AdguardMini Builder */,
+				A62329F1A4C0000000000001 /* FiltersCompilation */,
 			);
 			name = "AdguardMini Builder";
 			packageProductDependencies = (
@@ -1925,6 +1929,7 @@
 				16148DD02E01CDA4000A55E9 /* Localization */,
 				16209B4B2E0C267E00F0B9F5 /* ExtensionBrowserApi */,
 				1639AE532EE9854100185A05 /* Sources */,
+				A62329F1A4C0000000000001 /* FiltersCompilation */,
 				1644A07A2DB8D8AB003852C6 /* DI */,
 				169707F12E4E4C0000FE5A4E /* DI */,
 				169716FC2E55B51900FE5A4E /* Resources */,

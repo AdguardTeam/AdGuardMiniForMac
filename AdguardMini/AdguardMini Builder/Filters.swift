@@ -25,7 +25,7 @@ func updateFiltersDb(inDirectory path: String, force: Bool) -> Bool {
         force: force,
         metadataURL: Constants.filterMetaUrl,
         metadataLocalesURL: Constants.filterI18NUrl,
-        compilerConditionalConstants: ["adguard_ext_safari"],
+        compilerConditionalConstants: FiltersCompilationConstants.all,
         appName: info?["CFBundleName"] as? String ?? "AdGuard Mini Prebuilder",
         version: info?["CFBundleShortVersionString"] as? String ?? "1.0"
     )
