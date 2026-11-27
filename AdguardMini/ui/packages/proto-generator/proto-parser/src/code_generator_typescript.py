@@ -8,13 +8,22 @@ logger = logging.getLogger(__name__)
 
 
 class CodeGeneratorTypeScript(CodeGeneratorAbstract):
+    def get_service_output_subdir(self, file_type, service_postfix):
+        if file_type != constants.TYPE_CALLBACKS:
+            return None
+        return self.converter.seed_dirs.get(service_postfix)
+
     def should_skip_service_postfix(self, file_type, output_name, service_postfix):
-        if file_type != constants.TYPE_CALLBACKS or service_postfix != "Internal":
+        if file_type != constants.TYPE_CALLBACKS:
             return False
 
-        converted_path = self.converter.get_converted_path(output_name, file_type)
+        output_subdir = self.converter.seed_dirs.get(service_postfix)
+        if output_subdir is None:
+            return False
+
+        converted_path = self.converter.get_converted_path(output_name, file_type, output_subdir)
         if os.path.isfile(converted_path):
-            logger.info("Skip existing callback file %s", converted_path)
+            logger.info("Skip existing implementation file %s", converted_path)
             return True
 
         return False
@@ -28,17 +37,14 @@ class CodeGeneratorTypeScript(CodeGeneratorAbstract):
     def should_skip_primary_generation(self, file_type):
         return file_type == constants.TYPE_SERVICES
 
-    def handle_skipped_primary_generation(self, file_type, dir_input):
+    def handle_skipped_primary_generation(self, file_type, dir_input, proto_file_names):
         if file_type != constants.TYPE_SERVICES:
             return []
 
         logger.info("Skipping service generation for TypeScript, using requests instead")
         request_names = []
-        for proto_file in sorted(os.listdir(dir_input)):
-            if not proto_file.endswith(".proto"):
-                continue
-
-            full_proto_file_path = os.path.join(dir_input, proto_file)
+        for proto_file_name in proto_file_names:
+            full_proto_file_path = os.path.join(dir_input, proto_file_name)
             _, names = self.generate_request(constants.TYPE_REQUESTS, full_proto_file_path)
             request_names.extend(names)
 
@@ -61,4 +67,4 @@ class CodeGeneratorTypeScript(CodeGeneratorAbstract):
             self.converter.save_converted(index_content, os.path.join(service_name, "index"), constants.TYPE_REQUESTS)
 
     def should_generate_super_types(self, file_type):
-        return file_type != constants.TYPE_SERVICES
+        return file_type == constants.TYPE_TYPES

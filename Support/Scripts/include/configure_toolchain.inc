@@ -15,10 +15,10 @@ setup_toolchain() {
     mkdir bin
 
     # Validate tools exist
-    for tool in ruby node yarn; do
+    for tool in ruby node yarn python3; do
         if ! command -v "$tool" &>/dev/null; then
             echo "Error: $tool not found in PATH."
-            echo "Required: Ruby 3.2+, Node.js $(sed 's/^v//; s/\..*//' < .nvmrc 2>/dev/null || echo 22)+, Yarn 1.22+"
+            echo "Required: Ruby 3.2+, Node.js $(sed 's/^v//; s/\..*//' < .nvmrc 2>/dev/null || echo 22)+, Yarn 1.22+, Python 3.10+"
             exit 1
         fi
     done
@@ -62,6 +62,9 @@ EOF
         chmod +x "bin/$tool"
     done
 
-    echo "Toolchain: Ruby $ruby_version, Node $node_version, Yarn $(yarn --version)"
+    # Python needs no wrapper: the venv embeds the interpreter it was built from.
+    local python_version
+    python_version=$(python3 -c 'import sys; print("%d.%d" % sys.version_info[:2])')
+    echo "Toolchain: Ruby $ruby_version, Node $node_version, Yarn $(yarn --version), Python $python_version"
     echo
 }

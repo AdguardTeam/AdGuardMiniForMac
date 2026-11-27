@@ -23,7 +23,7 @@ public protocol InternalServiceProtocol
 	func openUserRulesWindow (
 						_ message: EmptyValue,
 						_ promise: sending @escaping (EmptyValue) -> Void) -> Void
-	/// Closes the user-rules editor window (called by the editor after it  resolves
+	/// Closes the user-rules editor window (called by the editor after it resolves
 	/// unsaved changes, or immediately if there are none)
 	func closeUserRulesWindow (
 						_ message: EmptyValue,

@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# CI gate for pull requests: SwiftLint + REUSE compliance, full builds of
-# both variants (catches signing/packaging regressions before merge) and
-# the XCTest suite.
+# CI gate for pull requests: SwiftLint + REUSE compliance, TypeScript lint
+# and tests, the Protobuf schema check, full builds of both variants
+# (catches signing/packaging regressions before merge) and the XCTest suite.
 #
 # PR builds use a synthetic epoch-based version so they never collide
 # with real releases; newer pushes cancel the in-flight run.
@@ -193,3 +193,46 @@ jobs:
 
       - name: TypeScript tests (vitest, coverage)
         run: yarn test:coverage
+
+  # ---------------------------------------------------------------------------
+  # Protobuf schema check
+  # ---------------------------------------------------------------------------
+
+  # protoc --fatal_warnings gate over AdguardMini/ui/schema, pinned by
+  # .protoc-version (Support/Scripts/check_proto_schema.sh).
+  proto-check:
+    if: github.repository == 'AdGuardSoftwareLimited/sciter-adguard-mini'
+    name: Proto schema check
+    runs-on: [team-sciter]
+    permissions:
+      contents: read
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      # The runner is persistent, so verify the downloaded archive first.
+      - name: Install protoc
+        working-directory: ${{ runner.temp }}
+        run: |
+          VERSION=$(tr -d '[:space:]' < "$GITHUB_WORKSPACE/.protoc-version")
+          curl -fL --retry 3 -o "protoc.zip" \
+            "https://github.com/protocolbuffers/protobuf/releases/download/v${VERSION}/protoc-${VERSION}-linux-x86_64.zip"
+          EXPECTED_SHA=$(tr -d '[:space:]' < "$GITHUB_WORKSPACE/.protoc-checksum")
+          ACTUAL_SHA=$(sha256sum protoc.zip | cut -d' ' -f1)
+          if [ "$ACTUAL_SHA" != "$EXPECTED_SHA" ]; then
+            echo "Error: protoc-${VERSION}-linux-x86_64.zip checksum mismatch."
+            echo "Expected: $EXPECTED_SHA"
+            echo "Actual:   $ACTUAL_SHA"
+            exit 1
+          fi
+          unzip -q protoc.zip -d protoc
+          echo "$PWD/protoc/bin" >> "$GITHUB_PATH"
+
+      - name: Check schema
+        run: ./Support/Scripts/check_proto_schema.sh

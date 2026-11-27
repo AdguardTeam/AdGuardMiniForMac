@@ -8,6 +8,13 @@ set -e
 
 source "Support/Scripts/include/common.inc"
 
+PYTHON_BIN="${VIRTUAL_ENV:-$PYTHON_VENV}/bin/python3"
+if [ ! -x "$PYTHON_BIN" ]; then
+    echo "Error: Python interpreter not found at $PYTHON_BIN" >&2
+    echo "Please run: ./configure.sh dev" >&2
+    exit 1
+fi
+
 cd "AdguardMini"
 
 # Common variables
@@ -48,6 +55,16 @@ if ! command -v protoc-gen-swift &> /dev/null; then
     exit 1
 fi
 
+# A pin bump leaves stale tools installed until ./configure.sh dev runs.
+EXPECTED_PROTOC_VERSION="$(tr -d '[:space:]' < ../.protoc-version)"
+FOUND_PROTOC_VERSION="$(protoc --version | sed -n 's/^libprotoc //p')"
+
+if [ "$FOUND_PROTOC_VERSION" != "$EXPECTED_PROTOC_VERSION" ]; then
+    echo "Error: protoc $EXPECTED_PROTOC_VERSION required, found ${FOUND_PROTOC_VERSION:-unknown}"
+    echo "Please run: ./configure.sh dev"
+    exit 1
+fi
+
 echo "protoc: $(command -v protoc)"
 protoc --version
 echo "protoc-gen-swift: $(command -v protoc-gen-swift)"
@@ -61,13 +78,9 @@ echo "=================================================================="
 echo
 
 if [ -d "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/callbacks" ]; then
-    # `*Internal.ts` files are handwritten extension points: the generator
-    # skips them on regeneration (see `should_skip_service_postfix` in
-    # code_generator_typescript.py) precisely so their store-dispatch logic
-    # survives. Deleting them here would make the generator re-emit empty
-    # classes from the template, silently dropping the live implementation.
-    find "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/callbacks" -type f -name "*.ts" \
-        -not -name "*Internal.ts" -delete
+    # Generated callback services only. The implementations live in
+    # `apis/impl/`, outside every path this script deletes.
+    find "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/callbacks" -type f -name "*.ts" -delete
 fi
 if [ -d "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/requests" ]; then
     find "$TYPESCRIPT_SCHEMA_OUTPUT_DIR/requests" -type f -name "*.ts" -delete
@@ -90,7 +103,7 @@ echo "Run protogen for swift"
 echo "=================================================================="
 echo
 
-python3 "$PROTO_GEN_DIR/proto-parser/src/main.py" -l swift -c "$PROTO_CONFIG_DIR" -i $PROTO_SCHEMA_DIR -o $SWIFT_SCHEMA_OUTPUT_DIR
+"$PYTHON_BIN" "$PROTO_GEN_DIR/proto-parser/src/main.py" -l swift -c "$PROTO_CONFIG_DIR" -i $PROTO_SCHEMA_DIR -o $SWIFT_SCHEMA_OUTPUT_DIR
 
 echo
 echo "=================================================================="
@@ -98,7 +111,7 @@ echo "Run protogen for typescript"
 echo "=================================================================="
 echo
 
-python3 "$PROTO_GEN_DIR/proto-parser/src/main.py" -l typescript -c "$PROTO_CONFIG_DIR" -i "$PROTO_SCHEMA_DIR" -o "$TYPESCRIPT_SCHEMA_OUTPUT_DIR"
+"$PYTHON_BIN" "$PROTO_GEN_DIR/proto-parser/src/main.py" -l typescript -c "$PROTO_CONFIG_DIR" -i "$PROTO_SCHEMA_DIR" -o "$TYPESCRIPT_SCHEMA_OUTPUT_DIR"
 
 echo
 echo "=================================================================="
@@ -106,17 +119,8 @@ echo "Generate ServiceMethodAllowlist"
 echo "=================================================================="
 echo
 
-# Post-processing step that emits the schema-derived per-service method
-# allowlist consumed by `WKWebViewBridge` before dispatch. Reads the SAME
-# services proto dir the codegen above consumed; does not modify the
-# external @adg/proto-generator package.
-#
-# NOTE on path: `updateProtoSchema.sh` does `cd "AdguardMini"` on line 11,
-# so the working directory for this whole script is the `AdguardMini/`
-# folder. Invoking `python3 "AdguardMini/Scripts/generateMethodAllowlist.py"`
-# would resolve to `AdguardMini/AdguardMini/Scripts/…` (nonexistent). The
-# script-relative path is `Scripts/generateMethodAllowlist.py`.
-python3 "Scripts/generateMethodAllowlist.py" \
+# The working directory is AdguardMini/ here, so the invocation path is relative to it.
+"$PYTHON_BIN" "Scripts/generateMethodAllowlist.py" \
     "$PROTO_SCHEMA_DIR/services" \
     "$SWIFT_SCHEMA_OUTPUT_DIR/ServiceMethodAllowlist.swift"
 

@@ -67,7 +67,7 @@ export class TrayCallbackService implements ITrayCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in TrayCallbackService.OnTrayWindowVisibilityChange: ${ param }`);
 		}
-		log.dbg('Callback data', 'TrayCallbackService.OnTrayWindowVisibilityChange', arg.toObject());
+		window.log?.dbg('Callback data', 'TrayCallbackService.OnTrayWindowVisibilityChange', arg.toObject());
 		await this.trayCallbackServiceInternal.OnTrayWindowVisibilityChange(arg);
 		return new EmptyValue();
 	};
@@ -83,7 +83,7 @@ export class TrayCallbackService implements ITrayCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in TrayCallbackService.OnLoginItemStateChange: ${ param }`);
 		}
-		log.dbg('Callback data', 'TrayCallbackService.OnLoginItemStateChange', arg.toObject());
+		window.log?.dbg('Callback data', 'TrayCallbackService.OnLoginItemStateChange', arg.toObject());
 		await this.trayCallbackServiceInternal.OnLoginItemStateChange(arg);
 		return new EmptyValue();
 	};
@@ -99,7 +99,7 @@ export class TrayCallbackService implements ITrayCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in TrayCallbackService.OnApplicationVersionStatusResolved: ${ param }`);
 		}
-		log.dbg('Callback data', 'TrayCallbackService.OnApplicationVersionStatusResolved', arg.toObject());
+		window.log?.dbg('Callback data', 'TrayCallbackService.OnApplicationVersionStatusResolved', arg.toObject());
 		await this.trayCallbackServiceInternal.OnApplicationVersionStatusResolved(arg);
 		return new EmptyValue();
 	};
@@ -115,7 +115,7 @@ export class TrayCallbackService implements ITrayCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in TrayCallbackService.OnFilterStatusResolved: ${ param }`);
 		}
-		log.dbg('Callback data', 'TrayCallbackService.OnFilterStatusResolved', arg.toObject());
+		window.log?.dbg('Callback data', 'TrayCallbackService.OnFilterStatusResolved', arg.toObject());
 		await this.trayCallbackServiceInternal.OnFilterStatusResolved(arg);
 		return new EmptyValue();
 	};
@@ -131,7 +131,7 @@ export class TrayCallbackService implements ITrayCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in TrayCallbackService.OnSafariExtensionUpdate: ${ param }`);
 		}
-		log.dbg('Callback data', 'TrayCallbackService.OnSafariExtensionUpdate', arg.toObject());
+		window.log?.dbg('Callback data', 'TrayCallbackService.OnSafariExtensionUpdate', arg.toObject());
 		await this.trayCallbackServiceInternal.OnSafariExtensionUpdate(arg);
 		return new EmptyValue();
 	};
@@ -148,7 +148,7 @@ export class TrayCallbackService implements ITrayCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in TrayCallbackService.OnLicenseUpdate: ${ param }`);
 		}
-		log.dbg('Callback data', 'TrayCallbackService.OnLicenseUpdate', arg.toObject());
+		window.log?.dbg('Callback data', 'TrayCallbackService.OnLicenseUpdate', arg.toObject());
 		await this.trayCallbackServiceInternal.OnLicenseUpdate(arg);
 		return new EmptyValue();
 	};
@@ -164,7 +164,7 @@ export class TrayCallbackService implements ITrayCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in TrayCallbackService.OnEffectiveThemeChanged: ${ param }`);
 		}
-		log.dbg('Callback data', 'TrayCallbackService.OnEffectiveThemeChanged', arg.toObject());
+		window.log?.dbg('Callback data', 'TrayCallbackService.OnEffectiveThemeChanged', arg.toObject());
 		await this.trayCallbackServiceInternal.OnEffectiveThemeChanged(arg);
 		return new EmptyValue();
 	};
@@ -180,7 +180,7 @@ export class TrayCallbackService implements ITrayCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in TrayCallbackService.OnTrayPageRequested: ${ param }`);
 		}
-		log.dbg('Callback data', 'TrayCallbackService.OnTrayPageRequested', arg.toObject());
+		window.log?.dbg('Callback data', 'TrayCallbackService.OnTrayPageRequested', arg.toObject());
 		await this.trayCallbackServiceInternal.OnTrayPageRequested(arg);
 		return new EmptyValue();
 	};
@@ -196,7 +196,7 @@ export class TrayCallbackService implements ITrayCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in TrayCallbackService.OnMailProtectionChanged: ${ param }`);
 		}
-		log.dbg('Callback data', 'TrayCallbackService.OnMailProtectionChanged', arg.toObject());
+		window.log?.dbg('Callback data', 'TrayCallbackService.OnMailProtectionChanged', arg.toObject());
 		await this.trayCallbackServiceInternal.OnMailProtectionChanged(arg);
 		return new EmptyValue();
 	};

@@ -7,7 +7,7 @@ import { test } from 'vitest';
 
 import { store, __resetSettingsTestStore } from '../mocks/settingsStore';
 import { windowing, __resetWindowingForTests } from '../mocks/settingsStore/modules/Windowing';
-import { UserRulesCallbackServiceInternal } from '../../modules/common/apis/callbacks/UserRulesCallbackServiceInternal';
+import { UserRulesCallbackServiceInternal } from '../../modules/common/apis/impl/UserRulesCallbackServiceInternal';
 import { EmptyValue, UserRulesCallbackState } from '../../modules/common/apis/types';
 
 /**

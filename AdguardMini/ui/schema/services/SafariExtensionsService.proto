@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "PrimitivesWrappers.proto";
 import "SafariExtension.proto";
+import "Helpers.proto";
 
 /* Shared service for Safari extension status and preferences across UI modules */
 service SafariExtensionsService {

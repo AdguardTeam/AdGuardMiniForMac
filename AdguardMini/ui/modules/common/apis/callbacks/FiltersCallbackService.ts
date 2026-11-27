@@ -41,7 +41,7 @@ export class FiltersCallbackService implements IFiltersCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in FiltersCallbackService.OnFiltersUpdate: ${ param }`);
 		}
-		log.dbg('Callback data', 'FiltersCallbackService.OnFiltersUpdate', arg.toObject());
+		window.log?.dbg('Callback data', 'FiltersCallbackService.OnFiltersUpdate', arg.toObject());
 		await this.filtersCallbackServiceInternal.OnFiltersUpdate(arg);
 		return new EmptyValue();
 	};
@@ -57,7 +57,7 @@ export class FiltersCallbackService implements IFiltersCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in FiltersCallbackService.OnFiltersIndexUpdate: ${ param }`);
 		}
-		log.dbg('Callback data', 'FiltersCallbackService.OnFiltersIndexUpdate', arg.toObject());
+		window.log?.dbg('Callback data', 'FiltersCallbackService.OnFiltersIndexUpdate', arg.toObject());
 		await this.filtersCallbackServiceInternal.OnFiltersIndexUpdate(arg);
 		return new EmptyValue();
 	};
@@ -73,7 +73,7 @@ export class FiltersCallbackService implements IFiltersCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in FiltersCallbackService.OnCustomFiltersSubscribe: ${ param }`);
 		}
-		log.dbg('Callback data', 'FiltersCallbackService.OnCustomFiltersSubscribe', arg.toObject());
+		window.log?.dbg('Callback data', 'FiltersCallbackService.OnCustomFiltersSubscribe', arg.toObject());
 		await this.filtersCallbackServiceInternal.OnCustomFiltersSubscribe(arg);
 		return new EmptyValue();
 	};

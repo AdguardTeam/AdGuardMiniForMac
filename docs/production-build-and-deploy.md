@@ -29,9 +29,15 @@ of the workflow files in `.github/workflows/`.
 | --- | --- |
 | `tag-and-deploy.yml` | Release entry point: validate tag, create tag, deploy |
 | `deploy-app.yml` | Production pipeline: build, sign, publish, notify |
-| `pr-check.yml` | PR gate: lint, full builds of both variants, XCTest |
+| `pr-check.yml` | PR gate: lint, builds of both variants, XCTest, protoc |
 | `build-mas-iap.yml` | Manual Developer ID-signed MAS build for IAP testing |
 | `mirror.yml` | Mirrors master, `release/*` and tags to the public repo |
+
+The `pr-check.yml` gate also runs the `proto-check` job: it compiles
+the Protobuf schema with `protoc --fatal_warnings` at the version
+pinned in `.protoc-version`, so a schema warning fails the run. The
+job verifies the downloaded `protoc` archive against `.protoc-checksum`
+before it runs.
 
 The rest (`build-standalone.yml`, `build-mas.yml`, `build-variant.yml`,
 `build-variant-config.yml`) are reusable building blocks called from

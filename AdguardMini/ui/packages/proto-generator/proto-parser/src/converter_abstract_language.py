@@ -10,41 +10,26 @@ logger = logging.getLogger(__name__)
 
 class ConverterAbstract(object):
     """Abstract language converter .proto file with rpc methods"""
-    def __init__(self, language_name):
+    def __init__(self, language_name, input_dir, output_dir):
         """Initializes the abstract language converter"""
         self.language_name_ = language_name
+        self.input_dir_path = input_dir
+        self.output_dir_path = output_dir
         self.service_postfixes = [""]
+        self.seed_dirs = {}
 
     def parse_config(self):
         """Parses configuration file if exists"""
         self.config_path_  = os.path.join(constants.DIR_CONFIGS, f"{self.language_name_}.json")
         self.config_ = json.loads(helper.read_file(self.config_path_))
 
-        if "input_dir" in self.config_ and self.config_["input_dir"]:
-            self.input_dir_path = self.config_["input_dir"]
-        else:
-            self.input_dir_path = constants.DIR_INPUT
-
-        if not os.path.exists(self.input_dir_path) or not os.path.isdir(self.input_dir_path):
-            raise FileNotFoundError(f"Input directory {self.input_dir_path} doesn't exist")
-
-        if "output_dir" in self.config_ and self.config_["output_dir"]:
-            self.output_dir_path = self.config_["output_dir"]
-        else:
-            postfix=self.language_name_
-            if "omit_lang_postfix_in_output_path" in self.config_ and self.config_["omit_lang_postfix_in_output_path"]:
-                postfix=""
-
-            self.output_dir_path = os.path.join(constants.DIR_OUTPUT, postfix)
-
         if "service_postfixes" in self.config_ and self.config_["service_postfixes"]:
             self.service_postfixes = self.config_["service_postfixes"]
 
-        if not os.path.exists(self.output_dir_path) or not os.path.isdir(self.output_dir_path):
-            # Create any missing intermediate directories: the output path can
-            # be nested (e.g. `<pkg>/samples/output`), which `os.mkdir` would
-            # fail on.
-            os.makedirs(self.output_dir_path, exist_ok=True)
+        # A postfix listed here produces a seeded file, kept outside the
+        # generated tree so no cleanup step can delete it.
+        if self.config_.get("seed_dirs"):
+            self.seed_dirs = self.config_["seed_dirs"]
 
     def get_service_converted(self, file_type, service, service_postfix, method=None):
         """Gets converted result from the specified parser result as a string"""
@@ -92,12 +77,12 @@ class ConverterAbstract(object):
         """Gets the protoc command"""
         return
 
-    def get_converted_path(self, name, file_type):
+    def get_converted_path(self, name, file_type, output_subdir=None):
         """Gets the path to converted file with the specified name"""
         language_file_extension = constants.SUPPORTED_LANGUAGES_PARAMETERS[self.language_name_][f'extension_{file_type}']
         converted_dir_path = os.path.join(
             self.output_dir_path,
-            file_type)
+            output_subdir or file_type)
 
         helper.create_dir(converted_dir_path)
         converted_path = os.path.join(
@@ -108,9 +93,9 @@ class ConverterAbstract(object):
             helper.create_dir(converted_dirname)
         return converted_path
 
-    def save_converted(self, converted, name, file_type):
+    def save_converted(self, converted, name, file_type, output_subdir=None):
         """Saves converted model, rpc service to the file with the specified name"""
-        converted_path = self.get_converted_path(name, file_type)
+        converted_path = self.get_converted_path(name, file_type, output_subdir)
         # Normalize to a single trailing newline so regenerated files stay
         # POSIX-conformant and diff-clean (a jinja template can otherwise
         # drop the final newline under trim_blocks).

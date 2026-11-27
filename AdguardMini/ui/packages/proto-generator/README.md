@@ -1,165 +1,124 @@
-﻿# Proto parser repo
+# Proto generator
 
-## Использование Protobuf для автогенерации кода
+`@adg/proto-generator` is the local Yarn workspace package that generates
+Swift and TypeScript sources from the Protobuf schema in
+`AdguardMini/ui/schema`. The converter code lives in `proto-parser/src`.
 
-Описание протокола можно найти по [ссылке](https://github.com/protocolbuffers/protobuf)
-## Подготовка окружения
-1. Для обеспечения работы конвертера необходимо установить `python 3.9` или выше.
-2. Необходимо установить дополнительные модули при помощи команды
-```
-pip install -r requirements.txt
-```
+## Requirements
 
-## Подготовка к автогенерации кода
+The Python dependencies are pinned in `requirements.txt`:
 
-1. Для того, чтобы корректно использовать protobuf для автогенерации кода необходимо осуществить предварительные шаги (в зависимости от языка программирования)
+- `Jinja2==3.1.6`
+- `protobuf==7.36.2`
 
-1.1 `C#`
-* Установить `Protocol buffer` компилятор (`protoc`) версии 3
-https://github.com/protocolbuffers/protobuf/releases
+`./configure.sh dev` creates the `.venv` virtual environment from `python3`
+on `PATH` (3.10+ is required by the `protobuf` pin; pip rejects an older
+interpreter), activates it, and installs these pins. It recreates an existing
+`.venv` that a different Python version built.
+`./Support/Scripts/update_proto_schema.sh` runs the generator with the `.venv`
+interpreter, so the calling shell does not need an active virtual
+environment.
 
-1.2 `Swift`
+The generator does not parse `.proto` files itself. It compiles the schema
+once with `protoc --descriptor_set_out --include_source_info`, reads the
+services, the RPC methods and the doc comments from the descriptor with the
+`protobuf` runtime, and feeds them to the templates. `protoc` 31.1 is
+therefore required and is pinned by `.protoc-version`; the `proto-check` CI
+job verifies its downloaded Linux archive against `.protoc-checksum`.
 
-* Установить `Protocol buffer` компилятор (`protoc`) версии 3
-```
-$ brew install protobuf
-```
-* Установить последнюю версию плагина `swift-protobuf`
+Swift generation runs `protoc` with the `protoc-gen-swift` plugin;
+`update_proto_schema.sh` puts `build/protoc-tools/bin` on `PATH`. TypeScript
+generation runs `protoc` with the `protoc-gen-ts` plugin from
+`node_modules/.bin`, which `yarn install` provides.
 
-1.2.1 *[WINDOWS]* Установить `Swift compiler` в соответствии с ОС, на которой просиходит сборка с официального [сайта](https://swift.org/)
-* Собрать плагин в соответствии с инструкцией
-```
-$ git clone https://github.com/apple/swift-protobuf
-$ cd swift-protobuf
-$ swift build -c release
-```
-* необходимо добавить путь `.build/release` в переменную `PATH`
+## Regeneration
 
-1.2.1 *[MACOS]* Установить `Swift compiler` через Homebrew
-```
-$ brew install swift-protobuf
-```
+Run the wrapper from the repository root:
 
-1.3 `Typescript`
-
-* Установить зависимости компилятора
-```
-yarn install
+```bash
+./Support/Scripts/update_proto_schema.sh
 ```
 
-## Автогенерация кода
-1. Для описания сервисов и моделей используется протокол `protobuf`. Синтаксис и руководство по стилю можно найти в разделах ([синтаксис](https://developers.google.com/protocol-buffers/docs/proto3) и [стиль](https://developers.google.com/protocol-buffers/docs/style)) [официального сайта](https://developers.google.com/protocol-buffers), посвященного проекту
+The wrapper regenerates both languages, generates the service method
+allowlist, and adds SPDX headers to the generated Swift sources.
 
-2. Прото-файлы
+The wrapper writes:
 
-2.1. В папку `input/services` разместить файлы `*.proto`, содержащие описания сервисов, используемых для работы. Каждый файл должен содержать только один сервис.
+- Swift: `AdguardMini/MiniResources/ProtoSchema/Sources` with the `services`,
+  `types`, and `callbacks` folders. The hand-written `WebView` folder is not
+  regenerated.
+- TypeScript: `AdguardMini/ui/modules/common/apis` with the `types`,
+  `requests`, and `callbacks` folders, plus the `impl` folder for the callback
+  implementations.
 
-2.2. В папку `input/types` разместить файлы `*.proto`, содержащие описания моделей, используемых для работы.
+`protoc` with the language plugin generates the `types` trees. The templates
+generate the Swift service files, the TypeScript request classes, and the
+callback classes.
 
-2.3. В папку `input/calbacks` разместить файлы `*.proto`, содержащие описания коллбек-сервисов, используемых для работы. Реализация коллбек-сервисов необходима не для всех языков программирования и как правило необходимо лишь с целью упрощения генерации однобразного кода программисту. Необходимо, чтобы названия сервисов в данной папке не пересекались с названиями сервисов в папке `input/services`
+Files whose service postfix is listed in `seed_dirs` are seeds for
+implementation files. The generator writes such a file only when it does not
+exist, and never overwrites it. The wrapper never deletes that folder, so a
+hand-written implementation is safe across regeneration.
 
-Важно:
-При формировании `*.proto` файлов необходимо учитывать синтаксис, описанный в [спецификации proto3](https://developers.google.com/protocol-buffers/docs/proto3) и [спецификации proto2](https://developers.google.com/protocol-buffers/docs/proto2).
-В частности, при необходимости включения в модель моделей из других файлов следует использовать
-```
-import %path_to_another_model proto file%
-```
+## Command-line interface
 
-4. В пользовательской папке `configs` (п.5.4) находятся конфигурационные файлы, где можно переопределить параметры, используемые для построения выходных типов и сервисов
+The generator accepts four required flags:
 
-Пример:
-```
-{
-	"param_name" : "param",
-	"res_name" : "res",
-	"xcall_method_name" : "xcall",
-	"store_value_method_name" : "storeValue",
-	"array_buffer_type_name" : "ArrayBuffer",
-	"output_dir" : "."
-}
-```
+- `-l`, `--languages`: language to generate. Repeat the flag to generate
+  several languages; the accepted values are `swift` and `typescript`.
+- `-i`, `--input-dir`: directory that holds the `services`, `types`, and
+  `callbacks` schema folders.
+- `-o`, `--output-dir`: directory for the generated trees.
+- `-c`, `--configs-dir`: directory that holds the `<language>.json` config
+  files.
 
+Example:
 
-5. Используемые параметры запуска скрипта
+`protoc` and `protoc-gen-swift` are resolved from `PATH`, so the example puts
+the pinned tools installed by `./configure.sh dev` first:
 
-5.1. Языки программирования
-`-l` (`--languages`) - определяет языки программирования, для которых необходимо сгенерировать выходные файлы. Значение параметра может быть одним из нескольких вариантов:
-* `swift`
-* `typescript`
-
-Пример:
-```
-python src/main.py -l swift
-```
-Также допускается использование нескольких значений параметра.
-Пример:
-```
-python src/main.py -l swift -l typescript
+```bash
+export PATH="$PWD/build/protoc-tools/bin:$PATH"
+.venv/bin/python3 \
+    AdguardMini/ui/packages/proto-generator/proto-parser/src/main.py \
+    -l swift -l typescript \
+    -i AdguardMini/ui/schema \
+    -o .temp/generated \
+    -c AdguardMini/ui/schema/.protocfg
 ```
 
-5.2. Получение прото-файлов
-`-i` (`--input-dir`) -
-* если значение `"input-dir"` равно `null` (п. 4), то параметр `--input_dir` определяет путь до директории, из которой будут получены прото-файлы
-* если если значение `"input-dir"` (п. 4) равно `null` и не задан параметр `--input_dir`, то будет использоваться директория `input` в корне `proto-parser`
-* если задано значение `"input-dir"` (п. 4), то значение параметра `--input_dir` будет проигнорировано
+## Configuration
 
-Пример:
-```
-python src/main.py -l swift -i "D:\Work\ProtoFiles"
-```
+The configs directory holds one file per language:
 
-5.3. Вывод результатов работы парсера
-`-o` (`--output-dir`) -
-* если значение `"output-dir"` равно `null` (п. 4), то параметр `--output_dir` определяет путь до директории, в которую будут записаны результаты работы парсера
-* если если значение `"output-dir"` (п. 4) равно `null` и не задан параметр `--ouput_dir`, то будет использоваться директория `output` в корне `proto-parser`
-* если задано значение `"output-dir"` (п. 4), то значение параметра `--output_dir` будет проигнорировано
+- `swift.json`: `service_class_name` (`WebViewBridge`),
+  `callback_class_name` (`WebViewCallbackBridge`), and `service_protocol`
+  (`Service`).
+- `typescript.json`: `param_name` (`param`), `array_buffer_type_name`
+  (`ArrayBuffer`), `service_postfixes` (`["", "Internal"]`), and
+  `seed_dirs` (postfix to output subdirectory, here
+  `{"Internal": "impl"}`).
 
+## Templates
 
-Пример:
-```
-python src/main.py -l swift -o "D:\Work\ParserResults"
-```
+The `proto-parser/templates` directory holds six Jinja2 templates. Per-file
+templates use the pattern `%type%_%language%%postfix%.j2`:
 
-5.4. Получение файлов конфигурации
-`-c` (`configs-dir`) -
-* параметр `--configs-dir` является обязательным и определяет путь до директории, в которую находятся файлы конфигурации (п.4)
-* если не задан параметр `--configs_dir`, то будет сгенерирована ошибка
+- `services_swift.j2`: Swift service protocol and bridge class.
+- `callbacks_swift.j2`: Swift callback bridge class.
+- `requests_typescript.j2`: TypeScript request class for one service method.
+- `callbacks_typescript.j2`: TypeScript callback service with its public and
+  internal interfaces.
+- `callbacks_typescriptInternal.j2`: seed for a hand-written TypeScript
+  `*Internal` callback class. The `Internal` service postfix selects this
+  template, and `seed_dirs` sends its output to the `impl` folder. An existing file is never overwritten.
 
-Пример:
-```
-python src/main.py -l swift -c "D:\Work\Configs"
-```
+The aggregate pattern `super_<type>_<language>.j2` emits one barrel file:
 
+- `super_types_typescript.j2`: the `types/index.ts` barrel that re-exports
+  every generated type.
 
-6. Помимо выходных файлов моделей и/или сервисов в выходной папке будут присутствовать три файла
-```
-model_credential.json,
-services_credential.json,
-callbacks_credential.json
-```
-
-содержащие объекты типа
-```
-{
-    "version": "1",
-    "date": "2021-10-22-12:26:23",
-    "language": "typescript",
-    "type": "model",
-    "hash": "5dfa5cbc2630f0dc3ee0b9be6f78d6d8053a08e7a264b99409e09f89ce2ed023"
-}
-```
-Данные файлы необходимы для корректного определения факта вносимых изменения в сгенерированных файлов, а также их версионирования.
-
-*Для разработчика:*
-7. Для генерации сервисов и коллбеков используются шаблоны, расположенные в директории `templates`. Название каждого шаблона удовлетворяет следующей маске
-```
-(super_)%type%_%language%%postfix%.j2
-```
-где
-* `super` - указывает на использования данного шаблона для генерации файла, содержащего информацию о сервисах. Например, массив объявленных сервисов или коллбеков. Данный параметр может быть опущен
-
-* `type` - указывает на тип генерируемого объекта. Может быть одно из значений `callback` или `service` (п. 2)
-
-* `language` - указывает на язык программирования (п. 5.1)
-
-* `postfix` - возможный постфикс для генерации нескольких выходных файлов для одного прото-файла заданного типа. Перечень постфиксов определяется в переменных `self.service_postfixes` каждого наследника класса `ConverterAbstract`. По умолчанию равен пустому списку, т.е. один выходной файл для каждого прото-файла
+In the per-file pattern, `%type%` is the file type (`services`,
+`callbacks`, or `requests`), `%language%` is the language name, and
+`%postfix%` is a service postfix from the language config or empty. In the
+aggregate pattern, `%type%` names the output family (`types`).

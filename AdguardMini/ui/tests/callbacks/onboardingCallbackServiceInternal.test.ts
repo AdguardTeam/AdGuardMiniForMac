@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { test } from 'vitest';
 
 import { store, __resetOnboardingTestStore } from '../mocks/onboardingStore';
-import { OnboardingCallbackServiceInternal } from '../../modules/common/apis/callbacks/OnboardingCallbackServiceInternal';
+import { OnboardingCallbackServiceInternal } from '../../modules/common/apis/impl/OnboardingCallbackServiceInternal';
 import { EffectiveThemeValue, EffectiveTheme } from '../../modules/common/apis/types';
 
 /**

@@ -6,9 +6,8 @@
  * TS-side tests for the regenerated callback services. Verifies the
  * Swift→TS dispatch (`window.__dispatchCallback`) routes to the
  * regenerated callback service's methods after `installCallbackDispatch`
- * is wired. The regenerated TS callback templates are config-driven
- * (Task 2's `xcall_method_name` rename) — this test guards the
- * regenerated consumer-side routing.
+ * is wired. The regenerated TS callback templates are config-driven —
+ * this test guards the regenerated consumer-side routing.
  */
 
 import { afterAll, beforeAll, describe, it } from 'vitest';
@@ -26,17 +25,15 @@ void describe('regenerated TS callback services', () => {
     beforeAll(() => {
         // `installCallbackDispatch` installs on `window`, so a fake window
         // must exist first (mirrors `setupFakeWindow` in the other tests).
+        // The generated callbacks log through window.log, so the fake window stubs it.
         (globalThis as Record<string, unknown>).window = {
             addEventListener: () => {},
             dispatchEvent: () => true,
-        };
-        // The generated callback services call `log.dbg(...)` before
-        // reaching the internal handler (the app installs `window.log` in
-        // webViewBootstrap). Stub it so routing can be verified.
-        (globalThis as Record<string, unknown>).log = {
-            dbg: () => {},
-            error: () => {},
-            info: () => {},
+            log: {
+                dbg: () => {},
+                error: () => {},
+                info: () => {},
+            },
         };
         // Install the window.__dispatchCallback entry point.
         installCallbackDispatch();

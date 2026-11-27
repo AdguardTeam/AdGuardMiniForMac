@@ -13,7 +13,7 @@
 import { describe, it } from 'vitest';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { readFileSync, mkdtempSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdtempSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
@@ -33,10 +33,9 @@ function resolvePython(repoRoot: string): string | null {
 }
 
 /**
- * Probe whether `resolvedPython` can import the generator's dependencies
- * by running it with `--help`. The top-level `import helper` chain pulls
- * in `simplejson` and friends, so a non-zero exit means the generator
- * cannot run at all.
+ * Probe whether `resolvedPython` can run the generator by invoking it with
+ * `--help`. A non-zero exit means the generator's own dependencies are
+ * missing, so it cannot run at all.
  */
 function pythonCanRunGenerator(python: string, generator: string): boolean {
     try {
@@ -47,7 +46,7 @@ function pythonCanRunGenerator(python: string, generator: string): boolean {
     }
 }
 
-const repoRoot = path.resolve(__dirname, '../../../../../..');
+const repoRoot = path.resolve(__dirname, '../../../..');
 const generator = path.join(
     repoRoot,
     'AdguardMini/ui/packages/proto-generator/proto-parser/src/main.py',
@@ -134,6 +133,20 @@ void describe('codegen smoke test WKWebView-native dispatch', { skip: SKIP }, ()
         );
     });
 
+    it('regenerated doc comments — service and method text comes from the proto comments', () => {
+        const outDir = mkdtempSync(path.join(tmpdir(), 'codegen-docs-'));
+        runCodegen('swift', outDir);
+        const content = readFileSync(path.join(outDir, 'services', 'SampleService.swift'), 'utf8');
+        assert.ok(
+            content.includes('/// Sample service for codegen smoke test'),
+            'Regenerated Swift service must carry its proto comment as the doc comment',
+        );
+        assert.ok(
+            content.includes('/// Echo request bytes back'),
+            'Regenerated Swift method must carry its proto comment as the doc comment',
+        );
+    });
+
     it('regenerated TS request + callback — no Window.this.xcall references (US14.2)', () => {
         const outDir = mkdtempSync(path.join(tmpdir(), 'codegen-ts-'));
         runCodegen('typescript', outDir);
@@ -149,8 +162,59 @@ void describe('codegen smoke test WKWebView-native dispatch', { skip: SKIP }, ()
             'Regenerated TS request must not reference Window.this.xcall',
         );
         assert.ok(
+            reqContent.includes(' * Echo request bytes back'),
+            'Regenerated TS request must carry the proto comment as its JSDoc',
+        );
+        assert.ok(
             !cbContent.includes('Window.this.xcall'),
             'Regenerated TS callback must not reference Window.this.xcall',
+        );
+        assert.ok(
+            cbContent.includes('window.log?.dbg('),
+            'Regenerated TS callback must log through window.log?.dbg',
+        );
+        assert.ok(
+            !cbContent.includes('log.dbg('),
+            'Regenerated TS callback must not call a bare log.dbg',
+        );
+    });
+
+    it('TypeScript codegen seeds callback implementations outside the generated tree', () => {
+        const outDir = mkdtempSync(path.join(tmpdir(), 'codegen-ts-impl-'));
+        runCodegen('typescript', outDir);
+        assert.ok(
+            existsSync(path.join(outDir, 'impl', 'SampleCallbackServiceInternal.ts')),
+            'Expected the seeded implementation in the impl tree',
+        );
+        assert.ok(
+            !existsSync(path.join(outDir, 'callbacks', 'SampleCallbackServiceInternal.ts')),
+            'Expected no implementation file inside the generated callbacks tree',
+        );
+    });
+
+    it('TypeScript codegen never overwrites an existing implementation', () => {
+        const outDir = mkdtempSync(path.join(tmpdir(), 'codegen-ts-impl-keep-'));
+        runCodegen('typescript', outDir);
+        const implPath = path.join(outDir, 'impl', 'SampleCallbackServiceInternal.ts');
+        const marker = '// implementation marker';
+        writeFileSync(implPath, `${readFileSync(implPath, 'utf8')}\n${marker}\n`);
+        runCodegen('typescript', outDir);
+        assert.ok(
+            readFileSync(implPath, 'utf8').includes(marker),
+            'The generator must not overwrite an existing implementation',
+        );
+    });
+
+    it('TypeScript codegen emits no callbacks index barrel', () => {
+        const outDir = mkdtempSync(path.join(tmpdir(), 'codegen-ts-barrel-'));
+        runCodegen('typescript', outDir);
+        assert.ok(
+            existsSync(path.join(outDir, 'callbacks', 'SampleCallbackService.ts')),
+            'Expected the regenerated callback service to exist',
+        );
+        assert.ok(
+            !existsSync(path.join(outDir, 'callbacks', 'index.ts')),
+            'Expected no callbacks/index.ts barrel in the regenerated output',
         );
     });
 });

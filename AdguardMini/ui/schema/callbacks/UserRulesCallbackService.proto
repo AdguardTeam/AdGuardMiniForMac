@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "UserRules.proto";
+import "PrimitivesWrappers.proto";
 
 /* Service handles settings lists */
 service UserRulesCallbackService {

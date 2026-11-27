@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "PrimitivesWrappers.proto";
 import "UserRules.proto";
+import "Helpers.proto";
 
 /* Service that handles client-platform communication*/
 service UserRulesService {

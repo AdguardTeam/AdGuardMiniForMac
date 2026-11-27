@@ -258,7 +258,12 @@ adguard-mini/
   `yarn test:coverage` also run on every pull request via the `ts-lint` and
   `ts-test` jobs in `.github/workflows/pr-check.yml` (Linux `team-sciter`
   pool, Node per `.nvmrc`), so TypeScript regressions, type errors and a
-  coverage drop fail PR checks like the Swift lanes do.
+  coverage drop fail PR checks like the Swift lanes do. The same workflow
+  runs the `proto-check` job, which compiles the schema with
+  `protoc --fatal_warnings` through `./Support/Scripts/check_proto_schema.sh`
+  using the version pinned in `.protoc-version`; the job downloads that
+  `protoc` release for Linux and verifies the archive against
+  `.protoc-checksum` before it runs.
 
 ### Linting
 
@@ -279,11 +284,30 @@ adguard-mini/
 ### Protobuf Schema
 
 - `./Support/Scripts/update_proto_schema.sh` - Regenerate Swift and TypeScript
-  schema from Protobuf definitions
+  schema from Protobuf definitions. The regeneration deletes the generated
+  trees first: `AdguardMini/MiniResources/ProtoSchema/Sources/` (except the
+  hand-written `WebView/` subtree) and the generated TypeScript under
+  `AdguardMini/ui/modules/common/apis/`
+- `./Support/Scripts/check_proto_schema.sh` - Compile the schema with
+  `protoc --fatal_warnings` as a warning gate; it first requires the exact
+  `.protoc-version` pin (`31.1`)
+- `.protoc-checksum` - SHA-256 of the pinned
+  `protoc-<version>-linux-x86_64.zip` release archive; the `proto-check` job
+  verifies the download against it
+- Hand-written code lives only outside the generated trees:
+  `AdguardMini/ui/modules/common/apis/impl/` (callback
+  implementations, seeded once and never overwritten),
+  `AdguardMini/MiniResources/ProtoSchema/Initialisers/` (Swift extensions),
+  `AdguardMini/MiniResources/ProtoSchema/Sources/WebView/` (bridge), and
+  `AdguardMini/AdguardMini/Sources/WebView/` (service implementations)
 - `AdguardMini/ui/packages/proto-generator` - Local workspace package
   (`@adg/proto-generator`) holding the Swift and TypeScript codegen, trimmed
   from the upstream package (the C# converter/templates were removed — this
-  project only generates Swift + TypeScript). Yarn workspaces
+  project only generates Swift + TypeScript). It reads the schema through
+  `protoc --descriptor_set_out --include_source_info`, compiled once per
+  generator run, so it has no `.proto` parser of its own. Its
+  `requirements.txt` pins `Jinja2==3.1.6` and `protobuf==7.36.2` (Python 3.10+),
+  which `./configure.sh dev` installs into `.venv`. Yarn workspaces
   (`AdguardMini/ui/packages/*`) link it into `node_modules`
   (`node_modules/@adg/proto-generator`), which is how
   `AdguardMini/Scripts/updateProtoSchema.sh` resolves it; edits here take
@@ -496,14 +520,30 @@ Blocker JSON consumed by the extension targets.
 3. **Protobuf schema sync**: Swift and TypeScript communicate via Protobuf.
    Schema definitions live in `AdguardMini/ui/schema/`. Generated Swift
    code goes to `AdguardMini/MiniResources/ProtoSchema/Sources/`, generated
-   TypeScript goes to `AdguardMini/ui/modules/common/apis/`. Generated service
-   protocols declare each reply `promise` as `sending`: implementations MUST
-   declare the same `sending` parameter and hand the promise to the `Task` as
-   is, without re-binding it through `nonisolated(unsafe)`.
+   TypeScript goes to `AdguardMini/ui/modules/common/apis/` (`callbacks/`,
+   `requests/`, `types/`). Generated service protocols declare each reply
+   `promise` as `sending`: implementations MUST declare the same `sending`
+   parameter and hand the promise to the `Task` as is, without re-binding it
+   through `nonisolated(unsafe)`.
+
+   Regeneration deletes the generated trees before it writes them, so a file
+   inside a generated tree is disposable. Hand-written code MUST live outside
+   them: TypeScript callback implementations in
+   `AdguardMini/ui/modules/common/apis/impl/` (seeded once by the
+   generator, never overwritten), Swift extensions in
+   `AdguardMini/MiniResources/ProtoSchema/Initialisers/`, bridge code in
+   `AdguardMini/MiniResources/ProtoSchema/Sources/WebView/`, and service
+   implementations in `AdguardMini/AdguardMini/Sources/WebView/`. A
+   hand-written TypeScript callback MUST implement the generated
+   `I<Name>CallbackServiceInternal` interface, so the compiler reports every
+   missing method after a schema change.
 
    **Rationale**: Ensures type-safe communication between Swift platform layer
    and TypeScript UI layer; the `sending` contract states the reply handover
-   once, at the protocol, where the compiler checks it.
+   once, at the protocol, where the compiler checks it. A tree boundary, not a
+   filename exception, is what makes the deletion step safe: the cleanup can
+   remove a whole directory without having to tell generated files from
+   hand-written ones.
 
 4. **UI modules**: Each UI module (`tray`, `settings`, `onboarding`,
    `userrules`) runs independently in its own WKWebView window. Shared
@@ -1145,7 +1185,10 @@ humans and AI agents that consume project documentation.
    paths (e.g., `/opt/homebrew/opt/ruby/bin/ruby`) or use `bundle exec` in
    scripts. The `configure.sh` script captures the toolchain and generates
    wrappers that ensure consistent tool versions across all environments
-   (Xcode Build Phases, Terminal, CI).
+   (Xcode Build Phases, Terminal, CI). Python is the exception: the `.venv`
+   embeds the interpreter it was built from, and `configure.sh` creates it
+   from `python3` on `PATH` (3.10+, required by the pinned `protobuf`),
+   recreating it when that interpreter changes.
 
    **Rationale**: Eliminates PATH-dependent behavior, removes reliance on shell
    init files and version managers (nvm, rbenv), and ensures reproducible builds

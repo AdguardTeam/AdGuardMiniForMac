@@ -30,6 +30,8 @@ path = [
     "**/.dockerignore",
     "**/.eslintignore",
     "**/.nvmrc",
+    ".protoc-version",
+    ".protoc-checksum",
     "**/Package.swift",
     "requirements.txt",
     "**/README.md",
@@ -116,7 +118,7 @@ path = [
 ]
 SPDX-FileCopyrightText = "AdGuard Software Limited"
 SPDX-License-Identifier = "GPL-3.0-or-later"
-SPDX-FileComment = "Internal proto codegen tool, sample fixtures and generated cache"
+SPDX-FileComment = "Internal proto codegen tool and generated Python bytecode cache"
 
 [[annotations]]
 path = [

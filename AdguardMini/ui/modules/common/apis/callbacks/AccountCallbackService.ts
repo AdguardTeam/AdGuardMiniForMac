@@ -33,7 +33,7 @@ export class AccountCallbackService implements IAccountCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in AccountCallbackService.OnLicenseUpdate: ${ param }`);
 		}
-		log.dbg('Callback data', 'AccountCallbackService.OnLicenseUpdate', arg.toObject());
+		window.log?.dbg('Callback data', 'AccountCallbackService.OnLicenseUpdate', arg.toObject());
 		await this.accountCallbackServiceInternal.OnLicenseUpdate(arg);
 		return new EmptyValue();
 	};

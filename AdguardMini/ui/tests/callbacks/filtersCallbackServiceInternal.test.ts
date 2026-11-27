@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { test } from 'vitest';
 
 import { store, __resetSettingsTestStore } from '../mocks/settingsStore';
-import { FiltersCallbackServiceInternal } from '../../modules/common/apis/callbacks/FiltersCallbackServiceInternal';
+import { FiltersCallbackServiceInternal } from '../../modules/common/apis/impl/FiltersCallbackServiceInternal';
 import { RouteName } from '../../modules/settings/store/modules/SettingsRouter';
 import { EmptyValue, FiltersIndex, StringValue } from '../../modules/common/apis/types';
 

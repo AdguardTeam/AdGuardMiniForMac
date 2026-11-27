@@ -3,8 +3,7 @@ syntax = "proto3";
 import "PrimitivesWrappers.proto";
 import "Helpers.proto";
 import "Settings.proto";
-import "EffectiveTheme.proto";
-import "Statistics.proto";
+import "SupportMessage.proto";
 
 /* Service that handles settings */
 service SettingsService {

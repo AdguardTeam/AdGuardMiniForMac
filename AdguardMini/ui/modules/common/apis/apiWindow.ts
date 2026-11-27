@@ -36,8 +36,6 @@ export const xcall = async (methodName: string, binaryParam: Bytes): Promise<Uin
 };
 
 /**
- * Alias of `xcall`. The codegen templates emit
- * `import { postMessage } from 'ApiWindow'` (the renamed
- * `xcall_method_name` in `typescript.json`).
+ * Alias of `xcall`; no codegen template emits the `postMessage` import.
  */
 export { xcall as postMessage };

@@ -10,7 +10,7 @@ import { render } from 'preact';
 // Import before other modules.
 import 'Common/api';
 import { OnboardingCallbackService } from 'Common/apis/callbacks/OnboardingCallbackService';
-import { OnboardingCallbackServiceInternal } from 'Common/apis/callbacks/OnboardingCallbackServiceInternal';
+import { OnboardingCallbackServiceInternal } from 'Common/apis/impl/OnboardingCallbackServiceInternal';
 import { setupOnboardingWebViewBridge } from 'Modules/onboarding/lib/webViewOnboardingBootstrap';
 // Default css styles (reset, colors, dark/light)...
 import 'Theme/default';

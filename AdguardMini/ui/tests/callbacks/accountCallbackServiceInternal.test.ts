@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { test } from 'vitest';
 
 import { store, __resetSettingsTestStore } from '../mocks/settingsStore';
-import { AccountCallbackServiceInternal } from '../../modules/common/apis/callbacks/AccountCallbackServiceInternal';
+import { AccountCallbackServiceInternal } from '../../modules/common/apis/impl/AccountCallbackServiceInternal';
 import { EmptyValue, LicenseOrError } from '../../modules/common/apis/types';
 
 /**

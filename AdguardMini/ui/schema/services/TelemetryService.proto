@@ -1,5 +1,8 @@
 syntax = "proto3";
 
+import "PrimitivesWrappers.proto";
+import "Telemetry.proto";
+
 /* Service that handles telemetry events */
 service TelemetryService {
     /* Record telemetry event */

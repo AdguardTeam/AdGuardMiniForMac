@@ -2,6 +2,10 @@ syntax = "proto3";
 
 import "PrimitivesWrappers.proto";
 import "License.proto";
+import "Helpers.proto";
+import "AppStoreSubscription.proto";
+import "EnterActivationCodeResult.proto";
+import "Subscription.proto";
 
 /* Service handles account info */
 service AccountService {

@@ -4,7 +4,7 @@ import { PlatformRequest } from '@adg/webview-utils-kit';
 import { EmptyValue as ReturnValue, EmptyValue as RequestMessage, EmptyValue as EmptyMessageImpl } from '../../types'
 
 /**
- * Closes the user-rules editor window (called by the editor after it  resolves
+ * Closes the user-rules editor window (called by the editor after it resolves
  * unsaved changes, or immediately if there are none)
  */
 export class CloseUserRulesWindowRequest extends PlatformRequest<ReturnValue, RequestMessage> {

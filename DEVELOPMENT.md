@@ -26,6 +26,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
   - [Theme Generation](#theme-generation)
 - [Troubleshooting](#troubleshooting)
   - [Ruby or Node.js Version Too Old](#ruby-or-nodejs-version-too-old)
+  - [Python Too Old](#python-too-old)
   - [Tests Don't Build](#tests-dont-build)
   - [Can't See the Build in TestFlight](#cant-see-the-build-in-testflight)
   - [Get New Updates Immediately (Sparkle)](#get-new-updates-immediately-sparkle)
@@ -42,7 +43,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 | Ruby | 3.2.2+ | Build scripts, RuboCop, ruby-lsp |
 | Bundler | 2.6+ | Ruby dependency management |
 | Yarn | 1.22+ | Frontend dependency management |
-| Python | 3.9+ | Protobuf schema generation (venv created by `configure.sh`) |
+| Python | 3.10+ | Protobuf schema generation (venv created by `configure.sh`) |
 
 - **Minimum deployment target** (end-user): **macOS 13** (`AG_DEPLOYMENT_TARGET`
   in `CommonConfig.xcconfig`)
@@ -231,11 +232,13 @@ GitHub Actions. See the workflows in `.github/workflows/`:
 The app uses Protobuf for Swift ↔ TypeScript communication.
 
 | Path | Description |
-|------|-------------|
+| --- | --- |
 | `AdguardMini/ui/schema/` | Schema definitions (`.proto` files) |
 | `AdguardMini/ui/schema/.protocfg/` | Generator configs (swift.json, typescript.json) |
 | `AdguardMini/MiniResources/ProtoSchema/Sources/` | Generated Swift code |
-| `AdguardMini/ui/modules/common/apis/` | Generated TypeScript code |
+| `AdguardMini/MiniResources/ProtoSchema/Initialisers/` | Hand-written Swift extensions of generated types |
+| `AdguardMini/ui/modules/common/apis/callbacks/`, `requests/`, `types/` | Generated TypeScript code |
+| `AdguardMini/ui/modules/common/apis/impl/` | TypeScript callback implementations |
 
 Regenerate after modifying `.proto` files:
 
@@ -246,11 +249,42 @@ Regenerate after modifying `.proto` files:
 This wrapper ensures the local protoc tools (`build/protoc-tools/`) are on
 `PATH` and then runs `AdguardMini/Scripts/updateProtoSchema.sh`.
 
-**Version pinning (optional):** To ensure reproducible protoc builds:
+The `protoc` version is pinned to `31.1` in `.protoc-version`.
+`install_protoc_tools.sh` and the `proto-check` CI job read this file. The CI
+job downloads the pinned Linux release and verifies its SHA-256 against
+`.protoc-checksum`, so a pin bump updates both files.
+
+### Hand-written code next to generated code
+
+The regeneration deletes the generated trees before it writes them. Any file
+inside a generated tree is disposable. Put hand-written code only in these
+places:
+
+- `AdguardMini/ui/modules/common/apis/impl/<Name>CallbackServiceInternal.ts`
+    - implements the generated `I<Name>CallbackServiceInternal` interface. The
+      generator creates the file once, when it does not exist, and never
+      overwrites it.
+- `AdguardMini/MiniResources/ProtoSchema/Initialisers/`
+    - extensions and initializers for generated Swift types.
+- `AdguardMini/MiniResources/ProtoSchema/Sources/WebView/`
+    - WKWebView bridge infrastructure.
+- `AdguardMini/AdguardMini/Sources/WebView/`
+    - service implementations (`*ServiceImpl.swift`) and callback senders
+      (`WebViewCallbackCoordinator.swift`).
+
+The TypeScript compiler checks the seam. A callback method added to the schema
+appears in the generated interface, so a missing implementation fails
+`yarn typecheck` with `TS2420` and a list of the missing methods.
+
+Check the schema without regenerating:
 
 ```bash
-echo '31.1' > .protoc-version
+./Support/Scripts/check_proto_schema.sh
 ```
+
+The gate runs `protoc --fatal_warnings` over the `types`, `services`, and
+`callbacks` schema folders and fails on any warning, including an unused
+import.
 
 ### Localization
 
@@ -307,6 +341,7 @@ All scripts are located in `Support/Scripts/`.
 | `flush_adguard_mini_data.sh` | Cleans all AdGuard Mini data (settings, keychain, group containers), restoring to first-run state |
 | `move_templates.sh` | Installs Xcode file templates (available under `macOS/AdGuardMini related` in New → File) |
 | `install_protoc_tools.sh` | Installs local protoc tools into `build/protoc-tools/` |
+| `check_proto_schema.sh` | Checks the schema with `protoc --fatal_warnings` |
 | `update_proto_schema.sh` | Regenerates Swift/TypeScript Protobuf schema (see Protobuf Schema section) |
 | `update_third_party_deps.rb` | Updates npm and SPM dependencies (see Update Dependencies section) |
 | `locales.sh` | Pushes/pulls localization strings (see Localization section) |
@@ -351,6 +386,13 @@ If `configure.sh` reports that your Ruby or Node.js version is too old:
 
 The toolchain wrappers in `bin/` will use whatever versions were active when
 `configure.sh` was run, so you don't need to modify shell profiles.
+
+### Python Too Old
+
+`configure.sh` stops in the pip step when `python3` is older than the pinned
+`protobuf` package requires (3.10+). Install a newer Python, put it first in
+`PATH`, and run `./configure.sh dev` again: the `.venv` built by the old
+interpreter is detected and recreated.
 
 ### Tests Don't Build
 

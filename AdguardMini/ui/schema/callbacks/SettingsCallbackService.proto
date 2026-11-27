@@ -5,6 +5,7 @@ import "AppInfo.proto";
 import "Settings.proto";
 import "EffectiveTheme.proto";
 import "URLFilter.proto";
+import "SafariExtension.proto";
 
 /* Service handles settings lists */
 service SettingsCallbackService {

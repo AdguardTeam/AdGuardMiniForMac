@@ -3,7 +3,6 @@
  * compiler version: 6.31.1
  * source: Filters.proto
  * git: https://github.com/thesayyn/protoc-gen-ts */
-import * as dependency_1 from "./PrimitivesWrappers";
 import * as pb_1 from "google-protobuf";
 export class Filters extends pb_1.Message {
     #one_of_decls: number[][] = [];

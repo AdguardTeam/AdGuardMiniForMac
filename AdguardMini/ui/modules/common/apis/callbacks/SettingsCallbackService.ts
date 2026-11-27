@@ -77,7 +77,7 @@ export class SettingsCallbackService implements ISettingsCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in SettingsCallbackService.OnSafariExtensionUpdate: ${ param }`);
 		}
-		log.dbg('Callback data', 'SettingsCallbackService.OnSafariExtensionUpdate', arg.toObject());
+		window.log?.dbg('Callback data', 'SettingsCallbackService.OnSafariExtensionUpdate', arg.toObject());
 		await this.settingsCallbackServiceInternal.OnSafariExtensionUpdate(arg);
 		return new EmptyValue();
 	};
@@ -93,7 +93,7 @@ export class SettingsCallbackService implements ISettingsCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in SettingsCallbackService.OnLoginItemStateChange: ${ param }`);
 		}
-		log.dbg('Callback data', 'SettingsCallbackService.OnLoginItemStateChange', arg.toObject());
+		window.log?.dbg('Callback data', 'SettingsCallbackService.OnLoginItemStateChange', arg.toObject());
 		await this.settingsCallbackServiceInternal.OnLoginItemStateChange(arg);
 		return new EmptyValue();
 	};
@@ -109,7 +109,7 @@ export class SettingsCallbackService implements ISettingsCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in SettingsCallbackService.OnImportStateChange: ${ param }`);
 		}
-		log.dbg('Callback data', 'SettingsCallbackService.OnImportStateChange', arg.toObject());
+		window.log?.dbg('Callback data', 'SettingsCallbackService.OnImportStateChange', arg.toObject());
 		await this.settingsCallbackServiceInternal.OnImportStateChange(arg);
 		return new EmptyValue();
 	};
@@ -125,7 +125,7 @@ export class SettingsCallbackService implements ISettingsCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in SettingsCallbackService.OnHardwareAccelerationChange: ${ param }`);
 		}
-		log.dbg('Callback data', 'SettingsCallbackService.OnHardwareAccelerationChange', arg.toObject());
+		window.log?.dbg('Callback data', 'SettingsCallbackService.OnHardwareAccelerationChange', arg.toObject());
 		await this.settingsCallbackServiceInternal.OnHardwareAccelerationChange(arg);
 		return new EmptyValue();
 	};
@@ -141,7 +141,7 @@ export class SettingsCallbackService implements ISettingsCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in SettingsCallbackService.OnApplicationVersionStatusResolved: ${ param }`);
 		}
-		log.dbg('Callback data', 'SettingsCallbackService.OnApplicationVersionStatusResolved', arg.toObject());
+		window.log?.dbg('Callback data', 'SettingsCallbackService.OnApplicationVersionStatusResolved', arg.toObject());
 		await this.settingsCallbackServiceInternal.OnApplicationVersionStatusResolved(arg);
 		return new EmptyValue();
 	};
@@ -157,7 +157,7 @@ export class SettingsCallbackService implements ISettingsCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in SettingsCallbackService.OnWindowDidBecomeMain: ${ param }`);
 		}
-		log.dbg('Callback data', 'SettingsCallbackService.OnWindowDidBecomeMain', arg.toObject());
+		window.log?.dbg('Callback data', 'SettingsCallbackService.OnWindowDidBecomeMain', arg.toObject());
 		await this.settingsCallbackServiceInternal.OnWindowDidBecomeMain(arg);
 		return new EmptyValue();
 	};
@@ -173,7 +173,7 @@ export class SettingsCallbackService implements ISettingsCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in SettingsCallbackService.OnSettingsPageRequested: ${ param }`);
 		}
-		log.dbg('Callback data', 'SettingsCallbackService.OnSettingsPageRequested', arg.toObject());
+		window.log?.dbg('Callback data', 'SettingsCallbackService.OnSettingsPageRequested', arg.toObject());
 		await this.settingsCallbackServiceInternal.OnSettingsPageRequested(arg);
 		return new EmptyValue();
 	};
@@ -189,7 +189,7 @@ export class SettingsCallbackService implements ISettingsCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in SettingsCallbackService.OnEffectiveThemeChanged: ${ param }`);
 		}
-		log.dbg('Callback data', 'SettingsCallbackService.OnEffectiveThemeChanged', arg.toObject());
+		window.log?.dbg('Callback data', 'SettingsCallbackService.OnEffectiveThemeChanged', arg.toObject());
 		await this.settingsCallbackServiceInternal.OnEffectiveThemeChanged(arg);
 		return new EmptyValue();
 	};
@@ -205,7 +205,7 @@ export class SettingsCallbackService implements ISettingsCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in SettingsCallbackService.OnSettingsWindowOpened: ${ param }`);
 		}
-		log.dbg('Callback data', 'SettingsCallbackService.OnSettingsWindowOpened', arg.toObject());
+		window.log?.dbg('Callback data', 'SettingsCallbackService.OnSettingsWindowOpened', arg.toObject());
 		await this.settingsCallbackServiceInternal.OnSettingsWindowOpened(arg);
 		return new EmptyValue();
 	};
@@ -221,7 +221,7 @@ export class SettingsCallbackService implements ISettingsCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in SettingsCallbackService.OnURLFilterStateChanged: ${ param }`);
 		}
-		log.dbg('Callback data', 'SettingsCallbackService.OnURLFilterStateChanged', arg.toObject());
+		window.log?.dbg('Callback data', 'SettingsCallbackService.OnURLFilterStateChanged', arg.toObject());
 		await this.settingsCallbackServiceInternal.OnURLFilterStateChanged(arg);
 		return new EmptyValue();
 	};
@@ -237,7 +237,7 @@ export class SettingsCallbackService implements ISettingsCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in SettingsCallbackService.OnProtectionStatusChanged: ${ param }`);
 		}
-		log.dbg('Callback data', 'SettingsCallbackService.OnProtectionStatusChanged', arg.toObject());
+		window.log?.dbg('Callback data', 'SettingsCallbackService.OnProtectionStatusChanged', arg.toObject());
 		await this.settingsCallbackServiceInternal.OnProtectionStatusChanged(arg);
 		return new EmptyValue();
 	};
@@ -253,7 +253,7 @@ export class SettingsCallbackService implements ISettingsCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in SettingsCallbackService.OnMailProtectionChanged: ${ param }`);
 		}
-		log.dbg('Callback data', 'SettingsCallbackService.OnMailProtectionChanged', arg.toObject());
+		window.log?.dbg('Callback data', 'SettingsCallbackService.OnMailProtectionChanged', arg.toObject());
 		await this.settingsCallbackServiceInternal.OnMailProtectionChanged(arg);
 		return new EmptyValue();
 	};

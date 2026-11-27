@@ -1,11 +1,13 @@
-{% set empty_type_name  = constants.EMPTY_VALUE_TYPE %}
-/* {{constants.COMMON_GENERATED_FILES_PREAMBLE}} */
-import { {{config["store_value_method_name"]}} } from 'Store';
-import { I{{service.body.name}}Internal } from './{{service.body.name}}';
+// SPDX-FileCopyrightText: AdGuard Software Limited
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+/* Implementation of the generated interface; the generator never overwrites this file. */
+import { I{{service.name}}Internal } from '../callbacks/{{service.name}}';
 {% set types = [] %}
-{% for method in service.body.body %}
-{% do types.append(method.body.request_message_type) %}
-{% do types.append(method.body.response_message_type) %}
+{% for method in service.methods %}
+{% do types.append(method.request_message_type) %}
+{% do types.append(method.response_message_type) %}
 {% endfor %}
 import {
 {%- for type in types | unique %}
@@ -14,7 +16,7 @@ import {
 } from '../types'
 
 /* {{helper.wrap_string(service.description, " * ")}}  */
-export class {{service.body.name}}Internal  implements I{{service.body.name}}Internal {
+export class {{service.name}}Internal  implements I{{service.name}}Internal {
 
 }
 

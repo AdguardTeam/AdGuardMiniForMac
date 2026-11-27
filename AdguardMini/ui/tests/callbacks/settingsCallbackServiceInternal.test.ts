@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { test } from 'vitest';
 
 import { store, __resetSettingsTestStore } from '../mocks/settingsStore';
-import { SettingsCallbackServiceInternal } from '../../modules/common/apis/callbacks/SettingsCallbackServiceInternal';
+import { SettingsCallbackServiceInternal } from '../../modules/common/apis/impl/SettingsCallbackServiceInternal';
 import {
     NotificationContext,
     NotificationsQueueType,

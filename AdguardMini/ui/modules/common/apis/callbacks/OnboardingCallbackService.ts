@@ -33,7 +33,7 @@ export class OnboardingCallbackService implements IOnboardingCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in OnboardingCallbackService.OnEffectiveThemeChanged: ${ param }`);
 		}
-		log.dbg('Callback data', 'OnboardingCallbackService.OnEffectiveThemeChanged', arg.toObject());
+		window.log?.dbg('Callback data', 'OnboardingCallbackService.OnEffectiveThemeChanged', arg.toObject());
 		await this.onboardingCallbackServiceInternal.OnEffectiveThemeChanged(arg);
 		return new EmptyValue();
 	};

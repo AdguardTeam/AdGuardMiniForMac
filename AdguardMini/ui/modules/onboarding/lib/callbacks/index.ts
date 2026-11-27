@@ -4,7 +4,7 @@
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { OnboardingCallbackService } from 'Common/apis/callbacks/OnboardingCallbackService';
-import { OnboardingCallbackServiceInternal } from 'Common/apis/callbacks/OnboardingCallbackServiceInternal';
+import { OnboardingCallbackServiceInternal } from 'Common/apis/impl/OnboardingCallbackServiceInternal';
 
 import type { IOnboardingCallbackService, IOnboardingCallbackServiceInternal } from 'Common/apis/callbacks/OnboardingCallbackService';
 

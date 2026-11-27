@@ -2,8 +2,6 @@ syntax = "proto3";
 
 option optimize_for = CODE_SIZE;
 
-import "PrimitivesWrappers.proto";
-
 // Describes the structure of filters
 message Filters {
     repeated Filter filters = 1;

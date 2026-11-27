@@ -22,6 +22,18 @@ export default defineConfig([
     },
     commonConfig,
     {
+        // The callback implementations implement a generated interface that
+        // already documents every method; a second JSDoc block here would
+        // duplicate it and drift on the next schema change.
+        files: ['**/apis/impl/**/*.ts'],
+        rules: {
+            'jsdoc/require-jsdoc': 'off',
+            // A callback parameter is dictated by the generated interface; the
+            // underscore marks the ones the implementation does not read.
+            '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+        },
+    },
+    {
         plugins: {
             'lodash': lodashPlugin,
         },

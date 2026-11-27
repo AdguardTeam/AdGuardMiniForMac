@@ -7,13 +7,13 @@ import { render } from 'preact';
 
 import 'Common/api';
 import { AccountCallbackService } from 'Common/apis/callbacks/AccountCallbackService';
-import { AccountCallbackServiceInternal } from 'Common/apis/callbacks/AccountCallbackServiceInternal';
 import { FiltersCallbackService } from 'Common/apis/callbacks/FiltersCallbackService';
-import { FiltersCallbackServiceInternal } from 'Common/apis/callbacks/FiltersCallbackServiceInternal';
 import { SettingsCallbackService } from 'Common/apis/callbacks/SettingsCallbackService';
-import { SettingsCallbackServiceInternal } from 'Common/apis/callbacks/SettingsCallbackServiceInternal';
 import { UserRulesCallbackService } from 'Common/apis/callbacks/UserRulesCallbackService';
-import { UserRulesCallbackServiceInternal } from 'Common/apis/callbacks/UserRulesCallbackServiceInternal';
+import { AccountCallbackServiceInternal } from 'Common/apis/impl/AccountCallbackServiceInternal';
+import { FiltersCallbackServiceInternal } from 'Common/apis/impl/FiltersCallbackServiceInternal';
+import { SettingsCallbackServiceInternal } from 'Common/apis/impl/SettingsCallbackServiceInternal';
+import { UserRulesCallbackServiceInternal } from 'Common/apis/impl/UserRulesCallbackServiceInternal';
 import { setupSettingsWebViewBridge } from 'Modules/settings/lib/webViewSettingsBootstrap';
 import 'Theme/default';
 

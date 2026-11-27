@@ -37,7 +37,7 @@ export class UserRulesCallbackService implements IUserRulesCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in UserRulesCallbackService.onUserFilterChange: ${ param }`);
 		}
-		log.dbg('Callback data', 'UserRulesCallbackService.onUserFilterChange', arg.toObject());
+		window.log?.dbg('Callback data', 'UserRulesCallbackService.onUserFilterChange', arg.toObject());
 		await this.userRulesCallbackServiceInternal.onUserFilterChange(arg);
 		return new EmptyValue();
 	};
@@ -53,7 +53,7 @@ export class UserRulesCallbackService implements IUserRulesCallbackService {
 		if (!arg) {
 			throw new Error(`Empty parameter in UserRulesCallbackService.onUserRulesWindowClosed: ${ param }`);
 		}
-		log.dbg('Callback data', 'UserRulesCallbackService.onUserRulesWindowClosed', arg.toObject());
+		window.log?.dbg('Callback data', 'UserRulesCallbackService.onUserRulesWindowClosed', arg.toObject());
 		await this.userRulesCallbackServiceInternal.onUserRulesWindowClosed(arg);
 		return new EmptyValue();
 	};

@@ -2,8 +2,10 @@ syntax = "proto3";
 
 import "PrimitivesWrappers.proto";
 import "AppInfo.proto";
-import "Settings.proto";
 import "EffectiveTheme.proto";
+import "Filters.proto";
+import "SafariExtension.proto";
+import "License.proto";
 
 /* Service handles settings lists */
 service TrayCallbackService {
